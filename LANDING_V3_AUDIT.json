@@ -1,0 +1,11 @@
+{
+  "release": "landing_v3_strong_composition",
+  "base": "meiferts_landing_v2_balanced.zip",
+  "changed": [
+    "index.html",
+    "assets/css/main.css"
+  ],
+  "notes": "Headline, cards and building line-art enlarged; right-column cards aligned higher; screen space used more evenly.",
+  "broken_internal_links_count": 0,
+  "broken_internal_links_sample": []
+}

@@ -1,0 +1,9 @@
+{
+  "release": "de_layout_restored_v1_6",
+  "base": "meiferts_language_landing_800px_hardfix_v1_4.zip",
+  "important": "Layout/CSS restored from last working visual version; only German text fragments were patched.",
+  "broken_internal_links_count": 0,
+  "broken_internal_links_sample": [],
+  "security_issues": [],
+  "registered_symbol_remaining": []
+}

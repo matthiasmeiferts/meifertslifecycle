@@ -1,0 +1,15 @@
+{
+  "project_portal_rebuilt": true,
+  "engine_public": false,
+  "workspace_modules": [
+    "Dashboard",
+    "Projects",
+    "Building Profile",
+    "Evidence",
+    "Findings",
+    "CAPEX Timeline",
+    "Documents",
+    "Report Viewer"
+  ],
+  "security_issues": []
+}

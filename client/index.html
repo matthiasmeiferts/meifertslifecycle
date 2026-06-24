@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MEIFERTS™ Client Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#2E6BE6;--blue2:#4D87F2;--gold:#F2B23E;--cream:#FFF1D9;--green:#2FB36A;--amber:#F2A81E;--red:#E5503C;--grey:#8A8A92;--line:#ECE3D1;--ink:#172033;--navy:#111C31}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);background-image:radial-gradient(circle at 1px 1px,rgba(46,107,230,.035) 1px,transparent 0);background-size:18px 18px;color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:14px}
+a{text-decoration:none;color:inherit}
+.app{display:grid;grid-template-columns:300px 1fr;min-height:100vh}
+.side{background:var(--navy);color:#fff;padding:26px 18px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:100vh}
+.logo{padding:0 10px 24px;border-bottom:1px solid rgba(255,255,255,.14)}
+.logo strong{display:block;font-family:"Cormorant Garamond",Georgia,serif;font-size:36px;letter-spacing:.1em;font-weight:600}.logo span{display:block;color:var(--gold);font-size:10px;letter-spacing:.18em;text-transform:uppercase;margin-top:5px}
+.navgroup small{display:block;color:rgba(255,255,255,.42);font-size:10px;text-transform:uppercase;letter-spacing:.18em;margin:10px 12px}
+.nav{display:grid;gap:5px}.nav a{display:flex;gap:11px;align-items:center;padding:12px 13px;border-radius:12px;color:rgba(255,255,255,.78);font-weight:760;font-size:13px}.nav a.active,.nav a:hover{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff}
+.sidebox{margin-top:auto;border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:15px;background:rgba(255,255,255,.04)}.sidebox b{display:block;color:var(--gold);font-size:12px;letter-spacing:.12em;text-transform:uppercase}.sidebox p{color:rgba(255,255,255,.65);font-size:12px;line-height:1.5}
+.main{padding:28px clamp(22px,3vw,46px) 42px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:20px;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:26px}.search{flex:1;max-width:620px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px 16px;color:var(--grey)}.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--blue),var(--gold));color:#fff;font-weight:900}
+.card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 10px 34px rgba(46,107,230,.06)}.kicker{color:var(--gold);text-transform:uppercase;letter-spacing:.16em;font-size:11px;font-weight:900}h1{font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(52px,6vw,88px);line-height:.86;margin:18px 0 16px;font-weight:500}h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin:0}h3{font-family:"Cormorant Garamond",Georgia,serif;font-size:32px;font-weight:500;margin:24px 0 10px}p{color:var(--grey);line-height:1.55}.lead{font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(25px,3vw,42px);line-height:1.06;color:var(--ink);margin:0 0 18px}
+.btn{background:var(--blue);color:#fff;border-radius:14px;padding:13px 18px;font-weight:850;display:inline-flex;gap:8px;align-items:center}.btn.secondary{background:#fff;color:var(--blue);border:1px solid var(--line)}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;margin-bottom:16px}.hero-card{padding:32px;position:relative;overflow:hidden}.hero-card:before{content:"";position:absolute;inset:0 0 auto 0;height:8px;background:linear-gradient(90deg,var(--blue),var(--gold))}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:14px}.kpi{min-height:150px;display:flex;flex-direction:column;position:relative;overflow:hidden}.kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--blue)}.kpi.green:before{background:var(--green)}.kpi.gold:before{background:var(--gold)}.kpi.red:before{background:var(--red)}.kpi small{color:var(--grey);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:850}.kpi strong{font-family:"Cormorant Garamond",Georgia,serif;font-size:46px;line-height:1;margin-top:auto;font-weight:500}.kpi span{color:var(--grey);font-size:13px;margin-top:7px}
+.layout{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}.section-title{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:16px}.section-title a{font-size:12px;color:var(--blue);font-weight:850}
+.workflow{display:grid;grid-template-columns:repeat(8,1fr);gap:8px}.step{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff;min-height:112px;position:relative}.step.done{border-color:rgba(47,179,106,.35);background:rgba(47,179,106,.06)}.step.active{border-color:rgba(46,107,230,.35);background:rgba(46,107,230,.06)}.step b{display:block;font-family:"Cormorant Garamond",Georgia,serif;font-size:27px;font-weight:500}.step small{display:block;color:var(--grey);font-size:11px;line-height:1.35}
+.table{width:100%;border-collapse:collapse}.table th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);text-align:left;padding:11px;border-bottom:1px solid var(--line)}.table td{padding:14px 11px;border-bottom:1px solid var(--line);font-size:13px}.table tr:last-child td{border-bottom:0}
+.pill{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:850}.pill.blue{background:rgba(46,107,230,.12);color:var(--blue)}.pill.gold{background:rgba(242,178,62,.18);color:#9A6700}.pill.green{background:rgba(47,179,106,.12);color:var(--green)}.pill.red{background:rgba(229,80,60,.12);color:var(--red)}.pill.grey{background:rgba(138,138,146,.12);color:var(--grey)}
+.message{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding:13px 0}.message:last-child{border-bottom:0}.bubble{width:40px;height:40px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:900}.message b{display:block}.message p{font-size:12px;margin:4px 0 0}
+.downloads{display:grid;gap:10px}.download{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:12px}.download b{display:block}.download span{color:var(--grey);font-size:12px}
+.invoice{display:grid;grid-template-columns:1fr auto;gap:12px;border-bottom:1px solid var(--line);padding:13px 0}.invoice:last-child{border-bottom:0}.notice{border-left:5px solid var(--red);background:rgba(229,80,60,.07)}
+@media(max-width:1220px){.app{grid-template-columns:1fr}.side{display:none}.hero,.layout{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.workflow{grid-template-columns:repeat(2,1fr)}}@media(max-width:680px){.kpis,.workflow{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:stretch}.hero-card{padding:24px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <div class="logo"><strong>MEIFERTS™</strong><span>Client Portal</span></div>
+  <div class="navgroup"><small>Client Area</small><nav class="nav">
+    <a class="active" href="#dashboard">▣ Dashboard</a>
+    <a href="#projects">▤ My Projects</a>
+    <a href="#workflow">◇ Review Status</a>
+    <a href="#messages">◌ Messages</a>
+    <a href="#downloads">▥ Downloads</a>
+    <a href="#invoices">▧ Invoices</a>
+  </nav></div>
+  <div class="navgroup"><small>Protected</small><nav class="nav">
+    <a href="../workspace/protected.html">🔒 Professional Engine</a>
+    <a href="../workspace/protected.html">🔒 Report Builder</a>
+  </nav></div>
+  <div class="sidebox"><b>Client View</b><p>Clients see reports and status. They do not access the inspection engine.</p></div>
+</aside>
+
+<main class="main" id="dashboard">
+  <div class="topbar">
+    <div class="search">⌕ Search reports, messages, invoices, documents...</div>
+    <div class="avatar">C</div>
+  </div>
+
+  <section class="hero">
+    <div class="card hero-card">
+      <span class="kicker">Client Portal</span>
+      <h1>Your property decisions in one place.</h1>
+      <p class="lead">Track project status, review reports, download decision records and communicate securely.</p>
+      <p>This portal is the client-facing layer. The professional TDD Engine remains protected.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px"><a class="btn" href="#projects">View Projects</a><a class="btn secondary" href="../contact/">Request Support</a></div>
+    </div>
+    <div class="card notice">
+      <span class="kicker">Security</span>
+      <h3>Result layer only.</h3>
+      <p>Clients receive project transparency, reports and downloads. Proprietary scoring logic, criteria and report automation are not exposed.</p>
+    </div>
+  </section>
+
+  <section class="kpis">
+    <article class="card kpi green"><small>Active Projects</small><strong>3</strong><span>1 in quality review</span></article>
+    <article class="card kpi"><small>Reports</small><strong>12</strong><span>Available downloads</span></article>
+    <article class="card kpi gold"><small>Open Requests</small><strong>4</strong><span>Documents needed</span></article>
+    <article class="card kpi red"><small>Critical Findings</small><strong>2</strong><span>Decision relevant</span></article>
+    <article class="card kpi gold"><small>Next Update</small><strong>24h</strong><span>Expected status change</span></article>
+  </section>
+
+  <div class="layout">
+    <section>
+      <article class="card" id="projects">
+        <div class="section-title"><h2>My Projects</h2><a href="../workspace/">Workspace demo →</a></div>
+        <table class="table">
+          <thead><tr><th>Project</th><th>Status</th><th>Score</th><th>Report</th><th>Next Step</th></tr></thead>
+          <tbody>
+            <tr><td><b>Bangkok Riverside Condo</b><br><span style="color:var(--grey)">Technical Property Review™</span></td><td><span class="pill blue">Quality Review</span></td><td>82</td><td>Research Note</td><td>Final approval</td></tr>
+            <tr><td><b>Pattaya Beachfront Villa</b><br><span style="color:var(--grey)">Moisture and façade review</span></td><td><span class="pill gold">Analysis</span></td><td>76</td><td>Pending</td><td>CAPEX check</td></tr>
+            <tr><td><b>Phuket Coastal Apartment</b><br><span style="color:var(--grey)">Completed review</span></td><td><span class="pill green">Completed</span></td><td>71</td><td>Available</td><td>Download</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="card" id="workflow" style="margin-top:14px">
+        <div class="section-title"><h2>Review Workflow</h2></div>
+        <div class="workflow">
+          <div class="step done"><b>01</b><small>Project Created</small></div>
+          <div class="step done"><b>02</b><small>Documents Received</small></div>
+          <div class="step done"><b>03</b><small>Site Inspection</small></div>
+          <div class="step done"><b>04</b><small>Evidence Review</small></div>
+          <div class="step active"><b>05</b><small>Technical Analysis</small></div>
+          <div class="step"><b>06</b><small>Risk Assessment</small></div>
+          <div class="step"><b>07</b><small>CAPEX Forecast</small></div>
+          <div class="step"><b>08</b><small>Final Report</small></div>
+        </div>
+      </article>
+
+      <article class="card" id="downloads" style="margin-top:14px">
+        <div class="section-title"><h2>Download Center</h2></div>
+        <div class="downloads">
+          <div class="download"><div><b>Executive Summary</b><span>Bangkok Riverside Condo · PDF</span></div><span class="pill blue">Research Note</span></div>
+          <div class="download"><div><b>Evidence Package</b><span>Photos and document index</span></div><span class="pill green">Available</span></div>
+          <div class="download"><div><b>CAPEX Forecast</b><span>20-year forecast summary</span></div><span class="pill gold">Review</span></div>
+          <div class="download"><div><b>Final Report</b><span>Technical Property Review™</span></div><span class="pill grey">Pending</span></div>
+        </div>
+      </article>
+    </section>
+
+    <aside>
+      <article class="card" id="messages">
+        <div class="section-title"><h2>Messages</h2></div>
+        <div class="message"><div class="bubble">M</div><div><b>Missing reserve statement</b><p>Please upload the latest reserve fund statement.</p></div><span class="pill red">Open</span></div>
+        <div class="message"><div class="bubble" style="background:var(--gold)">Q</div><div><b>Roof access confirmed</b><p>Inspection access confirmed by juristic office.</p></div><span class="pill green">Done</span></div>
+        <div class="message"><div class="bubble" style="background:var(--green)">R</div><div><b>Research Note report created</b><p>Executive summary is ready for review.</p></div><span class="pill blue">New</span></div>
+      </article>
+
+      <article class="card" id="invoices" style="margin-top:14px">
+        <div class="section-title"><h2>Invoices</h2></div>
+        <div class="invoice"><div><b>Invoice #TPR-2026-001</b><p>Technical Property Review™</p></div><span class="pill green">Paid</span></div>
+        <div class="invoice"><div><b>Invoice #TPR-2026-002</b><p>Extended CAPEX review</p></div><span class="pill gold">Open</span></div>
+      </article>
+
+      <article class="card" style="margin-top:14px">
+        <div class="section-title"><h2>Next Appointment</h2></div>
+        <h3>Quality Review Call</h3>
+        <p>Final review of decision summary, risk profile and acquisition recommendation.</p>
+        <span class="pill blue">Thursday · 10:30</span>
+      </article>
+    </aside>
+  </div>
+</main>
+</div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "release": "language_landing_800px_hardfix_v1.4",
+  "base": "meiferts_language_landing_nocut_v1_3.zip",
+  "changed": [
+    "assets/css/main.css",
+    "index.html"
+  ],
+  "fix": "Headline, top spacing and language cards reduced strongly for approx. 800px viewport height. Cards should now be fully visible above fold.",
+  "broken_internal_links_count": 0,
+  "broken_internal_links_sample": []
+}
