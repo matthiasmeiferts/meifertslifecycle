@@ -1,25 +1,373 @@
-  </section>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Portal | MEIFERTS Building Intelligence</title>
 
-  <section class="trusted">
-    <div class="trusted-label">Trusted by investors, owners and advisors</div>
-    <div class="logos">
-      <span>DWS</span>
-      <span>Union Investment</span>
-      <span>APLEONA</span>
-      <span>ECE</span>
-      <span>STRABAG</span>
-    </div>
-  </section>
+<style>
+:root{
+--navy:#1B2B45;
+--gold:#B8935A;
+--cream:#F3EEE2;
+--white:#ffffff;
+--text:#1f2933;
+--muted:#6b7280;
+--line:rgba(27,43,69,.16);
+}
+
+*{box-sizing:border-box}
+
+html,body{
+margin:0;
+padding:0;
+overflow-x:hidden;
+}
+
+body{
+font-family:Inter,Arial,sans-serif;
+background:var(--cream);
+color:var(--text);
+line-height:1.65;
+}
+
+header{
+padding:32px 6vw;
+border-bottom:1px solid var(--line);
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:32px;
+flex-wrap:wrap;
+}
+
+.brand{
+text-decoration:none;
+color:var(--navy);
+}
+
+.brand-title{
+font-family:Georgia,"Times New Roman",serif;
+font-size:30px;
+letter-spacing:.12em;
+font-weight:600;
+}
+
+.brand-subtitle{
+font-size:13px;
+letter-spacing:.22em;
+text-transform:uppercase;
+color:var(--gold);
+font-weight:700;
+margin-top:4px;
+}
+
+nav{
+display:flex;
+gap:24px;
+flex-wrap:wrap;
+align-items:center;
+}
+
+nav a{
+text-decoration:none;
+color:var(--navy);
+text-transform:uppercase;
+letter-spacing:.09em;
+font-size:13px;
+}
+
+nav a:hover{color:var(--gold)}
+
+.nav-button{
+border:1px solid var(--navy);
+padding:10px 16px;
+}
+
+main{
+padding:80px 6vw 100px;
+max-width:1480px;
+margin:0 auto;
+}
+
+.portal-grid{
+display:grid;
+grid-template-columns:1fr 320px;
+gap:60px;
+align-items:start;
+}
+
+.hero-card{
+background:var(--white);
+border:1px solid var(--line);
+padding:56px;
+}
+
+.eyebrow{
+color:var(--gold);
+text-transform:uppercase;
+letter-spacing:.22em;
+font-size:13px;
+font-weight:700;
+margin-bottom:18px;
+}
+
+h1{
+font-family:Georgia,"Times New Roman",serif;
+font-size:clamp(62px,9vw,126px);
+line-height:.95;
+font-weight:400;
+color:var(--navy);
+margin:0 0 34px;
+}
+
+.lead{
+font-size:26px;
+line-height:1.55;
+color:#6b665d;
+max-width:880px;
+margin-bottom:34px;
+}
+
+.login-box{
+border:1px solid var(--line);
+border-radius:28px;
+padding:38px;
+max-width:620px;
+background:rgba(255,255,255,.72);
+}
+
+label{
+display:block;
+color:var(--navy);
+font-weight:700;
+font-size:16px;
+margin:18px 0 8px;
+}
+
+input{
+width:100%;
+border:1px solid var(--line);
+background:var(--cream);
+padding:18px;
+border-radius:16px;
+font-size:18px;
+}
+
+button{
+width:100%;
+margin-top:28px;
+padding:18px 24px;
+border:none;
+border-radius:999px;
+background:var(--navy);
+color:white;
+font-size:18px;
+font-weight:700;
+cursor:pointer;
+}
+
+button:hover{
+background:var(--gold);
+color:var(--navy);
+}
+
+.note{
+font-size:18px;
+color:#6b665d;
+margin-top:24px;
+}
+
+.side-panel{
+background:rgba(255,255,255,.35);
+border:1px solid var(--line);
+border-radius:0 0 28px 28px;
+padding:42px 34px;
+position:sticky;
+top:24px;
+}
+
+.side-panel a{
+display:block;
+text-decoration:none;
+color:var(--navy);
+font-size:22px;
+font-weight:700;
+margin-bottom:28px;
+}
+
+.side-pill{
+border:2px solid var(--navy);
+border-radius:999px;
+padding:16px 22px;
+text-align:center;
+margin-top:18px;
+}
+
+.section{
+margin-top:60px;
+background:rgba(255,255,255,.42);
+border:1px solid var(--line);
+padding:42px;
+}
+
+h2{
+font-family:Georgia,"Times New Roman",serif;
+font-size:38px;
+font-weight:400;
+color:var(--navy);
+margin:0 0 22px;
+}
+
+.footer{
+border-top:1px solid var(--line);
+padding:34px 6vw;
+font-size:13px;
+color:var(--muted);
+display:flex;
+justify-content:space-between;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.footer a{
+color:var(--muted);
+text-decoration:none;
+margin-left:18px;
+}
+
+@media(max-width:900px){
+header{
+align-items:flex-start;
+}
+
+nav{
+gap:16px;
+}
+
+main{
+padding:54px 5vw 80px;
+}
+
+.portal-grid{
+display:block;
+}
+
+.hero-card{
+padding:34px 28px;
+width:100%;
+max-width:100%;
+}
+
+h1{
+font-size:clamp(64px,18vw,96px);
+}
+
+.lead{
+font-size:24px;
+}
+
+.login-box{
+padding:28px;
+max-width:100%;
+}
+
+.side-panel{
+position:static;
+width:100%;
+max-width:100%;
+margin-top:28px;
+border-radius:24px;
+padding:30px 28px;
+}
+
+.side-panel a{
+font-size:20px;
+margin-bottom:20px;
+}
+
+.section{
+padding:30px 28px;
+}
+
+.footer a{
+margin-left:0;
+margin-right:16px;
+}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<a class="brand" href="../index.html">
+<div class="brand-title">MEIFERTS™</div>
+<div class="brand-subtitle">Professional Portal</div>
+</a>
+
+<nav>
+<a href="../methodology.html">Methodology</a>
+<a href="../reports.html">Reports</a>
+<a href="../research.html">Research</a>
+<a href="../publications.html">Publications</a>
+<a href="../workspace/">Workspace</a>
+<a href="../contact.html">Contact</a>
+<a class="nav-button" href="../request-review.html">Request Review</a>
+</nav>
+</header>
+
+<main>
+
+<div class="portal-grid">
+
+<section class="hero-card">
+<div class="eyebrow">Member Access</div>
+<h1>Professional Portal.</h1>
+
+<p class="lead">
+Secure workspace for projects, research, reports and professional building intelligence.
+</p>
+
+<div class="login-box">
+<label>Username</label>
+<input type="text" placeholder="Username">
+
+<label>Password</label>
+<input type="password" placeholder="Password">
+
+<button onclick="location.href='../workspace/'">Open Workspace</button>
+
+<p class="note">
+Static preview mode. Backend authentication can be connected later.
+</p>
+</div>
+</section>
+
+<aside class="side-panel">
+<a href="../research.html">Library</a>
+<a href="../publications.html">Downloads</a>
+<a class="side-pill" href="../index.html">Public Website</a>
+</aside>
+
+</div>
+
+<section class="section">
+<h2>Portal Structure</h2>
+<p>
+The professional portal is designed as the access layer for projects, reports, research documents and future client-facing building intelligence tools.
+</p>
+</section>
 
 </main>
 
-<footer>
-  <div>© Matthias Meiferts · MEIFERTS Building Intelligence</div>
-  <div>
-    <a href="imprint.html">Imprint</a>
-    <a href="privacy.html">Privacy</a>
-    <a href="contact.html">Contact</a>
-  </div>
+<footer class="footer">
+<div>© Matthias Meiferts · MEIFERTS Building Intelligence</div>
+<div>
+<a href="../imprint.html">Imprint</a>
+<a href="../privacy.html">Privacy</a>
+<a href="../contact.html">Contact</a>
+</div>
 </footer>
 
 </body>
