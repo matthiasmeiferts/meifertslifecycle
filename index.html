@@ -42,11 +42,7 @@ flex-wrap:wrap;
 background:rgba(243,238,226,.96);
 }
 
-.brand{
-text-decoration:none;
-color:var(--navy);
-min-width:240px;
-}
+.brand{text-decoration:none;color:var(--navy);min-width:240px}
 
 .brand-title{
 font-family:Georgia,"Times New Roman",serif;
@@ -95,17 +91,11 @@ background:var(--navy);
 color:var(--cream);
 }
 
-main{
-padding:82px 5vw 100px;
-}
+main{padding:82px 5vw 100px}
 
 .hero{
-max-width:1280px;
+max-width:1180px;
 margin:0 auto 90px;
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:78px;
-align-items:stretch;
 }
 
 .eyebrow,.section-eyebrow{
@@ -119,26 +109,27 @@ margin-bottom:22px;
 
 h1{
 font-family:Georgia,"Times New Roman",serif;
-font-size:clamp(52px,6vw,86px);
-line-height:1;
+font-size:clamp(58px,8vw,112px);
+line-height:.95;
 font-weight:400;
 color:var(--navy);
-margin:0 0 28px;
+margin:0 0 34px;
+max-width:980px;
 }
 
 .lead{
-font-size:23px;
+font-size:25px;
 line-height:1.5;
 color:var(--navy);
-max-width:720px;
-margin:0 0 26px;
+max-width:860px;
+margin:0 0 30px;
 }
 
 .hero-text{
-font-size:18px;
+font-size:19px;
 color:#4b5563;
-max-width:680px;
-margin:0 0 34px;
+max-width:760px;
+margin:0 0 38px;
 }
 
 .actions{
@@ -170,60 +161,18 @@ border-color:var(--gold);
 color:var(--navy);
 }
 
-.standard-card{
-background:rgba(255,255,255,.62);
+.figure-section{
+max-width:1320px;
+margin:0 auto 90px;
+background:rgba(255,255,255,.35);
 border:1px solid var(--line);
-border-radius:24px;
-padding:58px;
-min-height:620px;
-box-shadow:0 24px 70px rgba(27,43,69,.06);
-position:relative;
-overflow:hidden;
-display:flex;
-flex-direction:column;
-justify-content:flex-start;
+padding:26px;
 }
 
-.standard-card:before{
-content:"";
-position:absolute;
-left:32px;
-right:32px;
-top:0;
-height:4px;
-background:linear-gradient(90deg,var(--navy),var(--gold));
-border-radius:999px;
-}
-
-h2{
-font-family:Georgia,"Times New Roman",serif;
-font-size:clamp(38px,4.6vw,68px);
-line-height:1.05;
-font-weight:400;
-color:var(--navy);
-margin:0 0 34px;
-}
-
-.standard-card p{
-font-size:19px;
-line-height:1.75;
-color:#4b5563;
-max-width:560px;
-margin:0 0 28px;
-}
-
-.standard-list{
-margin-top:auto;
-padding-top:34px;
-border-top:1px solid var(--line);
-display:grid;
-gap:14px;
-}
-
-.standard-list div{
-font-family:Georgia,"Times New Roman",serif;
-font-size:22px;
-color:var(--navy);
+.figure-section img{
+width:100%;
+height:auto;
+display:block;
 }
 
 .content-section{
@@ -237,44 +186,34 @@ padding:54px 48px;
 .content-section p{
 font-size:18px;
 color:#4b5563;
-max-width:880px;
+max-width:900px;
 margin:0 0 24px;
 }
 
-.figure-section{
-max-width:1240px;
-margin:0 auto 80px;
-background:rgba(255,255,255,.28);
-border:1px solid var(--line);
-padding:24px;
+h2{
+font-family:Georgia,"Times New Roman",serif;
+font-size:clamp(38px,4.6vw,68px);
+line-height:1.05;
+font-weight:400;
+color:var(--navy);
+margin:0 0 34px;
 }
 
-.figure-wrap{
-width:100%;
-overflow-x:auto;
-}
-
-.figure-wrap svg{
-width:100%;
-height:auto;
-display:block;
-min-width:760px;
-}
-
-.feature-grid{
+.standard-grid{
 display:grid;
 grid-template-columns:repeat(4,1fr);
 gap:22px;
 margin-top:34px;
 }
 
-.feature-card,.article-card{
+.standard-card,
+.article-card{
 border:1px solid rgba(184,147,90,.28);
 background:rgba(255,255,255,.52);
 padding:30px;
 }
 
-.feature-card h3{
+.standard-card h3{
 font-family:Georgia,"Times New Roman",serif;
 font-size:25px;
 font-weight:400;
@@ -282,7 +221,7 @@ color:var(--navy);
 margin:0 0 14px;
 }
 
-.feature-card p{
+.standard-card p{
 font-size:15px;
 margin:0;
 }
@@ -306,6 +245,35 @@ font-size:22px;
 color:var(--navy);
 }
 
+.behind-section{
+max-width:1180px;
+margin:0 auto 80px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:50px;
+align-items:stretch;
+}
+
+.behind-panel{
+border:1px solid var(--line);
+background:rgba(255,255,255,.38);
+padding:48px;
+}
+
+.behind-panel p{
+font-size:18px;
+color:#4b5563;
+margin:0 0 18px;
+}
+
+.signature{
+font-family:Georgia,"Times New Roman",serif;
+font-size:32px;
+line-height:1.25;
+color:var(--navy);
+margin-top:22px;
+}
+
 .article-grid{
 display:grid;
 grid-template-columns:repeat(4,1fr);
@@ -319,27 +287,6 @@ font-size:22px;
 line-height:1.3;
 color:var(--navy);
 min-height:150px;
-}
-
-.trust-block{
-max-width:1180px;
-margin:0 auto 80px;
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:50px;
-align-items:start;
-}
-
-.trust-panel{
-border:1px solid var(--line);
-background:rgba(255,255,255,.38);
-padding:48px;
-}
-
-.trust-panel p{
-font-size:18px;
-color:#4b5563;
-margin:0 0 18px;
 }
 
 footer{
@@ -386,16 +333,7 @@ font-size:12px;
 }
 
 @media(max-width:1100px){
-.hero{
-grid-template-columns:1fr;
-gap:54px;
-}
-
-.standard-card{
-min-height:auto;
-}
-
-.feature-grid,.article-grid,.trust-block{
+.standard-grid,.article-grid,.behind-section{
 grid-template-columns:1fr 1fr;
 }
 
@@ -405,54 +343,42 @@ grid-template-columns:1fr 1fr;
 }
 
 @media(max-width:760px){
-header{
-align-items:flex-start;
-}
+header{align-items:flex-start}
 
 nav{
 justify-content:flex-start;
 gap:16px 20px;
 }
 
-nav a{
-font-size:11px;
-}
+nav a{font-size:11px}
 
-main{
-padding:56px 5vw 80px;
-}
+main{padding:56px 5vw 80px}
 
-h1{
-font-size:clamp(48px,13vw,68px);
-}
+h1{font-size:clamp(52px,15vw,74px)}
 
-.lead{
-font-size:20px;
-}
+.lead{font-size:20px}
 
-.standard-card,.content-section,.trust-panel{
+.content-section,.behind-panel{
 padding:32px 26px;
 }
 
 .figure-section{
-padding:14px;
+padding:12px;
 }
 
-.standard-card h2{
-font-size:clamp(40px,12vw,56px);
+.figure-section img{
+min-width:720px;
 }
 
-.standard-card p{
-font-size:18px;
+.figure-scroll{
+overflow-x:auto;
 }
 
-.feature-grid,.article-grid,.evaluation-grid,.client-grid,.trust-block,.footer-inner{
+.standard-grid,.article-grid,.evaluation-grid,.client-grid,.behind-section,.footer-inner{
 grid-template-columns:1fr;
 }
 
-.footer-links{
-justify-content:flex-start;
-}
+.footer-links{justify-content:flex-start}
 }
 </style>
 </head>
@@ -479,10 +405,9 @@ justify-content:flex-start;
 <main>
 
 <section class="hero">
-<div>
 <div class="eyebrow">MEIFERTS™ Building Intelligence</div>
 
-<h1>The building behind the brochure.</h1>
+<h1>The Building Behind The Brochure.</h1>
 
 <p class="lead">
 Technical Due Diligence and Building Intelligence for property buyers, investors and asset owners.
@@ -495,8 +420,6 @@ Few investigate the building.
 <br><br>
 That imbalance creates risk.
 <br><br>
-Hidden defects, deferred maintenance, water intrusion, insufficient reserves and future capital expenditure often become visible only after the purchase.
-<br><br>
 MEIFERTS exists to close that gap.
 </p>
 
@@ -504,29 +427,12 @@ MEIFERTS exists to close that gap.
 <a class="button primary" href="request-review.html">Request Technical Review</a>
 <a class="button" href="methodology/">Explore Methodology</a>
 </div>
+</section>
+
+<section class="figure-section">
+<div class="figure-scroll">
+<img src="meiferts-research-v3%202.svg" alt="Building Performance Over Time">
 </div>
-
-<aside class="standard-card">
-<div class="eyebrow">The MEIFERTS Standard™</div>
-
-<h2>
-Observe.<br>
-Understand.<br>
-Evaluate.<br>
-Decide.
-</h2>
-
-<p>
-The MEIFERTS Standard™ transforms building observations into decision clarity.
-</p>
-
-<div class="standard-list">
-<div>Technical Property Review™</div>
-<div>Building Risk Score™</div>
-<div>Lifecycle Assessment™</div>
-<div>CAPEX Forecast™</div>
-</div>
-</aside>
 </section>
 
 <section class="content-section">
@@ -550,119 +456,17 @@ That is where Technical Due Diligence begins.
 </p>
 </section>
 
-<section class="figure-section">
-<div class="figure-wrap">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 840">
-  <defs>
-    <style>
-      .svg-title { font-family: Georgia, serif; }
-      .svg-sans  { font-family: Inter, Arial, sans-serif; }
-    </style>
-  </defs>
+<section class="content-section">
+<div class="section-eyebrow">The MEIFERTS Standard™</div>
+<h2>Observe. Understand. Evaluate. Decide.</h2>
 
-  <rect width="1240" height="840" fill="#F3EEE2"/>
+<p>
+The MEIFERTS Standard™ transforms building observations into decision clarity.
+</p>
 
-  <text x="95" y="64" class="svg-sans" font-size="12.5" font-weight="500"
-        fill="#B8935A" letter-spacing="4.2">BUILDING INTELLIGENCE · RESEARCH</text>
-  <text x="1145" y="64" text-anchor="end" class="svg-sans" font-size="12.5" font-weight="400"
-        fill="#1B2B45" letter-spacing="3.2" opacity="0.5">FIGURE 01</text>
-  <line x1="95" y1="84" x2="1145" y2="84" stroke="#1B2B45" stroke-width="1"/>
-
-  <text x="92" y="153" class="svg-title" font-size="54" font-weight="600"
-        fill="#1B2B45">Building Performance Over Time</text>
-  <line x1="95" y1="171" x2="183" y2="171" stroke="#B8935A" stroke-width="2.5"/>
-  <text x="95" y="201" class="svg-sans" font-size="15.5" font-weight="400" fill="#222222">
-    Understanding how maintenance influences long-term building performance.</text>
-
-  <g class="svg-sans" font-size="13" font-weight="400" fill="#222222">
-    <line x1="772" y1="196" x2="806" y2="196" stroke="#B8935A" stroke-width="2.6"/>
-    <text x="814" y="201">Managed Lifecycle</text>
-    <line x1="990" y1="196" x2="1024" y2="196" stroke="#1B2B45" stroke-width="1.5"
-          stroke-dasharray="6 5" opacity="0.55"/>
-    <text x="1032" y="201">Natural Deterioration</text>
-  </g>
-
-  <g stroke="#1B2B45" stroke-width="1" opacity="0.08">
-    <line x1="155" y1="365" x2="1085" y2="365"/>
-    <line x1="155" y1="460" x2="1085" y2="460"/>
-    <line x1="155" y1="555" x2="1085" y2="555"/>
-  </g>
-
-  <line x1="155" y1="357.4" x2="1085" y2="357.4" stroke="#B8935A" stroke-width="1"
-        stroke-dasharray="3 5" opacity="0.85"/>
-  <text x="1085" y="349" text-anchor="end" class="svg-sans" font-size="11" font-weight="500"
-        fill="#B8935A" letter-spacing="1.6">RENOVATION THRESHOLD</text>
-
-  <line x1="155" y1="270" x2="155" y2="650" stroke="#1B2B45" stroke-width="1.2"/>
-  <line x1="155" y1="650" x2="1085" y2="650" stroke="#1B2B45" stroke-width="1.2"/>
-
-  <g class="svg-sans" font-size="12" font-weight="400" fill="#1B2B45" opacity="0.5" text-anchor="end">
-    <text x="143" y="275">100</text>
-    <text x="143" y="370">75</text>
-    <text x="143" y="465">50</text>
-    <text x="143" y="560">25</text>
-    <text x="143" y="655">0</text>
-  </g>
-
-  <g class="svg-sans" font-size="12" font-weight="400" fill="#1B2B45" opacity="0.5" text-anchor="middle">
-    <text x="155" y="673">0</text>
-    <text x="310" y="673">10</text>
-    <text x="465" y="673">20</text>
-    <text x="620" y="673">30</text>
-    <text x="775" y="673">40</text>
-    <text x="930" y="673">50</text>
-    <text x="1085" y="673">60</text>
-  </g>
-
-  <text transform="translate(100,460) rotate(-90)" text-anchor="middle" class="svg-sans"
-        font-size="13" font-weight="400" fill="#222222" letter-spacing="0.6">Building Condition Index</text>
-  <text x="620" y="704" text-anchor="middle" class="svg-sans" font-size="13" font-weight="400"
-        fill="#222222" letter-spacing="0.6">Age of Building (Years)</text>
-
-  <path d="M155,270 C180.83,271.77 258.33,274.45 310,280.6
-           C361.67,286.75 413.33,295.93 465,306.9
-           C516.67,317.87 568.33,331.15 620,346.4
-           C671.67,361.65 723.33,379.22 775,398.4
-           C826.67,417.58 878.33,438.57 930,461.5
-           C981.67,484.43 1059.17,523.58 1085,536"
-        fill="none" stroke="#1B2B45" stroke-width="1.5"
-        stroke-dasharray="6 5" opacity="0.5" stroke-linecap="round"/>
-
-  <path d="M155,270 C198.92,287.73 361.67,371.97 418.5,376.4
-           C475.33,380.83 449.5,295.97 496,296.6
-           C542.5,297.23 651,378.93 697.5,380.2
-           C744,381.47 731.08,303.57 775,304.2
-           C818.92,304.83 917.08,382.73 961,384
-           C1004.92,385.27 1017.83,322.57 1038.5,311.8
-           C1059.17,301.03 1077.25,318.13 1085,319.4"
-        fill="none" stroke="#B8935A" stroke-width="2.6"
-        stroke-linejoin="round" stroke-linecap="round"/>
-
-  <g fill="#1B2B45">
-    <circle cx="418.5" cy="376.4" r="3"/>
-    <circle cx="697.5" cy="380.2" r="3"/>
-    <circle cx="961" cy="384" r="3"/>
-  </g>
-  <g fill="#F3EEE2" stroke="#B8935A" stroke-width="2.2">
-    <circle cx="496" cy="296.6" r="7"/>
-    <circle cx="775" cy="304.2" r="7"/>
-    <circle cx="1038.5" cy="311.8" r="7"/>
-  </g>
-
-  <text x="620" y="736" text-anchor="middle" class="svg-sans" font-size="12.5" font-weight="500"
-        fill="#B8935A" letter-spacing="5">OBSERVE · UNDERSTAND · EVALUATE · DECIDE</text>
-
-  <line x1="95" y1="774" x2="1145" y2="774" stroke="#1B2B45" stroke-width="1"/>
-  <text x="95" y="800" class="svg-sans" font-size="12" font-weight="400" fill="#1B2B45" opacity="0.6"
-        letter-spacing="0.4">Illustrative · The MEIFERTS Standard™ · meifertslifecycle.com</text>
-  <text x="95" y="816" class="svg-sans" font-size="10" font-weight="400" fill="#1B2B45" opacity="0.4"
-        letter-spacing="0.6">Version 4.0</text>
-  <text x="1145" y="796" text-anchor="end" class="svg-sans" font-size="15" font-weight="600"
-        fill="#1B2B45" letter-spacing="2.5">MEIFERTS®</text>
-  <text x="1145" y="811" text-anchor="end" class="svg-sans" font-size="8.5" font-weight="500"
-        fill="#B8935A" letter-spacing="3.6">BUILDING INTELLIGENCE</text>
-</svg>
-</div>
+<p>
+The objective is not to create more information. The objective is to create understanding.
+</p>
 </section>
 
 <section class="content-section">
@@ -673,23 +477,23 @@ That is where Technical Due Diligence begins.
 MEIFERTS translates building complexity into structured decision support.
 </p>
 
-<div class="feature-grid">
-<div class="feature-card">
+<div class="standard-grid">
+<div class="standard-card">
 <h3>Technical Property Review™</h3>
 <p>Identify visible and hidden technical risks before acquisition.</p>
 </div>
 
-<div class="feature-card">
+<div class="standard-card">
 <h3>Building Risk Score™</h3>
 <p>Transform technical observations into a structured risk classification.</p>
 </div>
 
-<div class="feature-card">
+<div class="standard-card">
 <h3>Lifecycle Assessment™</h3>
 <p>Evaluate asset maturity, remaining useful life and future risk drivers.</p>
 </div>
 
-<div class="feature-card">
+<div class="standard-card">
 <h3>CAPEX Forecast™</h3>
 <p>Understand future capital expenditure before it becomes unavoidable.</p>
 </div>
@@ -714,27 +518,27 @@ MEIFERTS translates building complexity into structured decision support.
 </div>
 </section>
 
-<section class="trust-block">
-<div class="trust-panel">
+<section class="content-section">
 <div class="section-eyebrow">Who We Work With</div>
 <h2>Built for decision makers.</h2>
 
 <div class="client-grid">
 <div>Property Buyers</div>
 <div>International Investors</div>
+<div>Cross-Border Investors</div>
 <div>Asset Owners</div>
 <div>Family Offices</div>
-<div>Private Equity</div>
 <div>Real Estate Advisors</div>
 </div>
-</div>
+</section>
 
-<div class="trust-panel">
-<div class="section-eyebrow">Why MEIFERTS</div>
+<section class="behind-section">
+<div class="behind-panel">
+<div class="section-eyebrow">Who Is Behind MEIFERTS</div>
 <h2>Experience translated into clarity.</h2>
 
 <p>
-MEIFERTS combines real estate experience, technical property management, lifecycle thinking and risk analysis into a structured Building Intelligence approach.
+MEIFERTS Building Intelligence combines more than 25 years of real estate experience with technical property management, lifecycle thinking and structured risk assessment.
 </p>
 
 <p>
@@ -742,14 +546,40 @@ The objective is not to create more information.
 </p>
 
 <p>
-The objective is to help people understand what matters before important decisions are made.
+The objective is to create understanding.
 </p>
+
+<p>
+Understanding creates confidence. Confidence enables better decisions.
+</p>
+</div>
+
+<div class="behind-panel">
+<div class="section-eyebrow">Platform Logic</div>
+<h2>Workspace as professional tool.</h2>
+
+<p>
+The public website explains the methodology, reports and research.
+</p>
+
+<p>
+The internal workspace is used as professional inspection tooling: checklist, risk engine, lifecycle assessment, CAPEX logic and report preparation.
+</p>
+
+<p>
+Clients see clarity. The workspace remains the craft behind the decision.
+</p>
+
+<div class="signature">
+Every building tells a story.<br>
+Understanding it is where better decisions begin.
+</div>
 </div>
 </section>
 
 <section class="content-section">
-<div class="section-eyebrow">Latest Insights</div>
-<h2>Research & Publications</h2>
+<div class="section-eyebrow">Research & Publications</div>
+<h2>Building Intelligence as a knowledge system.</h2>
 
 <div class="article-grid">
 <div class="article-card">The Most Expensive Question Property Buyers Never Ask</div>
@@ -771,7 +601,7 @@ Technical Due Diligence<br>
 Building Risk Assessment<br>
 Lifecycle Intelligence
 </p>
-<p>Hamburg | Bangkok</p>
+<p>Hamburg · Germany</p>
 <p>hello@meifertslifecycle.com</p>
 <p>+49 176 44537849</p>
 <p>© Matthias Meiferts</p>
