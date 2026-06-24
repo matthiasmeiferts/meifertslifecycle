@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Request Review | MEIFERTS Building Intelligence</title>
+  <style>
+    :root {
+      --navy:#1B2B45;
+      --gold:#B8935A;
+      --cream:#F3EEE2;
+      --text:#1f2933;
+      --muted:#6b7280;
+      --line:rgba(27,43,69,0.16);
+      --white:#fff;
+    }
+
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      font-family:Inter, Arial, sans-serif;
+      background:var(--cream);
+      color:var(--text);
+      line-height:1.7;
+    }
+
+    header {
+      padding:28px 6vw;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:32px;
+      flex-wrap:wrap;
+    }
+
+    .brand {
+      text-decoration:none;
+      color:var(--navy);
+    }
+
+    .brand-title {
+      font-family:Georgia, serif;
+      font-size:26px;
+      letter-spacing:.08em;
+      font-weight:500;
+    }
+
+    .brand-subtitle {
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--gold);
+      margin-top:4px;
+    }
+
+    nav {
+      display:flex;
+      gap:22px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    nav a {
+      text-decoration:none;
+      color:var(--navy);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-size:13px;
+    }
+
+    nav a:hover { color:var(--gold); }
+
+    .nav-button {
+      border:1px solid var(--navy);
+      padding:10px 16px;
+    }
+
+    .nav-button:hover {
+      background:var(--navy);
+      color:var(--cream);
+    }
+
+    main {
+      padding:80px 6vw 100px;
+    }
+
+    .hero {
+      max-width:980px;
+      margin-bottom:80px;
+    }
+
+    .eyebrow {
+      color:var(--gold);
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      font-size:12px;
+      margin-bottom:20px;
+    }
+
+    h1 {
+      font-family:Georgia, serif;
+      font-size:clamp(44px,7vw,82px);
+      line-height:1.05;
+      color:var(--navy);
+      font-weight:400;
+      margin:0 0 28px;
+    }
+
+    .lead {
+      font-size:22px;
+      max-width:760px;
+      color:var(--navy);
+    }
+
+    .grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:70px;
+      max-width:1160px;
+    }
+
+    section {
+      background:rgba(255,255,255,.38);
+      border:1px solid var(--line);
+      padding:44px;
+    }
+
+    h2 {
+      font-family:Georgia, serif;
+      font-size:34px;
+      font-weight:400;
+      color:var(--navy);
+      margin:0 0 22px;
+    }
+
+    p { margin:0 0 20px; }
+
+    ul {
+      margin:0;
+      padding-left:20px;
+    }
+
+    li { margin-bottom:10px; }
+
+    form {
+      display:grid;
+      gap:18px;
+    }
+
+    label {
+      display:block;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      color:var(--gold);
+      margin-bottom:6px;
+    }
+
+    input, textarea, select {
+      width:100%;
+      padding:14px;
+      border:1px solid var(--line);
+      background:var(--white);
+      font-family:Inter, Arial, sans-serif;
+      font-size:15px;
+      color:var(--text);
+    }
+
+    textarea {
+      min-height:160px;
+      resize:vertical;
+    }
+
+    button {
+      margin-top:8px;
+      background:var(--navy);
+      color:var(--cream);
+      border:none;
+      padding:15px 22px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      font-size:12px;
+      cursor:pointer;
+    }
+
+    button:hover {
+      background:var(--gold);
+      color:var(--navy);
+    }
+
+    .note {
+      font-size:13px;
+      color:var(--muted);
+      margin-top:16px;
+    }
+
+    .direct {
+      margin-top:70px;
+      max-width:1160px;
+      background:var(--navy);
+      color:var(--cream);
+      padding:44px;
+    }
+
+    .direct h2 {
+      color:var(--cream);
+    }
+
+    .direct a {
+      color:var(--cream);
+      text-decoration:none;
+      border-bottom:1px solid var(--gold);
+    }
+
+    footer {
+      border-top:1px solid var(--line);
+      padding:34px 6vw;
+      color:var(--muted);
+      font-size:13px;
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+      flex-wrap:wrap;
+    }
+
+    footer a {
+      color:var(--muted);
+      text-decoration:none;
+      margin-left:18px;
+    }
+
+    footer a:hover { color:var(--gold); }
+
+    @media(max-width:900px) {
+      .grid { grid-template-columns:1fr; }
+      section { padding:32px; }
+      nav { gap:16px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <a class="brand" href="index.html">
+    <div class="brand-title">MEIFERTS</div>
+    <div class="brand-subtitle">Building Intelligence</div>
+  </a>
+
+  <nav>
+    <a href="methodology.html">Methodology</a>
+    <a href="reports.html">Reports</a>
+    <a href="research.html">Research</a>
+    <a href="publications.html">Publications</a>
+    <a href="portal/">Portal</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a class="nav-button" href="request-review.html">Request Review</a>
+  </nav>
+</header>
+
+<main>
+
+  <div class="hero">
+    <div class="eyebrow">Request Review</div>
+    <h1>Request a technical property review.</h1>
+    <p class="lead">
+      Before price, yield or lifestyle comes the building itself. A technical review helps identify risks, lifecycle issues and future CAPEX exposure before decisions become expensive.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <section>
+      <h2>What to Submit</h2>
+      <p>
+        Please provide the basic property information available to you. A first review does not require perfect documentation. It begins with what is already known.
+      </p>
+      <ul>
+        <li>Property type and location</li>
+        <li>Purpose of review</li>
+        <li>Available documents or listing information</li>
+        <li>Known concerns or visible defects</li>
+        <li>Decision timeline</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Review Focus</h2>
+      <p>
+        Depending on the asset and available information, the review may focus on building condition, maintenance risks, lifecycle exposure, governance quality and possible future capital expenditure.
+      </p>
+      <p>
+        The objective is not to create certainty. The objective is to improve understanding before a decision is made.
+      </p>
+    </section>
+
+  </div>
+
+  <div class="grid" style="margin-top:70px;">
+
+    <section>
+      <h2>Submit Request</h2>
+
+      <form action="mailto:matthias@meiferts.de" method="post" enctype="text/plain">
+        <div>
+          <label for="name">Name</label>
+          <input id="name" name="Name" type="text" required>
+        </div>
+
+        <div>
+          <label for="email">Email</label>
+          <input id="email" name="Email" type="email" required>
+        </div>
+
+        <div>
+          <label for="location">Property Location</label>
+          <input id="location" name="Property Location" type="text">
+        </div>
+
+        <div>
+          <label for="type">Property Type</label>
+          <select id="type" name="Property Type">
+            <option value="">Please select</option>
+            <option>Condominium</option>
+            <option>House / Villa</option>
+            <option>Apartment Building</option>
+            <option>Commercial Property</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="message">Message</label>
+          <textarea id="message" name="Message" required></textarea>
+        </div>
+
+        <button type="submit">Send Request</button>
+
+        <p class="note">
+          Note: This form currently opens your email application. A direct web form can be connected later.
+        </p>
+      </form>
+    </section>
+
+    <section>
+      <h2>Typical Questions</h2>
+      <ul>
+        <li>Is the building technically sound?</li>
+        <li>What are the main hidden risks?</li>
+        <li>What could require investment later?</li>
+        <li>Are reserves, maintenance and governance sufficient?</li>
+        <li>Would the asset still make sense after technical review?</li>
+      </ul>
+    </section>
+
+  </div>
+
+  <section class="direct">
+    <h2>Prefer direct contact?</h2>
+    <p>
+      You can also contact Matthias Meiferts directly by email or phone.
+    </p>
+    <p>
+      <a href="mailto:matthias@meiferts.de">matthias@meiferts.de</a><br>
+      <a href="tel:+4917644537849">+49 176 44537849</a>
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  <div>
+    © Matthias Meiferts · MEIFERTS Building Intelligence
+  </div>
+  <div>
+    <a href="imprint.html">Imprint</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</footer>
+
+</body>
+</html>
