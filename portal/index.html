@@ -48,7 +48,7 @@ button,input,textarea,select{font:inherit}
 .portal{
 min-height:100vh;
 display:grid;
-grid-template-columns:292px 1fr 340px;
+grid-template-columns:292px 1fr 360px;
 }
 
 .sidebar{
@@ -223,7 +223,9 @@ white-space:nowrap;
 .work-panel,
 .context-card,
 .task-row,
-.table-card{
+.table-card,
+.finding-card,
+.gallery-card{
 background:rgba(255,255,255,.42);
 border:1px solid var(--line);
 }
@@ -616,11 +618,83 @@ height:100%;
 background:var(--gold);
 }
 
+.findings-board{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:18px;
+}
+
+.finding-card{
+padding:22px;
+min-height:260px;
+display:flex;
+flex-direction:column;
+}
+
+.finding-card h3{
+font-size:24px;
+}
+
+.finding-footer{
+margin-top:auto;
+padding-top:18px;
+border-top:1px solid var(--line);
+display:flex;
+justify-content:space-between;
+gap:12px;
+align-items:center;
+}
+
+.gallery-toolbar{
+display:flex;
+justify-content:space-between;
+gap:18px;
+align-items:center;
+margin-bottom:18px;
+flex-wrap:wrap;
+}
+
+.search{
+border:1px solid var(--line);
+background:rgba(255,255,255,.46);
+padding:12px 14px;
+min-width:260px;
+color:var(--navy);
+}
+
+.gallery-card{
+padding:16px;
+}
+
+.gallery-card .thumb{
+height:140px;
+}
+
+.capex-board{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
+}
+
+.capex-card{
+background:rgba(255,255,255,.42);
+border:1px solid var(--line);
+padding:26px;
+min-height:240px;
+}
+
+.capex-value{
+font-family:Georgia,"Times New Roman",serif;
+font-size:42px;
+color:var(--navy);
+margin:18px 0;
+}
+
 @media(max-width:1280px){
 .portal{grid-template-columns:292px 1fr}
 .context{display:none}
-.grid-4,.evidence-grid{grid-template-columns:1fr 1fr}
-.grid-3{grid-template-columns:1fr 1fr}
+.grid-4,.evidence-grid,.findings-board{grid-template-columns:1fr 1fr}
+.grid-3,.capex-board{grid-template-columns:1fr 1fr}
 }
 
 @media(max-width:980px){
@@ -636,10 +710,11 @@ background:var(--gold);
 .brand-title{font-size:24px}
 .main{padding:34px 5vw 70px}
 .topbar{flex-direction:column}
-.grid-2,.grid-3,.grid-4,.evidence-grid{grid-template-columns:1fr}
+.grid-2,.grid-3,.grid-4,.evidence-grid,.findings-board,.capex-board{grid-template-columns:1fr}
 .timeline-item,.table-row,.task-row{grid-template-columns:1fr}
 .panel,.tree,.work-panel,.score-card{padding:26px 22px}
 .preview-page{min-height:auto}
+.search{width:100%;min-width:0}
 }
 </style>
 </head>
@@ -661,16 +736,17 @@ background:var(--gold);
 <a class="nav-link" href="#projects">Projects <span>02</span></a>
 <a class="nav-link" href="#tasks">Tasks <span>03</span></a>
 <a class="nav-link" href="#inspection">Inspection <span>04</span></a>
-<a class="nav-link" href="#evidence">Evidence <span>05</span></a>
-<a class="nav-link" href="#risk">Risk Score™ <span>06</span></a>
-<a class="nav-link" href="#capex">CAPEX <span>07</span></a>
-<a class="nav-link" href="#report">Report <span>08</span></a>
+<a class="nav-link" href="#findings">Findings <span>05</span></a>
+<a class="nav-link" href="#evidence">Evidence <span>06</span></a>
+<a class="nav-link" href="#risk">Risk Score™ <span>07</span></a>
+<a class="nav-link" href="#capex">CAPEX <span>08</span></a>
+<a class="nav-link" href="#report">Report <span>09</span></a>
 </div>
 
 <div class="nav-group">
 <div class="nav-heading">Knowledge</div>
-<a class="nav-link" href="library.html">Library <span>09</span></a>
-<a class="nav-link" href="academy.html">Academy <span>10</span></a>
+<a class="nav-link" href="library.html">Library <span>10</span></a>
+<a class="nav-link" href="academy.html">Academy <span>11</span></a>
 <a class="nav-link" href="../">Public Website <span>↗</span></a>
 </div>
 
@@ -689,7 +765,7 @@ background:var(--gold);
 </div>
 <div class="status-group">
 <div class="status-pill">Internal Portal</div>
-<div class="status-pill">Release 2.0</div>
+<div class="status-pill">Release 3.0</div>
 </div>
 </section>
 
@@ -703,7 +779,7 @@ All project names, locations and inspection examples shown in this portal are fi
 <section class="grid-2 section">
 <div class="panel dark">
 <div class="eyebrow">Operating Center</div>
-<h2>Inspection, evidence, analysis and report preparation in one professional environment.</h2>
+<h2>Inspection, evidence, findings, analysis and report preparation in one professional environment.</h2>
 <p>
 The MEIFERTS Portal connects Technical Property Reviews™, evidence capture, Building Risk Score™, Lifecycle Assessment™, CAPEX Forecast™ and Decision Support Reports™ into one structured workflow.
 </p>
@@ -842,17 +918,75 @@ Each observation is structured so that it can flow directly into risk scoring, l
 </div>
 </section>
 
+<section class="section" id="findings">
+<div class="topbar">
+<div>
+<div class="eyebrow">Findings Manager</div>
+<h2>Open findings and decision impact.</h2>
+</div>
+<a class="small-link" href="#">Create Finding</a>
+</div>
+
+<div class="findings-board">
+<div class="finding-card">
+<div class="eyebrow">Building Envelope</div>
+<h3>Moisture staining beneath balcony edge</h3>
+<p>Potential waterproofing issue. Further review needed before acquisition decision.</p>
+<span class="tag">Medium</span>
+<span class="tag">Open</span>
+<div class="finding-footer">
+<span class="tag">2 Evidence</span>
+<a class="small-link" href="#report">Report</a>
+</div>
+</div>
+
+<div class="finding-card">
+<div class="eyebrow">Roofing</div>
+<h3>Waterproofing documentation missing</h3>
+<p>Maintenance history and warranty documentation require verification.</p>
+<span class="tag">High</span>
+<span class="tag">Review</span>
+<div class="finding-footer">
+<span class="tag">1 Document</span>
+<a class="small-link" href="#evidence">Evidence</a>
+</div>
+</div>
+
+<div class="finding-card">
+<div class="eyebrow">Governance</div>
+<h3>Reserve fund statement requires clarification</h3>
+<p>Reserve adequacy may influence financial risk and CAPEX interpretation.</p>
+<span class="tag">Medium</span>
+<span class="tag">Pending</span>
+<div class="finding-footer">
+<span class="tag">1 File</span>
+<a class="small-link" href="#risk">Risk</a>
+</div>
+</div>
+</div>
+</section>
+
 <section class="section" id="evidence">
 <div class="topbar">
 <div>
-<div class="eyebrow">Evidence Manager</div>
+<div class="eyebrow">Evidence Explorer</div>
 <h2>Evidence gallery.</h2>
 </div>
 <a class="small-link" href="#">Upload Evidence</a>
 </div>
 
+<div class="gallery-toolbar">
+<input class="search" placeholder="Search evidence, component, risk tag...">
+<div>
+<span class="tag">All</span>
+<span class="tag">Photos</span>
+<span class="tag">Documents</span>
+<span class="tag">Thermal</span>
+</div>
+</div>
+
 <div class="evidence-grid">
-<div class="evidence-card">
+<div class="gallery-card">
 <div class="thumb"></div>
 <h3>Balcony moisture staining</h3>
 <span class="tag">Envelope</span>
@@ -860,14 +994,14 @@ Each observation is structured so that it can flow directly into risk scoring, l
 <span class="tag">Photo</span>
 </div>
 
-<div class="evidence-card">
+<div class="gallery-card">
 <div class="thumb"></div>
 <h3>Reserve fund statement</h3>
 <span class="tag">Governance</span>
 <span class="tag">Document</span>
 </div>
 
-<div class="evidence-card">
+<div class="gallery-card">
 <div class="thumb"></div>
 <h3>Rooftop waterproofing note</h3>
 <span class="tag">Roof</span>
@@ -875,7 +1009,7 @@ Each observation is structured so that it can flow directly into risk scoring, l
 <span class="tag">CAPEX</span>
 </div>
 
-<div class="evidence-card">
+<div class="gallery-card">
 <div class="thumb"></div>
 <h3>Thermal image review</h3>
 <span class="tag">Thermal</span>
@@ -920,27 +1054,33 @@ Risk is evaluated across technical condition, lifecycle exposure, financial impl
 <section class="section" id="capex">
 <div class="topbar">
 <div>
-<div class="eyebrow">CAPEX Forecast™</div>
+<div class="eyebrow">CAPEX Planner™</div>
 <h2>Future cost exposure before purchase.</h2>
 </div>
 <div class="status-pill">Draft</div>
 </div>
 
-<div class="grid-3">
-<div class="card">
-<h3>Short Term</h3>
+<div class="capex-board">
+<div class="capex-card">
+<div class="eyebrow">Short Term</div>
+<h3>Specialist Review</h3>
+<div class="capex-value">€ 7k–12k</div>
 <p>Specialist waterproofing review and urgent documentation request.</p>
 <span class="tag">Priority</span>
 </div>
 
-<div class="card">
-<h3>Mid Term</h3>
+<div class="capex-card">
+<div class="eyebrow">Mid Term</div>
+<h3>Facade Programme</h3>
+<div class="capex-value">€ 45k–80k</div>
 <p>Facade sealant programme and drainage review.</p>
 <span class="tag">Plan</span>
 </div>
 
-<div class="card">
-<h3>Long Term</h3>
+<div class="capex-card">
+<div class="eyebrow">Long Term</div>
+<h3>MEP Reserve Review</h3>
+<div class="capex-value">€ 120k+</div>
 <p>MEP reserve review and lifecycle monitoring.</p>
 <span class="tag">Monitor</span>
 </div>
@@ -1002,13 +1142,20 @@ Open items: waterproofing documentation, reserve fund statement, maintenance his
 </div>
 
 <div class="context-card">
+<div class="eyebrow">Priority Alerts</div>
+<div class="context-metric"><span>High Risk</span><span>2</span></div>
+<div class="context-metric"><span>Missing Docs</span><span>4</span></div>
+<div class="context-metric"><span>Report Gaps</span><span>3</span></div>
+</div>
+
+<div class="context-card">
 <div class="eyebrow">Decision State</div>
 <p>Further evidence review required before acquisition recommendation.</p>
 </div>
 
 <div class="context-card">
 <div class="eyebrow">System</div>
-<div class="context-metric"><span>Version</span><span>2.0</span></div>
+<div class="context-metric"><span>Version</span><span>3.0</span></div>
 <div class="context-metric"><span>Mode</span><span>Demo</span></div>
 <div class="context-metric"><span>Access</span><span>Internal</span></div>
 </div>
