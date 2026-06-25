@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clients | MEIFERTS™ Building Intelligence</title>
+<style>
+:root{--n:#1B2B45;--g:#B8935A;--c:#F3EEE2;--l:rgba(27,43,69,.16)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial;background:var(--c);color:#1f2933}
+.app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+aside{background:var(--n);color:white;padding:28px}
+.logo{font:28px Georgia,serif;letter-spacing:.12em}.sub{color:var(--g);letter-spacing:.2em;font-size:12px;text-transform:uppercase;margin-bottom:30px}
+nav a{display:flex;justify-content:space-between;color:#eee;text-decoration:none;padding:11px 0;border-bottom:1px solid #ffffff18}
+main{padding:42px 5vw}
+.eyebrow{color:var(--g);letter-spacing:.22em;text-transform:uppercase;font-size:12px;font-weight:700}
+h1{font:72px/.95 Georgia,serif;color:var(--n);font-weight:400;margin:12px 0 34px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.card,.panel{background:#ffffff70;border:1px solid var(--l);padding:26px}
+.card h2{font:32px Georgia,serif;color:var(--n);font-weight:400;margin:0 0 10px}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.meta div{border-top:1px solid var(--l);padding-top:10px}
+.meta span{display:block;color:var(--g);font-size:11px;text-transform:uppercase;letter-spacing:.14em;font-weight:700}
+.meta strong{font:22px Georgia,serif;color:var(--n);font-weight:400}
+.btn{display:inline-block;margin-top:20px;padding:12px 18px;border:1px solid var(--n);background:var(--n);color:white;text-decoration:none;text-transform:uppercase;letter-spacing:.12em;font-size:12px;font-weight:700}
+.table{margin-top:28px;border:1px solid var(--l);background:#ffffff70}
+.row{display:grid;grid-template-columns:1.2fr .8fr .8fr .8fr;gap:16px;padding:18px 22px;border-bottom:1px solid var(--l)}
+.row:last-child{border-bottom:0}.head{color:var(--g);font-size:11px;text-transform:uppercase;letter-spacing:.14em;font-weight:700}
+.row strong{font:22px Georgia,serif;color:var(--n);font-weight:400}
+@media(max-width:850px){.app{grid-template-columns:1fr}aside nav{display:none}h1{font-size:52px}.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+<div class="logo">MEIFERTS™</div>
+<div class="sub">Building Intelligence™</div>
+<nav>
+<a href="dashboard.html">Dashboard <span>01</span></a>
+<a href="projects.html">Projects <span>02</span></a>
+<a href="clients.html"><strong>Clients</strong> <span>03</span></a>
+<a href="inspection.html">Inspection <span>04</span></a>
+<a href="evidence.html">Evidence <span>05</span></a>
+<a href="risk.html">Risk <span>06</span></a>
+<a href="report-generator.html">Reports <span>07</span></a>
+</nav>
+</aside>
+<main>
+<div class="eyebrow">Client Management</div>
+<h1>Client command center.</h1>
+
+<section class="grid">
+<div class="card"><h2>International Buyer</h2><p>Private acquisition review. Focus: building risk, reserve fund and CAPEX.</p><div class="meta"><div><span>Projects</span><strong>2</strong></div><div><span>Status</span><strong>Active</strong></div></div><a class="btn" href="projects.html">Open</a></div>
+<div class="card"><h2>Family Office</h2><p>Portfolio-level technical review and decision-support reporting.</p><div class="meta"><div><span>Projects</span><strong>4</strong></div><div><span>Status</span><strong>Review</strong></div></div><a class="btn" href="projects.html">Open</a></div>
+<div class="card"><h2>Advisor Partner</h2><p>Referral channel for pre-acquisition Technical Property Reviews™.</p><div class="meta"><div><span>Projects</span><strong>1</strong></div><div><span>Status</span><strong>Pending</strong></div></div><a class="btn" href="projects.html">Open</a></div>
+</section>
+
+<section class="panel" style="margin-top:34px">
+<div class="eyebrow">Client Register</div>
+<h2 style="font:46px Georgia,serif;color:var(--n);font-weight:400;margin:10px 0 20px">Relationship overview.</h2>
+<div class="table">
+<div class="row head"><div>Client</div><div>Type</div><div>Projects</div><div>Next Action</div></div>
+<div class="row"><div><strong>International Buyer</strong></div><div>Private</div><div>2</div><div>Document request</div></div>
+<div class="row"><div><strong>Family Office</strong></div><div>Institutional</div><div>4</div><div>Portfolio review</div></div>
+<div class="row"><div><strong>Advisor Partner</strong></div><div>Referral</div><div>1</div><div>Intro call</div></div>
+</div>
+</section>
+</main>
+</div>
+</body>
+</html>
