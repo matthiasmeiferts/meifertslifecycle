@@ -1,1 +1,115 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Academy | MEIFERTS™</title><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="portal.css"></head><body><header class="site-header"><a class="brand" href="../index.html"><span>MEIFERTS™</span><small>Professional Portal</small></a><nav class="nav" style="position:static;display:flex"><a href="dashboard.html">Dashboard</a><a href="report-generator.html">Decision Records</a><a href="library.html">Library</a><a href="downloads.html">Downloads</a><a class="nav-cta" href="../index.html">Public Website</a></nav></header><main class="portal-shell"><section class="portal-hero"><p class="eyebrow">Academy</p><h1>Academy.</h1><p class="lead">Future learning paths for Building Intelligence and The MEIFERTS Standard™.</p></section></main></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Academy | MEIFERTS™ Building Intelligence Portal</title>
+<meta name="description" content="MEIFERTS Academy for Technical Due Diligence, Building Intelligence, risk assessment, evidence, lifecycle and CAPEX learning modules." />
+<style>
+:root{--navy:#1B2B45;--gold:#B8935A;--cream:#F3EEE2;--text:#1f2933;--line:rgba(27,43,69,.16)}
+*{box-sizing:border-box}html,body{margin:0;padding:0;min-height:100%;overflow-x:hidden}
+body{font-family:Inter,Arial,sans-serif;background:radial-gradient(circle at top right,rgba(184,147,90,.10),transparent 34rem),var(--cream);color:var(--text);line-height:1.55}
+a{text-decoration:none;color:inherit}
+.portal{min-height:100vh;display:grid;grid-template-columns:292px 1fr 360px}
+.sidebar{background:var(--navy);color:var(--cream);padding:28px 24px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;box-shadow:18px 0 44px rgba(27,43,69,.08)}
+.brand{display:block;color:var(--cream);margin-bottom:34px}.brand-title{font-family:Georgia,"Times New Roman",serif;font-size:27px;letter-spacing:.12em;font-weight:500;text-transform:uppercase}.brand-subtitle{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-top:6px}.workspace-label{font-size:11px;letter-spacing:.20em;text-transform:uppercase;color:rgba(243,238,226,.58);margin-top:16px}
+.nav-group{margin:18px 0}.nav-heading{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:rgba(243,238,226,.45);margin:0 0 10px}.nav-link{display:flex;align-items:center;justify-content:space-between;gap:12px;color:rgba(243,238,226,.84);padding:11px 0;border-bottom:1px solid rgba(243,238,226,.10);font-size:14px}.nav-link span{color:var(--gold);font-size:12px}.nav-link:hover,.nav-link.active{color:var(--cream)}.sidebar-footer{margin-top:auto;font-size:12px;color:rgba(243,238,226,.55);line-height:1.6}
+.main{padding:32px 4vw 80px;min-width:0}.context{background:rgba(255,255,255,.36);border-left:1px solid var(--line);padding:28px 24px;position:sticky;top:0;height:100vh;overflow:auto}
+.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.22em;font-size:12px;font-weight:700;margin-bottom:12px}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(44px,5vw,78px);line-height:.98;font-weight:400;color:var(--navy);margin:0}h2{font-family:Georgia,"Times New Roman",serif;font-size:clamp(32px,3.4vw,54px);line-height:1.05;font-weight:400;color:var(--navy);margin:0 0 22px}h3{font-family:Georgia,"Times New Roman",serif;font-size:26px;font-weight:400;color:var(--navy);margin:0 0 14px}p{font-size:16px;color:#4b5563;margin:0 0 18px}
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:22px;margin-bottom:36px}.status-group{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.status-pill{border:1px solid var(--line);background:rgba(255,255,255,.40);padding:11px 15px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--navy);white-space:nowrap}
+.section{margin-bottom:40px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.grid-2{display:grid;grid-template-columns:1.15fr .85fr;gap:24px}
+.panel,.card,.metric,.context-card,.course-card,.path-card{background:rgba(255,255,255,.42);border:1px solid var(--line)}
+.panel,.card,.course-card,.path-card{padding:28px}.metric{padding:24px;min-height:142px}.metric-number{font-family:Georgia,"Times New Roman",serif;font-size:46px;line-height:1;color:var(--navy);margin-bottom:12px}.metric-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px}
+.panel.dark{background:var(--navy);color:var(--cream);border-color:rgba(184,147,90,.28)}.panel.dark h2,.panel.dark h3{color:var(--cream)}.panel.dark p{color:rgba(243,238,226,.78)}
+.button{display:inline-block;text-transform:uppercase;letter-spacing:.12em;font-size:12px;font-weight:700;padding:13px 18px;border:1px solid var(--navy);color:var(--navy);min-width:150px;text-align:center;background:transparent;cursor:pointer}.button.primary{background:var(--navy);color:var(--cream)}.actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px}.panel.dark .button{border-color:var(--cream);color:var(--cream)}.panel.dark .button.primary{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+.tag{display:inline-block;border:1px solid rgba(184,147,90,.34);padding:6px 9px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:700;margin:4px 4px 0 0}
+.course-card{min-height:250px;display:flex;flex-direction:column}.course-card p{font-size:15px}.course-footer{margin-top:auto;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}.small-link{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--navy);border-bottom:1px solid var(--gold);padding-bottom:3px;white-space:nowrap}
+.path-card{min-height:220px}.progress-line{height:8px;background:rgba(27,43,69,.10);overflow:hidden;margin:16px 0}.progress-line span{display:block;height:100%;background:var(--gold)}
+.context-card{padding:0 0 20px;margin-bottom:20px;border:0;border-bottom:1px solid var(--line);background:transparent}.context-card strong{font-family:Georgia,"Times New Roman",serif;font-size:25px;font-weight:400;color:var(--navy);display:block;margin-bottom:8px}.context-metric{display:flex;justify-content:space-between;gap:16px;border-top:1px solid var(--line);padding:12px 0;font-size:14px}.context-metric span:last-child{color:var(--gold);font-weight:700}
+@media(max-width:1280px){.portal{grid-template-columns:292px 1fr}.context{display:none}.grid-4,.grid-3{grid-template-columns:1fr 1fr}}
+@media(max-width:980px){.portal{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.sidebar .nav-group,.sidebar .sidebar-footer{display:none}.main{padding:38px 5vw 70px}.grid-2{grid-template-columns:1fr}}
+@media(max-width:760px){.sidebar{padding:22px 5vw}.brand-title{font-size:24px}.main{padding:34px 5vw 70px}.topbar{flex-direction:column}.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="portal">
+<aside class="sidebar">
+<a class="brand" href="../"><div class="brand-title">MEIFERTS™</div><div class="brand-subtitle">Building Intelligence™</div><div class="workspace-label">Professional Portal</div></a>
+<div class="nav-group"><div class="nav-heading">Workspace</div>
+<a class="nav-link" href="dashboard.html">Dashboard <span>01</span></a>
+<a class="nav-link" href="projects.html">Projects <span>02</span></a>
+<a class="nav-link" href="inspection.html">Inspection <span>03</span></a>
+<a class="nav-link" href="evidence.html">Evidence <span>04</span></a>
+<a class="nav-link" href="risk.html">Risk Score™ <span>05</span></a>
+<a class="nav-link" href="report-generator.html">Report <span>06</span></a>
+</div>
+<div class="nav-group"><div class="nav-heading">Knowledge</div><a class="nav-link" href="library.html">Library <span>07</span></a><a class="nav-link active" href="academy.html">Academy <span>08</span></a><a class="nav-link" href="../">Public Website <span>↗</span></a></div>
+<div class="sidebar-footer"><p>Academy workspace for training, standards, methodology and platform adoption.</p><p>© Matthias Meiferts</p></div>
+</aside>
+
+<main class="main">
+<section class="topbar">
+<div><div class="eyebrow">MEIFERTS Academy™</div><h1>Training the judgement behind better decisions.</h1></div>
+<div class="status-group"><div class="status-pill">Academy v1.0</div><div class="status-pill">8 Modules</div></div>
+</section>
+
+<section class="grid-2 section">
+<div class="panel dark">
+<div class="eyebrow">Learning System</div>
+<h2>From checklist thinking to Building Intelligence.</h2>
+<p>The Academy translates the MEIFERTS methodology into practical learning modules for inspection, evidence handling, risk interpretation, lifecycle thinking, CAPEX reasoning and report writing.</p>
+<div class="actions"><a class="button primary" href="#courses">Open Courses</a><a class="button" href="library.html">Open Library</a></div>
+</div>
+<div class="panel">
+<div class="eyebrow">Current Path</div>
+<h2>Technical Property Review™ Foundations</h2>
+<p>Foundation path for structured inspection, evidence classification and decision support reporting.</p>
+<div class="progress-line"><span style="width:42%"></span></div>
+<span class="tag">42% Complete</span>
+</div>
+</section>
+
+<section class="grid-4 section">
+<div class="metric"><div class="metric-label">Courses</div><div class="metric-number">8</div><p>Learning modules.</p></div>
+<div class="metric"><div class="metric-label">Lessons</div><div class="metric-number">34</div><p>Planned lessons.</p></div>
+<div class="metric"><div class="metric-label">Templates</div><div class="metric-number">12</div><p>Reusable templates.</p></div>
+<div class="metric"><div class="metric-label">Progress</div><div class="metric-number">42</div><p>Current path.</p></div>
+</section>
+
+<section class="section" id="courses">
+<div class="topbar"><div><div class="eyebrow">Course Library</div><h2>Core learning modules.</h2></div><a class="button" href="library.html">Knowledge Library</a></div>
+<div class="grid-3">
+<div class="course-card"><div class="eyebrow">01</div><h3>Technical Property Review™ Foundations</h3><p>Scope, inspection logic, evidence discipline and decision-oriented reporting.</p><span class="tag">Foundation</span><div class="course-footer"><span class="tag">42%</span><a class="small-link" href="inspection.html">Apply</a></div></div>
+<div class="course-card"><div class="eyebrow">02</div><h3>Evidence Classification</h3><p>How photos, documents, thermal images and notes become useful evidence.</p><span class="tag">Evidence</span><div class="course-footer"><span class="tag">Draft</span><a class="small-link" href="evidence.html">Open</a></div></div>
+<div class="course-card"><div class="eyebrow">03</div><h3>Building Risk Score™</h3><p>Technical, lifecycle, financial and governance risk as one interpretation layer.</p><span class="tag">Risk</span><div class="course-footer"><span class="tag">Ready</span><a class="small-link" href="risk.html">Open</a></div></div>
+<div class="course-card"><div class="eyebrow">04</div><h3>Lifecycle Assessment™</h3><p>Remaining useful life, component ageing and maintenance culture.</p><span class="tag">Lifecycle</span><div class="course-footer"><span class="tag">Draft</span><a class="small-link" href="library.html">Read</a></div></div>
+<div class="course-card"><div class="eyebrow">05</div><h3>CAPEX Forecast™</h3><p>How findings and lifecycle signals become future cost exposure.</p><span class="tag">CAPEX</span><div class="course-footer"><span class="tag">Draft</span><a class="small-link" href="report-generator.html">Report</a></div></div>
+<div class="course-card"><div class="eyebrow">06</div><h3>Report Writing</h3><p>Turning technical findings into clear, calm and decision-useful language.</p><span class="tag">Report</span><div class="course-footer"><span class="tag">Ready</span><a class="small-link" href="report-generator.html">Open</a></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="topbar"><div><div class="eyebrow">Learning Paths</div><h2>Structured professional development.</h2></div><a class="button" href="../research.html">Research</a></div>
+<div class="grid-3">
+<div class="path-card"><h3>Inspector Path</h3><p>Field observation, evidence, findings and report-ready documentation.</p><div class="progress-line"><span style="width:55%"></span></div><span class="tag">55%</span></div>
+<div class="path-card"><h3>Advisor Path</h3><p>Decision support, buyer communication, risk language and recommendations.</p><div class="progress-line"><span style="width:30%"></span></div><span class="tag">30%</span></div>
+<div class="path-card"><h3>Platform Path</h3><p>Portal workflow, project command center, evidence explorer and report studio.</p><div class="progress-line"><span style="width:48%"></span></div><span class="tag">48%</span></div>
+</div>
+</section>
+
+<section class="grid-3 section">
+<div class="card"><div class="eyebrow">Next Build</div><h3>Field lesson templates.</h3><p>Short lesson blocks for common inspection findings and component-specific review logic.</p><span class="tag">Next</span></div>
+<div class="card"><div class="eyebrow">Certification</div><h3>Internal standards path.</h3><p>Future training path for MEIFERTS report quality and inspection consistency.</p><span class="tag">Planned</span></div>
+<div class="card"><div class="eyebrow">Client Education</div><h3>Buyer-facing explainers.</h3><p>Simple learning cards explaining risk, lifecycle and CAPEX for clients.</p><span class="tag">Client</span></div>
+</section>
+</main>
+
+<aside class="context">
+<div class="context-card"><div class="eyebrow">Academy Focus</div><strong>Technical Property Review™</strong><p>Training modules for the platform and methodology.</p></div>
+<div class="context-card"><div class="eyebrow">Learning Status</div><div class="context-metric"><span>Courses</span><span>8</span></div><div class="context-metric"><span>Lessons</span><span>34</span></div><div class="context-metric"><span>Templates</span><span>12</span></div><div class="context-metric"><span>Progress</span><span>42%</span></div></div>
+<div class="context-card"><div class="eyebrow">Module</div><div class="context-metric"><span>Name</span><span>Academy</span></div><div class="context-metric"><span>Version</span><span>1.0</span></div><div class="context-metric"><span>Mode</span><span>Demo</span></div></div>
+</aside>
+</div>
+</body>
+</html>
