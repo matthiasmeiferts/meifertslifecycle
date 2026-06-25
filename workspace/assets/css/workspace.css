@@ -173,3 +173,66 @@ padding-top:12vh;
 padding:34px 28px;
 }
 }
+
+
+/* MEIFERTS Workspace v5.0 editorial refinement */
+body{
+  background:
+    radial-gradient(circle at top right, rgba(184,147,90,.08), transparent 34rem),
+    var(--cream);
+}
+
+.sidebar{
+  box-shadow:18px 0 44px rgba(27,43,69,.08);
+}
+
+.nav-link.active{
+  color:var(--cream);
+  border-bottom-color:rgba(184,147,90,.58);
+}
+
+.nav-link.active span{
+  color:var(--cream);
+}
+
+.panel,
+.card,
+.metric,
+.tree,
+.work-panel,
+.side-panel,
+preview-page{
+  backdrop-filter:saturate(120%) blur(2px);
+}
+
+.section-title{
+  max-width:820px;
+}
+
+.demo-badge{
+  display:inline-block;
+  border:1px solid rgba(184,147,90,.42);
+  color:var(--gold);
+  padding:8px 12px;
+  font-size:11px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  font-weight:700;
+  margin-bottom:18px;
+}
+
+.disclaimer-panel{
+  background:rgba(255,255,255,.42);
+  border:1px solid rgba(184,147,90,.28);
+  padding:22px;
+  margin-bottom:26px;
+}
+
+.disclaimer-panel p{
+  font-size:14px;
+  margin:0;
+}
+
+@media(max-width:760px){
+  .demo-badge{margin-bottom:14px}
+}
