@@ -50,6 +50,120 @@ p{font-size:16px;color:#4b5563;margin:0 0 18px}
 @media(max-width:1280px){.portal{grid-template-columns:292px 1fr}.context{display:none}.grid-4,.evidence-grid,.findings-board{grid-template-columns:1fr 1fr}.grid-3,.capex-board,.kanban{grid-template-columns:1fr 1fr}}
 @media(max-width:980px){.portal{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.sidebar .nav-group,.sidebar .sidebar-footer{display:none}.main{padding:38px 5vw 70px}.grid-2,.workspace-grid{grid-template-columns:1fr}}
 @media(max-width:760px){.sidebar{padding:22px 5vw}.brand-title{font-size:24px}.main{padding:34px 5vw 70px}.topbar{flex-direction:column}.grid-2,.grid-3,.grid-4,.evidence-grid,.findings-board,.capex-board,.kanban,.module-grid{grid-template-columns:1fr}.timeline-item,.table-row,.task-row{grid-template-columns:1fr}.panel,.tree,.work-panel,.score-card{padding:26px 22px}.preview-page{min-height:auto}.search{width:100%;min-width:0}}
+
+.command-strip{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:12px;
+margin-bottom:40px;
+}
+
+.command-button{
+background:rgba(255,255,255,.42);
+border:1px solid var(--line);
+padding:18px;
+cursor:pointer;
+min-height:92px;
+}
+
+.command-button:hover{
+border-color:rgba(184,147,90,.58);
+background:rgba(255,255,255,.62);
+}
+
+.command-button strong{
+display:block;
+font-family:Georgia,"Times New Roman",serif;
+font-size:22px;
+font-weight:400;
+color:var(--navy);
+margin-bottom:8px;
+}
+
+.command-button span{
+font-size:11px;
+letter-spacing:.13em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--gold);
+}
+
+.health-matrix{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:16px;
+}
+
+.health-cell{
+background:rgba(255,255,255,.42);
+border:1px solid var(--line);
+padding:22px;
+min-height:150px;
+}
+
+.health-cell strong{
+display:block;
+font-family:Georgia,"Times New Roman",serif;
+font-size:24px;
+font-weight:400;
+color:var(--navy);
+margin-bottom:10px;
+}
+
+.health-cell .score{
+font-family:Georgia,"Times New Roman",serif;
+font-size:40px;
+color:var(--gold);
+margin-top:12px;
+}
+
+.doc-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:16px;
+}
+
+.doc-card{
+background:rgba(255,255,255,.42);
+border:1px solid var(--line);
+padding:22px;
+min-height:170px;
+}
+
+.doc-card h3{
+font-size:23px;
+}
+
+.checklist-grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:16px;
+}
+
+.check-row{
+background:rgba(255,255,255,.42);
+border:1px solid var(--line);
+padding:18px 20px;
+display:grid;
+grid-template-columns:1fr auto;
+gap:14px;
+align-items:center;
+}
+
+.check-row strong{
+font-family:Georgia,"Times New Roman",serif;
+font-size:21px;
+font-weight:400;
+color:var(--navy);
+}
+
+@media(max-width:1280px){
+.command-strip,.health-matrix,.doc-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:760px){
+.command-strip,.health-matrix,.doc-grid,.checklist-grid{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 
@@ -74,8 +188,10 @@ p{font-size:16px;color:#4b5563;margin:0 0 18px}
 <a class="nav-link" href="#findings">Findings <span>06</span></a>
 <a class="nav-link" href="#evidence">Evidence <span>07</span></a>
 <a class="nav-link" href="#risk">Risk Score™ <span>08</span></a>
-<a class="nav-link" href="#capex">CAPEX <span>09</span></a>
-<a class="nav-link" href="#report">Report <span>10</span></a>
+<a class="nav-link" href="#health">Health Matrix <span>09</span></a>
+<a class="nav-link" href="#capex">CAPEX <span>10</span></a>
+<a class="nav-link" href="#documents">Documents <span>11</span></a>
+<a class="nav-link" href="#report">Report <span>12</span></a>
 </div>
 
 <div class="nav-group">
@@ -100,7 +216,7 @@ p{font-size:16px;color:#4b5563;margin:0 0 18px}
 </div>
 <div class="status-group">
 <div class="status-pill">Internal Portal</div>
-<div class="status-pill">Release 4.0</div>
+<div class="status-pill">Release 5.0</div>
 </div>
 </section>
 
@@ -109,6 +225,14 @@ p{font-size:16px;color:#4b5563;margin:0 0 18px}
 <p>
 All project names, locations and inspection examples shown in this portal are fictional placeholders for demonstration purposes. No real building, developer, owner or client project is referenced.
 </p>
+</section>
+
+<section class="command-strip">
+<a class="command-button" href="#projects"><strong>Open Project</strong><span>Project Workspace</span></a>
+<a class="command-button" href="#inspection"><strong>New Observation</strong><span>Inspection Engine</span></a>
+<a class="command-button" href="#evidence"><strong>Upload Evidence</strong><span>Evidence Explorer</span></a>
+<a class="command-button" href="#risk"><strong>Review Risk</strong><span>Risk Score™</span></a>
+<a class="command-button" href="#report"><strong>Generate Report</strong><span>Decision Support™</span></a>
 </section>
 
 <section class="grid-2 section">
@@ -314,6 +438,20 @@ Technical Property Review™ in progress. Evidence collection active. Building R
 </div>
 </section>
 
+<section class="section" id="health">
+<div class="topbar">
+<div><div class="eyebrow">Building Health Matrix</div><h2>Risk signals by system.</h2></div>
+<div class="status-pill">Live View</div>
+</div>
+
+<div class="health-matrix">
+<div class="health-cell"><strong>Envelope</strong><p>Moisture and waterproofing signals require further review.</p><div class="score">72</div><span class="tag">Medium</span></div>
+<div class="health-cell"><strong>Roof</strong><p>Documentation gap and lifecycle uncertainty.</p><div class="score">78</div><span class="tag">High</span></div>
+<div class="health-cell"><strong>MEP</strong><p>Reserve assumptions not yet validated.</p><div class="score">61</div><span class="tag">Review</span></div>
+<div class="health-cell"><strong>Governance</strong><p>Reserve fund and maintenance history under review.</p><div class="score">70</div><span class="tag">Pending</span></div>
+</div>
+</section>
+
 <section class="section" id="capex">
 <div class="topbar">
 <div><div class="eyebrow">CAPEX Planner™</div><h2>Future cost exposure before purchase.</h2></div>
@@ -324,6 +462,34 @@ Technical Property Review™ in progress. Evidence collection active. Building R
 <div class="capex-card"><div class="eyebrow">Short Term</div><h3>Specialist Review</h3><div class="capex-value">€ 7k–12k</div><p>Specialist waterproofing review and urgent documentation request.</p><span class="tag">Priority</span></div>
 <div class="capex-card"><div class="eyebrow">Mid Term</div><h3>Facade Programme</h3><div class="capex-value">€ 45k–80k</div><p>Facade sealant programme and drainage review.</p><span class="tag">Plan</span></div>
 <div class="capex-card"><div class="eyebrow">Long Term</div><h3>MEP Reserve Review</h3><div class="capex-value">€ 120k+</div><p>MEP reserve review and lifecycle monitoring.</p><span class="tag">Monitor</span></div>
+</div>
+</section>
+
+<section class="section" id="documents">
+<div class="topbar">
+<div><div class="eyebrow">Document Center</div><h2>Documents required for decision clarity.</h2></div>
+<a class="small-link" href="#">Request Documents</a>
+</div>
+
+<div class="doc-grid">
+<div class="doc-card"><h3>Reserve Fund Statement</h3><p>Required for governance and financial risk interpretation.</p><span class="tag">Review</span></div>
+<div class="doc-card"><h3>Maintenance History</h3><p>Needed to validate lifecycle assumptions.</p><span class="tag">Missing</span></div>
+<div class="doc-card"><h3>Waterproofing Records</h3><p>Relevant to roof and balcony condition.</p><span class="tag">Priority</span></div>
+<div class="doc-card"><h3>Juristic Notes</h3><p>Relevant to decision context and future CAPEX exposure.</p><span class="tag">Pending</span></div>
+</div>
+</section>
+
+<section class="section" id="quality">
+<div class="topbar">
+<div><div class="eyebrow">Quality Control</div><h2>Report readiness checklist.</h2></div>
+<div class="status-pill">67% Complete</div>
+</div>
+
+<div class="checklist-grid">
+<div class="check-row"><strong>Evidence classified</strong><span class="tag">Complete</span></div>
+<div class="check-row"><strong>High-risk findings reviewed</strong><span class="tag">Open</span></div>
+<div class="check-row"><strong>CAPEX assumptions documented</strong><span class="tag">Draft</span></div>
+<div class="check-row"><strong>Recommendation language approved</strong><span class="tag">Pending</span></div>
 </div>
 </section>
 
@@ -357,7 +523,8 @@ Technical Property Review™ in progress. Evidence collection active. Building R
 <div class="context-card"><div class="eyebrow">Active Project</div><strong>Coastal Residential Tower</strong><p>Residential Tower<br>Confidential Demo Location</p></div>
 <div class="context-card"><div class="eyebrow">Live Status</div><div class="context-metric"><span>Progress</span><span>67%</span></div><div class="context-metric"><span>Evidence</span><span>124</span></div><div class="context-metric"><span>Open Findings</span><span>17</span></div><div class="context-metric"><span>Risk Score</span><span>68</span></div><div class="context-metric"><span>CAPEX</span><span>Draft</span></div></div>
 <div class="context-card"><div class="eyebrow">Priority Alerts</div><div class="context-metric"><span>High Risk</span><span>2</span></div><div class="context-metric"><span>Missing Docs</span><span>4</span></div><div class="context-metric"><span>Report Gaps</span><span>3</span></div></div>
-<div class="context-card"><div class="eyebrow">System</div><div class="context-metric"><span>Version</span><span>4.0</span></div><div class="context-metric"><span>Mode</span><span>Demo</span></div><div class="context-metric"><span>Access</span><span>Internal</span></div></div>
+<div class="context-card"><div class="eyebrow">System</div><div class="context-metric"><span>Version</span><span>5.0</span></div><div class="context-metric"><span>Mode</span><span>Demo</span></div><div class="context-metric"><span>Access</span><span>Internal</span></div>
+<div class="context-metric"><span>QC</span><span>67%</span></div></div>
 </aside>
 
 </div>
