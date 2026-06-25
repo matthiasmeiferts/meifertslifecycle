@@ -116,3 +116,60 @@ user-select:none;
 body.locked .toast{
 display:none!important;
 }
+
+
+/* Private gate refinement v4.2 */
+body.locked .app{
+display:none!important;
+}
+
+.gate{
+background:
+linear-gradient(180deg, rgba(243,238,226,.98), rgba(243,238,226,.96)),
+var(--cream);
+}
+
+.gate.hidden{
+display:none!important;
+}
+
+.gate-card{
+max-width:720px;
+}
+
+.gate-card .brand-mini{
+font-family:Georgia,"Times New Roman",serif;
+font-size:34px;
+letter-spacing:.12em;
+font-weight:500;
+text-transform:uppercase;
+color:var(--navy);
+margin-bottom:8px;
+}
+
+.gate-card .brand-sub-mini{
+font-size:12px;
+letter-spacing:.22em;
+text-transform:uppercase;
+color:var(--gold);
+font-weight:700;
+margin-bottom:42px;
+}
+
+.security-note{
+margin-top:24px;
+padding-top:20px;
+border-top:1px solid var(--line);
+font-size:13px;
+color:#6b7280;
+}
+
+@media(max-width:760px){
+.gate{
+align-items:flex-start;
+padding-top:12vh;
+}
+.gate-card{
+padding:34px 28px;
+}
+}

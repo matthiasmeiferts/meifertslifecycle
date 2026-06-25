@@ -1,9 +1,10 @@
-MEIFERTS Professional Workspace v4.1
+MEIFERTS Professional Workspace v4.2
 
-Gate fix:
-- Body locked while password gate is active
-- Workspace underneath is not scrollable/clickable
-- Gate overlay scrolls properly on iPhone/Safari
+Private gate refinement:
+- App is fully hidden while locked
+- No underlying workspace visible/scrollable on iPhone/Safari
+- Cleaner internal access screen
+- Security note added
 
 Upload the full contents of this folder into /workspace/ or /portal/.
 
