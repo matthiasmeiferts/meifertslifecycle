@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Methodology | MEIFERTS™ Building Intelligence</title>
-<meta name="description" content="The MEIFERTS Standard™ transforms building observations into decision clarity through structured methodology, lifecycle assessment and risk evaluation." />
+<meta name="description" content="The MEIFERTS Standard™ transforms building observations into decision clarity through structured evidence, lifecycle assessment, risk evaluation and decision support." />
 
 <style>
 :root{
@@ -113,7 +113,7 @@ main{padding:82px 5vw 100px}
 
 .hero{
 max-width:1180px;
-margin:0 auto 90px;
+margin:0 auto 80px;
 }
 
 .eyebrow,.section-eyebrow{
@@ -146,7 +146,7 @@ margin:0 0 30px;
 .hero-text{
 font-size:19px;
 color:#4b5563;
-max-width:820px;
+max-width:840px;
 margin:0 0 38px;
 }
 
@@ -179,6 +179,42 @@ color:var(--cream);
 background:var(--gold);
 border-color:var(--gold);
 color:var(--navy);
+}
+
+.figure-section{
+max-width:1320px;
+margin:0 auto 90px;
+background:rgba(255,255,255,.35);
+border:1px solid rgba(27,43,69,.10);
+padding:14px;
+box-shadow:0 18px 40px rgba(27,43,69,.06);
+}
+
+.figure-section img{
+width:100%;
+height:auto;
+display:block;
+}
+
+.figure-note{
+margin:18px 4px 0;
+display:flex;
+justify-content:space-between;
+gap:18px;
+flex-wrap:wrap;
+font-size:13px;
+color:#4b5563;
+}
+
+.figure-note a{
+color:var(--navy);
+text-transform:uppercase;
+letter-spacing:.12em;
+font-size:11px;
+font-weight:700;
+text-decoration:none;
+border-bottom:1px solid var(--gold);
+padding-bottom:2px;
 }
 
 .content-section{
@@ -370,6 +406,54 @@ font-size:24px;
 color:var(--navy);
 }
 
+.not-list{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:18px;
+margin-top:34px;
+}
+
+.not-card{
+border:1px solid rgba(184,147,90,.28);
+background:rgba(255,255,255,.52);
+padding:28px;
+font-family:Georgia,"Times New Roman",serif;
+font-size:24px;
+line-height:1.2;
+color:var(--navy);
+min-height:150px;
+}
+
+.case-flow{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:18px;
+margin-top:34px;
+}
+
+.case-card{
+border:1px solid rgba(184,147,90,.28);
+background:rgba(255,255,255,.52);
+padding:28px;
+min-height:210px;
+}
+
+.case-card span{
+display:block;
+font-size:12px;
+letter-spacing:.18em;
+text-transform:uppercase;
+color:var(--gold);
+font-weight:700;
+margin-bottom:16px;
+}
+
+.case-card p{
+font-size:16px;
+margin:0;
+color:#4b5563;
+}
+
 .workspace-line{
 margin-top:30px;
 padding-top:26px;
@@ -438,7 +522,7 @@ font-size:12px;
 }
 
 @media(max-width:1100px){
-.flow-grid,.component-grid,.logic-grid,.workspace-line{
+.flow-grid,.component-grid,.logic-grid,.workspace-line,.not-list,.case-flow{
 grid-template-columns:1fr 1fr;
 }
 
@@ -504,11 +588,24 @@ margin-bottom:44px;
 padding:32px 26px;
 }
 
-.flow-grid,.component-grid,.logic-grid,.principle-list,.workspace-line,.footer-inner{
+.figure-section{
+padding:10px;
+margin-top:-18px;
+}
+
+.figure-section img{
+min-width:720px;
+}
+
+.figure-scroll{
+overflow-x:auto;
+}
+
+.flow-grid,.component-grid,.logic-grid,.principle-list,.workspace-line,.not-list,.case-flow,.footer-inner{
 grid-template-columns:1fr;
 }
 
-.flow-step,.component-card{
+.flow-step,.component-card,.case-card{
 min-height:auto;
 }
 
@@ -566,6 +663,18 @@ Buildings are complex systems. Their risks are rarely contained in a single defe
 <div class="actions">
 <a class="button primary" href="../reports.html">Explore Reports</a>
 <a class="button" href="../request-review.html">Request Technical Review</a>
+</div>
+</section>
+
+<section class="figure-section">
+<div class="figure-scroll">
+<a href="../meiferts-research-v3%202.svg" target="_blank" rel="noopener">
+<img src="../meiferts-research-v3%202.svg" alt="Building Performance Over Time">
+</a>
+</div>
+<div class="figure-note">
+<span>Building Performance Over Time · The MEIFERTS Standard™</span>
+<a href="../meiferts-research-v3%202.svg" target="_blank" rel="noopener">Open full research figure</a>
 </div>
 </section>
 
@@ -676,6 +785,89 @@ Building Intelligence reduces uncertainty to a level where informed decisions be
 </section>
 
 <section class="content-section">
+<div class="section-eyebrow">Decision Framework</div>
+<h2>From observation to decision.</h2>
+
+<p>
+The methodology connects each stage of thinking. Observations become evidence. Evidence creates understanding. Understanding enables evaluation. Evaluation structures risk. Risk supports recommendation. Recommendation enables decision.
+</p>
+
+<div class="logic-grid">
+<div class="logic-tile">Observation</div>
+<div class="logic-tile">Evidence</div>
+<div class="logic-tile">Understanding</div>
+<div class="logic-tile">Evaluation</div>
+<div class="logic-tile">Risk</div>
+<div class="logic-tile">Decision</div>
+</div>
+</section>
+
+<section class="content-section">
+<div class="section-eyebrow">Six Principles of Building Intelligence™</div>
+<h2>The rules behind the method.</h2>
+
+<div class="principle-list">
+<div>Evidence before opinion</div>
+<div>Context before judgement</div>
+<div>Systems before components</div>
+<div>Lifecycle before appearance</div>
+<div>Transparency before certainty</div>
+<div>Decisions before documentation</div>
+</div>
+</section>
+
+<section class="content-section">
+<div class="section-eyebrow">What the Methodology Is Not</div>
+<h2>Clear boundaries create better understanding.</h2>
+
+<p>
+The MEIFERTS Standard™ is not a generic defect list, a valuation report or an engineering calculation. It is a structured decision framework designed to transform technical complexity into practical understanding.
+</p>
+
+<div class="not-list">
+<div class="not-card">Not a defect list.</div>
+<div class="not-card">Not a valuation report.</div>
+<div class="not-card">Not an engineering calculation.</div>
+<div class="not-card">Not a collection of isolated observations.</div>
+</div>
+</section>
+
+<section class="content-section">
+<div class="section-eyebrow">Methodology in Practice</div>
+<h2>A simple observation can change a decision.</h2>
+
+<p>
+The value of methodology becomes visible when one observation is connected to its possible implication, evaluated as risk and translated into a practical next step.
+</p>
+
+<div class="case-flow">
+<div class="case-card">
+<span>Observation</span>
+<h3>Moisture staining beneath a balcony.</h3>
+<p>A visible sign appears during inspection.</p>
+</div>
+
+<div class="case-card">
+<span>Understanding</span>
+<h3>Possible waterproofing failure.</h3>
+<p>The observation may indicate deterioration beyond the visible surface.</p>
+</div>
+
+<div class="case-card">
+<span>Evaluation</span>
+<h3>Hidden damage cannot be excluded.</h3>
+<p>The risk may affect future maintenance, negotiation and ownership cost.</p>
+</div>
+
+<div class="case-card">
+<span>Decision</span>
+<h3>Further investigation before acquisition.</h3>
+<p>The report supports a clear next step rather than a vague concern.</p>
+</div>
+</div>
+</section>
+
+<section class="content-section">
 <div class="section-eyebrow">The Decision Pyramid™</div>
 <h2>Reliable decisions are built from the ground up.</h2>
 
@@ -689,24 +881,6 @@ Every professional assessment begins with evidence. Not with conclusions. Not wi
 <div class="pyramid-level">Risk Evaluation</div>
 <div class="pyramid-level">Understanding</div>
 <div class="pyramid-level">Observation</div>
-</div>
-</section>
-
-<section class="content-section">
-<div class="section-eyebrow">Methodology Pipeline</div>
-<h2>From inspection logic to decision support.</h2>
-
-<p>
-The MEIFERTS Standard™ connects observation, evidence capture, evaluation, risk classification, lifecycle analysis, CAPEX reasoning and recommendation into one coherent process.
-</p>
-
-<div class="logic-grid">
-<div class="logic-tile">Inspection</div>
-<div class="logic-tile">Evidence</div>
-<div class="logic-tile">Evaluation</div>
-<div class="logic-tile">Risk</div>
-<div class="logic-tile">Lifecycle</div>
-<div class="logic-tile">Decision</div>
 </div>
 </section>
 
@@ -748,24 +922,6 @@ The MEIFERTS Standard™ is not a single report. It is a structured framework co
 
 <section class="split">
 <div class="panel">
-<div class="section-eyebrow">Principles</div>
-<h2>Consistency creates trust.</h2>
-
-<p>
-Every application of the MEIFERTS Standard™ is guided by the same principles. These principles ensure consistency regardless of building type, location or project size.
-</p>
-
-<div class="principle-list">
-<div>Objectivity</div>
-<div>Evidence</div>
-<div>Transparency</div>
-<div>Consistency</div>
-<div>Lifecycle Thinking</div>
-<div>Decision Clarity</div>
-</div>
-</div>
-
-<div class="panel">
 <div class="section-eyebrow">Professional Workspace</div>
 <h2>The internal craft behind the decision.</h2>
 
@@ -784,6 +940,19 @@ It is the internal environment used to document observations, structure evidence
 <div>CAPEX Logic</div>
 <div>Report</div>
 </div>
+</div>
+
+<div class="panel">
+<div class="section-eyebrow">Purpose</div>
+<h2>More than documentation.</h2>
+
+<p>
+Buildings rarely fail because of a single defect. More often, problems emerge when small observations remain disconnected and their long-term implications are overlooked.
+</p>
+
+<p>
+The purpose of the MEIFERTS Standard™ is to connect evidence, explain relationships and transform complexity into practical understanding.
+</p>
 </div>
 </section>
 
