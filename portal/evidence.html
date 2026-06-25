@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Evidence | MEIFERTS™ Building Intelligence Portal</title>
+<meta name="description" content="MEIFERTS Evidence Explorer for Technical Property Reviews, photos, documents, thermal images, findings and report-ready evidence." />
+
+<style>
+:root{
+--navy:#1B2B45;
+--gold:#B8935A;
+--cream:#F3EEE2;
+--text:#1f2933;
+--line:rgba(27,43,69,.16);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;min-height:100%;overflow-x:hidden}
+body{font-family:Inter,Arial,sans-serif;background:radial-gradient(circle at top right,rgba(184,147,90,.10),transparent 34rem),var(--cream);color:var(--text);line-height:1.55}
+a{text-decoration:none;color:inherit}
+button,input,select{font:inherit}
+
+.portal{min-height:100vh;display:grid;grid-template-columns:292px 1fr 360px}
+.sidebar{background:var(--navy);color:var(--cream);padding:28px 24px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;box-shadow:18px 0 44px rgba(27,43,69,.08)}
+.brand{display:block;color:var(--cream);margin-bottom:34px}
+.brand-title{font-family:Georgia,"Times New Roman",serif;font-size:27px;letter-spacing:.12em;font-weight:500;text-transform:uppercase}
+.brand-subtitle{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-top:6px}
+.workspace-label{font-size:11px;letter-spacing:.20em;text-transform:uppercase;color:rgba(243,238,226,.58);margin-top:16px}
+.nav-group{margin:18px 0}
+.nav-heading{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:rgba(243,238,226,.45);margin:0 0 10px}
+.nav-link{display:flex;align-items:center;justify-content:space-between;gap:12px;color:rgba(243,238,226,.84);padding:11px 0;border-bottom:1px solid rgba(243,238,226,.10);font-size:14px}
+.nav-link span{color:var(--gold);font-size:12px}
+.nav-link:hover,.nav-link.active{color:var(--cream)}
+.sidebar-footer{margin-top:auto;font-size:12px;color:rgba(243,238,226,.55);line-height:1.6}
+
+.main{padding:32px 4vw 80px;min-width:0}
+.context{background:rgba(255,255,255,.36);border-left:1px solid var(--line);padding:28px 24px;position:sticky;top:0;height:100vh;overflow:auto}
+.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.22em;font-size:12px;font-weight:700;margin-bottom:12px}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(44px,5vw,78px);line-height:.98;font-weight:400;color:var(--navy);margin:0}
+h2{font-family:Georgia,"Times New Roman",serif;font-size:clamp(32px,3.4vw,54px);line-height:1.05;font-weight:400;color:var(--navy);margin:0 0 22px}
+h3{font-family:Georgia,"Times New Roman",serif;font-size:24px;line-height:1.15;font-weight:400;color:var(--navy);margin:0 0 12px}
+p{font-size:16px;color:#4b5563;margin:0 0 18px}
+
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:22px;margin-bottom:36px}
+.status-group{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.status-pill{border:1px solid var(--line);background:rgba(255,255,255,.40);padding:11px 15px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--navy);white-space:nowrap}
+
+.section{margin-bottom:40px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.metric,.filter-card,.gallery-card,.context-card,.drop,.table-card,.panel{background:rgba(255,255,255,.42);border:1px solid var(--line)}
+.metric{padding:24px;min-height:142px}
+.metric-number{font-family:Georgia,"Times New Roman",serif;font-size:46px;line-height:1;color:var(--navy);margin-bottom:12px}
+.metric-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px}
+.panel{padding:28px}
+
+.filter-card{padding:22px}
+.filter-row{display:grid;grid-template-columns:1.3fr .7fr .7fr .7fr auto;gap:12px;align-items:center}
+.search,input,select{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.56);padding:13px 14px;color:var(--navy);outline:none}
+
+.button{display:inline-block;text-transform:uppercase;letter-spacing:.12em;font-size:12px;font-weight:700;padding:13px 18px;border:1px solid var(--navy);color:var(--navy);min-width:165px;text-align:center;background:transparent;cursor:pointer}
+.button.primary{background:var(--navy);color:var(--cream)}
+.button:hover{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+
+.evidence-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.gallery-card{padding:16px;min-height:265px;display:flex;flex-direction:column}
+.thumb{height:140px;background:linear-gradient(135deg,rgba(27,43,69,.12),rgba(184,147,90,.20));border:1px solid rgba(27,43,69,.10);margin-bottom:14px}
+.gallery-card p{font-size:14px;margin-bottom:12px}
+.tag{display:inline-block;border:1px solid rgba(184,147,90,.34);padding:6px 9px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:700;margin:4px 4px 0 0}
+.card-footer{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.small-link{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--navy);border-bottom:1px solid var(--gold);padding-bottom:3px;white-space:nowrap}
+
+.drop{padding:34px;text-align:center}
+.drop strong{display:block;font-family:Georgia,"Times New Roman",serif;font-size:30px;font-weight:400;color:var(--navy);margin-bottom:8px}
+
+.table-card{padding:0;overflow:hidden}
+.table-row{display:grid;grid-template-columns:1.2fr .8fr .8fr .8fr .8fr;gap:16px;padding:18px 22px;border-bottom:1px solid var(--line);align-items:center}
+.table-row:last-child{border-bottom:0}
+.table-row.header{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--gold)}
+.table-row strong{font-family:Georgia,"Times New Roman",serif;font-size:21px;font-weight:400;color:var(--navy)}
+
+.context-card{padding:0 0 20px;margin-bottom:20px;border:0;border-bottom:1px solid var(--line);background:transparent}
+.context-card strong{font-family:Georgia,"Times New Roman",serif;font-size:25px;font-weight:400;color:var(--navy);display:block;margin-bottom:8px}
+.context-metric{display:flex;justify-content:space-between;gap:16px;border-top:1px solid var(--line);padding:12px 0;font-size:14px}
+.context-metric span:last-child{color:var(--gold);font-weight:700}
+
+@media(max-width:1280px){.portal{grid-template-columns:292px 1fr}.context{display:none}.grid-4,.evidence-grid{grid-template-columns:1fr 1fr}.filter-row{grid-template-columns:1fr 1fr}.table-row{grid-template-columns:1fr 1fr}}
+@media(max-width:980px){.portal{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.sidebar .nav-group,.sidebar .sidebar-footer{display:none}.main{padding:38px 5vw 70px}}
+@media(max-width:760px){.sidebar{padding:22px 5vw}.brand-title{font-size:24px}.main{padding:34px 5vw 70px}.topbar{flex-direction:column}.grid-4,.evidence-grid,.filter-row,.table-row{grid-template-columns:1fr}.panel{padding:26px 22px}}
+</style>
+</head>
+
+<body>
+
+<div class="portal">
+
+<aside class="sidebar">
+<a class="brand" href="../">
+<div class="brand-title">MEIFERTS™</div>
+<div class="brand-subtitle">Building Intelligence™</div>
+<div class="workspace-label">Professional Portal</div>
+</a>
+
+<div class="nav-group">
+<div class="nav-heading">Workspace</div>
+<a class="nav-link" href="dashboard.html">Dashboard <span>01</span></a>
+<a class="nav-link" href="projects.html">Projects <span>02</span></a>
+<a class="nav-link" href="inspection.html">Inspection <span>03</span></a>
+<a class="nav-link active" href="evidence.html">Evidence <span>04</span></a>
+<a class="nav-link" href="risk.html">Risk Score™ <span>05</span></a>
+<a class="nav-link" href="report-generator.html">Report <span>06</span></a>
+</div>
+
+<div class="nav-group">
+<div class="nav-heading">Knowledge</div>
+<a class="nav-link" href="library.html">Library <span>07</span></a>
+<a class="nav-link" href="academy.html">Academy <span>08</span></a>
+<a class="nav-link" href="../">Public Website <span>↗</span></a>
+</div>
+
+<div class="sidebar-footer">
+<p>Evidence Explorer for photos, documents, field notes, thermal images and report-ready evidence items.</p>
+<p>© Matthias Meiferts</p>
+</div>
+</aside>
+
+<main class="main">
+
+<section class="topbar">
+<div>
+<div class="eyebrow">Evidence Explorer</div>
+<h1>Evidence that explains the building.</h1>
+</div>
+<div class="status-group">
+<div class="status-pill">Evidence v1.0</div>
+<div class="status-pill">124 Items</div>
+</div>
+</section>
+
+<section class="grid-4 section">
+<div class="metric"><div class="metric-label">Photos</div><div class="metric-number">68</div><p>Inspection images.</p></div>
+<div class="metric"><div class="metric-label">Documents</div><div class="metric-number">31</div><p>Uploaded records.</p></div>
+<div class="metric"><div class="metric-label">Thermal</div><div class="metric-number">9</div><p>Thermal review items.</p></div>
+<div class="metric"><div class="metric-label">Unassigned</div><div class="metric-number">16</div><p>Need classification.</p></div>
+</section>
+
+<section class="filter-card section">
+<div class="filter-row">
+<input class="search" placeholder="Search evidence, component, finding, risk tag..." />
+<select>
+<option>All Components</option>
+<option>Building Envelope</option>
+<option>Roofing</option>
+<option>Governance</option>
+<option>MEP</option>
+</select>
+<select>
+<option>All Types</option>
+<option>Photo</option>
+<option>Document</option>
+<option>Thermal</option>
+<option>Note</option>
+</select>
+<select>
+<option>All Status</option>
+<option>Classified</option>
+<option>Review</option>
+<option>Unassigned</option>
+</select>
+<a class="button primary" href="#">Upload</a>
+</div>
+</section>
+
+<section class="section">
+<div class="topbar">
+<div>
+<div class="eyebrow">Evidence Gallery</div>
+<h2>Classified evidence items.</h2>
+</div>
+<a class="small-link" href="inspection.html">Back to Inspection</a>
+</div>
+
+<div class="evidence-grid">
+<div class="gallery-card">
+<div class="thumb"></div>
+<h3>Balcony moisture staining</h3>
+<p>Linked to Building Envelope and current waterproofing finding.</p>
+<div>
+<span class="tag">Photo</span><span class="tag">Envelope</span><span class="tag">Moisture</span>
+</div>
+<div class="card-footer"><span class="tag">Classified</span><a class="small-link" href="inspection.html">Open</a></div>
+</div>
+
+<div class="gallery-card">
+<div class="thumb"></div>
+<h3>Reserve fund statement</h3>
+<p>Governance and financial risk documentation requiring final review.</p>
+<div>
+<span class="tag">Document</span><span class="tag">Governance</span>
+</div>
+<div class="card-footer"><span class="tag">Review</span><a class="small-link" href="risk.html">Risk</a></div>
+</div>
+
+<div class="gallery-card">
+<div class="thumb"></div>
+<h3>Rooftop waterproofing note</h3>
+<p>Field note linked to roof lifecycle and potential CAPEX exposure.</p>
+<div>
+<span class="tag">Note</span><span class="tag">Roof</span><span class="tag">CAPEX</span>
+</div>
+<div class="card-footer"><span class="tag">Assigned</span><a class="small-link" href="report-generator.html">Report</a></div>
+</div>
+
+<div class="gallery-card">
+<div class="thumb"></div>
+<h3>Thermal image review</h3>
+<p>Thermal image requiring interpretation and component assignment.</p>
+<div>
+<span class="tag">Thermal</span><span class="tag">Review</span>
+</div>
+<div class="card-footer"><span class="tag">Unassigned</span><a class="small-link" href="inspection.html">Assign</a></div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="drop">
+<strong>Drag evidence into the workspace.</strong>
+<p>Photos, PDFs, maintenance records, inspection notes and thermal images can be linked to components, findings, risk and reports.</p>
+<div style="margin-top:22px">
+<a class="button primary" href="#">Upload Files</a>
+<a class="button" href="inspection.html">Attach to Finding</a>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="topbar">
+<div>
+<div class="eyebrow">Evidence Register</div>
+<h2>Operational evidence status.</h2>
+</div>
+<a class="small-link" href="#">Export Register</a>
+</div>
+
+<div class="table-card">
+<div class="table-row header">
+<div>Evidence</div><div>Type</div><div>Component</div><div>Status</div><div>Report</div>
+</div>
+
+<div class="table-row">
+<div><strong>Balcony moisture staining</strong></div><div>Photo</div><div>Envelope</div><div>Classified</div><div>Draft</div>
+</div>
+
+<div class="table-row">
+<div><strong>Reserve fund statement</strong></div><div>Document</div><div>Governance</div><div>Review</div><div>Pending</div>
+</div>
+
+<div class="table-row">
+<div><strong>Rooftop waterproofing note</strong></div><div>Note</div><div>Roof</div><div>Assigned</div><div>Draft</div>
+</div>
+
+<div class="table-row">
+<div><strong>Thermal image review</strong></div><div>Thermal</div><div>Unassigned</div><div>Review</div><div>Open</div>
+</div>
+</div>
+</section>
+
+<section class="grid-4 section">
+<div class="panel">
+<div class="eyebrow">Classification</div>
+<h3>16 items open</h3>
+<p>Assign unclassified photos and documents to components or findings.</p>
+<span class="tag">Review</span>
+</div>
+
+<div class="panel">
+<div class="eyebrow">Report Evidence</div>
+<h3>38 items selected</h3>
+<p>Evidence items ready for report appendix and finding documentation.</p>
+<span class="tag">Ready</span>
+</div>
+
+<div class="panel">
+<div class="eyebrow">Missing Evidence</div>
+<h3>4 requests open</h3>
+<p>Waterproofing records and maintenance history still missing.</p>
+<span class="tag">Missing</span>
+</div>
+
+<div class="panel">
+<div class="eyebrow">Quality</div>
+<h3>Evidence confidence</h3>
+<p>Confidence level depends on source, clarity and documentation status.</p>
+<span class="tag">Medium</span>
+</div>
+</section>
+
+</main>
+
+<aside class="context">
+<div class="context-card">
+<div class="eyebrow">Active Project</div>
+<strong>Coastal Residential Tower</strong>
+<p>Residential Tower<br>Confidential Demo Location</p>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">Evidence Status</div>
+<div class="context-metric"><span>Total</span><span>124</span></div>
+<div class="context-metric"><span>Classified</span><span>108</span></div>
+<div class="context-metric"><span>Unassigned</span><span>16</span></div>
+<div class="context-metric"><span>Report Ready</span><span>38</span></div>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">Current Focus</div>
+<strong>Waterproofing Evidence</strong>
+<div class="context-metric"><span>Photos</span><span>12</span></div>
+<div class="context-metric"><span>Documents</span><span>3</span></div>
+<div class="context-metric"><span>Status</span><span>Review</span></div>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">Module</div>
+<div class="context-metric"><span>Name</span><span>Evidence</span></div>
+<div class="context-metric"><span>Version</span><span>1.0</span></div>
+<div class="context-metric"><span>Mode</span><span>Demo</span></div>
+</div>
+</aside>
+
+</div>
+
+</body>
+</html>
