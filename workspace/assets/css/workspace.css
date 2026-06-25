@@ -83,10 +83,36 @@ textarea{min-height:150px;resize:vertical}
 .preview-line{height:1px;background:var(--line);margin:22px 0}
 .toast{position:fixed;right:24px;bottom:24px;z-index:9998;background:var(--navy);color:var(--cream);border:1px solid rgba(184,147,90,.36);padding:16px 20px;box-shadow:0 18px 40px rgba(27,43,69,.18);font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;display:none}
 .toast.visible{display:block}
-.gate{position:fixed;inset:0;z-index:9999;background:var(--cream);display:flex;align-items:center;justify-content:center;padding:5vw}
+.gate{position:fixed;inset:0;z-index:9999;background:var(--cream);display:flex;align-items:center;justify-content:center;padding:5vw;overflow:auto;-webkit-overflow-scrolling:touch}
 .gate.hidden{display:none}
 .gate-card{max-width:680px;width:100%;background:rgba(255,255,255,.48);border:1px solid var(--line);padding:48px;box-shadow:0 18px 40px rgba(27,43,69,.06)}
 @media(max-width:1280px){.tree-layout{grid-template-columns:280px 1fr}.side-panel{grid-column:1/-1}.grid-4{grid-template-columns:1fr 1fr}.grid-3{grid-template-columns:1fr 1fr}}
 @media(max-width:1100px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.sidebar .nav-group,.sidebar .sidebar-footer{display:none}.main{padding:42px 5vw 80px}.tree-layout,.grid-2{grid-template-columns:1fr}}
 @media(max-width:760px){.sidebar{padding:22px 5vw}.brand-title{font-size:24px}.brand-subtitle{font-size:11px;letter-spacing:.16em}.main{padding:34px 5vw 70px}.topbar{align-items:flex-start;flex-direction:column;margin-bottom:42px}.status-group{justify-content:flex-start}h1{font-size:clamp(48px,13vw,70px);max-width:94%}.panel,.tree,.work-panel,.side-panel,.score-card,.gate-card{padding:26px 22px}.grid-2,.grid-3,.grid-4,.form-grid,.field-grid{grid-template-columns:1fr}.full{grid-column:auto}.evidence-item,.timeline-item{grid-template-columns:1fr}.preview-page{min-height:auto}}
 @media print{.gate,.sidebar,.actions,.button,.small-link{display:none!important}.app{display:block}.main{padding:0}body{background:white}.panel,.work-panel,.side-panel,.score-card,.preview-page,.metric,.card{box-shadow:none;break-inside:avoid}}
+
+
+/* Gate lock fix v4.1 */
+body.locked{
+height:100vh;
+overflow:hidden;
+}
+
+.gate{
+overflow:auto;
+-webkit-overflow-scrolling:touch;
+}
+
+.gate-card{
+margin:auto;
+}
+
+body.locked .app{
+filter:blur(2px);
+pointer-events:none;
+user-select:none;
+}
+
+body.locked .toast{
+display:none!important;
+}

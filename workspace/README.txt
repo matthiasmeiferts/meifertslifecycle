@@ -1,9 +1,11 @@
-MEIFERTS Professional Workspace v4.0
+MEIFERTS Professional Workspace v4.1
 
-Upload the contents of this folder into /portal/ in GitHub.
+Gate fix:
+- Body locked while password gate is active
+- Workspace underneath is not scrollable/clickable
+- Gate overlay scrolls properly on iPhone/Safari
 
-Main entry:
-portal/index.html
+Upload the full contents of this folder into /workspace/ or /portal/.
 
 Static prototype password:
 meiferts
