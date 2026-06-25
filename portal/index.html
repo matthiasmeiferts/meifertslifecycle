@@ -35,16 +35,15 @@ overflow-x:hidden;
 
 body{
 font-family:Inter,Arial,sans-serif;
-background:var(--cream);
+background:
+radial-gradient(circle at top right, rgba(184,147,90,.10), transparent 34rem),
+var(--cream);
 color:var(--text);
 line-height:1.55;
 }
 
 a{text-decoration:none;color:inherit}
-
-button,input,textarea,select{
-font:inherit;
-}
+button,input,textarea,select{font:inherit}
 
 .portal{
 min-height:100vh;
@@ -95,9 +94,7 @@ color:rgba(243,238,226,.58);
 margin-top:16px;
 }
 
-.nav-group{
-margin:18px 0;
-}
+.nav-group{margin:18px 0}
 
 .nav-heading{
 font-size:11px;
@@ -219,11 +216,19 @@ color:var(--navy);
 white-space:nowrap;
 }
 
-.panel{
+.panel,
+.card,
+.metric,
+.tree,
+.work-panel,
+.context-card,
+.task-row,
+.table-card{
 background:rgba(255,255,255,.42);
 border:1px solid var(--line);
-padding:30px;
 }
+
+.panel{padding:30px}
 
 .panel.dark{
 background:var(--navy);
@@ -232,13 +237,9 @@ border-color:rgba(184,147,90,.28);
 }
 
 .panel.dark h2,
-.panel.dark h3{
-color:var(--cream);
-}
+.panel.dark h3{color:var(--cream)}
 
-.panel.dark p{
-color:rgba(243,238,226,.78);
-}
+.panel.dark p{color:rgba(243,238,226,.78)}
 
 .actions{
 display:flex;
@@ -302,13 +303,9 @@ grid-template-columns:repeat(4,1fr);
 gap:16px;
 }
 
-.section{
-margin-bottom:40px;
-}
+.section{margin-bottom:40px}
 
 .metric{
-background:rgba(255,255,255,.42);
-border:1px solid var(--line);
 padding:24px;
 min-height:146px;
 }
@@ -331,8 +328,6 @@ margin-bottom:8px;
 }
 
 .card{
-background:rgba(255,255,255,.42);
-border:1px solid var(--line);
 padding:26px;
 min-height:185px;
 }
@@ -357,8 +352,6 @@ align-items:start;
 
 .tree,
 .work-panel{
-background:rgba(255,255,255,.42);
-border:1px solid var(--line);
 padding:24px;
 }
 
@@ -396,9 +389,7 @@ color:#6b7280;
 }
 
 .tree-item.active strong,
-.tree-item:hover strong{
-color:var(--gold);
-}
+.tree-item:hover strong{color:var(--gold)}
 
 .evidence-grid{
 display:grid;
@@ -420,9 +411,7 @@ border:1px solid rgba(27,43,69,.10);
 margin-bottom:14px;
 }
 
-.evidence-card h3{
-font-size:22px;
-}
+.evidence-card h3{font-size:22px}
 
 .tag{
 display:inline-block;
@@ -444,13 +433,9 @@ border:1px solid rgba(184,147,90,.28);
 }
 
 .score-card h2,
-.score-card h3{
-color:var(--cream);
-}
+.score-card h3{color:var(--cream)}
 
-.score-card p{
-color:rgba(243,238,226,.76);
-}
+.score-card p{color:rgba(243,238,226,.76)}
 
 .score-number{
 font-family:Georgia,"Times New Roman",serif;
@@ -528,9 +513,11 @@ margin:22px 0;
 }
 
 .context-card{
-border-bottom:1px solid var(--line);
 padding:0 0 20px;
 margin-bottom:20px;
+border:0;
+border-bottom:1px solid var(--line);
+background:transparent;
 }
 
 .context-card strong{
@@ -568,88 +555,91 @@ font-size:14px;
 margin:0;
 }
 
+.table-card{
+padding:0;
+overflow:hidden;
+}
+
+.table-row{
+display:grid;
+grid-template-columns:1.2fr .8fr .8fr .8fr .8fr;
+gap:16px;
+padding:18px 22px;
+border-bottom:1px solid var(--line);
+align-items:center;
+}
+
+.table-row:last-child{border-bottom:0}
+
+.table-row.header{
+font-size:11px;
+letter-spacing:.14em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--gold);
+}
+
+.table-row strong{
+font-family:Georgia,"Times New Roman",serif;
+font-size:22px;
+font-weight:400;
+color:var(--navy);
+}
+
+.task-row{
+padding:18px 22px;
+display:grid;
+grid-template-columns:1fr auto;
+gap:16px;
+border-bottom:1px solid var(--line);
+}
+
+.task-row:last-child{border-bottom:0}
+
+.task-row strong{
+font-family:Georgia,"Times New Roman",serif;
+font-size:21px;
+font-weight:400;
+color:var(--navy);
+}
+
+.progress-line{
+height:8px;
+background:rgba(27,43,69,.10);
+overflow:hidden;
+margin-top:16px;
+}
+
+.progress-line span{
+display:block;
+height:100%;
+background:var(--gold);
+}
+
 @media(max-width:1280px){
-.portal{
-grid-template-columns:292px 1fr;
-}
-
-.context{
-display:none;
-}
-
-.grid-4,
-.evidence-grid{
-grid-template-columns:1fr 1fr;
-}
-
-.grid-3{
-grid-template-columns:1fr 1fr;
-}
+.portal{grid-template-columns:292px 1fr}
+.context{display:none}
+.grid-4,.evidence-grid{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:1fr 1fr}
 }
 
 @media(max-width:980px){
-.portal{
-grid-template-columns:1fr;
-}
-
-.sidebar{
-position:relative;
-height:auto;
-}
-
-.sidebar .nav-group,
-.sidebar .sidebar-footer{
-display:none;
-}
-
-.main{
-padding:38px 5vw 70px;
-}
-
-.grid-2,
-.workspace-grid{
-grid-template-columns:1fr;
-}
+.portal{grid-template-columns:1fr}
+.sidebar{position:relative;height:auto}
+.sidebar .nav-group,.sidebar .sidebar-footer{display:none}
+.main{padding:38px 5vw 70px}
+.grid-2,.workspace-grid{grid-template-columns:1fr}
 }
 
 @media(max-width:760px){
-.sidebar{
-padding:22px 5vw;
-}
-
-.brand-title{
-font-size:24px;
-}
-
-.main{
-padding:34px 5vw 70px;
-}
-
-.topbar{
-flex-direction:column;
-}
-
-.grid-2,
-.grid-3,
-.grid-4,
-.evidence-grid{
-grid-template-columns:1fr;
-}
-
-.timeline-item{
-grid-template-columns:1fr;
-}
-
-.panel,
-.tree,
-.work-panel,
-.score-card{
-padding:26px 22px;
-}
-
-.preview-page{
-min-height:auto;
-}
+.sidebar{padding:22px 5vw}
+.brand-title{font-size:24px}
+.main{padding:34px 5vw 70px}
+.topbar{flex-direction:column}
+.grid-2,.grid-3,.grid-4,.evidence-grid{grid-template-columns:1fr}
+.timeline-item,.table-row,.task-row{grid-template-columns:1fr}
+.panel,.tree,.work-panel,.score-card{padding:26px 22px}
+.preview-page{min-height:auto}
 }
 </style>
 </head>
@@ -669,17 +659,18 @@ min-height:auto;
 <div class="nav-heading">Workspace</div>
 <a class="nav-link active" href="#dashboard">Dashboard <span>01</span></a>
 <a class="nav-link" href="#projects">Projects <span>02</span></a>
-<a class="nav-link" href="#inspection">Inspection <span>03</span></a>
-<a class="nav-link" href="#evidence">Evidence <span>04</span></a>
-<a class="nav-link" href="#risk">Risk Score™ <span>05</span></a>
-<a class="nav-link" href="#capex">CAPEX <span>06</span></a>
-<a class="nav-link" href="#report">Report <span>07</span></a>
+<a class="nav-link" href="#tasks">Tasks <span>03</span></a>
+<a class="nav-link" href="#inspection">Inspection <span>04</span></a>
+<a class="nav-link" href="#evidence">Evidence <span>05</span></a>
+<a class="nav-link" href="#risk">Risk Score™ <span>06</span></a>
+<a class="nav-link" href="#capex">CAPEX <span>07</span></a>
+<a class="nav-link" href="#report">Report <span>08</span></a>
 </div>
 
 <div class="nav-group">
 <div class="nav-heading">Knowledge</div>
-<a class="nav-link" href="library.html">Library <span>08</span></a>
-<a class="nav-link" href="academy.html">Academy <span>09</span></a>
+<a class="nav-link" href="library.html">Library <span>09</span></a>
+<a class="nav-link" href="academy.html">Academy <span>10</span></a>
 <a class="nav-link" href="../">Public Website <span>↗</span></a>
 </div>
 
@@ -698,7 +689,7 @@ min-height:auto;
 </div>
 <div class="status-group">
 <div class="status-pill">Internal Portal</div>
-<div class="status-pill">Release 1.0</div>
+<div class="status-pill">Release 2.0</div>
 </div>
 </section>
 
@@ -711,7 +702,7 @@ All project names, locations and inspection examples shown in this portal are fi
 
 <section class="grid-2 section">
 <div class="panel dark">
-<div class="eyebrow">Today’s Work</div>
+<div class="eyebrow">Operating Center</div>
 <h2>Inspection, evidence, analysis and report preparation in one professional environment.</h2>
 <p>
 The MEIFERTS Portal connects Technical Property Reviews™, evidence capture, Building Risk Score™, Lifecycle Assessment™, CAPEX Forecast™ and Decision Support Reports™ into one structured workflow.
@@ -728,6 +719,7 @@ The MEIFERTS Portal connects Technical Property Reviews™, evidence capture, Bu
 <p>
 Technical Property Review™ in progress. Evidence collection active. Building Risk Score™ under review. CAPEX Forecast™ in preparation.
 </p>
+<div class="progress-line"><span style="width:67%"></span></div>
 <div class="actions">
 <a class="button primary" href="#projects">Open Project</a>
 </div>
@@ -754,9 +746,9 @@ Technical Property Review™ in progress. Evidence collection active. Building R
 </div>
 
 <div class="metric">
-<div class="metric-label">Report</div>
-<div class="metric-number">1</div>
-<p>Draft report ready.</p>
+<div class="metric-label">High Risk</div>
+<div class="metric-number">2</div>
+<p>Items requiring priority review.</p>
 </div>
 </section>
 
@@ -764,31 +756,45 @@ Technical Property Review™ in progress. Evidence collection active. Building R
 <div class="topbar">
 <div>
 <div class="eyebrow">Projects</div>
-<h2>Project workspace.</h2>
+<h2>Project command table.</h2>
 </div>
 <a class="small-link" href="#">Create New Project</a>
 </div>
 
-<div class="grid-3">
-<div class="card">
-<div class="eyebrow">Project 001</div>
-<h3>Coastal Residential Tower</h3>
-<p>Technical review focused on waterproofing, reserve adequacy and future capital expenditure exposure.</p>
-<a class="small-link" href="#inspection">Open Inspection</a>
+<div class="table-card">
+<div class="table-row header">
+<div>Project</div><div>Status</div><div>Risk</div><div>Evidence</div><div>Report</div>
+</div>
+<div class="table-row">
+<div><strong>Coastal Residential Tower</strong></div><div>Inspection</div><div>68</div><div>124</div><div>Draft</div>
+</div>
+<div class="table-row">
+<div><strong>Residential Tower Alpha</strong></div><div>Review</div><div>42</div><div>86</div><div>Pending</div>
+</div>
+<div class="table-row">
+<div><strong>Project Atlas</strong></div><div>Report</div><div>74</div><div>211</div><div>Ready</div>
+</div>
+</div>
+</section>
+
+<section class="section" id="tasks">
+<div class="topbar">
+<div>
+<div class="eyebrow">Task Queue</div>
+<h2>What needs attention.</h2>
+</div>
+<a class="small-link" href="#">View All Tasks</a>
 </div>
 
-<div class="card">
-<div class="eyebrow">Project 002</div>
-<h3>Residential Tower Alpha</h3>
-<p>Lifecycle and governance demo project for structured review logic.</p>
-<a class="small-link" href="#risk">Open Risk</a>
+<div class="table-card">
+<div class="task-row">
+<div><strong>Review waterproofing evidence</strong><p>Linked to Building Envelope and CAPEX Forecast™.</p></div><span class="tag">High</span>
 </div>
-
-<div class="card">
-<div class="eyebrow">Project 003</div>
-<h3>Project Atlas</h3>
-<p>Demo project for report generation and CAPEX forecast workflow.</p>
-<a class="small-link" href="#report">Open Report</a>
+<div class="task-row">
+<div><strong>Confirm reserve fund statement</strong><p>Required for governance and financial risk interpretation.</p></div><span class="tag">Review</span>
+</div>
+<div class="task-row">
+<div><strong>Complete Executive Summary</strong><p>Report section pending final risk language.</p></div><span class="tag">Draft</span>
 </div>
 </div>
 </section>
@@ -998,6 +1004,13 @@ Open items: waterproofing documentation, reserve fund statement, maintenance his
 <div class="context-card">
 <div class="eyebrow">Decision State</div>
 <p>Further evidence review required before acquisition recommendation.</p>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">System</div>
+<div class="context-metric"><span>Version</span><span>2.0</span></div>
+<div class="context-metric"><span>Mode</span><span>Demo</span></div>
+<div class="context-metric"><span>Access</span><span>Internal</span></div>
 </div>
 </aside>
 
