@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MEIFERTS™ Professional Workspace v3.0</title>
-<meta name="description" content="MEIFERTS Professional Workspace™ v3.0 for inspections, evidence management, building risk scoring, lifecycle assessment, CAPEX forecasting and report preparation." />
+<title>MEIFERTS™ Professional Workspace v3.1</title>
+<meta name="description" content="MEIFERTS Professional Workspace™ v3.1 for inspections, evidence management, building risk scoring, lifecycle assessment, CAPEX forecasting and report preparation." />
 
 <style>
 :root{
@@ -796,6 +796,66 @@ h1{font-size:clamp(48px,13vw,70px);max-width:94%}
 .preview-page{min-height:auto}
 .footer-note{flex-direction:column;align-items:flex-start;padding:32px 26px}
 }
+
+.interactive-tools{
+margin-top:24px;
+border-top:1px solid var(--line);
+padding-top:22px;
+display:grid;
+gap:14px;
+}
+
+.slider-row{
+display:grid;
+grid-template-columns:1fr 70px;
+gap:16px;
+align-items:center;
+}
+
+.slider-row label{
+color:var(--cream);
+}
+
+.slider-row input{
+accent-color:var(--gold);
+}
+
+.slider-value{
+font-family:Georgia,"Times New Roman",serif;
+font-size:24px;
+color:var(--gold);
+text-align:right;
+}
+
+.toast{
+position:fixed;
+right:24px;
+bottom:24px;
+z-index:9998;
+background:var(--navy);
+color:var(--cream);
+border:1px solid rgba(184,147,90,.36);
+padding:16px 20px;
+box-shadow:0 18px 40px rgba(27,43,69,.18);
+font-size:13px;
+letter-spacing:.08em;
+text-transform:uppercase;
+font-weight:700;
+display:none;
+}
+
+.toast.visible{
+display:block;
+}
+
+@media print{
+.gate,.sidebar,.actions,.button,.small-link,.interactive-tools{display:none!important}
+.app{display:block}
+.main{padding:0}
+body{background:white}
+.panel,.work-panel,.side-panel,.score-card,.preview-page,.report-step,.metric{box-shadow:none;break-inside:avoid}
+}
+
 </style>
 </head>
 
@@ -824,7 +884,7 @@ This workspace is the internal professional environment behind MEIFERTS Building
 <a class="brand" href="../">
 <div class="brand-title">MEIFERTS™</div>
 <div class="brand-subtitle">Building Intelligence™</div>
-<div class="workspace-label">Professional Workspace™ v3.0</div>
+<div class="workspace-label">Professional Workspace™ v3.1</div>
 </a>
 
 <div class="nav-group">
@@ -856,7 +916,7 @@ This workspace is the internal professional environment behind MEIFERTS Building
 </div>
 <div class="status-group">
 <div class="status-pill">Internal Workspace</div>
-<div class="status-pill">Prototype v3.0</div>
+<div class="status-pill">Prototype v3.1</div>
 </div>
 </section>
 
@@ -955,8 +1015,8 @@ Each observation is structured so that it can flow directly into risk scoring, l
 </div>
 
 <div class="actions">
-<a class="button primary" href="#">Add Evidence</a>
-<a class="button" href="#">Save Observation</a>
+<button class="button primary" type="button" onclick="addEvidenceItem()">Add Evidence</button>
+<button class="button" type="button" onclick="saveObservation()">Save Observation</button>
 </div>
 </div>
 
@@ -964,7 +1024,7 @@ Each observation is structured so that it can flow directly into risk scoring, l
 <div class="eyebrow">Evidence Inbox</div>
 <h2>Evidence becomes useful when structured.</h2>
 
-<div class="evidence-list">
+<div class="evidence-list" id="evidenceList">
 <div class="evidence-item"><div class="thumb"></div><div><strong>Balcony moisture staining</strong><p>Photo evidence requiring classification.</p></div><span>Classify</span></div>
 <div class="evidence-item"><div class="thumb"></div><div><strong>Reserve fund statement</strong><p>Document review pending.</p></div><span>Review</span></div>
 <div class="evidence-item"><div class="thumb"></div><div><strong>Rooftop waterproofing note</strong><p>Linked to lifecycle and CAPEX exposure.</p></div><span>Assign</span></div>
@@ -989,10 +1049,17 @@ Indicative medium-risk profile based on current evidence classification. Final s
 </p>
 <div class="bar"><span></span></div>
 <div class="factor-list">
-<div class="factor"><strong>Technical Risk</strong><span>Medium</span></div>
-<div class="factor"><strong>Lifecycle Risk</strong><span>Medium</span></div>
-<div class="factor"><strong>Financial Risk</strong><span>Review</span></div>
-<div class="factor"><strong>Governance Risk</strong><span>Pending</span></div>
+<div class="factor"><strong>Technical Risk</strong><span id="technicalLabel">Medium</span></div>
+<div class="factor"><strong>Lifecycle Risk</strong><span id="lifecycleLabel">Medium</span></div>
+<div class="factor"><strong>Financial Risk</strong><span id="financialLabel">Review</span></div>
+<div class="factor"><strong>Governance Risk</strong><span id="governanceLabel">Pending</span></div>
+</div>
+
+<div class="interactive-tools">
+<div class="slider-row"><label for="technicalRisk">Technical</label><input id="technicalRisk" type="range" min="0" max="100" value="70" oninput="updateRiskScore()"><div class="slider-value" id="technicalValue">70</div></div>
+<div class="slider-row"><label for="lifecycleRisk">Lifecycle</label><input id="lifecycleRisk" type="range" min="0" max="100" value="68" oninput="updateRiskScore()"><div class="slider-value" id="lifecycleValue">68</div></div>
+<div class="slider-row"><label for="financialRisk">Financial</label><input id="financialRisk" type="range" min="0" max="100" value="64" oninput="updateRiskScore()"><div class="slider-value" id="financialValue">64</div></div>
+<div class="slider-row"><label for="governanceRisk">Governance</label><input id="governanceRisk" type="range" min="0" max="100" value="70" oninput="updateRiskScore()"><div class="slider-value" id="governanceValue">70</div></div>
 </div>
 </div>
 
@@ -1029,7 +1096,7 @@ CAPEX reasoning translates technical and lifecycle observations into future owne
 <section class="section" id="report">
 <div class="section-header">
 <h2 class="section-title">Report Builder™</h2>
-<a class="small-link" href="#">Export PDF</a>
+<a class="small-link" href="#" onclick="window.print(); return false;">Export / Print PDF</a>
 </div>
 
 <div class="report-builder">
@@ -1094,6 +1161,8 @@ It is the internal professional environment where the MEIFERTS Standard™ is ap
 
 </div>
 
+<div class="toast" id="toast">Saved</div>
+
 <script>
 (function(){
   if(sessionStorage.getItem("meifertsWorkspaceAccess")==="granted"){
@@ -1102,6 +1171,60 @@ It is the internal professional environment where the MEIFERTS Standard™ is ap
     });
   }
 })();
+
+
+function riskLabel(value){
+  if(value < 35) return "Low";
+  if(value < 70) return "Medium";
+  return "High";
+}
+
+function updateRiskScore(){
+  var ids = ["technical","lifecycle","financial","governance"];
+  var sum = 0;
+  ids.forEach(function(name){
+    var input = document.getElementById(name+"Risk");
+    if(!input) return;
+    var value = parseInt(input.value,10);
+    sum += value;
+    var valueEl = document.getElementById(name+"Value");
+    if(valueEl){ valueEl.textContent = value; }
+    var label = document.getElementById(name+"Label");
+    if(label){ label.textContent = riskLabel(value); }
+  });
+
+  var score = Math.round(sum / ids.length);
+  var scoreEl = document.querySelector(".score-number");
+  if(scoreEl){ scoreEl.textContent = score; }
+  var bar = document.querySelector(".bar span");
+  if(bar){ bar.style.width = score + "%"; }
+}
+
+function showToast(text){
+  var toast = document.getElementById("toast");
+  if(!toast) return;
+  toast.textContent = text;
+  toast.classList.add("visible");
+  setTimeout(function(){ toast.classList.remove("visible"); }, 1800);
+}
+
+function addEvidenceItem(){
+  var list = document.getElementById("evidenceList");
+  if(!list) return;
+  var item = document.createElement("div");
+  item.className = "evidence-item";
+  item.innerHTML = '<div class="thumb"></div><div><strong>New observation evidence</strong><p>Evidence item added from current inspection note.</p></div><span>New</span>';
+  list.prepend(item);
+  showToast("Evidence added");
+}
+
+function saveObservation(){
+  showToast("Observation saved");
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+  updateRiskScore();
+});
 
 function unlockWorkspace(){
   var input = document.getElementById("workspacePassword");
