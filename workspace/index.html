@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MEIFERTS™ Professional Workspace v2.0</title>
-<meta name="description" content="MEIFERTS Professional Workspace™ v2.0 for inspection workflow, evidence management, building risk score, lifecycle assessment, CAPEX forecast and report generation." />
+<title>MEIFERTS™ Professional Workspace v3.0</title>
+<meta name="description" content="MEIFERTS Professional Workspace™ v3.0 for inspections, evidence management, building risk scoring, lifecycle assessment, CAPEX forecasting and report preparation." />
 
 <style>
 :root{
@@ -17,7 +17,6 @@
 --text:#1f2933;
 --muted:#6b7280;
 --line:rgba(27,43,69,.16);
---soft:rgba(255,255,255,.52);
 --green:#5F7D65;
 --amber:#B8935A;
 --red:#9A5B52;
@@ -43,10 +42,12 @@ button,input,textarea,select{
 font:inherit;
 }
 
+a{color:inherit}
+
 .app{
 min-height:100vh;
 display:grid;
-grid-template-columns:292px 1fr;
+grid-template-columns:300px 1fr;
 }
 
 .sidebar{
@@ -92,9 +93,7 @@ color:rgba(243,238,226,.58);
 margin-top:16px;
 }
 
-.nav-group{
-margin:18px 0;
-}
+.nav-group{margin:18px 0}
 
 .nav-heading{
 font-size:11px;
@@ -121,9 +120,7 @@ color:var(--gold);
 font-size:12px;
 }
 
-.nav-link:hover{
-color:var(--cream);
-}
+.nav-link:hover{color:var(--cream)}
 
 .sidebar-footer{
 margin-top:auto;
@@ -205,13 +202,6 @@ color:var(--navy);
 white-space:nowrap;
 }
 
-.workspace-shell{
-display:grid;
-grid-template-columns:1fr 360px;
-gap:28px;
-margin-bottom:44px;
-}
-
 .panel{
 background:rgba(255,255,255,.42);
 border:1px solid var(--line);
@@ -261,6 +251,12 @@ background:var(--navy);
 color:var(--cream);
 }
 
+.button:hover{
+background:var(--gold);
+border-color:var(--gold);
+color:var(--navy);
+}
+
 .panel.dark .button{
 border-color:var(--cream);
 color:var(--cream);
@@ -272,10 +268,44 @@ border-color:var(--gold);
 color:var(--navy);
 }
 
-.button:hover{
-background:var(--gold);
-border-color:var(--gold);
+.section{
+margin-bottom:44px;
+}
+
+.section-header{
+display:flex;
+align-items:flex-end;
+justify-content:space-between;
+gap:24px;
+margin-bottom:20px;
+}
+
+.section-title{
+font-family:Georgia,"Times New Roman",serif;
+font-size:40px;
+line-height:1.05;
 color:var(--navy);
+font-weight:400;
+margin:0;
+}
+
+.small-link{
+font-size:12px;
+letter-spacing:.12em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--navy);
+text-decoration:none;
+border-bottom:1px solid var(--gold);
+padding-bottom:3px;
+white-space:nowrap;
+}
+
+.workspace-grid{
+display:grid;
+grid-template-columns:1.2fr .8fr;
+gap:24px;
+margin-bottom:44px;
 }
 
 .metric-grid{
@@ -314,186 +344,61 @@ font-size:14px;
 margin:0;
 }
 
-.section{
-margin-bottom:44px;
-}
-
-.section-header{
-display:flex;
-align-items:flex-end;
-justify-content:space-between;
-gap:24px;
-margin-bottom:20px;
-}
-
-.section-title{
-font-family:Georgia,"Times New Roman",serif;
-font-size:40px;
-line-height:1.05;
-color:var(--navy);
-font-weight:400;
-margin:0;
-}
-
-.small-link{
-font-size:12px;
-letter-spacing:.12em;
-text-transform:uppercase;
-font-weight:700;
-color:var(--navy);
-text-decoration:none;
-border-bottom:1px solid var(--gold);
-padding-bottom:3px;
-white-space:nowrap;
-}
-
-.board{
+.engine-layout{
 display:grid;
-grid-template-columns:330px 1fr;
+grid-template-columns:320px 1fr 370px;
 gap:22px;
+align-items:start;
 }
 
-.project-list{
-display:grid;
-gap:14px;
-}
-
-.project-row{
+.tree,
+.work-panel,
+.side-panel{
 background:rgba(255,255,255,.42);
 border:1px solid var(--line);
-padding:18px;
-cursor:pointer;
+padding:24px;
 }
 
-.project-row.active{
-background:var(--navy);
-color:var(--cream);
-border-color:rgba(184,147,90,.35);
+.tree-section{
+margin-bottom:22px;
 }
 
-.project-row.active p,
-.project-row.active .project-meta{
-color:rgba(243,238,226,.72);
-}
-
-.project-row h3{
-font-size:24px;
-margin-bottom:8px;
-}
-
-.project-row.active h3{
-color:var(--cream);
-}
-
-.project-meta{
+.tree-title{
 font-size:11px;
-letter-spacing:.14em;
+letter-spacing:.16em;
 text-transform:uppercase;
 color:var(--gold);
 font-weight:700;
-margin-bottom:10px;
+margin-bottom:12px;
 }
 
-.project-row p{
-font-size:13px;
-margin:0;
-}
-
-.detail-grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:22px;
-}
-
-.detail-card{
-background:rgba(255,255,255,.42);
-border:1px solid var(--line);
-padding:26px;
-min-height:230px;
-}
-
-.detail-card.large{
-grid-column:1 / -1;
-}
-
-.field-grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
-margin-top:18px;
-}
-
-.field{
-border-top:1px solid var(--line);
-padding-top:12px;
-}
-
-.field span{
-display:block;
-font-size:11px;
-letter-spacing:.14em;
-text-transform:uppercase;
-color:var(--gold);
-font-weight:700;
-margin-bottom:6px;
-}
-
-.field strong{
-font-family:Georgia,"Times New Roman",serif;
-font-size:21px;
-font-weight:400;
-color:var(--navy);
-}
-
-.inspection-layout{
-display:grid;
-grid-template-columns:270px 1fr;
-gap:22px;
-}
-
-.component-menu{
-background:rgba(255,255,255,.42);
-border:1px solid var(--line);
-padding:22px;
-}
-
-.component-button{
-width:100%;
-border:0;
-background:transparent;
+.tree-item{
 display:flex;
 justify-content:space-between;
-align-items:center;
 gap:14px;
-padding:14px 0;
+padding:12px 0;
 border-bottom:1px solid var(--line);
 cursor:pointer;
-color:var(--navy);
-text-align:left;
 }
 
-.component-button strong{
+.tree-item strong{
 font-family:Georgia,"Times New Roman",serif;
 font-size:21px;
 font-weight:400;
+color:var(--navy);
 }
 
-.component-button span{
+.tree-item span{
 font-size:11px;
 letter-spacing:.12em;
 text-transform:uppercase;
-color:var(--gold);
 font-weight:700;
+color:#6b7280;
 }
 
-.component-button:hover strong{
+.tree-item.active strong,
+.tree-item:hover strong{
 color:var(--gold);
-}
-
-.observation-form{
-background:rgba(255,255,255,.42);
-border:1px solid var(--line);
-padding:30px;
 }
 
 .form-grid{
@@ -530,74 +435,85 @@ outline:none;
 }
 
 textarea{
-min-height:130px;
+min-height:140px;
 resize:vertical;
 }
 
-.evidence-grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:18px;
+.evidence-drop{
+margin-top:24px;
+border:1px dashed rgba(27,43,69,.28);
+background:rgba(255,255,255,.36);
+padding:30px;
+text-align:center;
 }
 
-.evidence-card{
-background:rgba(255,255,255,.42);
-border:1px solid var(--line);
-padding:22px;
-min-height:210px;
-display:flex;
-flex-direction:column;
+.evidence-drop strong{
+display:block;
+font-family:Georgia,"Times New Roman",serif;
+font-size:26px;
+font-weight:400;
+color:var(--navy);
+margin-bottom:8px;
 }
 
-.evidence-thumb{
-height:92px;
-background:linear-gradient(135deg, rgba(27,43,69,.10), rgba(184,147,90,.18));
-border:1px solid rgba(27,43,69,.10);
-margin-bottom:18px;
-}
-
-.evidence-card h3{
-font-size:24px;
-}
-
-.evidence-card p{
+.evidence-drop p{
 font-size:14px;
+margin:0;
 }
 
-.evidence-status{
-margin-top:auto;
+.evidence-list{
+display:grid;
+gap:12px;
+margin-top:24px;
+}
+
+.evidence-item{
+display:grid;
+grid-template-columns:62px 1fr auto;
+gap:14px;
+align-items:center;
+padding:14px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.42);
+}
+
+.thumb{
+height:48px;
+background:linear-gradient(135deg, rgba(27,43,69,.12), rgba(184,147,90,.20));
+border:1px solid rgba(27,43,69,.10);
+}
+
+.evidence-item strong{
+font-family:Georgia,"Times New Roman",serif;
+font-size:20px;
+font-weight:400;
+color:var(--navy);
+}
+
+.evidence-item span{
 font-size:11px;
 letter-spacing:.12em;
 text-transform:uppercase;
-color:var(--gold);
 font-weight:700;
-}
-
-.analysis-grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:22px;
+color:var(--gold);
 }
 
 .score-card{
 background:var(--navy);
 color:var(--cream);
-padding:34px;
+padding:30px;
 border:1px solid rgba(184,147,90,.28);
-min-height:100%;
 }
 
-.score-card h2,
-.score-card h3{
-color:var(--cream);
-}
+.score-card h3,
+.score-card h2{color:var(--cream)}
 
 .score-number{
 font-family:Georgia,"Times New Roman",serif;
-font-size:98px;
+font-size:92px;
 line-height:.9;
 color:var(--gold);
-margin:20px 0;
+margin:18px 0;
 }
 
 .score-card p{
@@ -607,7 +523,7 @@ color:rgba(243,238,226,.76);
 .bar{
 height:8px;
 background:rgba(243,238,226,.18);
-margin:26px 0;
+margin:24px 0;
 overflow:hidden;
 }
 
@@ -633,7 +549,7 @@ padding-bottom:12px;
 
 .factor strong{
 font-family:Georgia,"Times New Roman",serif;
-font-size:20px;
+font-size:19px;
 font-weight:400;
 color:var(--cream);
 }
@@ -649,6 +565,7 @@ color:var(--gold);
 .timeline{
 display:grid;
 gap:14px;
+margin-top:20px;
 }
 
 .timeline-item{
@@ -707,6 +624,46 @@ font-size:13px;
 margin:0;
 }
 
+.report-preview{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:24px;
+margin-top:22px;
+}
+
+.preview-page{
+background:var(--paper);
+border:1px solid var(--line);
+min-height:520px;
+padding:34px;
+box-shadow:0 18px 40px rgba(27,43,69,.06);
+}
+
+.preview-page .page-mark{
+font-size:11px;
+letter-spacing:.16em;
+text-transform:uppercase;
+color:var(--gold);
+font-weight:700;
+margin-bottom:26px;
+}
+
+.preview-page h3{
+font-size:34px;
+}
+
+.preview-line{
+height:1px;
+background:var(--line);
+margin:22px 0;
+}
+
+.preview-box{
+border:1px solid rgba(184,147,90,.28);
+padding:20px;
+margin-top:20px;
+}
+
 .library-grid{
 display:grid;
 grid-template-columns:repeat(4,1fr);
@@ -754,135 +711,7 @@ display:block;
 margin-bottom:10px;
 }
 
-.mobile-menu{
-display:none;
-}
-
-@media(max-width:1180px){
-.app{
-grid-template-columns:1fr;
-}
-
-.sidebar{
-position:relative;
-height:auto;
-}
-
-.sidebar .nav-group,
-.sidebar .sidebar-footer{
-display:none;
-}
-
-.main{
-padding:42px 5vw 80px;
-}
-
-.workspace-shell,
-.board,
-.inspection-layout,
-analysis-grid{
-grid-template-columns:1fr;
-}
-
-.metric-grid,
-.evidence-grid,
-.library-grid{
-grid-template-columns:1fr 1fr;
-}
-
-.report-builder{
-grid-template-columns:1fr 1fr 1fr;
-}
-}
-
-@media(max-width:900px){
-.workspace-shell,
-.board,
-.inspection-layout,
-.analysis-grid,
-.detail-grid{
-grid-template-columns:1fr;
-}
-
-.field-grid,
-.form-grid{
-grid-template-columns:1fr;
-}
-
-.form-field.full{
-grid-column:auto;
-}
-
-.report-builder{
-grid-template-columns:1fr 1fr;
-}
-}
-
-@media(max-width:760px){
-.sidebar{
-padding:22px 5vw;
-}
-
-.brand-title{
-font-size:24px;
-}
-
-.brand-subtitle{
-font-size:11px;
-letter-spacing:.16em;
-}
-
-.main{
-padding:34px 5vw 70px;
-}
-
-.topbar{
-align-items:flex-start;
-flex-direction:column;
-margin-bottom:42px;
-}
-
-.status-group{
-justify-content:flex-start;
-}
-
-h1{
-font-size:clamp(48px,13vw,70px);
-max-width:94%;
-}
-
-.panel,
-.observation-form,
-.component-menu,
-.score-card{
-padding:26px 22px;
-}
-
-.metric-grid,
-.evidence-grid,
-.report-builder,
-.library-grid{
-grid-template-columns:1fr;
-}
-
-.section-header{
-align-items:flex-start;
-flex-direction:column;
-}
-
-.timeline-item{
-grid-template-columns:1fr;
-}
-
-.footer-note{
-flex-direction:column;
-align-items:flex-start;
-padding:32px 26px;
-}
-}
-
-/* Static prototype password gate.
-   Important: This is only a visual/basic access layer for GitHub Pages, not real security. */
+/* Password gate */
 .gate{
 position:fixed;
 inset:0;
@@ -894,9 +723,7 @@ justify-content:center;
 padding:5vw;
 }
 
-.gate.hidden{
-display:none;
-}
+.gate.hidden{display:none}
 
 .gate-card{
 max-width:680px;
@@ -912,19 +739,10 @@ font-size:clamp(46px,6vw,76px);
 margin-bottom:28px;
 }
 
-.gate-card p{
-font-size:18px;
-max-width:560px;
-}
-
 .gate-form{
 display:grid;
 gap:14px;
 margin-top:28px;
-}
-
-.gate-form input{
-background:rgba(255,255,255,.72);
 }
 
 .gate-error{
@@ -936,10 +754,48 @@ letter-spacing:.08em;
 text-transform:uppercase;
 }
 
-.gate-error.visible{
-display:block;
+.gate-error.visible{display:block}
+
+@media(max-width:1280px){
+.engine-layout{
+grid-template-columns:280px 1fr;
 }
 
+.side-panel{
+grid-column:1 / -1;
+}
+
+.report-builder,
+.library-grid{
+grid-template-columns:1fr 1fr 1fr;
+}
+}
+
+@media(max-width:1100px){
+.app{grid-template-columns:1fr}
+.sidebar{position:relative;height:auto}
+.sidebar .nav-group,.sidebar .sidebar-footer{display:none}
+.main{padding:42px 5vw 80px}
+.workspace-grid,.engine-layout,.report-preview{grid-template-columns:1fr}
+.metric-grid{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:760px){
+.sidebar{padding:22px 5vw}
+.brand-title{font-size:24px}
+.brand-subtitle{font-size:11px;letter-spacing:.16em}
+.main{padding:34px 5vw 70px}
+.topbar{align-items:flex-start;flex-direction:column;margin-bottom:42px}
+.status-group{justify-content:flex-start}
+h1{font-size:clamp(48px,13vw,70px);max-width:94%}
+.panel,.tree,.work-panel,.side-panel,.score-card,.gate-card{padding:26px 22px}
+.metric-grid,.form-grid,.report-builder,.library-grid{grid-template-columns:1fr}
+.form-field.full{grid-column:auto}
+.evidence-item{grid-template-columns:1fr}
+.timeline-item{grid-template-columns:1fr}
+.preview-page{min-height:auto}
+.footer-note{flex-direction:column;align-items:flex-start;padding:32px 26px}
+}
 </style>
 </head>
 
@@ -962,35 +818,31 @@ This workspace is the internal professional environment behind MEIFERTS Building
 </div>
 </div>
 
-
 <div class="app">
 
 <aside class="sidebar">
 <a class="brand" href="../">
 <div class="brand-title">MEIFERTS™</div>
 <div class="brand-subtitle">Building Intelligence™</div>
-<div class="workspace-label">Professional Workspace™ v2.0</div>
+<div class="workspace-label">Professional Workspace™ v3.0</div>
 </a>
 
 <div class="nav-group">
 <div class="nav-heading">Workspace</div>
 <a class="nav-link" href="#dashboard">Dashboard <span>01</span></a>
-<a class="nav-link" href="#projects">Projects <span>02</span></a>
-<a class="nav-link" href="#inspection">Inspection <span>03</span></a>
-<a class="nav-link" href="#evidence">Evidence <span>04</span></a>
-<a class="nav-link" href="#analysis">Analysis <span>05</span></a>
-<a class="nav-link" href="#reports">Reports <span>06</span></a>
+<a class="nav-link" href="#engine">Inspection Engine <span>02</span></a>
+<a class="nav-link" href="#risk">Risk & CAPEX <span>03</span></a>
+<a class="nav-link" href="#report">Report Builder <span>04</span></a>
 </div>
 
 <div class="nav-group">
 <div class="nav-heading">Knowledge</div>
-<a class="nav-link" href="#library">Research Library <span>07</span></a>
-<a class="nav-link" href="#standards">Standards <span>08</span></a>
+<a class="nav-link" href="#library">Research Library <span>05</span></a>
 <a class="nav-link" href="../">Public Website <span>↗</span></a>
 </div>
 
 <div class="sidebar-footer">
-<p>Internal professional environment for inspection logic, evidence capture, risk evaluation, CAPEX reasoning and report preparation.</p>
+<p>Internal operating system for inspection logic, evidence capture, risk evaluation, CAPEX reasoning and report preparation.</p>
 <p>© Matthias Meiferts</p>
 </div>
 </aside>
@@ -1004,190 +856,102 @@ This workspace is the internal professional environment behind MEIFERTS Building
 </div>
 <div class="status-group">
 <div class="status-pill">Internal Workspace</div>
-<div class="status-pill">Prototype v2.0</div>
+<div class="status-pill">Prototype v3.0</div>
 </div>
 </section>
 
-<section class="workspace-shell">
+<section class="workspace-grid">
 <div class="panel dark">
-<div class="eyebrow">Today’s Work</div>
-<h2>Inspection, evidence, analysis and report preparation in one professional environment.</h2>
+<div class="eyebrow">Workspace Purpose</div>
+<h2>The methodology explains the thinking. The workspace prepares the decision.</h2>
 <p>
-The Professional Workspace™ is the internal working layer behind MEIFERTS Building Intelligence. It supports the structured preparation of Technical Property Reviews™, Building Risk Scores™, Lifecycle Assessments™, CAPEX Forecasts™ and Decision Support Reports™.
+The Professional Workspace™ connects inspection logic, evidence capture, risk evaluation, lifecycle assessment, CAPEX reasoning and report generation into one structured working environment.
 </p>
 <div class="actions">
-<a class="button primary" href="#inspection">New Inspection</a>
-<a class="button" href="#reports">Continue Report</a>
+<a class="button primary" href="#engine">Start Inspection</a>
+<a class="button" href="#report">Open Report Builder</a>
 </div>
 </div>
 
 <div class="panel">
 <div class="eyebrow">Active Project</div>
-<h2>The Edge Pattaya</h2>
+<h2>Coastal Residential Tower</h2>
 <p>
 Technical review draft in progress. Evidence collection active. Risk evaluation pending. CAPEX section not yet finalised.
 </p>
 <div class="actions">
-<a class="button primary" href="#projects">Open Project</a>
+<a class="button primary" href="#engine">Open Workspace</a>
 </div>
 </div>
 </section>
 
 <section class="metric-grid">
-<div class="metric">
-<div class="metric-label">Active Projects</div>
-<div class="metric-number">3</div>
-<p>Properties currently under review.</p>
-</div>
-
-<div class="metric">
-<div class="metric-label">Draft Reports</div>
-<div class="metric-number">2</div>
-<p>Reports requiring final review.</p>
-</div>
-
-<div class="metric">
-<div class="metric-label">Evidence Items</div>
-<div class="metric-number">14</div>
-<p>Photos, notes and documents pending classification.</p>
-</div>
-
-<div class="metric">
-<div class="metric-label">Report Ready</div>
-<div class="metric-number">1</div>
-<p>One report section ready for export.</p>
-</div>
+<div class="metric"><div class="metric-label">Active Projects</div><div class="metric-number">3</div><p>Properties currently under review.</p></div>
+<div class="metric"><div class="metric-label">Draft Reports</div><div class="metric-number">2</div><p>Reports requiring final review.</p></div>
+<div class="metric"><div class="metric-label">Evidence Items</div><div class="metric-number">14</div><p>Photos, notes and documents pending classification.</p></div>
+<div class="metric"><div class="metric-label">Report Ready</div><div class="metric-number">1</div><p>One report section ready for export.</p></div>
 </section>
 
-<section class="section" id="projects">
+<section class="section" id="engine">
 <div class="section-header">
-<h2 class="section-title">Projects</h2>
-<a class="small-link" href="#">Create New Property</a>
+<h2 class="section-title">Inspection Engine™</h2>
+<a class="small-link" href="#">Save Draft</a>
 </div>
 
-<div class="board">
-<div class="project-list">
-<div class="project-row active">
-<div class="project-meta">Condominium · Pattaya</div>
-<h3>The Edge Central Pattaya</h3>
-<p>Waterproofing, reserves, rooftop pool and future CAPEX exposure.</p>
+<div class="engine-layout">
+<div class="tree">
+<div class="tree-section">
+<div class="tree-title">Property</div>
+<div class="tree-item active"><strong>Coastal Residential Tower</strong><span>Open</span></div>
+<div class="tree-item"><strong>Metropolitan High-Rise</strong><span>Draft</span></div>
+<div class="tree-item"><strong>Residential Asset Prototype</strong><span>Review</span></div>
 </div>
 
-<div class="project-row">
-<div class="project-meta">Condominium · Bangkok</div>
-<h3>Asok High-Rise</h3>
-<p>Lifecycle assessment for envelope, MEP and reserve fund logic.</p>
+<div class="tree-section">
+<div class="tree-title">Components</div>
+<div class="tree-item active"><strong>Building Envelope</strong><span>Open</span></div>
+<div class="tree-item"><strong>Roofing</strong><span>Open</span></div>
+<div class="tree-item"><strong>Structure</strong><span>Draft</span></div>
+<div class="tree-item"><strong>Electrical</strong><span>Pending</span></div>
+<div class="tree-item"><strong>Plumbing</strong><span>Pending</span></div>
+<div class="tree-item"><strong>Common Areas</strong><span>Open</span></div>
+<div class="tree-item"><strong>Documents</strong><span>Review</span></div>
+</div>
 </div>
 
-<div class="project-row">
-<div class="project-meta">Multi-Family · Hamburg</div>
-<h3>Urban Residential Asset</h3>
-<p>Roof, windows, basement moisture and electrical systems.</p>
-</div>
-</div>
-
-<div class="detail-grid">
-<div class="detail-card large">
-<div class="eyebrow">Property Profile</div>
-<h2>The Edge Central Pattaya</h2>
+<div class="work-panel">
+<div class="eyebrow">Observation Workspace</div>
+<h2>Component → Observation → Evidence → Risk → Recommendation.</h2>
 <p>
-A technical review focused on visible and hidden risks that may influence ownership decisions, future maintenance exposure and capital expenditure requirements.
-</p>
-
-<div class="field-grid">
-<div class="field"><span>Asset Type</span><strong>Condominium</strong></div>
-<div class="field"><span>Location</span><strong>Pattaya</strong></div>
-<div class="field"><span>Status</span><strong>Evidence Active</strong></div>
-<div class="field"><span>Risk Profile</span><strong>Medium</strong></div>
-</div>
-</div>
-
-<div class="detail-card">
-<div class="eyebrow">Next Action</div>
-<h3>Classify evidence.</h3>
-<p>Assign risk relevance to balcony moisture staining, reserve fund statement and rooftop pool notes.</p>
-</div>
-
-<div class="detail-card">
-<div class="eyebrow">Decision Status</div>
-<h3>Not ready.</h3>
-<p>Further specialist investigation may be required before final recommendation.</p>
-</div>
-</div>
-</div>
-</section>
-
-<section class="section" id="inspection">
-<div class="section-header">
-<h2 class="section-title">Inspection Workspace™</h2>
-<a class="small-link" href="#">Save Inspection Draft</a>
-</div>
-
-<div class="inspection-layout">
-<div class="component-menu">
-<div class="eyebrow">Components</div>
-<button class="component-button"><strong>Building Envelope</strong><span>Open</span></button>
-<button class="component-button"><strong>Roofing</strong><span>Open</span></button>
-<button class="component-button"><strong>Structure</strong><span>Draft</span></button>
-<button class="component-button"><strong>Electrical</strong><span>Pending</span></button>
-<button class="component-button"><strong>Plumbing</strong><span>Pending</span></button>
-<button class="component-button"><strong>Common Areas</strong><span>Open</span></button>
-<button class="component-button"><strong>Documents</strong><span>Review</span></button>
-</div>
-
-<div class="observation-form">
-<div class="eyebrow">New Observation</div>
-<h2>Property → Building → Component → Observation.</h2>
-<p>
-Each observation is linked to evidence, risk relevance, lifecycle implication and recommendation logic.
+Each observation is structured so that it can flow directly into risk scoring, lifecycle assessment, CAPEX reasoning and the final decision support report.
 </p>
 
 <div class="form-grid">
 <div class="form-field">
 <label>Component</label>
-<select>
-<option>Building Envelope</option>
-<option>Roofing</option>
-<option>Structure</option>
-<option>Electrical Systems</option>
-<option>Plumbing</option>
-</select>
+<select><option>Building Envelope</option><option>Roofing</option><option>Structure</option><option>Electrical Systems</option><option>Plumbing</option></select>
 </div>
-
 <div class="form-field">
 <label>Priority</label>
-<select>
-<option>Medium</option>
-<option>Low</option>
-<option>High</option>
-<option>Critical</option>
-</select>
+<select><option>Medium</option><option>Low</option><option>High</option><option>Critical</option></select>
 </div>
-
 <div class="form-field">
 <label>Risk Type</label>
-<select>
-<option>Technical Risk</option>
-<option>Lifecycle Risk</option>
-<option>Financial Risk</option>
-<option>Governance Risk</option>
-</select>
+<select><option>Technical Risk</option><option>Lifecycle Risk</option><option>Financial Risk</option><option>Governance Risk</option></select>
 </div>
-
 <div class="form-field">
 <label>Status</label>
-<select>
-<option>Draft</option>
-<option>Evidence Required</option>
-<option>Review</option>
-<option>Ready for Report</option>
-</select>
+<select><option>Draft</option><option>Evidence Required</option><option>Review</option><option>Ready for Report</option></select>
 </div>
-
 <div class="form-field full">
 <label>Observation</label>
 <textarea>Moisture staining visible beneath balcony edge. Further assessment of waterproofing condition recommended before acquisition.</textarea>
 </div>
+</div>
+
+<div class="evidence-drop">
+<strong>Drag evidence here.</strong>
+<p>Photos, documents, thermal images, notes and measurements become classified evidence items.</p>
 </div>
 
 <div class="actions">
@@ -1195,46 +959,27 @@ Each observation is linked to evidence, risk relevance, lifecycle implication an
 <a class="button" href="#">Save Observation</a>
 </div>
 </div>
-</div>
-</section>
 
-<section class="section" id="evidence">
-<div class="section-header">
-<h2 class="section-title">Evidence Inbox</h2>
-<a class="small-link" href="#">Upload Evidence</a>
-</div>
+<div class="side-panel">
+<div class="eyebrow">Evidence Inbox</div>
+<h2>Evidence becomes useful when structured.</h2>
 
-<div class="evidence-grid">
-<div class="evidence-card">
-<div class="evidence-thumb"></div>
-<h3>Balcony moisture staining</h3>
-<p>Photo evidence requiring classification and risk assignment.</p>
-<div class="evidence-status">Classify</div>
+<div class="evidence-list">
+<div class="evidence-item"><div class="thumb"></div><div><strong>Balcony moisture staining</strong><p>Photo evidence requiring classification.</p></div><span>Classify</span></div>
+<div class="evidence-item"><div class="thumb"></div><div><strong>Reserve fund statement</strong><p>Document review pending.</p></div><span>Review</span></div>
+<div class="evidence-item"><div class="thumb"></div><div><strong>Rooftop waterproofing note</strong><p>Linked to lifecycle and CAPEX exposure.</p></div><span>Assign</span></div>
 </div>
-
-<div class="evidence-card">
-<div class="evidence-thumb"></div>
-<h3>Reserve fund statement</h3>
-<p>Document review pending for governance and financial preparedness.</p>
-<div class="evidence-status">Review</div>
-</div>
-
-<div class="evidence-card">
-<div class="evidence-thumb"></div>
-<h3>Rooftop pool note</h3>
-<p>Observation linked to waterproofing and future CAPEX exposure.</p>
-<div class="evidence-status">Assign</div>
 </div>
 </div>
 </section>
 
-<section class="section" id="analysis">
+<section class="section" id="risk">
 <div class="section-header">
-<h2 class="section-title">Analysis Engine</h2>
-<a class="small-link" href="#">Open Risk Logic</a>
+<h2 class="section-title">Risk & CAPEX Engine™</h2>
+<a class="small-link" href="#">Open Calculation Logic</a>
 </div>
 
-<div class="analysis-grid">
+<div class="engine-layout">
 <div class="score-card">
 <div class="eyebrow">Building Risk Score™</div>
 <h2>Current Risk Profile</h2>
@@ -1243,7 +988,6 @@ Each observation is linked to evidence, risk relevance, lifecycle implication an
 Indicative medium-risk profile based on current evidence classification. Final score remains pending until lifecycle and CAPEX sections are reviewed.
 </p>
 <div class="bar"><span></span></div>
-
 <div class="factor-list">
 <div class="factor"><strong>Technical Risk</strong><span>Medium</span></div>
 <div class="factor"><strong>Lifecycle Risk</strong><span>Medium</span></div>
@@ -1252,11 +996,11 @@ Indicative medium-risk profile based on current evidence classification. Final s
 </div>
 </div>
 
-<div class="panel">
-<div class="eyebrow">Lifecycle & CAPEX</div>
-<h2>Future cost exposure begins with component behaviour.</h2>
+<div class="work-panel">
+<div class="eyebrow">Lifecycle Assessment™</div>
+<h2>Condition, age and maintenance define future exposure.</h2>
 <p>
-The workspace connects condition, age, maintenance quality and expected remaining useful life. This enables structured CAPEX reasoning before the report is written.
+The workspace connects component condition, expected service life, maintenance quality and evidence status into one lifecycle view.
 </p>
 
 <div class="timeline">
@@ -1266,13 +1010,26 @@ The workspace connects condition, age, maintenance quality and expected remainin
 <div class="timeline-item"><span>2034</span><strong>Electrical distribution</strong><span>Pending</span></div>
 </div>
 </div>
+
+<div class="side-panel">
+<div class="eyebrow">CAPEX Forecast™</div>
+<h2>Future cost exposure before purchase.</h2>
+<p>
+CAPEX reasoning translates technical and lifecycle observations into future ownership cost awareness.
+</p>
+<div class="timeline">
+<div class="timeline-item"><span>Short</span><strong>Specialist waterproofing review</strong><span>Priority</span></div>
+<div class="timeline-item"><span>Mid</span><strong>Facade sealant programme</strong><span>Plan</span></div>
+<div class="timeline-item"><span>Long</span><strong>MEP reserve review</strong><span>Monitor</span></div>
+</div>
+</div>
 </div>
 </section>
 
-<section class="section" id="reports">
+<section class="section" id="report">
 <div class="section-header">
-<h2 class="section-title">Report Generator™</h2>
-<a class="small-link" href="#">Preview Report</a>
+<h2 class="section-title">Report Builder™</h2>
+<a class="small-link" href="#">Export PDF</a>
 </div>
 
 <div class="report-builder">
@@ -1282,6 +1039,30 @@ The workspace connects condition, age, maintenance quality and expected remainin
 <div class="report-step"><span>04</span><h3>Lifecycle</h3><p>Remaining useful life and component behaviour.</p></div>
 <div class="report-step"><span>05</span><h3>CAPEX</h3><p>Foreseeable expenditure and ownership implications.</p></div>
 <div class="report-step"><span>06</span><h3>Recommendation</h3><p>Proceed, renegotiate, investigate further or walk away.</p></div>
+</div>
+
+<div class="report-preview">
+<div class="preview-page">
+<div class="page-mark">Decision Support Report™ · Preview</div>
+<h3>Executive Summary</h3>
+<p>Current evidence indicates a medium technical risk profile. The primary concern relates to waterproofing performance, reserve adequacy and potential future capital expenditure.</p>
+<div class="preview-line"></div>
+<div class="preview-box">
+<strong>Preliminary Recommendation</strong>
+<p>Proceed only after targeted specialist review and confirmation of reserve fund adequacy.</p>
+</div>
+</div>
+
+<div class="preview-page">
+<div class="page-mark">Building Risk Score™ · Preview</div>
+<h3>Risk Profile</h3>
+<p>Technical and lifecycle risks remain manageable but require clarification before acquisition decision.</p>
+<div class="preview-line"></div>
+<div class="preview-box">
+<strong>Open Items</strong>
+<p>Waterproofing documentation, reserve fund statement, maintenance history and roof/pool inspection records.</p>
+</div>
+</div>
 </div>
 </section>
 
@@ -1299,7 +1080,7 @@ The workspace connects condition, age, maintenance quality and expected remainin
 </div>
 </section>
 
-<section class="footer-note" id="standards">
+<section class="footer-note">
 <div>
 <strong>The workspace is not the product.</strong>
 <p>
@@ -1312,7 +1093,6 @@ It is the internal professional environment where the MEIFERTS Standard™ is ap
 </main>
 
 </div>
-
 
 <script>
 (function(){
@@ -1328,7 +1108,7 @@ function unlockWorkspace(){
   var error = document.getElementById("gateError");
   var value = input.value.trim();
 
-  /* Change this password inside the HTML before publishing. */
+  /* Change this password before publishing. This is not real server-side security. */
   var password = "meiferts";
 
   if(value === password){
@@ -1342,7 +1122,8 @@ function unlockWorkspace(){
 }
 
 document.addEventListener("keydown", function(event){
-  if(event.key === "Enter" && !document.getElementById("workspaceGate").classList.contains("hidden")){
+  var gate = document.getElementById("workspaceGate");
+  if(event.key === "Enter" && gate && !gate.classList.contains("hidden")){
     unlockWorkspace();
   }
 });
