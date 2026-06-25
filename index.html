@@ -109,11 +109,11 @@ background:var(--navy);
 color:var(--cream);
 }
 
-main{padding:82px 5vw 100px}
+main{padding:70px 5vw 100px}
 
 .hero{
 max-width:1180px;
-margin:0 auto 90px;
+margin:0 auto 58px;
 }
 
 .eyebrow,.section-eyebrow{
@@ -147,7 +147,17 @@ margin:0 0 30px;
 font-size:19px;
 color:#4b5563;
 max-width:760px;
-margin:0 0 38px;
+margin:0 0 30px;
+}
+
+.hero-text.compact{
+line-height:1.65;
+max-width:820px;
+}
+
+.hero-text strong{
+color:var(--navy);
+font-weight:600;
 }
 
 .actions{
@@ -183,8 +193,9 @@ color:var(--navy);
 max-width:1320px;
 margin:0 auto 90px;
 background:rgba(255,255,255,.35);
-border:1px solid var(--line);
-padding:26px;
+border:1px solid rgba(27,43,69,.10);
+padding:14px;
+box-shadow:0 18px 40px rgba(27,43,69,.06);
 }
 
 .figure-section img{
@@ -385,6 +396,7 @@ grid-template-columns:1fr 1fr;
 header{
 align-items:center;
 gap:18px;
+padding:22px 5vw;
 }
 
 .brand{
@@ -403,6 +415,9 @@ letter-spacing:.16em;
 
 .menu-label{
 display:block;
+padding:14px 22px;
+letter-spacing:.18em;
+font-size:11px;
 }
 
 nav{
@@ -420,9 +435,9 @@ display:flex;
 
 nav a{font-size:11px}
 
-main{padding:56px 5vw 80px}
+main{padding:46px 5vw 80px}
 
-h1{font-size:clamp(52px,15vw,74px)}
+h1{font-size:clamp(54px,15.5vw,78px)}
 
 .lead{font-size:20px}
 
@@ -431,7 +446,8 @@ padding:32px 26px;
 }
 
 .figure-section{
-padding:12px;
+padding:10px;
+margin-top:-18px;
 }
 
 .figure-section img{
@@ -484,14 +500,8 @@ grid-template-columns:1fr;
 Technical Due Diligence and Building Intelligence for property buyers, investors and asset owners.
 </p>
 
-<p class="hero-text">
-Most buyers investigate the location.
-<br><br>
-Few investigate the building.
-<br><br>
-That imbalance creates risk.
-<br><br>
-MEIFERTS exists to close that gap.
+<p class="hero-text compact">
+Most buyers investigate the location. Few investigate the building. That imbalance creates risk. <strong>MEIFERTS exists to close that gap.</strong>
 </p>
 
 <div class="actions">
