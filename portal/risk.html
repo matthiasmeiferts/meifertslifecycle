@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Risk Score | MEIFERTS™ Building Intelligence Portal</title>
+<meta name="description" content="MEIFERTS Building Risk Score for technical risk, lifecycle risk, governance risk, CAPEX exposure and decision confidence." />
+<style>
+:root{--navy:#1B2B45;--gold:#B8935A;--cream:#F3EEE2;--text:#1f2933;--line:rgba(27,43,69,.16)}
+*{box-sizing:border-box}html,body{margin:0;padding:0;min-height:100%;overflow-x:hidden}
+body{font-family:Inter,Arial,sans-serif;background:radial-gradient(circle at top right,rgba(184,147,90,.10),transparent 34rem),var(--cream);color:var(--text);line-height:1.55}
+a{text-decoration:none;color:inherit}
+.portal{min-height:100vh;display:grid;grid-template-columns:292px 1fr 360px}
+.sidebar{background:var(--navy);color:var(--cream);padding:28px 24px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;box-shadow:18px 0 44px rgba(27,43,69,.08)}
+.brand{display:block;color:var(--cream);margin-bottom:34px}.brand-title{font-family:Georgia,"Times New Roman",serif;font-size:27px;letter-spacing:.12em;font-weight:500;text-transform:uppercase}.brand-subtitle{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-top:6px}.workspace-label{font-size:11px;letter-spacing:.20em;text-transform:uppercase;color:rgba(243,238,226,.58);margin-top:16px}
+.nav-group{margin:18px 0}.nav-heading{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:rgba(243,238,226,.45);margin:0 0 10px}.nav-link{display:flex;align-items:center;justify-content:space-between;gap:12px;color:rgba(243,238,226,.84);padding:11px 0;border-bottom:1px solid rgba(243,238,226,.10);font-size:14px}.nav-link span{color:var(--gold);font-size:12px}.nav-link:hover,.nav-link.active{color:var(--cream)}.sidebar-footer{margin-top:auto;font-size:12px;color:rgba(243,238,226,.55);line-height:1.6}
+.main{padding:32px 4vw 80px;min-width:0}.context{background:rgba(255,255,255,.36);border-left:1px solid var(--line);padding:28px 24px;position:sticky;top:0;height:100vh;overflow:auto}
+.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.22em;font-size:12px;font-weight:700;margin-bottom:12px}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(44px,5vw,78px);line-height:.98;font-weight:400;color:var(--navy);margin:0}h2{font-family:Georgia,"Times New Roman",serif;font-size:clamp(32px,3.4vw,54px);line-height:1.05;font-weight:400;color:var(--navy);margin:0 0 22px}h3{font-family:Georgia,"Times New Roman",serif;font-size:27px;font-weight:400;color:var(--navy);margin:0 0 14px}p{font-size:16px;color:#4b5563;margin:0 0 18px}
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:22px;margin-bottom:36px}.status-group{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.status-pill{border:1px solid var(--line);background:rgba(255,255,255,.40);padding:11px 15px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--navy);white-space:nowrap}
+.section{margin-bottom:40px}.grid-2{display:grid;grid-template-columns:1.1fr .9fr;gap:24px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.panel,.metric,.score-card,.matrix-card,.table-card,.context-card{background:rgba(255,255,255,.42);border:1px solid var(--line)}
+.panel,.matrix-card{padding:28px}.metric{padding:24px;min-height:142px}.metric-number{font-family:Georgia,"Times New Roman",serif;font-size:46px;line-height:1;color:var(--navy);margin-bottom:12px}.metric-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px}
+.score-card{background:var(--navy);color:var(--cream);padding:34px;border-color:rgba(184,147,90,.28)}.score-card h2,.score-card h3{color:var(--cream)}.score-card p{color:rgba(243,238,226,.78)}.score-number{font-family:Georgia,"Times New Roman",serif;font-size:118px;line-height:.86;color:var(--gold);margin:26px 0}.bar{height:9px;background:rgba(243,238,226,.18);margin:24px 0;overflow:hidden}.bar span{display:block;height:100%;width:68%;background:var(--gold)}
+.tag{display:inline-block;border:1px solid rgba(184,147,90,.34);padding:6px 9px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:700;margin:4px 4px 0 0}
+.matrix-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.risk-value{font-family:Georgia,"Times New Roman",serif;font-size:48px;color:var(--gold);margin:18px 0}.mini-bar{height:7px;background:rgba(27,43,69,.10);overflow:hidden}.mini-bar span{display:block;height:100%;background:var(--gold)}
+.table-card{padding:0;overflow:hidden}.table-row{display:grid;grid-template-columns:1.2fr .7fr .7fr .8fr 1fr;gap:16px;padding:18px 22px;border-bottom:1px solid var(--line);align-items:center}.table-row:last-child{border-bottom:0}.table-row.header{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--gold)}.table-row strong{font-family:Georgia,"Times New Roman",serif;font-size:21px;font-weight:400;color:var(--navy)}
+.actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px}.button{display:inline-block;text-transform:uppercase;letter-spacing:.12em;font-size:12px;font-weight:700;padding:13px 18px;border:1px solid var(--navy);color:var(--navy);min-width:165px;text-align:center;background:transparent;cursor:pointer}.button.primary{background:var(--navy);color:var(--cream)}
+.context-card{padding:0 0 20px;margin-bottom:20px;border:0;border-bottom:1px solid var(--line);background:transparent}.context-card strong{font-family:Georgia,"Times New Roman",serif;font-size:25px;font-weight:400;color:var(--navy);display:block;margin-bottom:8px}.context-metric{display:flex;justify-content:space-between;gap:16px;border-top:1px solid var(--line);padding:12px 0;font-size:14px}.context-metric span:last-child{color:var(--gold);font-weight:700}
+@media(max-width:1280px){.portal{grid-template-columns:292px 1fr}.context{display:none}.grid-4,.grid-3,.matrix-grid{grid-template-columns:1fr 1fr}.table-row{grid-template-columns:1fr 1fr}}
+@media(max-width:980px){.portal{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.sidebar .nav-group,.sidebar .sidebar-footer{display:none}.main{padding:38px 5vw 70px}.grid-2{grid-template-columns:1fr}}
+@media(max-width:760px){.sidebar{padding:22px 5vw}.brand-title{font-size:24px}.main{padding:34px 5vw 70px}.topbar{flex-direction:column}.grid-2,.grid-3,.grid-4,.matrix-grid,.table-row{grid-template-columns:1fr}.score-number{font-size:92px}}
+</style>
+</head>
+<body>
+<div class="portal">
+<aside class="sidebar">
+<a class="brand" href="../"><div class="brand-title">MEIFERTS™</div><div class="brand-subtitle">Building Intelligence™</div><div class="workspace-label">Professional Portal</div></a>
+<div class="nav-group"><div class="nav-heading">Workspace</div>
+<a class="nav-link" href="dashboard.html">Dashboard <span>01</span></a>
+<a class="nav-link" href="projects.html">Projects <span>02</span></a>
+<a class="nav-link" href="inspection.html">Inspection <span>03</span></a>
+<a class="nav-link" href="evidence.html">Evidence <span>04</span></a>
+<a class="nav-link active" href="risk.html">Risk Score™ <span>05</span></a>
+<a class="nav-link" href="report-generator.html">Report <span>06</span></a>
+</div>
+<div class="nav-group"><div class="nav-heading">Knowledge</div><a class="nav-link" href="library.html">Library <span>07</span></a><a class="nav-link" href="academy.html">Academy <span>08</span></a><a class="nav-link" href="../">Public Website <span>↗</span></a></div>
+<div class="sidebar-footer"><p>Risk Engine for technical, lifecycle, financial and governance risk interpretation.</p><p>© Matthias Meiferts</p></div>
+</aside>
+
+<main class="main">
+<section class="topbar">
+<div><div class="eyebrow">Building Risk Score™</div><h1>Risk becomes decision clarity.</h1></div>
+<div class="status-group"><div class="status-pill">Risk v1.0</div><div class="status-pill">Medium Risk</div></div>
+</section>
+
+<section class="grid-2 section">
+<div class="score-card">
+<div class="eyebrow">Overall Profile</div>
+<h2>Building Risk Score™</h2>
+<div class="score-number">68</div>
+<p>Indicative medium-risk profile based on current evidence, findings, lifecycle exposure and documentation confidence.</p>
+<div class="bar"><span></span></div>
+<span class="tag">Medium Risk</span><span class="tag">Review Required</span>
+</div>
+<div class="panel">
+<div class="eyebrow">Decision Interpretation</div>
+<h2>Proceed with conditions.</h2>
+<p>The current project profile does not indicate an automatic walk-away decision, but several technical and documentation gaps require clarification before final acquisition recommendation.</p>
+<p>The most relevant open items are waterproofing evidence, reserve fund documentation and maintenance history.</p>
+<div class="actions"><a class="button primary" href="inspection.html">Review Findings</a><a class="button" href="report-generator.html">Send to Report</a></div>
+</div>
+</section>
+
+<section class="grid-4 section">
+<div class="metric"><div class="metric-label">Technical</div><div class="metric-number">70</div><p>Observed technical risk.</p></div>
+<div class="metric"><div class="metric-label">Lifecycle</div><div class="metric-number">68</div><p>Future exposure.</p></div>
+<div class="metric"><div class="metric-label">Financial</div><div class="metric-number">64</div><p>Potential cost impact.</p></div>
+<div class="metric"><div class="metric-label">Governance</div><div class="metric-number">70</div><p>Documentation and reserves.</p></div>
+</section>
+
+<section class="section">
+<div class="topbar"><div><div class="eyebrow">Risk Matrix</div><h2>Risk signals by category.</h2></div><a class="button" href="evidence.html">Open Evidence</a></div>
+<div class="matrix-grid">
+<div class="matrix-card"><h3>Envelope & Waterproofing</h3><p>Moisture signals and missing records indicate medium to high review relevance.</p><div class="risk-value">72</div><div class="mini-bar"><span style="width:72%"></span></div><span class="tag">Medium</span></div>
+<div class="matrix-card"><h3>Roofing</h3><p>Waterproofing documentation gap and lifecycle uncertainty create priority review status.</p><div class="risk-value">78</div><div class="mini-bar"><span style="width:78%"></span></div><span class="tag">High</span></div>
+<div class="matrix-card"><h3>MEP Systems</h3><p>Reserve assumptions and component age need validation before final CAPEX position.</p><div class="risk-value">61</div><div class="mini-bar"><span style="width:61%"></span></div><span class="tag">Review</span></div>
+<div class="matrix-card"><h3>Governance</h3><p>Reserve fund and maintenance history are not yet sufficiently documented.</p><div class="risk-value">70</div><div class="mini-bar"><span style="width:70%"></span></div><span class="tag">Pending</span></div>
+</div>
+</section>
+
+<section class="section">
+<div class="topbar"><div><div class="eyebrow">Risk Register</div><h2>Findings influencing the score.</h2></div><a class="button" href="inspection.html">Open Inspection</a></div>
+<div class="table-card">
+<div class="table-row header"><div>Finding</div><div>Severity</div><div>Likelihood</div><div>Risk</div><div>Decision Impact</div></div>
+<div class="table-row"><div><strong>Waterproofing documentation missing</strong></div><div>High</div><div>Medium</div><div>78</div><div>Further review required</div></div>
+<div class="table-row"><div><strong>Moisture staining beneath balcony edge</strong></div><div>Medium</div><div>Medium</div><div>72</div><div>Specialist check recommended</div></div>
+<div class="table-row"><div><strong>Reserve fund statement unclear</strong></div><div>Medium</div><div>Medium</div><div>70</div><div>Financial risk interpretation pending</div></div>
+<div class="table-row"><div><strong>MEP reserve assumptions not validated</strong></div><div>Medium</div><div>Low</div><div>61</div><div>Monitor and request documentation</div></div>
+</div>
+</section>
+
+<section class="grid-3 section">
+<div class="panel"><div class="eyebrow">Confidence Index</div><h3>Moderate confidence.</h3><p>Confidence is limited by missing maintenance and waterproofing documentation.</p><span class="tag">64</span></div>
+<div class="panel"><div class="eyebrow">CAPEX Signal</div><h3>Draft exposure.</h3><p>Short-term specialist review and mid-term facade programme should be considered.</p><span class="tag">CAPEX</span></div>
+<div class="panel"><div class="eyebrow">Recommendation</div><h3>Proceed conditionally.</h3><p>Proceed only after targeted document review and specialist waterproofing assessment.</p><span class="tag">Conditional</span></div>
+</section>
+</main>
+
+<aside class="context">
+<div class="context-card"><div class="eyebrow">Active Project</div><strong>Coastal Residential Tower</strong><p>Residential Tower<br>Confidential Demo Location</p></div>
+<div class="context-card"><div class="eyebrow">Risk Profile</div><div class="context-metric"><span>Overall</span><span>68</span></div><div class="context-metric"><span>Technical</span><span>70</span></div><div class="context-metric"><span>Lifecycle</span><span>68</span></div><div class="context-metric"><span>Financial</span><span>64</span></div><div class="context-metric"><span>Governance</span><span>70</span></div></div>
+<div class="context-card"><div class="eyebrow">Decision State</div><strong>Proceed with conditions</strong><p>Further documentation and specialist review required before final recommendation.</p></div>
+<div class="context-card"><div class="eyebrow">Module</div><div class="context-metric"><span>Name</span><span>Risk</span></div><div class="context-metric"><span>Version</span><span>1.0</span></div><div class="context-metric"><span>Mode</span><span>Demo</span></div></div>
+</aside>
+</div>
+</body>
+</html>
