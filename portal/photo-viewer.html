@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang='en'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Photo Viewer | MEIFERTS™</title>
+<style>
+:root{--n:#1B2B45;--g:#B8935A;--c:#F3EEE2;--l:rgba(27,43,69,.16)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial;background:var(--c);color:#1f2933}
+.app{display:grid;grid-template-columns:280px 1fr 340px;min-height:100vh}
+aside{background:var(--n);color:white;padding:28px}
+.logo{font:28px Georgia,serif;letter-spacing:.12em}.sub{color:var(--g);letter-spacing:.2em;font-size:12px;text-transform:uppercase;margin-bottom:30px}
+nav a{display:flex;justify-content:space-between;color:#eee;text-decoration:none;padding:11px 0;border-bottom:1px solid #ffffff18}
+main{padding:42px 4vw}.right{background:#ffffff60;border-left:1px solid var(--l);padding:28px}
+.eyebrow{color:var(--g);letter-spacing:.22em;text-transform:uppercase;font-size:12px;font-weight:700}
+h1{font:68px/.95 Georgia,serif;color:var(--n);font-weight:400;margin:12px 0 34px}
+.viewer{display:grid;grid-template-columns:1fr 280px;gap:22px}
+.image{min-height:520px;border:1px solid var(--l);background:linear-gradient(135deg,rgba(27,43,69,.12),rgba(184,147,90,.22));display:flex;align-items:center;justify-content:center;color:var(--n);font:34px Georgia,serif}
+.panel,.thumb,.card{background:#ffffff70;border:1px solid var(--l);padding:18px}
+.thumb{height:120px;margin-bottom:14px;background:linear-gradient(135deg,rgba(27,43,69,.10),rgba(184,147,90,.18))}
+.tag{display:inline-block;border:1px solid rgba(184,147,90,.34);padding:6px 9px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--g);font-weight:700;margin:4px 4px 0 0}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px}
+.card h3{font:21px Georgia,serif;color:var(--n);font-weight:400}
+@media(max-width:1100px){.app{grid-template-columns:1fr}.right,aside nav{display:none}.viewer{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.image{min-height:320px}h1{font-size:50px}}
+</style></head><body>
+<div class='app'><aside><div class='logo'>MEIFERTS™</div><div class='sub'>Building Intelligence™</div><nav>
+<a href='dashboard.html'>Dashboard <span>01</span></a><a href='evidence.html'>Evidence <span>02</span></a><a href='photo-viewer.html'><strong>Photo Viewer</strong> <span>03</span></a><a href='inspection.html'>Inspection <span>04</span></a><a href='report-generator.html'>Report <span>05</span></a>
+</nav></aside>
+<main><div class='eyebrow'>Evidence Photo Viewer</div><h1>Visual evidence review.</h1>
+<div class='viewer'><div class='image'>Selected Evidence Image</div><div class='panel'><div class='eyebrow'>Selected Item</div><h2 style='font:32px Georgia,serif;color:var(--n);font-weight:400'>Balcony moisture staining</h2><p>Linked to Building Envelope and waterproofing finding.</p><span class='tag'>Envelope</span><span class='tag'>Moisture</span><span class='tag'>Report</span></div></div>
+<div class='grid'>
+<div class='card'><div class='thumb'></div><h3>Balcony moisture staining</h3><span class='tag'>Photo</span></div>
+<div class='card'><div class='thumb'></div><h3>Roof edge detail</h3><span class='tag'>Roof</span></div>
+<div class='card'><div class='thumb'></div><h3>Thermal review</h3><span class='tag'>Thermal</span></div>
+<div class='card'><div class='thumb'></div><h3>Facade joint</h3><span class='tag'>Envelope</span></div>
+</div></main>
+<section class='right'><div class='eyebrow'>Metadata</div><h2 style='font:30px Georgia,serif;color:var(--n);font-weight:400'>Evidence Context</h2><p>Project: Coastal Residential Tower</p><p>Component: Building Envelope</p><p>Status: Classified</p><p>Report: Draft</p></section></div></body></html>
