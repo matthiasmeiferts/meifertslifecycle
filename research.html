@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Research | MEIFERTS™ Building Intelligence</title>
+<meta name="description" content="Research, methodology papers and technical notes from MEIFERTS™ Building Intelligence on Technical Due Diligence, Building Risk, Lifecycle Assessment and CAPEX." />
+
+<style>
+:root{
+--navy:#1B2B45;
+--gold:#B8935A;
+--cream:#F3EEE2;
+--text:#1f2933;
+--muted:#6b7280;
+--line:rgba(27,43,69,.16);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:hidden}
+
+body{
+font-family:Inter,Arial,sans-serif;
+background:var(--cream);
+color:var(--text);
+line-height:1.65;
+}
+
+header{
+padding:28px 5vw;
+border-bottom:1px solid var(--line);
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:34px;
+flex-wrap:wrap;
+background:rgba(243,238,226,.96);
+}
+
+.brand{text-decoration:none;color:var(--navy);min-width:240px}
+
+.brand-title{
+font-family:Georgia,"Times New Roman",serif;
+font-size:28px;
+letter-spacing:.12em;
+font-weight:500;
+text-transform:uppercase;
+}
+
+.brand-subtitle{
+font-size:13px;
+letter-spacing:.20em;
+text-transform:uppercase;
+color:var(--gold);
+font-weight:700;
+margin-top:6px;
+}
+
+nav{
+display:flex;
+gap:24px;
+align-items:center;
+justify-content:flex-end;
+flex-wrap:wrap;
+}
+
+nav a{
+text-decoration:none;
+color:var(--navy);
+text-transform:uppercase;
+letter-spacing:.10em;
+font-size:12px;
+font-weight:700;
+white-space:nowrap;
+}
+
+nav a:hover{color:var(--gold)}
+
+.nav-button{
+border:1px solid var(--navy);
+padding:10px 16px;
+}
+
+.nav-button:hover{
+background:var(--navy);
+color:var(--cream);
+}
+
+main{padding:82px 5vw 100px}
+
+.hero{
+max-width:1180px;
+margin:0 auto 80px;
+}
+
+.eyebrow,.section-eyebrow{
+color:var(--gold);
+text-transform:uppercase;
+letter-spacing:.22em;
+font-size:12px;
+font-weight:700;
+margin-bottom:22px;
+}
+
+h1{
+font-family:Georgia,"Times New Roman",serif;
+font-size:clamp(58px,8vw,108px);
+line-height:.95;
+font-weight:400;
+color:var(--navy);
+margin:0 0 38px;
+max-width:980px;
+}
+
+.lead{
+font-size:24px;
+line-height:1.5;
+color:var(--navy);
+max-width:880px;
+margin:0 0 30px;
+}
+
+.hero-text{
+font-size:18px;
+color:#4b5563;
+max-width:820px;
+margin:0;
+}
+
+.content-section{
+max-width:1180px;
+margin:0 auto 80px;
+background:rgba(255,255,255,.38);
+border:1px solid var(--line);
+padding:54px 48px;
+}
+
+.content-section p{
+font-size:18px;
+color:#4b5563;
+max-width:940px;
+margin:0 0 24px;
+}
+
+h2{
+font-family:Georgia,"Times New Roman",serif;
+font-size:clamp(38px,4.6vw,68px);
+line-height:1.05;
+font-weight:400;
+color:var(--navy);
+margin:0 0 34px;
+}
+
+h3{
+font-family:Georgia,"Times New Roman",serif;
+font-size:29px;
+line-height:1.15;
+font-weight:400;
+color:var(--navy);
+margin:0 0 16px;
+}
+
+.research-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:22px;
+margin-top:34px;
+}
+
+.research-card{
+border:1px solid rgba(184,147,90,.28);
+background:rgba(255,255,255,.52);
+padding:30px;
+min-height:280px;
+display:flex;
+flex-direction:column;
+}
+
+.research-card p{
+font-size:15px;
+margin:0 0 22px;
+}
+
+.card-meta{
+font-size:11px;
+letter-spacing:.16em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--gold);
+margin-bottom:18px;
+}
+
+.card-link{
+margin-top:auto;
+font-size:12px;
+letter-spacing:.12em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--navy);
+border-bottom:1px solid var(--gold);
+width:max-content;
+text-decoration:none;
+padding-bottom:3px;
+}
+
+.framework{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:14px;
+margin-top:34px;
+}
+
+.framework div{
+border-top:1px solid var(--line);
+padding-top:16px;
+font-family:Georgia,"Times New Roman",serif;
+font-size:22px;
+color:var(--navy);
+}
+
+.dark-section{
+max-width:1180px;
+margin:0 auto 80px;
+background:var(--navy);
+color:var(--cream);
+padding:62px 48px;
+border:1px solid rgba(184,147,90,.24);
+}
+
+.dark-section h2,
+.dark-section h3{
+color:var(--cream);
+}
+
+.dark-section p{
+font-size:19px;
+color:rgba(243,238,226,.82);
+max-width:920px;
+margin:0 0 24px;
+}
+
+.dark-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:18px;
+margin-top:34px;
+}
+
+.dark-card{
+border:1px solid rgba(243,238,226,.18);
+background:rgba(255,255,255,.04);
+padding:26px;
+min-height:190px;
+}
+
+.dark-card h3{
+font-size:25px;
+}
+
+.dark-card p{
+font-size:15px;
+margin:0;
+}
+
+footer{
+background:var(--navy);
+color:var(--cream);
+padding:52px 5vw;
+}
+
+.footer-inner{
+max-width:1180px;
+margin:0 auto;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:50px;
+}
+
+footer h3{
+font-family:Georgia,"Times New Roman",serif;
+font-size:30px;
+font-weight:400;
+letter-spacing:.08em;
+margin:0 0 18px;
+color:var(--cream);
+}
+
+footer p{
+margin:0 0 16px;
+color:rgba(243,238,226,.82);
+}
+
+.footer-links{
+display:flex;
+gap:22px;
+flex-wrap:wrap;
+justify-content:flex-end;
+align-items:flex-start;
+}
+
+.footer-links a{
+color:var(--cream);
+text-decoration:none;
+text-transform:uppercase;
+letter-spacing:.12em;
+font-size:12px;
+}
+
+@media(max-width:1100px){
+.research-grid,.dark-grid{grid-template-columns:1fr 1fr}
+.framework{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:760px){
+header{align-items:flex-start}
+nav{justify-content:flex-start;gap:16px 20px}
+nav a{font-size:11px}
+main{padding:56px 5vw 80px}
+h1{font-size:clamp(52px,15vw,74px)}
+.lead{font-size:20px}
+.content-section,.dark-section{padding:32px 26px}
+.research-grid,.dark-grid,.framework,.footer-inner{grid-template-columns:1fr}
+.footer-links{justify-content:flex-start}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<a class="brand" href="/">
+<div class="brand-title">MEIFERTS™</div>
+<div class="brand-subtitle">Building Intelligence™</div>
+</a>
+
+<nav>
+<a href="/methodology/">Methodology</a>
+<a href="/reports.html">Reports</a>
+<a href="/research.html">Research</a>
+<a href="/publications.html">Publications</a>
+<a href="/portal/">Portal</a>
+<a href="/contact.html">Contact</a>
+<a class="nav-button" href="/request-review.html">Request Technical Review</a>
+</nav>
+</header>
+
+<main>
+
+<section class="hero">
+<div class="eyebrow">MEIFERTS Research</div>
+<h1>Building knowledge for better property decisions.</h1>
+<p class="lead">
+Research, methodology papers and technical notes on building risk, lifecycle behaviour, deferred maintenance, CAPEX exposure and Technical Due Diligence.
+</p>
+<p class="hero-text">
+MEIFERTS™ Building Intelligence treats research as part of the decision process. The objective is not academic complexity. The objective is to translate building complexity into usable, structured and decision-relevant understanding.
+</p>
+</section>
+
+<section class="content-section">
+<div class="section-eyebrow">Research Focus</div>
+<h2>Where building performance becomes decision risk.</h2>
+<p>
+Buildings change over time. Materials age, systems deteriorate, maintenance decisions compound, reserves become relevant and hidden defects slowly become financial exposure.
+</p>
+<p>
+The research section documents the frameworks behind the MEIFERTS Standard™: how buildings are observed, how evidence is structured, how lifecycle behaviour is interpreted and how findings become decision support.
+</p>
+
+<div class="framework">
+<div>Building Risk</div>
+<div>Lifecycle</div>
+<div>CAPEX</div>
+<div>Evidence</div>
+<div>Decision</div>
+</div>
+</section>
+
+<section class="content-section">
+<div class="section-eyebrow">Current Research Library</div>
+<h2>Methodology papers and technical notes.</h2>
+
+<div class="research-grid">
+<div class="research-card">
+<div class="card-meta">Methodology Paper</div>
+<h3>The MEIFERTS Standard™</h3>
+<p>A structured framework for transforming observations into evidence, evidence into understanding and understanding into decision clarity.</p>
+<a class="card-link" href="/methodology/">Read Methodology</a>
+</div>
+
+<div class="research-card">
+<div class="card-meta">Research Figure</div>
+<h3>Building Performance Over Time</h3>
+<p>A lifecycle-oriented view of building deterioration, maintenance intervention and the hidden cost of deferred technical decisions.</p>
+<a class="card-link" href="/meiferts-research-v3%202.svg">Open Figure</a>
+</div>
+
+<div class="research-card">
+<div class="card-meta">Technical Note</div>
+<h3>The Building Behind The Brochure</h3>
+<p>A research note on why marketing material rarely explains the future cost profile of a building and why technical review must start before acquisition.</p>
+<a class="card-link" href="/publications.html">View Publications</a>
+</div>
+
+<div class="research-card">
+<div class="card-meta">Risk Framework</div>
+<h3>Building Risk Score™</h3>
+<p>A decision-support approach for translating technical, lifecycle, financial and governance observations into a structured risk profile.</p>
+<a class="card-link" href="/reports.html">Explore Reports</a>
+</div>
+
+<div class="research-card">
+<div class="card-meta">Lifecycle Note</div>
+<h3>Remaining Useful Life</h3>
+<p>How component age, maintenance quality and environmental exposure affect the remaining useful life of building systems.</p>
+<a class="card-link" href="/reports.html">Report Structure</a>
+</div>
+
+<div class="research-card">
+<div class="card-meta">CAPEX Note</div>
+<h3>Future Cost Exposure</h3>
+<p>Why acquisition decisions should include foreseeable capital expenditure, maintenance backlog and reserve adequacy before purchase.</p>
+<a class="card-link" href="/request-review.html">Request Review</a>
+</div>
+</div>
+</section>
+
+<section class="dark-section">
+<div class="section-eyebrow">Research Principles</div>
+<h2>Research must improve decisions, not decorate documents.</h2>
+<p>
+The purpose of MEIFERTS research is practical: to create frameworks that help buyers, investors and advisors understand what a building may ask of them after acquisition.
+</p>
+
+<div class="dark-grid">
+<div class="dark-card">
+<h3>Evidence before opinion</h3>
+<p>Every research model begins with observable condition, documentation and context.</p>
+</div>
+
+<div class="dark-card">
+<h3>Lifecycle before appearance</h3>
+<p>Buildings should be understood through long-term performance, not only present visual condition.</p>
+</div>
+
+<div class="dark-card">
+<h3>Risk before price</h3>
+<p>The acquisition price is only one part of the ownership decision.</p>
+</div>
+
+<div class="dark-card">
+<h3>Decision before documentation</h3>
+<p>Reports are only useful when they support a clear next step.</p>
+</div>
+</div>
+</section>
+
+<section class="content-section">
+<div class="section-eyebrow">Upcoming Research</div>
+<h2>Future publications.</h2>
+<p>
+The research library will be expanded with white papers, case-based technical notes, building risk frameworks, CAPEX models and field observations from Technical Property Reviews™.
+</p>
+
+<div class="research-grid">
+<div class="research-card">
+<div class="card-meta">Upcoming</div>
+<h3>Reserve Funds Matter More Than Marble Floors</h3>
+<p>A paper on the financial infrastructure behind condominium ownership, reserve adequacy and future special assessments.</p>
+</div>
+
+<div class="research-card">
+<div class="card-meta">Upcoming</div>
+<h3>Waterproofing as Ownership Risk</h3>
+<p>A technical note on balconies, roofs, terraces, pool decks and moisture pathways in residential buildings.</p>
+</div>
+
+<div class="research-card">
+<div class="card-meta">Upcoming</div>
+<h3>CAPEX Forecasting for Buyers</h3>
+<p>A practical framework for identifying short-, mid- and long-term capital expenditure before acquisition.</p>
+</div>
+</div>
+</section>
+
+</main>
+
+<footer>
+<div class="footer-inner">
+<div>
+<h3>MEIFERTS BUILDING INTELLIGENCE™</h3>
+<p>We help people make better decisions.</p>
+<p>
+Technical Due Diligence<br>
+Building Risk Assessment<br>
+Lifecycle Intelligence
+</p>
+<p>Hamburg · Germany</p>
+<p>hello@meifertslifecycle.com</p>
+<p>+49 176 44537849</p>
+<p>© Matthias Meiferts</p>
+</div>
+
+<div class="footer-links">
+<a href="/methodology/">Methodology</a>
+<a href="/reports.html">Reports</a>
+<a href="/research.html">Research</a>
+<a href="/publications.html">Publications</a>
+<a href="/portal/">Portal</a>
+<a href="/contact.html">Contact</a>
+<a href="/imprint.html">Imprint</a>
+<a href="/privacy.html">Privacy</a>
+</div>
+</div>
+</footer>
+
+</body>
+</html>
