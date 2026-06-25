@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MEIFERTS™ Professional Workspace v3.1</title>
-<meta name="description" content="MEIFERTS Professional Workspace™ v3.1 for inspections, evidence management, building risk scoring, lifecycle assessment, CAPEX forecasting and report preparation." />
+<title>MEIFERTS™ Professional Workspace v3.2</title>
+<meta name="description" content="MEIFERTS Professional Workspace™ v3.2 for inspections, evidence management, building risk scoring, lifecycle assessment, CAPEX forecasting and report preparation." />
 
 <style>
 :root{
@@ -856,6 +856,98 @@ body{background:white}
 .panel,.work-panel,.side-panel,.score-card,.preview-page,.report-step,.metric{box-shadow:none;break-inside:avoid}
 }
 
+
+.property-tabs{
+display:flex;
+gap:12px;
+flex-wrap:wrap;
+margin:22px 0;
+}
+
+.property-tab{
+border:1px solid var(--line);
+background:rgba(255,255,255,.46);
+padding:12px 14px;
+font-size:11px;
+letter-spacing:.12em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--navy);
+cursor:pointer;
+}
+
+.property-tab.active,
+.property-tab:hover{
+background:var(--navy);
+color:var(--cream);
+}
+
+.report-status-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:14px;
+margin-top:22px;
+}
+
+.report-status{
+border:1px solid var(--line);
+background:rgba(255,255,255,.42);
+padding:18px;
+}
+
+.report-status strong{
+display:block;
+font-family:Georgia,"Times New Roman",serif;
+font-size:22px;
+font-weight:400;
+color:var(--navy);
+margin-bottom:6px;
+}
+
+.report-status span{
+font-size:11px;
+letter-spacing:.12em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--gold);
+}
+
+.command-center{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:18px;
+margin-top:22px;
+}
+
+.command-card{
+border:1px solid rgba(184,147,90,.28);
+background:rgba(255,255,255,.52);
+padding:24px;
+min-height:165px;
+}
+
+.command-card h3{
+font-size:24px;
+}
+
+.command-card p{
+font-size:14px;
+margin:0 0 18px;
+}
+
+.saved-note{
+margin-top:14px;
+font-size:13px;
+color:#4b5563;
+}
+
+@media(max-width:1100px){
+.report-status-grid,.command-center{grid-template-columns:1fr 1fr}
+}
+@media(max-width:760px){
+.report-status-grid,.command-center{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 
@@ -884,7 +976,7 @@ This workspace is the internal professional environment behind MEIFERTS Building
 <a class="brand" href="../">
 <div class="brand-title">MEIFERTS™</div>
 <div class="brand-subtitle">Building Intelligence™</div>
-<div class="workspace-label">Professional Workspace™ v3.1</div>
+<div class="workspace-label">Professional Workspace™ v3.2</div>
 </a>
 
 <div class="nav-group">
@@ -916,7 +1008,7 @@ This workspace is the internal professional environment behind MEIFERTS Building
 </div>
 <div class="status-group">
 <div class="status-pill">Internal Workspace</div>
-<div class="status-pill">Prototype v3.1</div>
+<div class="status-pill">Prototype v3.2</div>
 </div>
 </section>
 
@@ -935,8 +1027,8 @@ The Professional Workspace™ connects inspection logic, evidence capture, risk 
 
 <div class="panel">
 <div class="eyebrow">Active Project</div>
-<h2>Coastal Residential Tower</h2>
-<p>
+<h2 id="activeProjectTitle">Coastal Residential Tower</h2>
+<p id="activeProjectText">
 Technical review draft in progress. Evidence collection active. Risk evaluation pending. CAPEX section not yet finalised.
 </p>
 <div class="actions">
@@ -952,6 +1044,33 @@ Technical review draft in progress. Evidence collection active. Risk evaluation 
 <div class="metric"><div class="metric-label">Report Ready</div><div class="metric-number">1</div><p>One report section ready for export.</p></div>
 </section>
 
+<section class="section" id="command">
+<div class="section-header">
+<h2 class="section-title">Command Center</h2>
+<a class="small-link" href="#" onclick="resetWorkspaceDemo(); return false;">Reset Demo Data</a>
+</div>
+
+<div class="command-center">
+<div class="command-card">
+<h3>Create Property</h3>
+<p>Start a new project profile with asset type, location, inspection scope and decision objective.</p>
+<a class="small-link" href="#engine">Open Property Setup</a>
+</div>
+
+<div class="command-card">
+<h3>Evidence Review</h3>
+<p>Classify photos, notes and documents before they influence risk scoring and report logic.</p>
+<a class="small-link" href="#engine">Open Evidence Inbox</a>
+</div>
+
+<div class="command-card">
+<h3>Generate Report</h3>
+<p>Prepare Executive Summary, Technical Review, Risk Score, Lifecycle, CAPEX and Recommendation.</p>
+<a class="small-link" href="#report">Open Report Builder</a>
+</div>
+</div>
+</section>
+
 <section class="section" id="engine">
 <div class="section-header">
 <h2 class="section-title">Inspection Engine™</h2>
@@ -962,6 +1081,11 @@ Technical review draft in progress. Evidence collection active. Risk evaluation 
 <div class="tree">
 <div class="tree-section">
 <div class="tree-title">Property</div>
+<div class="property-tabs">
+<button class="property-tab active" type="button" onclick="selectProperty('Coastal Residential Tower')">Project 001</button>
+<button class="property-tab" type="button" onclick="selectProperty('Metropolitan High-Rise')">Project 002</button>
+<button class="property-tab" type="button" onclick="selectProperty('Residential Asset Prototype')">Project 003</button>
+</div>
 <div class="tree-item active"><strong>Coastal Residential Tower</strong><span>Open</span></div>
 <div class="tree-item"><strong>Metropolitan High-Rise</strong><span>Draft</span></div>
 <div class="tree-item"><strong>Residential Asset Prototype</strong><span>Review</span></div>
@@ -1108,6 +1232,20 @@ CAPEX reasoning translates technical and lifecycle observations into future owne
 <div class="report-step"><span>06</span><h3>Recommendation</h3><p>Proceed, renegotiate, investigate further or walk away.</p></div>
 </div>
 
+<div class="report-status-grid">
+<div class="report-status"><strong id="statusExecutive">Draft</strong><span>Executive Summary</span></div>
+<div class="report-status"><strong id="statusTechnical">Open</strong><span>Technical Review</span></div>
+<div class="report-status"><strong id="statusRisk">Live</strong><span>Risk Score</span></div>
+<div class="report-status"><strong id="statusCapex">Pending</strong><span>CAPEX Forecast</span></div>
+</div>
+
+<div class="actions">
+<button class="button primary" type="button" onclick="markReportReady()">Mark Report Ready</button>
+<button class="button" type="button" onclick="window.print()">Export / Print PDF</button>
+</div>
+
+<div class="saved-note" id="savedNote">Workspace data is stored locally in this browser during the session.</div>
+
 <div class="report-preview">
 <div class="preview-page">
 <div class="page-mark">Decision Support Report™ · Preview</div>
@@ -1173,6 +1311,93 @@ It is the internal professional environment where the MEIFERTS Standard™ is ap
 })();
 
 
+
+var workspaceProjects = {
+  "Coastal Residential Tower": {
+    text: "Technical review draft in progress. Evidence collection active. Risk evaluation pending. CAPEX section not yet finalised.",
+    risk: [70,68,64,70]
+  },
+  "Metropolitan High-Rise": {
+    text: "Lifecycle assessment focused on building envelope, MEP systems, reserve fund logic and governance structure.",
+    risk: [42,48,45,38]
+  },
+  "Residential Asset Prototype": {
+    text: "Technical property review focused on roof, windows, moisture, electrical systems and maintenance backlog.",
+    risk: [78,74,82,63]
+  }
+};
+
+function selectProperty(name){
+  var data = workspaceProjects[name];
+  if(!data) return;
+
+  var title = document.getElementById("activeProjectTitle");
+  if(title){ title.textContent = name; }
+
+  var text = document.getElementById("activeProjectText");
+  if(text){ text.textContent = data.text; }
+
+  var inputs = ["technicalRisk","lifecycleRisk","financialRisk","governanceRisk"];
+  inputs.forEach(function(id, index){
+    var el = document.getElementById(id);
+    if(el){ el.value = data.risk[index]; }
+  });
+  updateRiskScore();
+
+  document.querySelectorAll(".property-tab").forEach(function(button){
+    button.classList.remove("active");
+    if(button.textContent.includes(name.split(" ")[0]) || button.getAttribute("onclick").includes(name)){
+      button.classList.add("active");
+    }
+  });
+
+  localStorage.setItem("meifertsActiveProject", name);
+  showToast("Project loaded");
+}
+
+function saveWorkspaceState(){
+  var state = {
+    score: document.querySelector(".score-number") ? document.querySelector(".score-number").textContent : "",
+    executive: document.getElementById("statusExecutive") ? document.getElementById("statusExecutive").textContent : "",
+    technical: document.getElementById("statusTechnical") ? document.getElementById("statusTechnical").textContent : "",
+    risk: document.getElementById("statusRisk") ? document.getElementById("statusRisk").textContent : "",
+    capex: document.getElementById("statusCapex") ? document.getElementById("statusCapex").textContent : ""
+  };
+  localStorage.setItem("meifertsWorkspaceState", JSON.stringify(state));
+}
+
+function restoreWorkspaceState(){
+  var active = localStorage.getItem("meifertsActiveProject");
+  if(active && workspaceProjects[active]){ selectProperty(active); }
+
+  var raw = localStorage.getItem("meifertsWorkspaceState");
+  if(!raw) return;
+  try{
+    var state = JSON.parse(raw);
+    ["Executive","Technical","Risk","Capex"].forEach(function(name){
+      var el = document.getElementById("status"+name);
+      var key = name.toLowerCase();
+      if(el && state[key]) el.textContent = state[key];
+    });
+  }catch(e){}
+}
+
+function markReportReady(){
+  document.getElementById("statusExecutive").textContent = "Ready";
+  document.getElementById("statusTechnical").textContent = "Ready";
+  document.getElementById("statusRisk").textContent = "Ready";
+  document.getElementById("statusCapex").textContent = "Ready";
+  saveWorkspaceState();
+  showToast("Report marked ready");
+}
+
+function resetWorkspaceDemo(){
+  localStorage.removeItem("meifertsActiveProject");
+  localStorage.removeItem("meifertsWorkspaceState");
+  sessionStorage.removeItem("meifertsWorkspaceAccess");
+  location.reload();
+}
+
 function riskLabel(value){
   if(value < 35) return "Low";
   if(value < 70) return "Medium";
@@ -1219,11 +1444,13 @@ function addEvidenceItem(){
 }
 
 function saveObservation(){
+  saveWorkspaceState();
   showToast("Observation saved");
 }
 
 document.addEventListener("DOMContentLoaded", function(){
   updateRiskScore();
+  restoreWorkspaceState();
 });
 
 function unlockWorkspace(){
