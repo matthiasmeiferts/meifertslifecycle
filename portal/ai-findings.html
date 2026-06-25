@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Findings | MEIFERTS™ Building Intelligence</title>
+<style>
+:root{--n:#1B2B45;--g:#B8935A;--c:#F3EEE2;--l:rgba(27,43,69,.16)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial;background:var(--c);color:#1f2933}
+.app{display:grid;grid-template-columns:280px 1fr 340px;min-height:100vh}
+aside{background:var(--n);color:white;padding:28px}
+.logo{font:28px Georgia,serif;letter-spacing:.12em}.sub{color:var(--g);letter-spacing:.2em;font-size:12px;text-transform:uppercase;margin-bottom:30px}
+nav a{display:flex;justify-content:space-between;color:#eee;text-decoration:none;padding:11px 0;border-bottom:1px solid #ffffff18}
+main{padding:42px 4vw}.right{background:#ffffff60;border-left:1px solid var(--l);padding:28px}
+.eyebrow{color:var(--g);letter-spacing:.22em;text-transform:uppercase;font-size:12px;font-weight:700}
+h1{font:68px/.95 Georgia,serif;color:var(--n);font-weight:400;margin:12px 0 34px}
+h2{font:42px Georgia,serif;color:var(--n);font-weight:400;margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.card,.panel{background:#ffffff70;border:1px solid var(--l);padding:24px}
+.card h3{font:28px Georgia,serif;color:var(--n);font-weight:400;margin:0 0 12px}
+.tag{display:inline-block;border:1px solid rgba(184,147,90,.34);padding:6px 9px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--g);font-weight:700;margin:4px 4px 0 0}
+.btn{display:inline-block;margin-top:18px;background:var(--n);color:#fff;padding:12px 18px;text-decoration:none;text-transform:uppercase;letter-spacing:.12em;font-size:12px;font-weight:700}
+.row{display:grid;grid-template-columns:1.2fr .7fr .7fr 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--l)}
+.row strong{font:22px Georgia,serif;color:var(--n);font-weight:400}
+@media(max-width:1100px){.app{grid-template-columns:1fr}.right,aside nav{display:none}}
+@media(max-width:700px){h1{font-size:50px}.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+<div class="logo">MEIFERTS™</div>
+<div class="sub">Building Intelligence™</div>
+<nav>
+<a href="dashboard.html">Dashboard <span>01</span></a>
+<a href="evidence.html">Evidence <span>02</span></a>
+<a href="inspection.html">Inspection <span>03</span></a>
+<a href="ai-findings.html"><strong>AI Findings</strong> <span>04</span></a>
+<a href="risk.html">Risk <span>05</span></a>
+<a href="report-generator.html">Report <span>06</span></a>
+</nav>
+</aside>
+
+<main>
+<div class="eyebrow">AI Findings Assistant</div>
+<h1>Suggested findings for professional review.</h1>
+
+<section class="panel">
+<h2>Human-in-the-loop workflow.</h2>
+<p>AI suggestions are draft support only. Final judgement, wording, risk level and report inclusion remain with the professional reviewer.</p>
+<span class="tag">Draft</span><span class="tag">Review Required</span><span class="tag">No Auto Approval</span>
+</section>
+
+<section class="grid" style="margin-top:28px">
+<div class="card">
+<div class="eyebrow">Suggested Finding</div>
+<h3>Moisture staining at balcony edge</h3>
+<p>Possible waterproofing weakness. Recommend specialist review and documentation request.</p>
+<span class="tag">Envelope</span><span class="tag">Medium</span>
+<a class="btn" href="inspection.html">Review</a>
+</div>
+<div class="card">
+<div class="eyebrow">Suggested Finding</div>
+<h3>Missing roof documentation</h3>
+<p>Waterproofing records and maintenance history not yet available. Risk confidence limited.</p>
+<span class="tag">Roof</span><span class="tag">High</span>
+<a class="btn" href="risk.html">Risk</a>
+</div>
+<div class="card">
+<div class="eyebrow">Suggested Finding</div>
+<h3>Reserve statement unclear</h3>
+<p>Reserve adequacy cannot be confirmed from current evidence. Request clarification.</p>
+<span class="tag">Governance</span><span class="tag">Review</span>
+<a class="btn" href="evidence.html">Evidence</a>
+</div>
+</section>
+
+<section class="panel" style="margin-top:28px">
+<div class="eyebrow">Suggestion Register</div>
+<h2>AI draft queue.</h2>
+<div class="row"><strong>Balcony moisture staining</strong><div>Envelope</div><div>Medium</div><div>Needs professional approval</div></div>
+<div class="row"><strong>Roof records missing</strong><div>Roof</div><div>High</div><div>Evidence request needed</div></div>
+<div class="row"><strong>Reserve fund unclear</strong><div>Governance</div><div>Review</div><div>Document clarification</div></div>
+</section>
+</main>
+
+<section class="right">
+<div class="eyebrow">Control Rules</div>
+<h2>Professional guardrails.</h2>
+<p>No AI-generated finding becomes part of a report without review.</p>
+<p>No legal, structural or financial conclusion is automated.</p>
+<p>Every suggestion must be linked to evidence.</p>
+</section>
+</div>
+</body>
+</html>
