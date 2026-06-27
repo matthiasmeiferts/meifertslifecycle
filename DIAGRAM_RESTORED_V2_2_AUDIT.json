@@ -1,0 +1,14 @@
+{
+  "release": "diagram_restored_v2_2",
+  "base": "meiferts_reports_final_v2_1_fixed.zip",
+  "changed": [
+    "de/reports.html",
+    "de/methodik.html",
+    "de/technische-due-diligence.html",
+    "assets/css/main.css"
+  ],
+  "diagram": "MEIFERTS Decision Framework restored: Inspection Inputs → Technical Property Review → Building Risk Score → Remaining Useful Life → CAPEX Forecast → Decision Support Report → Investment Decision",
+  "broken_internal_links_count": 0,
+  "broken_internal_links_sample": [],
+  "security_issues": []
+}

@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PDF Export Center | MEIFERTS™</title>
+<meta name="description" content="MEIFERTS Professional Portal for Technical Property Reviews, evidence, building risk, lifecycle assessment, CAPEX and decision support.">
+<meta name="robots" content="index,follow">
+<style>
+:root{--n:#1B2B45;--g:#B8935A;--c:#F3EEE2;--l:rgba(27,43,69,.16)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial;background:var(--c);color:#1f2933}
+.app{display:grid;grid-template-columns:280px 1fr 340px;min-height:100vh}
+aside{background:var(--n);color:#fff;padding:28px}.logo{font:28px Georgia,serif}.sub{color:var(--g);font-size:12px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:28px}
+nav a{display:flex;justify-content:space-between;color:#eee;text-decoration:none;padding:11px 0;border-bottom:1px solid #ffffff18}
+main{padding:42px 4vw}.right{background:#ffffff66;border-left:1px solid var(--l);padding:28px}
+.eyebrow{color:var(--g);font-size:12px;text-transform:uppercase;letter-spacing:.2em;font-weight:700}
+h1{font:68px/.95 Georgia,serif;color:var(--n);font-weight:400;margin:12px 0 32px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.card,.panel{background:#ffffff75;border:1px solid var(--l);padding:24px}
+.card h2,.panel h2{font:34px Georgia,serif;color:var(--n);font-weight:400;margin:0 0 12px}
+.btn{display:inline-block;margin-top:18px;padding:12px 18px;background:var(--n);color:#fff;text-decoration:none;text-transform:uppercase;font-size:12px;letter-spacing:.12em}
+.tag{display:inline-block;border:1px solid rgba(184,147,90,.34);padding:6px 9px;color:var(--g);font-size:10px;text-transform:uppercase;letter-spacing:.12em;margin:4px}
+.check{display:grid;grid-template-columns:1fr auto;gap:10px;padding:12px 0;border-bottom:1px solid var(--l)}
+@media(max-width:1100px){.app{grid-template-columns:1fr}.right,aside nav{display:none}}
+</style></head><body>
+<div class="app">
+<aside><div class="logo">MEIFERTS™</div><div class="sub">Building Intelligence™</div>
+<nav>
+<a href="dashboard.html">Dashboard <span>01</span></a>
+<a href="report-generator.html">Reports <span>02</span></a>
+<a href="pdf-export.html"><strong>PDF Export</strong> <span>03</span></a>
+</nav></aside>
+<main>
+<div class="eyebrow">Export Center</div>
+<h1>Create publication-ready reports.</h1>
+
+<div class="grid">
+<div class="card">
+<h2>Decision Support Report™</h2>
+<p>Generate a complete client report including findings, evidence, Building Risk Score™, lifecycle assessment and recommendation.</p>
+<span class="tag">PDF</span><span class="tag">Client</span>
+<a class="btn" href="#" onclick="window.print();return false;">Generate PDF</a>
+</div>
+
+<div class="card">
+<h2>Executive Summary</h2>
+<p>One-page management summary with key risks and acquisition recommendation.</p>
+<span class="tag">Summary</span>
+<a class="btn" href="#" onclick="window.print();return false;">Export</a>
+</div>
+
+<div class="card">
+<h2>Evidence Appendix</h2>
+<p>Export selected photos, notes and linked evidence into a structured appendix.</p>
+<span class="tag">Evidence</span>
+<a class="btn" href="#" onclick="window.print();return false;">Export</a>
+</div>
+</div>
+
+<div class="panel" style="margin-top:28px">
+<h2>Pre-export validation</h2>
+<div class="check"><span>Evidence classified</span><strong>✓</strong></div>
+<div class="check"><span>High-risk findings reviewed</span><strong>✓</strong></div>
+<div class="check"><span>Recommendation completed</span><strong>○</strong></div>
+<div class="check"><span>Client details verified</span><strong>✓</strong></div>
+<div class="check"><span>Report branding applied</span><strong>✓</strong></div>
+</div>
+</main>
+
+<section class="right">
+<div class="eyebrow">Export Status</div>
+<h2 style="font:32px Georgia,serif;color:var(--n);font-weight:400">Ready for publication</h2>
+<p>Future versions will support automatic PDF generation, digital signatures, versioning and secure client delivery.</p>
+</section>
+</div></body></html>

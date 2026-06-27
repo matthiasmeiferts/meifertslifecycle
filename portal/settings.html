@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Settings | MEIFERTS Building Intelligence</title>
+<meta name="description" content="MEIFERTS Professional Portal for Technical Property Reviews, evidence, building risk, lifecycle assessment, CAPEX and decision support.">
+<meta name="robots" content="index,follow">
+<style>
+:root{--n:#1B2B45;--g:#B8935A;--c:#F3EEE2;--l:#d9d5cb}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial;background:var(--c);color:#222}
+.layout{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+aside{background:var(--n);color:#fff;padding:28px}
+aside h1{font:28px Georgia,serif;margin:0}.sub{color:var(--g);font-size:12px;letter-spacing:.2em;text-transform:uppercase}
+nav a{display:block;color:#eee;padding:11px 0;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.08)}
+main{padding:42px}
+h2{font:54px Georgia,serif;color:var(--n);margin:0 0 28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+.card{background:#fff8;border:1px solid var(--l);padding:24px}
+label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.15em;color:var(--g);margin:14px 0 6px}
+input,select{width:100%;padding:12px;border:1px solid var(--l)}
+button{margin-top:18px;padding:12px 18px;border:1px solid var(--n);background:var(--n);color:#fff;cursor:pointer}
+small{color:#666}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside>
+<h1>MEIFERTS™</h1>
+<div class="sub">Building Intelligence™</div>
+<nav>
+<a href="dashboard.html">Dashboard</a>
+<a href="projects.html">Projects</a>
+<a href="inspection.html">Inspection</a>
+<a href="evidence.html">Evidence</a>
+<a href="risk.html">Risk</a>
+<a href="report-generator.html">Reports</a>
+<a href="library.html">Library</a>
+<a href="academy.html">Academy</a>
+<a href="settings.html"><strong>Settings</strong></a>
+</nav>
+</aside>
+<main>
+<h2>Platform Settings</h2>
+<div class="grid">
+<div class="card">
+<h3>User Profile</h3>
+<label>Name</label><input value="Matthias Meiferts">
+<label>Role</label><input value="Technical Due Diligence Advisor">
+<label>Email</label><input value="hello@meifertslifecycle.com">
+<button>Save Profile</button>
+</div>
+<div class="card">
+<h3>Inspection Defaults</h3>
+<label>Default Report</label>
+<select><option>Technical Property Review™</option></select>
+<label>Risk Model</label>
+<select><option>Building Risk Score™ v1</option></select>
+<label>Language</label>
+<select><option>English</option><option>German</option></select>
+<button>Save Defaults</button>
+</div>
+<div class="card">
+<h3>Branding</h3>
+<label>Company</label><input value="MEIFERTS Building Intelligence">
+<label>Footer</label><input value="© Matthias Meiferts">
+<label>Primary Color</label><input value="#1B2B45">
+<button>Save Branding</button>
+</div>
+<div class="card">
+<h3>Platform Status</h3>
+<p><strong>Version:</strong> 1.0 Demo</p>
+<p><strong>Modules:</strong> Dashboard, Projects, Inspection, Evidence, Risk, Reports, Library, Academy</p>
+<p><strong>Next:</strong> Authentication, database, photo upload, PDF engine, AI findings.</p>
+<small>This page is prepared for future backend integration.</small>
+</div>
+</div>
+</main>
+</div>
+</body>
+</html>

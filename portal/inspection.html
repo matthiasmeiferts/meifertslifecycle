@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Inspection Workspace | MEIFERTS Building Intelligence Platform</title>
+<meta name="description" content="Evidence-first Inspection Workspace for MEIFERTS Building Intelligence Platform. Capture building systems, components, observations, evidence, AI review, findings, assessment and report-ready recommendations." />
+<meta name="robots" content="noindex,nofollow">
+
+<style>
+:root{
+--navy:#1B2B45;
+--navy2:#14213A;
+--gold:#B8935A;
+--cream:#F3EEE2;
+--paper:#FBF8EF;
+--white:#fff;
+--text:#1f2933;
+--muted:#6b7280;
+--line:rgba(27,43,69,.16);
+--soft:rgba(255,255,255,.46);
+--red:#9A5B52;
+--green:#5F7D65;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;min-height:100%;overflow-x:hidden}
+
+body{
+font-family:Inter,Arial,sans-serif;
+background:radial-gradient(circle at top right,rgba(184,147,90,.10),transparent 34rem),var(--cream);
+color:var(--text);
+line-height:1.55;
+}
+
+a{text-decoration:none;color:inherit}
+button,input,textarea,select{font:inherit}
+
+.portal{min-height:100vh;display:grid;grid-template-columns:292px 1fr 360px}
+
+.sidebar{
+background:var(--navy);
+color:var(--cream);
+padding:28px 24px;
+position:sticky;
+top:0;
+height:100vh;
+display:flex;
+flex-direction:column;
+box-shadow:18px 0 44px rgba(27,43,69,.08);
+}
+
+.brand{display:block;color:var(--cream);margin-bottom:34px}
+.brand-title{font-family:Georgia,"Times New Roman",serif;font-size:27px;letter-spacing:.12em;font-weight:500;text-transform:uppercase}
+.brand-subtitle{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-top:6px}
+.workspace-label{font-size:11px;letter-spacing:.20em;text-transform:uppercase;color:rgba(243,238,226,.58);margin-top:16px}
+.nav-group{margin:18px 0}
+.nav-heading{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:rgba(243,238,226,.45);margin:0 0 10px}
+
+.nav-link{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+color:rgba(243,238,226,.84);
+padding:11px 0;
+border-bottom:1px solid rgba(243,238,226,.10);
+font-size:14px;
+}
+
+.nav-link span{color:var(--gold);font-size:12px}
+.nav-link:hover,.nav-link.active{color:var(--cream)}
+.sidebar-footer{margin-top:auto;font-size:12px;color:rgba(243,238,226,.55);line-height:1.6}
+
+.main{padding:32px 4vw 80px;min-width:0}
+.context{background:rgba(255,255,255,.36);border-left:1px solid var(--line);padding:28px 24px;position:sticky;top:0;height:100vh;overflow:auto}
+
+.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.22em;font-size:12px;font-weight:700;margin-bottom:12px}
+
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:400;color:var(--navy);margin-top:0}
+h1{font-size:clamp(44px,5vw,76px);line-height:.98;margin-bottom:0}
+h2{font-size:clamp(31px,3.4vw,52px);line-height:1.05;margin-bottom:22px}
+h3{font-size:27px;line-height:1.15;margin-bottom:14px}
+p{font-size:16px;color:#4b5563;margin:0 0 18px}
+
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:22px;margin-bottom:36px}
+.status-group{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.status-pill{border:1px solid var(--line);background:rgba(255,255,255,.40);padding:11px 15px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--navy);white-space:nowrap}
+
+.section{margin-bottom:40px}
+.grid-2{display:grid;grid-template-columns:1.1fr .9fr;gap:24px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+
+.panel,.metric,.tree,.work-panel,.context-card,.card,.finding-row,.evidence-strip,.workflow-step,.decision-object{
+background:var(--soft);
+border:1px solid var(--line);
+}
+
+.panel{padding:30px}
+.metric{padding:24px;min-height:142px}
+.metric-number{font-family:Georgia,"Times New Roman",serif;font-size:46px;line-height:1;color:var(--navy);margin-bottom:12px}
+.metric-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px}
+
+.workflow-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:40px}
+.workflow-step{padding:18px;min-height:120px;position:relative}
+.workflow-step strong{display:block;font-family:Georgia,"Times New Roman",serif;font-size:22px;font-weight:400;color:var(--navy);margin-bottom:8px}
+.workflow-step p{font-size:13px;margin:0}
+.workflow-step .num{position:absolute;right:14px;bottom:8px;font-family:Georgia,"Times New Roman",serif;font-size:34px;color:rgba(184,147,90,.34)}
+
+.workspace-grid{display:grid;grid-template-columns:310px 1fr;gap:22px;align-items:start}
+.tree,.work-panel{padding:24px}
+.tree-title{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:12px}
+.tree-item{display:flex;justify-content:space-between;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.tree-item strong{font-family:Georgia,"Times New Roman",serif;font-size:21px;font-weight:400;color:var(--navy)}
+.tree-item span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:#6b7280}
+.tree-item.active strong,.tree-item:hover strong{color:var(--gold)}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.full{grid-column:1/-1}
+label{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--gold);margin-bottom:7px}
+input,select,textarea{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.56);padding:13px 14px;color:var(--navy);outline:none}
+textarea{min-height:132px;resize:vertical}
+
+.actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px}
+.button{display:inline-block;text-transform:uppercase;letter-spacing:.12em;font-size:12px;font-weight:700;padding:13px 18px;border:1px solid var(--navy);color:var(--navy);min-width:165px;text-align:center;background:transparent;cursor:pointer}
+.button.primary{background:var(--navy);color:var(--cream)}
+.button:hover{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+
+.card{padding:24px;min-height:180px}
+.tag{display:inline-block;border:1px solid rgba(184,147,90,.34);padding:6px 9px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:700;margin:4px 4px 0 0}
+.tag.red{color:var(--red);border-color:rgba(154,91,82,.42)}
+.tag.green{color:var(--green);border-color:rgba(95,125,101,.42)}
+
+.drop{border:1px dashed rgba(27,43,69,.28);background:rgba(255,255,255,.36);padding:28px;text-align:center;margin-top:22px}
+.drop strong{display:block;font-family:Georgia,"Times New Roman",serif;font-size:25px;font-weight:400;color:var(--navy);margin-bottom:8px}
+
+.decision-object{padding:22px;margin-top:22px}
+.object-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:16px}
+.object-field{border-top:1px solid var(--line);padding-top:10px}
+.object-field span{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--gold);margin-bottom:6px}
+.object-field strong{font-family:Georgia,"Times New Roman",serif;font-size:21px;font-weight:400;color:var(--navy)}
+
+.finding-row{display:grid;grid-template-columns:1.2fr .7fr .7fr .7fr .8fr;gap:16px;align-items:center;padding:18px 22px;border-bottom:1px solid var(--line)}
+.finding-row:last-child{border-bottom:0}
+.finding-row.header{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--gold)}
+.finding-row strong{font-family:Georgia,"Times New Roman",serif;font-size:21px;font-weight:400;color:var(--navy)}
+
+.evidence-strip{padding:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.thumb{height:94px;background:linear-gradient(135deg,rgba(27,43,69,.12),rgba(184,147,90,.20));border:1px solid rgba(27,43,69,.10);margin-bottom:10px}
+.evidence-card h3{font-size:19px;margin-bottom:8px}
+
+.context-card{padding:0 0 20px;margin-bottom:20px;border:0;border-bottom:1px solid var(--line);background:transparent}
+.context-card strong{font-family:Georgia,"Times New Roman",serif;font-size:25px;font-weight:400;color:var(--navy);display:block;margin-bottom:8px}
+.context-metric{display:flex;justify-content:space-between;gap:16px;border-top:1px solid var(--line);padding:12px 0;font-size:14px}
+.context-metric span:last-child{color:var(--gold);font-weight:700}
+.progress-line{height:8px;background:rgba(27,43,69,.10);overflow:hidden;margin-top:14px}
+.progress-line span{display:block;height:100%;background:var(--gold)}
+
+@media(max-width:1380px){.portal{grid-template-columns:292px 1fr}.context{display:none}.grid-4,.grid-3,.workflow-grid{grid-template-columns:1fr 1fr}.evidence-strip,.object-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:980px){.portal{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.sidebar .nav-group,.sidebar .sidebar-footer{display:none}.main{padding:38px 5vw 70px}.workspace-grid,.grid-2{grid-template-columns:1fr}}
+@media(max-width:760px){.sidebar{padding:22px 5vw}.brand-title{font-size:24px}.main{padding:34px 5vw 70px}.topbar{flex-direction:column}.grid-2,.grid-3,.grid-4,.form-grid,.finding-row,.evidence-strip,.workflow-grid,.object-grid{grid-template-columns:1fr}.full{grid-column:auto}.panel,.tree,.work-panel{padding:26px 22px}}
+</style>
+</head>
+
+<body>
+
+<div class="portal">
+
+<aside class="sidebar">
+<a class="brand" href="../">
+<div class="brand-title">MEIFERTS™</div>
+<div class="brand-subtitle">Building Intelligence™</div>
+<div class="workspace-label">Professional Workspace</div>
+</a>
+
+<div class="nav-group">
+<div class="nav-heading">Workspace</div>
+<a class="nav-link" href="dashboard.html">Dashboard <span>01</span></a>
+<a class="nav-link" href="projects.html">Cases <span>02</span></a>
+<a class="nav-link active" href="inspection.html">Inspection <span>03</span></a>
+<a class="nav-link" href="evidence.html">Evidence <span>04</span></a>
+<a class="nav-link" href="ai-findings.html">AI Analysis <span>05</span></a>
+<a class="nav-link" href="risk.html">Decision Engine <span>06</span></a>
+<a class="nav-link" href="report-generator.html">Report Studio <span>07</span></a>
+</div>
+
+<div class="nav-group">
+<div class="nav-heading">System</div>
+<a class="nav-link" href="clients.html">Clients <span>08</span></a>
+<a class="nav-link" href="library.html">Library <span>09</span></a>
+<a class="nav-link" href="settings.html">Settings <span>10</span></a>
+<a class="nav-link" href="../">Public Website <span>↗</span></a>
+</div>
+
+<div class="sidebar-footer">
+<p>Inspection workspace for case-based evidence capture, observations, findings, expert assessment, CAPEX relevance and report-ready decision objects.</p>
+<p>© Matthias Meiferts</p>
+</div>
+</aside>
+
+<main class="main">
+
+<section class="topbar">
+<div>
+<div class="eyebrow">Inspection Workspace</div>
+<h1>Field evidence becomes decision objects.</h1>
+</div>
+<div class="status-group">
+<div class="status-pill">Inspection v2.0</div>
+<div class="status-pill">67% Complete</div>
+<div class="status-pill">Evidence First</div>
+</div>
+</section>
+
+<section class="grid-4 section">
+<div class="metric"><div class="metric-label">Systems</div><div class="metric-number">7</div><p>Building areas in review.</p></div>
+<div class="metric"><div class="metric-label">Observations</div><div class="metric-number">38</div><p>Expert notes captured.</p></div>
+<div class="metric"><div class="metric-label">Findings</div><div class="metric-number">17</div><p>Open validated issues.</p></div>
+<div class="metric"><div class="metric-label">Evidence</div><div class="metric-number">124</div><p>Linked evidence objects.</p></div>
+</section>
+
+<section class="workflow-grid">
+<div class="workflow-step"><strong>Property</strong><p>Case, client, location and assignment scope.</p><div class="num">01</div></div>
+<div class="workflow-step"><strong>Building</strong><p>Asset profile, type, age, use and exposure.</p><div class="num">02</div></div>
+<div class="workflow-step"><strong>Systems</strong><p>Envelope, roof, structure, MEP and governance.</p><div class="num">03</div></div>
+<div class="workflow-step"><strong>Evidence</strong><p>Photos, notes, documents and measurements.</p><div class="num">04</div></div>
+<div class="workflow-step"><strong>Observation</strong><p>Expert-confirmed condition or document signal.</p><div class="num">05</div></div>
+<div class="workflow-step"><strong>Finding</strong><p>Validated issue ready for assessment.</p><div class="num">06</div></div>
+</section>
+
+<section class="workspace-grid section">
+<div class="tree">
+<div class="tree-title">Building Systems</div>
+<div class="tree-item active"><strong>Building Envelope</strong><span>Open</span></div>
+<div class="tree-item"><strong>Roofing</strong><span>Open</span></div>
+<div class="tree-item"><strong>Structure</strong><span>Draft</span></div>
+<div class="tree-item"><strong>Electrical</strong><span>Pending</span></div>
+<div class="tree-item"><strong>Plumbing</strong><span>Pending</span></div>
+<div class="tree-item"><strong>Common Areas</strong><span>Open</span></div>
+<div class="tree-item"><strong>Documents</strong><span>Review</span></div>
+</div>
+
+<div class="work-panel">
+<div class="eyebrow">Observation Editor</div>
+<h2>Component → Evidence → Observation → Finding.</h2>
+<p>
+Each field observation is structured so it can become part of the Decision Engine. The goal is not to write notes. The goal is to create traceable decision objects.
+</p>
+
+<div class="form-grid">
+<div>
+<label>System</label>
+<select>
+<option>Building Envelope</option>
+<option>Roofing</option>
+<option>Structure</option>
+<option>Electrical Systems</option>
+<option>Plumbing</option>
+<option>Common Areas</option>
+<option>Documents</option>
+</select>
+</div>
+
+<div>
+<label>Component / Location</label>
+<input value="Balcony edge / exterior envelope">
+</div>
+
+<div>
+<label>Observation Type</label>
+<select>
+<option>Visible Condition</option>
+<option>Document Gap</option>
+<option>Measurement Signal</option>
+<option>Maintenance Signal</option>
+<option>Governance Signal</option>
+</select>
+</div>
+
+<div>
+<label>Status</label>
+<select>
+<option>Open</option>
+<option>Evidence Required</option>
+<option>AI Review</option>
+<option>Ready for Finding</option>
+<option>Closed</option>
+</select>
+</div>
+
+<div>
+<label>Severity</label>
+<select>
+<option>Medium</option>
+<option>Low</option>
+<option>High</option>
+<option>Critical</option>
+</select>
+</div>
+
+<div>
+<label>Confidence</label>
+<select>
+<option>Moderate</option>
+<option>Low</option>
+<option>High</option>
+<option>Requires Specialist Review</option>
+</select>
+</div>
+
+<div>
+<label>Risk Type</label>
+<select>
+<option>Technical Risk</option>
+<option>Lifecycle Risk</option>
+<option>Financial Risk</option>
+<option>Governance Risk</option>
+<option>Health / Safety Risk</option>
+</select>
+</div>
+
+<div>
+<label>CAPEX Relevance</label>
+<select>
+<option>Potential CAPEX</option>
+<option>No CAPEX</option>
+<option>Immediate CAPEX</option>
+<option>Monitor</option>
+</select>
+</div>
+
+<div class="full">
+<label>Observation</label>
+<textarea>Moisture staining visible beneath balcony edge. Further assessment of waterproofing condition recommended before acquisition.</textarea>
+</div>
+
+<div class="full">
+<label>Evidence Requirement</label>
+<textarea>Link photos, thermal images, maintenance records and waterproofing documentation before converting this observation into a final finding.</textarea>
+</div>
+
+<div class="full">
+<label>Preliminary Recommendation</label>
+<textarea>Request specialist waterproofing review, maintenance documentation and inspection records before final acquisition recommendation.</textarea>
+</div>
+</div>
+
+<div class="drop">
+<strong>Attach evidence to this observation.</strong>
+<p>Photos, documents, measurements and thermal images become traceable evidence objects linked to this observation.</p>
+</div>
+
+<div class="decision-object">
+<div class="eyebrow">Decision Object Preview</div>
+<h3>Moisture staining beneath balcony edge</h3>
+<p>This object will move through AI Analysis, Expert Review, Finding, Assessment, Recommendation and Report Output.</p>
+<div class="object-grid">
+<div class="object-field"><span>Evidence</span><strong>4 linked</strong></div>
+<div class="object-field"><span>Status</span><strong>Open</strong></div>
+<div class="object-field"><span>Risk</span><strong>Medium</strong></div>
+<div class="object-field"><span>CAPEX</span><strong>Potential</strong></div>
+</div>
+</div>
+
+<div class="actions">
+<a class="button primary" href="evidence.html">Add Evidence</a>
+<a class="button" href="ai-findings.html">Send to AI Review</a>
+<a class="button" href="risk.html">Create Finding</a>
+</div>
+</div>
+</section>
+
+<section class="grid-3 section">
+<div class="card">
+<div class="eyebrow">Risk Signal</div>
+<h3>Medium technical risk.</h3>
+<p>The observation is relevant to waterproofing performance and possible future repair exposure.</p>
+<span class="tag">Technical</span>
+<span class="tag">Lifecycle</span>
+</div>
+
+<div class="card">
+<div class="eyebrow">CAPEX Signal</div>
+<h3>Potential short-term cost.</h3>
+<p>Specialist review may lead to immediate repair, further opening-up or additional investigation costs.</p>
+<span class="tag red">CAPEX</span>
+</div>
+
+<div class="card">
+<div class="eyebrow">Traceability</div>
+<h3>Not report-ready yet.</h3>
+<p>The finding can only enter the report after the supporting evidence and confidence level are validated.</p>
+<span class="tag">Evidence Required</span>
+</div>
+</section>
+
+<section class="section">
+<div class="topbar">
+<div>
+<div class="eyebrow">Open Findings</div>
+<h2>Inspection findings linked to this case.</h2>
+</div>
+<a class="button" href="risk.html">Open Decision Engine</a>
+</div>
+
+<div class="finding-row header">
+<div>Finding</div><div>System</div><div>Severity</div><div>Status</div><div>Output</div>
+</div>
+
+<div class="finding-row">
+<div><strong>Moisture staining beneath balcony edge</strong></div>
+<div>Envelope</div>
+<div>Medium</div>
+<div>Open</div>
+<div>Draft</div>
+</div>
+
+<div class="finding-row">
+<div><strong>Waterproofing documentation missing</strong></div>
+<div>Roofing</div>
+<div>High</div>
+<div>Review</div>
+<div>Pending</div>
+</div>
+
+<div class="finding-row">
+<div><strong>Reserve fund statement requires clarification</strong></div>
+<div>Governance</div>
+<div>Medium</div>
+<div>Pending</div>
+<div>Draft</div>
+</div>
+</section>
+
+<section class="section">
+<div class="topbar">
+<div>
+<div class="eyebrow">Linked Evidence</div>
+<h2>Evidence attached to current inspection.</h2>
+</div>
+<a class="button" href="evidence.html">Open Evidence</a>
+</div>
+
+<div class="evidence-strip">
+<div class="evidence-card"><div class="thumb"></div><h3>Balcony moisture staining</h3><span class="tag">Photo</span></div>
+<div class="evidence-card"><div class="thumb"></div><h3>Reserve fund statement</h3><span class="tag">Document</span></div>
+<div class="evidence-card"><div class="thumb"></div><h3>Rooftop waterproofing note</h3><span class="tag">Note</span></div>
+<div class="evidence-card"><div class="thumb"></div><h3>Thermal image review</h3><span class="tag">Thermal</span></div>
+</div>
+</section>
+
+</main>
+
+<aside class="context">
+<div class="context-card">
+<div class="eyebrow">Active Case</div>
+<strong>Coastal Residential Tower</strong>
+<p>Technical Property Review™<br>Confidential Demo Location</p>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">Inspection Status</div>
+<div class="context-metric"><span>Progress</span><span>67%</span></div>
+<div class="context-metric"><span>Systems</span><span>7</span></div>
+<div class="context-metric"><span>Observations</span><span>38</span></div>
+<div class="context-metric"><span>Open Findings</span><span>17</span></div>
+<div class="context-metric"><span>Evidence</span><span>124</span></div>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">Current System</div>
+<strong>Building Envelope</strong>
+<div class="context-metric"><span>Risk</span><span>Medium</span></div>
+<div class="context-metric"><span>CAPEX</span><span>Potential</span></div>
+<div class="context-metric"><span>Status</span><span>Open</span></div>
+<div class="context-metric"><span>Evidence Gap</span><span>Yes</span></div>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">Decision Chain</div>
+<div class="context-metric"><span>Evidence</span><span>Linked</span></div>
+<div class="context-metric"><span>AI Review</span><span>Pending</span></div>
+<div class="context-metric"><span>Finding</span><span>Draft</span></div>
+<div class="context-metric"><span>Assessment</span><span>Open</span></div>
+<div class="context-metric"><span>Report</span><span>Not Ready</span></div>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">Module</div>
+<div class="context-metric"><span>Name</span><span>Inspection</span></div>
+<div class="context-metric"><span>Version</span><span>2.0</span></div>
+<div class="context-metric"><span>Mode</span><span>Prototype</span></div>
+</div>
+</aside>
+
+</div>
+
+</body>
+</html>

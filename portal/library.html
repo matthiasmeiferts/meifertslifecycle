@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Library | MEIFERTS Building Intelligence Portal</title>
+<meta name="description" content="MEIFERTS Knowledge Library for standards, methodology, technical notes, risk frameworks, lifecycle and CAPEX references." />
+<meta name="robots" content="index,follow">
+<style>
+:root{--navy:#1B2B45;--gold:#B8935A;--cream:#F3EEE2;--text:#1f2933;--line:rgba(27,43,69,.16)}
+*{box-sizing:border-box}html,body{margin:0;padding:0;min-height:100%;overflow-x:hidden}
+body{font-family:Inter,Arial,sans-serif;background:radial-gradient(circle at top right,rgba(184,147,90,.10),transparent 34rem),var(--cream);color:var(--text);line-height:1.55}
+a{text-decoration:none;color:inherit}
+.portal{min-height:100vh;display:grid;grid-template-columns:292px 1fr 360px}
+.sidebar{background:var(--navy);color:var(--cream);padding:28px 24px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;box-shadow:18px 0 44px rgba(27,43,69,.08)}
+.brand{display:block;color:var(--cream);margin-bottom:34px}.brand-title{font-family:Georgia,"Times New Roman",serif;font-size:27px;letter-spacing:.12em;font-weight:500;text-transform:uppercase}.brand-subtitle{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-top:6px}.workspace-label{font-size:11px;letter-spacing:.20em;text-transform:uppercase;color:rgba(243,238,226,.58);margin-top:16px}
+.nav-group{margin:18px 0}.nav-heading{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:rgba(243,238,226,.45);margin:0 0 10px}.nav-link{display:flex;align-items:center;justify-content:space-between;gap:12px;color:rgba(243,238,226,.84);padding:11px 0;border-bottom:1px solid rgba(243,238,226,.10);font-size:14px}.nav-link span{color:var(--gold);font-size:12px}.nav-link:hover,.nav-link.active{color:var(--cream)}.sidebar-footer{margin-top:auto;font-size:12px;color:rgba(243,238,226,.55);line-height:1.6}
+.main{padding:32px 4vw 80px;min-width:0}.context{background:rgba(255,255,255,.36);border-left:1px solid var(--line);padding:28px 24px;position:sticky;top:0;height:100vh;overflow:auto}
+.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.22em;font-size:12px;font-weight:700;margin-bottom:12px}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(44px,5vw,78px);line-height:.98;font-weight:400;color:var(--navy);margin:0}h2{font-family:Georgia,"Times New Roman",serif;font-size:clamp(32px,3.4vw,54px);line-height:1.05;font-weight:400;color:var(--navy);margin:0 0 22px}h3{font-family:Georgia,"Times New Roman",serif;font-size:26px;font-weight:400;color:var(--navy);margin:0 0 14px}p{font-size:16px;color:#4b5563;margin:0 0 18px}
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:22px;margin-bottom:36px}.status-group{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.status-pill{border:1px solid var(--line);background:rgba(255,255,255,.40);padding:11px 15px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--navy);white-space:nowrap}
+.section{margin-bottom:40px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.panel,.card,.metric,.context-card,.search-card,.table-card{background:rgba(255,255,255,.42);border:1px solid var(--line)}
+.panel,.card,.search-card{padding:28px}.metric{padding:24px;min-height:142px}.metric-number{font-family:Georgia,"Times New Roman",serif;font-size:46px;line-height:1;color:var(--navy);margin-bottom:12px}.metric-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px}
+.search-row{display:grid;grid-template-columns:1.4fr .8fr .8fr auto;gap:12px;align-items:center}input,select{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.56);padding:13px 14px;color:var(--navy);outline:none}
+.button{display:inline-block;text-transform:uppercase;letter-spacing:.12em;font-size:12px;font-weight:700;padding:13px 18px;border:1px solid var(--navy);color:var(--navy);min-width:150px;text-align:center;background:transparent;cursor:pointer}.button.primary{background:var(--navy);color:var(--cream)}
+.tag{display:inline-block;border:1px solid rgba(184,147,90,.34);padding:6px 9px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:700;margin:4px 4px 0 0}
+.card{min-height:235px;display:flex;flex-direction:column}.card p{font-size:15px}.card-footer{margin-top:auto;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}.small-link{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--navy);border-bottom:1px solid var(--gold);padding-bottom:3px;white-space:nowrap}
+.table-card{padding:0;overflow:hidden}.table-row{display:grid;grid-template-columns:1.2fr .8fr .8fr 1fr;gap:16px;padding:18px 22px;border-bottom:1px solid var(--line);align-items:center}.table-row:last-child{border-bottom:0}.table-row.header{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--gold)}.table-row strong{font-family:Georgia,"Times New Roman",serif;font-size:21px;font-weight:400;color:var(--navy)}
+.context-card{padding:0 0 20px;margin-bottom:20px;border:0;border-bottom:1px solid var(--line);background:transparent}.context-card strong{font-family:Georgia,"Times New Roman",serif;font-size:25px;font-weight:400;color:var(--navy);display:block;margin-bottom:8px}.context-metric{display:flex;justify-content:space-between;gap:16px;border-top:1px solid var(--line);padding:12px 0;font-size:14px}.context-metric span:last-child{color:var(--gold);font-weight:700}
+@media(max-width:1280px){.portal{grid-template-columns:292px 1fr}.context{display:none}.grid-4,.grid-3{grid-template-columns:1fr 1fr}.search-row,.table-row{grid-template-columns:1fr 1fr}}
+@media(max-width:980px){.portal{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.sidebar .nav-group,.sidebar .sidebar-footer{display:none}.main{padding:38px 5vw 70px}}
+@media(max-width:760px){.sidebar{padding:22px 5vw}.brand-title{font-size:24px}.main{padding:34px 5vw 70px}.topbar{flex-direction:column}.grid-3,.grid-4,.search-row,.table-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="portal">
+<aside class="sidebar">
+<a class="brand" href="../"><div class="brand-title">MEIFERTS™</div><div class="brand-subtitle">Building Intelligence™</div><div class="workspace-label">Professional Portal</div></a>
+<div class="nav-group"><div class="nav-heading">Workspace</div>
+<a class="nav-link" href="dashboard.html">Dashboard <span>01</span></a>
+<a class="nav-link" href="projects.html">Projects <span>02</span></a>
+<a class="nav-link" href="inspection.html">Inspection <span>03</span></a>
+<a class="nav-link" href="evidence.html">Evidence <span>04</span></a>
+<a class="nav-link" href="risk.html">Risk Score™ <span>05</span></a>
+<a class="nav-link" href="report-generator.html">Report <span>06</span></a>
+</div>
+<div class="nav-group"><div class="nav-heading">Knowledge</div><a class="nav-link active" href="library.html">Library <span>07</span></a><a class="nav-link" href="academy.html">Academy <span>08</span></a><a class="nav-link" href="../">Public Website <span>↗</span></a></div>
+<div class="sidebar-footer"><p>Knowledge Library for methodology, standards, technical notes and reusable report intelligence.</p><p>© Matthias Meiferts</p></div>
+</aside>
+
+<main class="main">
+<section class="topbar">
+<div><div class="eyebrow">Knowledge Library</div><h1>Building intelligence as reusable knowledge.</h1></div>
+<div class="status-group"><div class="status-pill">Library v1.0</div><div class="status-pill">32 Records</div></div>
+</section>
+
+<section class="search-card section">
+<div class="search-row">
+<input placeholder="Search methods, components, defects, CAPEX, risk terms..." />
+<select><option>All Categories</option><option>Methodology</option><option>Technical Notes</option><option>Risk</option><option>CAPEX</option></select>
+<select><option>All Status</option><option>Ready</option><option>Draft</option><option>Review</option></select>
+<a class="button primary" href="#">New Entry</a>
+</div>
+</section>
+
+<section class="grid-4 section">
+<div class="metric"><div class="metric-label">Methods</div><div class="metric-number">7</div><p>Core frameworks.</p></div>
+<div class="metric"><div class="metric-label">Technical Notes</div><div class="metric-number">14</div><p>Reusable findings logic.</p></div>
+<div class="metric"><div class="metric-label">CAPEX Models</div><div class="metric-number">6</div><p>Forecast references.</p></div>
+<div class="metric"><div class="metric-label">Report Blocks</div><div class="metric-number">5</div><p>Reusable language.</p></div>
+</section>
+
+<section class="section">
+<div class="topbar"><div><div class="eyebrow">Featured Knowledge</div><h2>Core Building Intelligence references.</h2></div><a class="button" href="../research.html">Open Research</a></div>
+
+<div class="grid-3">
+<div class="card"><div class="eyebrow">Methodology</div><h3>The MEIFERTS Standard™</h3><p>Observation, evidence, risk, lifecycle, CAPEX and decision support as one structured process.</p><span class="tag">Ready</span><div class="card-footer"><span class="tag">Core</span><a class="small-link" href="../methodology/">Open</a></div></div>
+<div class="card"><div class="eyebrow">Risk Framework</div><h3>Building Risk Score™</h3><p>Technical, lifecycle, financial and governance risk translated into decision clarity.</p><span class="tag">Risk</span><div class="card-footer"><span class="tag">Framework</span><a class="small-link" href="risk.html">Use</a></div></div>
+<div class="card"><div class="eyebrow">Technical Note</div><h3>Waterproofing as Ownership Risk</h3><p>Balconies, roofs, terraces and pool decks as hidden future cost exposure.</p><span class="tag">Draft</span><div class="card-footer"><span class="tag">CAPEX</span><a class="small-link" href="inspection.html">Apply</a></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="topbar"><div><div class="eyebrow">Reference Register</div><h2>Operational knowledge index.</h2></div><a class="button" href="report-generator.html">Use in Report</a></div>
+
+<div class="table-card">
+<div class="table-row header"><div>Entry</div><div>Category</div><div>Status</div><div>Use Case</div></div>
+<div class="table-row"><div><strong>Deferred Maintenance</strong></div><div>Technical Note</div><div>Ready</div><div>Findings, CAPEX, report language</div></div>
+<div class="table-row"><div><strong>Reserve Fund Adequacy</strong></div><div>Governance</div><div>Review</div><div>Financial risk interpretation</div></div>
+<div class="table-row"><div><strong>Remaining Useful Life</strong></div><div>Lifecycle</div><div>Draft</div><div>Lifecycle Assessment™</div></div>
+<div class="table-row"><div><strong>Decision Support Recommendation</strong></div><div>Report Block</div><div>Ready</div><div>Executive Summary</div></div>
+</div>
+</section>
+
+<section class="grid-3 section">
+<div class="panel"><div class="eyebrow">Next Build</div><h3>Reusable defect library.</h3><p>Standard finding templates for moisture, cracks, corrosion, MEP, fire safety and documentation gaps.</p><span class="tag">Next</span></div>
+<div class="panel"><div class="eyebrow">Report Intelligence</div><h3>Approved language blocks.</h3><p>Consistent report language for risk, lifecycle, CAPEX and recommendations.</p><span class="tag">Quality</span></div>
+<div class="panel"><div class="eyebrow">Field Support</div><h3>Inspection prompts.</h3><p>Checklist logic that helps identify relevant observations during site visits.</p><span class="tag">Inspection</span></div>
+</section>
+</main>
+
+<aside class="context">
+<div class="context-card"><div class="eyebrow">Library Focus</div><strong>Technical Due Diligence</strong><p>Methods, findings, risk, lifecycle, CAPEX and report language.</p></div>
+<div class="context-card"><div class="eyebrow">Knowledge Status</div><div class="context-metric"><span>Total</span><span>32</span></div><div class="context-metric"><span>Ready</span><span>18</span></div><div class="context-metric"><span>Draft</span><span>9</span></div><div class="context-metric"><span>Review</span><span>5</span></div></div>
+<div class="context-card"><div class="eyebrow">Module</div><div class="context-metric"><span>Name</span><span>Library</span></div><div class="context-metric"><span>Version</span><span>1.0</span></div><div class="context-metric"><span>Mode</span><span>Demo</span></div></div>
+</aside>
+</div>
+</body>
+</html>

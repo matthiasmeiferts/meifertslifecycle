@@ -1,0 +1,15 @@
+{
+  "siteName": "MEIFERTS Building Intelligence",
+  "brand": "MEIFERTS",
+  "contactEmail": "hello@meifertslifecycle.com",
+  "phone": "+49 176 44537849",
+  "phoneHref": "+4917644537849",
+  "location": "Hamburg · Germany",
+  "primaryCTA": "Request Technical Review",
+  "release": "v1.0-rc1",
+  "colors": {
+    "navy": "#1B2B45",
+    "gold": "#B8935A",
+    "cream": "#F3EEE2"
+  }
+}

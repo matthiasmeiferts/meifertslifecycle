@@ -1,0 +1,10 @@
+{
+  "release": "language_landing_final",
+  "base": "meiferts_release_v1_2.zip",
+  "changed": [
+    "index.html",
+    "assets/css/main.css"
+  ],
+  "broken_internal_links_count": 0,
+  "broken_internal_links_sample": []
+}

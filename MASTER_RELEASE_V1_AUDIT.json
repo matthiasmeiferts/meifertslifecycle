@@ -1,0 +1,17 @@
+{
+  "release": "v1.0 master",
+  "base": "meiferts_sprint18_website_finish_release.zip",
+  "changed": [
+    "index.html",
+    "de/index.html",
+    "legal.html",
+    "privacy.html",
+    "404.html",
+    "assets/css/main.css"
+  ],
+  "registered_symbol_remaining": [],
+  "broken_internal_links_count": 0,
+  "broken_internal_links_sample": [],
+  "security_issues": [],
+  "engine_public": false
+}

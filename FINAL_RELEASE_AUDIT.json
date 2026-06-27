@@ -1,0 +1,24 @@
+{
+  "release_candidate": true,
+  "public_html_pages": 61,
+  "total_html_files": 63,
+  "broken_internal_links": [
+    [
+      "en/research.html",
+      "research/rn-001.html",
+      "en/research/rn-001.html"
+    ],
+    [
+      "en/research.html",
+      "research/rn-002.html",
+      "en/research/rn-002.html"
+    ],
+    [
+      "en/research.html",
+      "research/rn-003.html",
+      "en/research/rn-003.html"
+    ]
+  ],
+  "security_issues": [],
+  "engine_public": false
+}

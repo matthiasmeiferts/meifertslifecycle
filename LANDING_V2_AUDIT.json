@@ -1,0 +1,11 @@
+{
+  "release": "landing_v2_balanced",
+  "base": "meiferts_de_layout_restored_v1_6.zip",
+  "changed": [
+    "index.html",
+    "assets/css/main.css"
+  ],
+  "notes": "Landingpage neu komponiert: größerer Hero, rechte Sprachkarten, bessere Bildschirmnutzung, größere Architekturzeichnung.",
+  "broken_internal_links_count": 0,
+  "broken_internal_links_sample": []
+}

@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Report Studio | MEIFERTS Building Intelligence Platform</title>
+<meta name="description" content="Report Studio for MEIFERTS Building Intelligence Platform. Generate Decision Support Reports from validated evidence, findings, assessments, recommendations, CAPEX logic and decision outputs." />
+<meta name="robots" content="noindex,nofollow">
+
+<style>
+:root{
+--navy:#1B2B45;
+--gold:#B8935A;
+--cream:#F3EEE2;
+--paper:#FBF8EF;
+--text:#1f2933;
+--muted:#6b7280;
+--line:rgba(27,43,69,.16);
+--red:#9A5B52;
+--green:#5F7D65;
+--soft:rgba(255,255,255,.46);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;min-height:100%;overflow-x:hidden}
+
+body{
+font-family:Inter,Arial,sans-serif;
+background:radial-gradient(circle at top right,rgba(184,147,90,.10),transparent 34rem),var(--cream);
+color:var(--text);
+line-height:1.55;
+}
+
+a{text-decoration:none;color:inherit}
+button,input,select,textarea{font:inherit}
+
+.portal{
+min-height:100vh;
+display:grid;
+grid-template-columns:292px 1fr 360px;
+}
+
+.sidebar{
+background:var(--navy);
+color:var(--cream);
+padding:28px 24px;
+position:sticky;
+top:0;
+height:100vh;
+display:flex;
+flex-direction:column;
+box-shadow:18px 0 44px rgba(27,43,69,.08);
+}
+
+.brand{display:block;color:var(--cream);margin-bottom:34px}
+.brand-title{font-family:Georgia,"Times New Roman",serif;font-size:27px;letter-spacing:.12em;font-weight:500;text-transform:uppercase}
+.brand-subtitle{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-top:6px}
+.workspace-label{font-size:11px;letter-spacing:.20em;text-transform:uppercase;color:rgba(243,238,226,.58);margin-top:16px}
+
+.nav-group{margin:18px 0}
+.nav-heading{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:rgba(243,238,226,.45);margin:0 0 10px}
+
+.nav-link{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+color:rgba(243,238,226,.84);
+padding:11px 0;
+border-bottom:1px solid rgba(243,238,226,.10);
+font-size:14px;
+}
+
+.nav-link span{color:var(--gold);font-size:12px}
+.nav-link:hover,.nav-link.active{color:var(--cream)}
+
+.sidebar-footer{
+margin-top:auto;
+font-size:12px;
+color:rgba(243,238,226,.55);
+line-height:1.6;
+}
+
+.main{padding:32px 4vw 80px;min-width:0}
+
+.context{
+background:rgba(255,255,255,.36);
+border-left:1px solid var(--line);
+padding:28px 24px;
+position:sticky;
+top:0;
+height:100vh;
+overflow:auto;
+}
+
+.eyebrow{
+color:var(--gold);
+text-transform:uppercase;
+letter-spacing:.22em;
+font-size:12px;
+font-weight:700;
+margin-bottom:12px;
+}
+
+h1,h2,h3{
+font-family:Georgia,"Times New Roman",serif;
+font-weight:400;
+color:var(--navy);
+margin-top:0;
+}
+
+h1{font-size:clamp(44px,5vw,76px);line-height:.98;margin-bottom:0}
+h2{font-size:clamp(31px,3.4vw,52px);line-height:1.05;margin-bottom:22px}
+h3{font-size:27px;line-height:1.15;margin-bottom:14px}
+
+p{font-size:16px;color:#4b5563;margin:0 0 18px}
+
+.topbar{
+display:flex;
+align-items:flex-start;
+justify-content:space-between;
+gap:22px;
+margin-bottom:36px;
+}
+
+.status-group{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+
+.status-pill{
+border:1px solid var(--line);
+background:rgba(255,255,255,.40);
+padding:11px 15px;
+font-size:11px;
+letter-spacing:.12em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--navy);
+white-space:nowrap;
+}
+
+.section{margin-bottom:40px}
+
+.grid-2{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:24px;
+}
+
+.grid-3{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
+}
+
+.grid-4{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:16px;
+}
+
+.panel,.metric,.chapter-card,.preview-page,.context-card,.table-card,.quality-card,.output-card{
+background:var(--soft);
+border:1px solid var(--line);
+}
+
+.panel,.chapter-card,.quality-card,.output-card{padding:28px}
+
+.panel.dark{
+background:var(--navy);
+color:var(--cream);
+border-color:rgba(184,147,90,.28);
+}
+
+.panel.dark h2,.panel.dark h3{color:var(--cream)}
+.panel.dark p{color:rgba(243,238,226,.78)}
+
+.metric{padding:24px;min-height:142px}
+
+.metric-number{
+font-family:Georgia,"Times New Roman",serif;
+font-size:46px;
+line-height:1;
+color:var(--navy);
+margin-bottom:12px;
+}
+
+.metric-label{
+font-size:11px;
+letter-spacing:.16em;
+text-transform:uppercase;
+color:var(--gold);
+font-weight:700;
+margin-bottom:8px;
+}
+
+.actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px}
+
+.button{
+display:inline-block;
+text-transform:uppercase;
+letter-spacing:.12em;
+font-size:12px;
+font-weight:700;
+padding:13px 18px;
+border:1px solid var(--navy);
+color:var(--navy);
+min-width:165px;
+text-align:center;
+background:transparent;
+cursor:pointer;
+}
+
+.button.primary{background:var(--navy);color:var(--cream)}
+.button:hover{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+.panel.dark .button{border-color:var(--cream);color:var(--cream)}
+.panel.dark .button.primary{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+
+.tag{
+display:inline-block;
+border:1px solid rgba(184,147,90,.34);
+padding:6px 9px;
+font-size:10px;
+letter-spacing:.12em;
+text-transform:uppercase;
+color:var(--gold);
+font-weight:700;
+margin:4px 4px 0 0;
+}
+
+.tag.red{color:var(--red);border-color:rgba(154,91,82,.42)}
+.tag.green{color:var(--green);border-color:rgba(95,125,101,.42)}
+
+.chapter-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:18px;
+}
+
+.chapter-card{
+min-height:245px;
+display:flex;
+flex-direction:column;
+}
+
+.chapter-card h3{font-size:25px}
+
+.chapter-footer{
+margin-top:auto;
+padding-top:16px;
+border-top:1px solid var(--line);
+display:flex;
+justify-content:space-between;
+gap:12px;
+align-items:center;
+}
+
+.small-link{
+font-size:12px;
+letter-spacing:.12em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--navy);
+border-bottom:1px solid var(--gold);
+padding-bottom:3px;
+white-space:nowrap;
+}
+
+.report-layout{
+display:grid;
+grid-template-columns:320px 1fr;
+gap:22px;
+align-items:start;
+}
+
+.report-nav{
+background:var(--soft);
+border:1px solid var(--line);
+padding:24px;
+position:sticky;
+top:32px;
+}
+
+.nav-item{
+display:flex;
+justify-content:space-between;
+padding:12px 0;
+border-bottom:1px solid var(--line);
+font-size:14px;
+gap:12px;
+}
+
+.nav-item strong{
+font-family:Georgia,"Times New Roman",serif;
+font-size:20px;
+font-weight:400;
+color:var(--navy);
+}
+
+.nav-item span{
+font-size:11px;
+letter-spacing:.12em;
+text-transform:uppercase;
+color:var(--gold);
+font-weight:700;
+}
+
+.preview-page{
+background:var(--paper);
+min-height:640px;
+padding:42px;
+box-shadow:0 18px 40px rgba(27,43,69,.08);
+}
+
+.page-mark{
+font-size:11px;
+letter-spacing:.16em;
+text-transform:uppercase;
+color:var(--gold);
+font-weight:700;
+margin-bottom:26px;
+}
+
+.preview-line{height:1px;background:var(--line);margin:24px 0}
+
+.report-title{
+font-family:Georgia,"Times New Roman",serif;
+font-size:44px;
+line-height:1.05;
+font-weight:400;
+color:var(--navy);
+margin:0 0 18px;
+}
+
+.report-section{
+margin-top:26px;
+padding-top:22px;
+border-top:1px solid var(--line);
+}
+
+.report-section h3{
+font-size:26px;
+margin-bottom:12px;
+}
+
+.output-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:16px;
+}
+
+.table-card{padding:0;overflow:hidden}
+
+.table-row{
+display:grid;
+grid-template-columns:1.2fr .8fr .8fr 1fr;
+gap:16px;
+padding:18px 22px;
+border-bottom:1px solid var(--line);
+align-items:center;
+}
+
+.table-row:last-child{border-bottom:0}
+
+.table-row.header{
+font-size:11px;
+letter-spacing:.14em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--gold);
+}
+
+.table-row strong{
+font-family:Georgia,"Times New Roman",serif;
+font-size:21px;
+font-weight:400;
+color:var(--navy);
+}
+
+.context-card{
+padding:0 0 20px;
+margin-bottom:20px;
+border:0;
+border-bottom:1px solid var(--line);
+background:transparent;
+}
+
+.context-card strong{
+font-family:Georgia,"Times New Roman",serif;
+font-size:25px;
+font-weight:400;
+color:var(--navy);
+display:block;
+margin-bottom:8px;
+}
+
+.context-metric{
+display:flex;
+justify-content:space-between;
+gap:16px;
+border-top:1px solid var(--line);
+padding:12px 0;
+font-size:14px;
+}
+
+.context-metric span:last-child{color:var(--gold);font-weight:700}
+
+@media(max-width:1380px){
+.portal{grid-template-columns:292px 1fr}
+.context{display:none}
+.grid-4,.grid-3,.chapter-grid,.output-grid{grid-template-columns:1fr 1fr}
+.report-layout{grid-template-columns:1fr}
+.report-nav{position:relative;top:auto}
+.table-row{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:980px){
+.portal{grid-template-columns:1fr}
+.sidebar{position:relative;height:auto}
+.sidebar .nav-group,.sidebar .sidebar-footer{display:none}
+.main{padding:38px 5vw 70px}
+.grid-2{grid-template-columns:1fr}
+}
+
+@media(max-width:760px){
+.sidebar{padding:22px 5vw}
+.brand-title{font-size:24px}
+.main{padding:34px 5vw 70px}
+.topbar{flex-direction:column}
+.grid-2,.grid-3,.grid-4,.chapter-grid,.table-row,.output-grid{grid-template-columns:1fr}
+.preview-page{min-height:auto;padding:26px}
+.report-title{font-size:34px}
+}
+
+@media print{
+.sidebar,.context,.actions,.button,.topbar,.chapter-grid,.report-nav,.metrics,.quality-screen,.output-screen{display:none!important}
+.portal{display:block}
+.main{padding:0}
+.preview-page{box-shadow:none;border:0;min-height:auto;background:white}
+body{background:white}
+}
+</style>
+</head>
+
+<body>
+<div class="portal">
+
+<aside class="sidebar">
+<a class="brand" href="../">
+<div class="brand-title">MEIFERTS™</div>
+<div class="brand-subtitle">Building Intelligence™</div>
+<div class="workspace-label">Professional Workspace</div>
+</a>
+
+<div class="nav-group">
+<div class="nav-heading">Workspace</div>
+<a class="nav-link" href="dashboard.html">Dashboard <span>01</span></a>
+<a class="nav-link" href="projects.html">Cases <span>02</span></a>
+<a class="nav-link" href="inspection.html">Inspection <span>03</span></a>
+<a class="nav-link" href="evidence.html">Evidence <span>04</span></a>
+<a class="nav-link" href="ai-findings.html">AI Analysis <span>05</span></a>
+<a class="nav-link" href="risk.html">Decision Engine <span>06</span></a>
+<a class="nav-link active" href="report-generator.html">Report Studio <span>07</span></a>
+</div>
+
+<div class="nav-group">
+<div class="nav-heading">System</div>
+<a class="nav-link" href="clients.html">Clients <span>08</span></a>
+<a class="nav-link" href="library.html">Library <span>09</span></a>
+<a class="nav-link" href="settings.html">Settings <span>10</span></a>
+<a class="nav-link" href="../">Public Website <span>↗</span></a>
+</div>
+
+<div class="sidebar-footer">
+<p>Report Studio for Decision Support Reports™ generated from validated evidence, findings, assessments, recommendations and decision objects.</p>
+<p>© Matthias Meiferts</p>
+</div>
+</aside>
+
+<main class="main">
+
+<section class="topbar">
+<div>
+<div class="eyebrow">Report Studio</div>
+<h1>The report is the output, not the product.</h1>
+</div>
+<div class="status-group">
+<div class="status-pill">Report Studio v2.0</div>
+<div class="status-pill">67% Ready</div>
+<div class="status-pill">Draft Output</div>
+</div>
+</section>
+
+<section class="grid-2 section">
+<div class="panel dark">
+<div class="eyebrow">Report Principle</div>
+<h2>Generated from the decision chain.</h2>
+<p>
+The Decision Support Report™ is assembled from validated evidence, expert-confirmed findings, assessments, recommendations and decision logic. It should never become detached from the underlying case record.
+</p>
+<div class="actions">
+<a class="button primary" href="#" onclick="window.print();return false;">Export / Print PDF</a>
+<a class="button" href="risk.html">Open Decision Engine</a>
+</div>
+</div>
+
+<div class="panel">
+<div class="eyebrow">Active Case Output</div>
+<h2>Coastal Residential Tower</h2>
+<p>
+The report can be drafted, but not finalized. Two high-risk findings, four missing documents and draft CAPEX assumptions remain unresolved.
+</p>
+<span class="tag">Draft</span>
+<span class="tag red">Not Final</span>
+<span class="tag">Decision Blockers</span>
+</div>
+</section>
+
+<section class="grid-4 section metrics">
+<div class="metric"><div class="metric-label">Chapters</div><div class="metric-number">8</div><p>Structured report sections.</p></div>
+<div class="metric"><div class="metric-label">Findings</div><div class="metric-number">17</div><p>Linked findings.</p></div>
+<div class="metric"><div class="metric-label">Evidence</div><div class="metric-number">38</div><p>Selected report evidence.</p></div>
+<div class="metric"><div class="metric-label">Readiness</div><div class="metric-number">67</div><p>Output readiness.</p></div>
+</section>
+
+<section class="section">
+<div class="topbar">
+<div>
+<div class="eyebrow">Report Chapters</div>
+<h2>Structured output workflow.</h2>
+</div>
+<a class="button primary" href="#" onclick="window.print();return false;">Export / Print PDF</a>
+</div>
+
+<div class="chapter-grid">
+<div class="chapter-card"><div class="eyebrow">01</div><h3>Executive Summary</h3><p>Decision-oriented overview, key risks and preliminary recommendation.</p><div class="chapter-footer"><span class="tag">Draft</span><a class="small-link" href="#preview">Preview</a></div></div>
+<div class="chapter-card"><div class="eyebrow">02</div><h3>Scope & Limitations</h3><p>Inspection scope, reliance limits, evidence boundaries and assumptions.</p><div class="chapter-footer"><span class="tag green">Ready</span><a class="small-link" href="#preview">Preview</a></div></div>
+<div class="chapter-card"><div class="eyebrow">03</div><h3>Building Description</h3><p>Asset type, systems, components and contextual property information.</p><div class="chapter-footer"><span class="tag green">Ready</span><a class="small-link" href="#preview">Preview</a></div></div>
+<div class="chapter-card"><div class="eyebrow">04</div><h3>Technical Findings</h3><p>Findings linked to evidence, components and decision impact.</p><div class="chapter-footer"><span class="tag red">Open</span><a class="small-link" href="inspection.html">Review</a></div></div>
+<div class="chapter-card"><div class="eyebrow">05</div><h3>Building Risk Score™</h3><p>Technical, lifecycle, financial and governance risk profile.</p><div class="chapter-footer"><span class="tag green">Ready</span><a class="small-link" href="risk.html">Risk</a></div></div>
+<div class="chapter-card"><div class="eyebrow">06</div><h3>Lifecycle Assessment™</h3><p>Remaining useful life and component exposure.</p><div class="chapter-footer"><span class="tag">Draft</span><a class="small-link" href="#preview">Preview</a></div></div>
+<div class="chapter-card"><div class="eyebrow">07</div><h3>CAPEX Forecast™</h3><p>Short-, medium- and long-term future cost exposure.</p><div class="chapter-footer"><span class="tag">Draft</span><a class="small-link" href="#preview">Preview</a></div></div>
+<div class="chapter-card"><div class="eyebrow">08</div><h3>Decision Recommendation</h3><p>Proceed, proceed with conditions, renegotiate, pause or reject.</p><div class="chapter-footer"><span class="tag red">Pending</span><a class="small-link" href="#preview">Preview</a></div></div>
+</div>
+</section>
+
+<section class="report-layout section" id="preview">
+<div class="report-nav">
+<div class="eyebrow">Report Outline</div>
+<div class="nav-item"><strong>Executive Summary</strong><span>Draft</span></div>
+<div class="nav-item"><strong>Scope & Limitations</strong><span>Ready</span></div>
+<div class="nav-item"><strong>Building Description</strong><span>Ready</span></div>
+<div class="nav-item"><strong>Technical Findings</strong><span>Open</span></div>
+<div class="nav-item"><strong>Risk Score™</strong><span>Ready</span></div>
+<div class="nav-item"><strong>Lifecycle</strong><span>Draft</span></div>
+<div class="nav-item"><strong>CAPEX</strong><span>Draft</span></div>
+<div class="nav-item"><strong>Recommendation</strong><span>Pending</span></div>
+</div>
+
+<div class="preview-page">
+<div class="page-mark">Decision Support Report™ · Preview</div>
+<div class="report-title">Technical Property Review™<br>Coastal Residential Tower</div>
+<p><strong>Report Status:</strong> Draft output. Not final. Pending evidence validation and decision blocker resolution.</p>
+
+<div class="report-section">
+<h3>Executive Summary</h3>
+<p>
+Current evidence indicates a medium technical risk profile. The primary concerns relate to waterproofing performance, reserve adequacy, maintenance documentation and potential future capital expenditure.
+</p>
+<p>
+The Building Risk Score™ currently stands at 68. This does not indicate an automatic walk-away decision, but several technical and documentation gaps require clarification before a final acquisition recommendation can be issued.
+</p>
+</div>
+
+<div class="report-section">
+<h3>Preliminary Recommendation</h3>
+<p>
+Proceed only after targeted specialist review, confirmation of reserve fund adequacy and clarification of waterproofing maintenance records.
+</p>
+<span class="tag red">Conditional</span>
+<span class="tag">Not Final</span>
+</div>
+
+<div class="report-section">
+<h3>Open Decision Items</h3>
+<p>
+Waterproofing documentation, reserve fund statement, maintenance history and selected inspection records remain open. These items directly affect confidence, risk interpretation and final recommendation language.
+</p>
+</div>
+
+<div class="report-section">
+<h3>Traceability Rule</h3>
+<p>
+Every final report statement must remain traceable to validated evidence, expert-reviewed findings and assessment logic inside the Professional Workspace.
+</p>
+</div>
+</div>
+</section>
+
+<section class="section quality-screen">
+<div class="topbar">
+<div>
+<div class="eyebrow">Report Readiness</div>
+<h2>Quality control before export.</h2>
+</div>
+<a class="button" href="evidence.html">Open Evidence</a>
+</div>
+
+<div class="table-card">
+<div class="table-row header"><div>Check</div><div>Status</div><div>Owner</div><div>Note</div></div>
+<div class="table-row"><div><strong>Evidence classified</strong></div><div><span class="tag green">Complete</span></div><div>MEIFERTS</div><div>38 selected items</div></div>
+<div class="table-row"><div><strong>High-risk findings reviewed</strong></div><div><span class="tag red">Open</span></div><div>MEIFERTS</div><div>2 findings pending</div></div>
+<div class="table-row"><div><strong>CAPEX assumptions documented</strong></div><div><span class="tag">Draft</span></div><div>MEIFERTS</div><div>Short- and medium-term ranges</div></div>
+<div class="table-row"><div><strong>Recommendation language approved</strong></div><div><span class="tag red">Pending</span></div><div>MEIFERTS</div><div>Final decision text needed</div></div>
+<div class="table-row"><div><strong>Evidence traceability check</strong></div><div><span class="tag">Review</span></div><div>MEIFERTS</div><div>All final statements must link to evidence</div></div>
+</div>
+</section>
+
+<section class="grid-4 section output-screen">
+<div class="output-card">
+<div class="eyebrow">PDF Output</div>
+<h3>Print-ready report.</h3>
+<p>Generate a formatted Decision Support Report™ for client delivery.</p>
+<span class="tag">Export</span>
+</div>
+
+<div class="output-card">
+<div class="eyebrow">Executive Brief</div>
+<h3>Decision summary.</h3>
+<p>Short-form client summary for acquisition discussion and advisory review.</p>
+<span class="tag">Brief</span>
+</div>
+
+<div class="output-card">
+<div class="eyebrow">Evidence Appendix</div>
+<h3>Traceability pack.</h3>
+<p>Evidence-linked appendix with photos, documents and finding references.</p>
+<span class="tag">Appendix</span>
+</div>
+
+<div class="output-card">
+<div class="eyebrow">Client Portal</div>
+<h3>Controlled release.</h3>
+<p>Publish selected report outputs to the client workspace.</p>
+<span class="tag">Portal</span>
+</div>
+</section>
+
+</main>
+
+<aside class="context">
+<div class="context-card">
+<div class="eyebrow">Active Case</div>
+<strong>Coastal Residential Tower</strong>
+<p>Technical Property Review™<br>Confidential Demo Location</p>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">Report Status</div>
+<div class="context-metric"><span>Readiness</span><span>67%</span></div>
+<div class="context-metric"><span>Chapters</span><span>8</span></div>
+<div class="context-metric"><span>Findings</span><span>17</span></div>
+<div class="context-metric"><span>Evidence</span><span>38</span></div>
+<div class="context-metric"><span>Export</span><span>Draft</span></div>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">Decision State</div>
+<strong>Proceed with conditions</strong>
+<p>Final recommendation pending specialist review and documentation update.</p>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">Open Blockers</div>
+<div class="context-metric"><span>High Risk Findings</span><span>2</span></div>
+<div class="context-metric"><span>Missing Docs</span><span>4</span></div>
+<div class="context-metric"><span>CAPEX Assumptions</span><span>Draft</span></div>
+<div class="context-metric"><span>Final Recommendation</span><span>Pending</span></div>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">Module</div>
+<div class="context-metric"><span>Name</span><span>Report Studio</span></div>
+<div class="context-metric"><span>Version</span><span>2.0</span></div>
+<div class="context-metric"><span>Mode</span><span>Prototype</span></div>
+</div>
+</aside>
+
+</div>
+</body>
+</html>

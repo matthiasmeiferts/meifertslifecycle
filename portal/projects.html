@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Cases | MEIFERTS Building Intelligence Platform</title>
+<meta name="description" content="Cases Workspace for MEIFERTS Building Intelligence Platform. Manage technical review cases, evidence readiness, AI analysis, decision blockers and report output." />
+<meta name="robots" content="noindex,nofollow">
+
+<style>
+:root{
+--navy:#1B2B45;
+--gold:#B8935A;
+--cream:#F3EEE2;
+--text:#1f2933;
+--line:rgba(27,43,69,.16);
+--red:#9A5B52;
+--green:#5F7D65;
+--soft:rgba(255,255,255,.46);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;min-height:100%;overflow-x:hidden}
+
+body{
+font-family:Inter,Arial,sans-serif;
+background:radial-gradient(circle at top right,rgba(184,147,90,.10),transparent 34rem),var(--cream);
+color:var(--text);
+line-height:1.55;
+}
+
+a{text-decoration:none;color:inherit}
+
+.portal{
+min-height:100vh;
+display:grid;
+grid-template-columns:292px 1fr 360px;
+}
+
+.sidebar{
+background:var(--navy);
+color:var(--cream);
+padding:28px 24px;
+position:sticky;
+top:0;
+height:100vh;
+display:flex;
+flex-direction:column;
+box-shadow:18px 0 44px rgba(27,43,69,.08);
+}
+
+.brand{display:block;color:var(--cream);margin-bottom:34px}
+.brand-title{font-family:Georgia,"Times New Roman",serif;font-size:27px;letter-spacing:.12em;font-weight:500;text-transform:uppercase}
+.brand-subtitle{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-top:6px}
+.workspace-label{font-size:11px;letter-spacing:.20em;text-transform:uppercase;color:rgba(243,238,226,.58);margin-top:16px}
+
+.nav-group{margin:18px 0}
+.nav-heading{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:rgba(243,238,226,.45);margin:0 0 10px}
+
+.nav-link{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+color:rgba(243,238,226,.84);
+padding:11px 0;
+border-bottom:1px solid rgba(243,238,226,.10);
+font-size:14px;
+}
+
+.nav-link span{color:var(--gold);font-size:12px}
+.nav-link:hover,.nav-link.active{color:var(--cream)}
+
+.sidebar-footer{
+margin-top:auto;
+font-size:12px;
+color:rgba(243,238,226,.55);
+line-height:1.6;
+}
+
+.main{padding:32px 4vw 80px;min-width:0}
+
+.context{
+background:rgba(255,255,255,.36);
+border-left:1px solid var(--line);
+padding:28px 24px;
+position:sticky;
+top:0;
+height:100vh;
+overflow:auto;
+}
+
+.eyebrow{
+color:var(--gold);
+text-transform:uppercase;
+letter-spacing:.22em;
+font-size:12px;
+font-weight:700;
+margin-bottom:12px;
+}
+
+h1,h2,h3{
+font-family:Georgia,"Times New Roman",serif;
+font-weight:400;
+color:var(--navy);
+margin-top:0;
+}
+
+h1{font-size:clamp(44px,5vw,76px);line-height:.98;margin-bottom:0}
+h2{font-size:clamp(31px,3.4vw,52px);line-height:1.05;margin-bottom:22px}
+h3{font-size:27px;line-height:1.15;margin-bottom:14px}
+
+p{font-size:16px;color:#4b5563;margin:0 0 18px}
+
+.topbar{
+display:flex;
+align-items:flex-start;
+justify-content:space-between;
+gap:22px;
+margin-bottom:36px;
+}
+
+.status-group{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+
+.status-pill{
+border:1px solid var(--line);
+background:rgba(255,255,255,.40);
+padding:11px 15px;
+font-size:11px;
+letter-spacing:.12em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--navy);
+white-space:nowrap;
+}
+
+.section{margin-bottom:40px}
+
+.panel,.metric,.case-card,.table-card,.context-card,.filter-card,.engine-card{
+background:var(--soft);
+border:1px solid var(--line);
+}
+
+.panel{padding:30px}
+
+.grid-2{
+display:grid;
+grid-template-columns:1.15fr .85fr;
+gap:24px;
+}
+
+.grid-3{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
+}
+
+.grid-4{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:16px;
+}
+
+.metric{padding:24px;min-height:146px}
+
+.metric-number{
+font-family:Georgia,"Times New Roman",serif;
+font-size:46px;
+line-height:1;
+color:var(--navy);
+margin-bottom:12px;
+}
+
+.metric-label{
+font-size:11px;
+letter-spacing:.16em;
+text-transform:uppercase;
+color:var(--gold);
+font-weight:700;
+margin-bottom:8px;
+}
+
+.actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px}
+
+.button{
+display:inline-block;
+text-transform:uppercase;
+letter-spacing:.12em;
+font-size:12px;
+font-weight:700;
+padding:13px 18px;
+border:1px solid var(--navy);
+color:var(--navy);
+min-width:165px;
+text-align:center;
+background:transparent;
+cursor:pointer;
+}
+
+.button.primary{background:var(--navy);color:var(--cream)}
+.button:hover{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+
+.filter-card{padding:22px}
+
+.filter-row{
+display:grid;
+grid-template-columns:1.3fr .7fr .7fr .7fr auto;
+gap:12px;
+align-items:center;
+}
+
+input,select{
+width:100%;
+border:1px solid var(--line);
+background:rgba(255,255,255,.56);
+padding:13px 14px;
+color:var(--navy);
+}
+
+.case-card{
+padding:26px;
+min-height:330px;
+display:flex;
+flex-direction:column;
+}
+
+.case-card p{font-size:15px}
+
+.case-meta{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+margin:18px 0;
+}
+
+.meta-item{
+border-top:1px solid var(--line);
+padding-top:10px;
+}
+
+.meta-item span{
+display:block;
+font-size:11px;
+letter-spacing:.14em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--gold);
+margin-bottom:6px;
+}
+
+.meta-item strong{
+font-family:Georgia,"Times New Roman",serif;
+font-size:21px;
+font-weight:400;
+color:var(--navy);
+}
+
+.tag{
+display:inline-block;
+border:1px solid rgba(184,147,90,.34);
+padding:6px 9px;
+font-size:10px;
+letter-spacing:.12em;
+text-transform:uppercase;
+color:var(--gold);
+font-weight:700;
+margin:4px 4px 0 0;
+}
+
+.tag.red{color:var(--red);border-color:rgba(154,91,82,.42)}
+.tag.green{color:var(--green);border-color:rgba(95,125,101,.42)}
+
+.progress-line{
+height:8px;
+background:rgba(27,43,69,.10);
+overflow:hidden;
+margin-top:12px;
+}
+
+.progress-line span{display:block;height:100%;background:var(--gold)}
+
+.card-footer{
+margin-top:auto;
+padding-top:18px;
+border-top:1px solid var(--line);
+display:flex;
+justify-content:space-between;
+gap:14px;
+align-items:center;
+}
+
+.small-link{
+font-size:12px;
+letter-spacing:.12em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--navy);
+border-bottom:1px solid var(--gold);
+padding-bottom:3px;
+white-space:nowrap;
+}
+
+.engine-grid{
+display:grid;
+grid-template-columns:repeat(6,1fr);
+gap:12px;
+}
+
+.engine-card{
+padding:18px;
+min-height:120px;
+position:relative;
+}
+
+.engine-card strong{
+display:block;
+font-family:Georgia,"Times New Roman",serif;
+font-size:22px;
+font-weight:400;
+color:var(--navy);
+margin-bottom:10px;
+}
+
+.engine-card p{
+font-size:13px;
+margin:0;
+}
+
+.engine-card .count{
+position:absolute;
+right:14px;
+bottom:8px;
+font-family:Georgia,"Times New Roman",serif;
+font-size:34px;
+color:rgba(184,147,90,.34);
+}
+
+.table-card{padding:0;overflow:hidden}
+
+.table-row{
+display:grid;
+grid-template-columns:1.35fr .7fr .7fr .7fr .7fr .7fr;
+gap:16px;
+padding:18px 22px;
+border-bottom:1px solid var(--line);
+align-items:center;
+}
+
+.table-row:last-child{border-bottom:0}
+
+.table-row.header{
+font-size:11px;
+letter-spacing:.14em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--gold);
+}
+
+.table-row strong{
+font-family:Georgia,"Times New Roman",serif;
+font-size:22px;
+font-weight:400;
+color:var(--navy);
+}
+
+.context-card{
+padding:0 0 20px;
+margin-bottom:20px;
+border:0;
+border-bottom:1px solid var(--line);
+background:transparent;
+}
+
+.context-card strong{
+font-family:Georgia,"Times New Roman",serif;
+font-size:25px;
+font-weight:400;
+color:var(--navy);
+display:block;
+margin-bottom:8px;
+}
+
+.context-metric{
+display:flex;
+justify-content:space-between;
+gap:16px;
+border-top:1px solid var(--line);
+padding:12px 0;
+font-size:14px;
+}
+
+.context-metric span:last-child{color:var(--gold);font-weight:700}
+
+@media(max-width:1380px){
+.portal{grid-template-columns:292px 1fr}
+.context{display:none}
+.grid-4,.engine-grid{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:1fr 1fr}
+.filter-row{grid-template-columns:1fr 1fr}
+.table-row{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:980px){
+.portal{grid-template-columns:1fr}
+.sidebar{position:relative;height:auto}
+.sidebar .nav-group,.sidebar .sidebar-footer{display:none}
+.main{padding:38px 5vw 70px}
+.grid-2{grid-template-columns:1fr}
+}
+
+@media(max-width:760px){
+.sidebar{padding:22px 5vw}
+.brand-title{font-size:24px}
+.main{padding:34px 5vw 70px}
+.topbar{flex-direction:column}
+.grid-2,.grid-3,.grid-4,.filter-row,.table-row,.engine-grid{grid-template-columns:1fr}
+.panel{padding:26px 22px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="portal">
+
+<aside class="sidebar">
+<a class="brand" href="../">
+<div class="brand-title">MEIFERTS™</div>
+<div class="brand-subtitle">Building Intelligence™</div>
+<div class="workspace-label">Professional Workspace</div>
+</a>
+
+<div class="nav-group">
+<div class="nav-heading">Workspace</div>
+<a class="nav-link" href="dashboard.html">Dashboard <span>01</span></a>
+<a class="nav-link active" href="projects.html">Cases <span>02</span></a>
+<a class="nav-link" href="inspection.html">Inspection <span>03</span></a>
+<a class="nav-link" href="evidence.html">Evidence <span>04</span></a>
+<a class="nav-link" href="ai-findings.html">AI Analysis <span>05</span></a>
+<a class="nav-link" href="risk.html">Decision Engine <span>06</span></a>
+<a class="nav-link" href="report-generator.html">Report Studio <span>07</span></a>
+</div>
+
+<div class="nav-group">
+<div class="nav-heading">System</div>
+<a class="nav-link" href="clients.html">Clients <span>08</span></a>
+<a class="nav-link" href="library.html">Library <span>09</span></a>
+<a class="nav-link" href="settings.html">Settings <span>10</span></a>
+<a class="nav-link" href="../">Public Website <span>↗</span></a>
+</div>
+
+<div class="sidebar-footer">
+<p>Case-based workspace for evidence-first building decisions, expert validation, risk interpretation and report output.</p>
+<p>© Matthias Meiferts</p>
+</div>
+</aside>
+
+<main class="main">
+
+<section class="topbar">
+<div>
+<div class="eyebrow">Cases Workspace</div>
+<h1>Every assignment begins as a case.</h1>
+</div>
+<div class="status-group">
+<div class="status-pill">Cases v2.0</div>
+<div class="status-pill">3 Active Cases</div>
+<div class="status-pill">Evidence First</div>
+</div>
+</section>
+
+<section class="filter-card section">
+<div class="filter-row">
+<input placeholder="Search cases, buildings, clients, status or risk..." />
+<select>
+<option>All Case Types</option>
+<option>Technical Due Diligence</option>
+<option>Building Condition</option>
+<option>Reserve Fund Review</option>
+<option>Asset Review</option>
+</select>
+<select>
+<option>All Status</option>
+<option>Evidence Capture</option>
+<option>Expert Review</option>
+<option>Decision Pending</option>
+<option>Report Ready</option>
+</select>
+<select>
+<option>All Risk</option>
+<option>High Risk</option>
+<option>Medium Risk</option>
+<option>Low Risk</option>
+</select>
+<a class="button primary" href="#">New Case</a>
+</div>
+</section>
+
+<section class="grid-4 section">
+<div class="metric">
+<div class="metric-label">Active Cases</div>
+<div class="metric-number">3</div>
+<p>Open professional workspaces.</p>
+</div>
+
+<div class="metric">
+<div class="metric-label">Evidence Objects</div>
+<div class="metric-number">421</div>
+<p>Across all active cases.</p>
+</div>
+
+<div class="metric">
+<div class="metric-label">Open Findings</div>
+<div class="metric-number">41</div>
+<p>Awaiting validation or decision.</p>
+</div>
+
+<div class="metric">
+<div class="metric-label">Decision Blockers</div>
+<div class="metric-number">7</div>
+<p>High-priority unresolved issues.</p>
+</div>
+</section>
+
+<section class="grid-2 section">
+<div class="panel">
+<div class="eyebrow">Case Logic</div>
+<h2>Case is the container. Evidence is the truth.</h2>
+<p>
+A case connects property data, building systems, evidence, AI analysis, expert findings, assessments, recommendations and report outputs.
+</p>
+<p>
+The report is generated from structured decision objects, not written as an isolated document.
+</p>
+</div>
+
+<div class="panel">
+<div class="eyebrow">Current Focus</div>
+<h2>Coastal Residential Tower</h2>
+<p>
+Evidence capture is active. AI-generated signals require expert validation. Waterproofing and reserve fund documentation remain decision blockers.
+</p>
+<div class="actions">
+<a class="button primary" href="inspection.html">Continue Case</a>
+<a class="button" href="evidence.html">Open Evidence</a>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="topbar">
+<div>
+<div class="eyebrow">Active Cases</div>
+<h2>Case portfolio.</h2>
+</div>
+<a class="small-link" href="dashboard.html">Back to Dashboard</a>
+</div>
+
+<div class="grid-3">
+
+<div class="case-card">
+<div class="eyebrow">Case 001 · Technical Due Diligence</div>
+<h3>Coastal Residential Tower</h3>
+<p>Acquisition-focused technical review with emphasis on waterproofing, maintenance history, reserve adequacy and short-term CAPEX exposure.</p>
+<div class="case-meta">
+<div class="meta-item"><span>Status</span><strong>Evidence Capture</strong></div>
+<div class="meta-item"><span>Risk</span><strong>68</strong></div>
+<div class="meta-item"><span>Evidence</span><strong>124</strong></div>
+<div class="meta-item"><span>Decision</span><strong>Blocked</strong></div>
+</div>
+<span class="tag red">2 Blockers</span>
+<span class="tag">Report Draft</span>
+<div class="progress-line"><span style="width:67%"></span></div>
+<div class="card-footer">
+<span class="tag">Active</span>
+<a class="small-link" href="inspection.html">Open Case</a>
+</div>
+</div>
+
+<div class="case-card">
+<div class="eyebrow">Case 002 · Lifecycle Review</div>
+<h3>Residential Tower Alpha</h3>
+<p>Lifecycle and governance review for reserve fund logic, maintenance culture, documentation quality and medium-term cost exposure.</p>
+<div class="case-meta">
+<div class="meta-item"><span>Status</span><strong>Expert Review</strong></div>
+<div class="meta-item"><span>Risk</span><strong>42</strong></div>
+<div class="meta-item"><span>Evidence</span><strong>86</strong></div>
+<div class="meta-item"><span>Decision</span><strong>Pending</strong></div>
+</div>
+<span class="tag">Review</span>
+<span class="tag green">No High Risk</span>
+<div class="progress-line"><span style="width:44%"></span></div>
+<div class="card-footer">
+<span class="tag">Review</span>
+<a class="small-link" href="risk.html">Decision</a>
+</div>
+</div>
+
+<div class="case-card">
+<div class="eyebrow">Case 003 · Report Output</div>
+<h3>Project Atlas</h3>
+<p>Structured findings, CAPEX forecast and Decision Support Report™ readiness for demonstration and export workflow validation.</p>
+<div class="case-meta">
+<div class="meta-item"><span>Status</span><strong>Report Studio</strong></div>
+<div class="meta-item"><span>Risk</span><strong>74</strong></div>
+<div class="meta-item"><span>Evidence</span><strong>211</strong></div>
+<div class="meta-item"><span>Decision</span><strong>Ready</strong></div>
+</div>
+<span class="tag red">High Exposure</span>
+<span class="tag green">Output Ready</span>
+<div class="progress-line"><span style="width:91%"></span></div>
+<div class="card-footer">
+<span class="tag">Ready</span>
+<a class="small-link" href="report-generator.html">Report</a>
+</div>
+</div>
+
+</div>
+</section>
+
+<section class="section">
+<div class="topbar">
+<div>
+<div class="eyebrow">Case Decision Chain</div>
+<h2>From evidence to output.</h2>
+</div>
+<a class="small-link" href="risk.html">Open Decision Engine</a>
+</div>
+
+<div class="engine-grid">
+<div class="engine-card"><strong>Evidence</strong><p>Photos, notes, documents and measurements.</p><div class="count">421</div></div>
+<div class="engine-card"><strong>AI Analysis</strong><p>Suggested signals requiring expert review.</p><div class="count">84</div></div>
+<div class="engine-card"><strong>Findings</strong><p>Validated technical or governance issues.</p><div class="count">41</div></div>
+<div class="engine-card"><strong>Assessment</strong><p>Risk, likelihood, severity and confidence.</p><div class="count">29</div></div>
+<div class="engine-card"><strong>Recommendation</strong><p>Actionable advice for decision support.</p><div class="count">18</div></div>
+<div class="engine-card"><strong>Output</strong><p>Reports, summaries and client deliverables.</p><div class="count">2</div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="topbar">
+<div>
+<div class="eyebrow">Operational Table</div>
+<h2>Case status.</h2>
+</div>
+<a class="small-link" href="#">Export Overview</a>
+</div>
+
+<div class="table-card">
+<div class="table-row header">
+<div>Case</div><div>Status</div><div>Risk</div><div>Evidence</div><div>Findings</div><div>Output</div>
+</div>
+
+<div class="table-row">
+<div><strong>Coastal Residential Tower</strong></div>
+<div>Evidence Capture</div>
+<div><span class="tag red">68</span></div>
+<div>124</div>
+<div>17</div>
+<div>Draft</div>
+</div>
+
+<div class="table-row">
+<div><strong>Residential Tower Alpha</strong></div>
+<div>Expert Review</div>
+<div><span class="tag">42</span></div>
+<div>86</div>
+<div>9</div>
+<div>Pending</div>
+</div>
+
+<div class="table-row">
+<div><strong>Project Atlas</strong></div>
+<div>Report Studio</div>
+<div><span class="tag red">74</span></div>
+<div>211</div>
+<div>15</div>
+<div>Ready</div>
+</div>
+</div>
+</section>
+
+<section class="grid-3 section">
+<div class="panel">
+<div class="eyebrow">Next Action</div>
+<h3>Continue evidence capture.</h3>
+<p>Complete Building Envelope review and link missing waterproofing evidence to findings.</p>
+<div class="actions">
+<a class="button primary" href="inspection.html">Continue</a>
+</div>
+</div>
+
+<div class="panel">
+<div class="eyebrow">Decision Blocker</div>
+<h3>Reserve fund statement missing.</h3>
+<p>Financial and governance assessment cannot be finalized without supporting documentation.</p>
+<div class="actions">
+<a class="button" href="evidence.html">Open Evidence</a>
+</div>
+</div>
+
+<div class="panel">
+<div class="eyebrow">Output Queue</div>
+<h3>One report almost ready.</h3>
+<p>Project Atlas can be prepared for final export after recommendation review.</p>
+<div class="actions">
+<a class="button" href="report-generator.html">Open Report</a>
+</div>
+</div>
+</section>
+
+</main>
+
+<aside class="context">
+<div class="context-card">
+<div class="eyebrow">Selected Case</div>
+<strong>Coastal Residential Tower</strong>
+<p>Technical Property Review™<br>Confidential Demo Location</p>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">Live Status</div>
+<div class="context-metric"><span>Case Type</span><span>TDD</span></div>
+<div class="context-metric"><span>Status</span><span>Evidence Capture</span></div>
+<div class="context-metric"><span>Readiness</span><span>67%</span></div>
+<div class="context-metric"><span>Risk Score</span><span>68</span></div>
+<div class="context-metric"><span>Evidence</span><span>124</span></div>
+<div class="context-metric"><span>Findings</span><span>17</span></div>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">Decision Blockers</div>
+<div class="context-metric"><span>High Risk</span><span>2</span></div>
+<div class="context-metric"><span>Missing Docs</span><span>4</span></div>
+<div class="context-metric"><span>AI Review</span><span>31</span></div>
+<div class="context-metric"><span>CAPEX</span><span>Draft</span></div>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">Module</div>
+<div class="context-metric"><span>Name</span><span>Cases</span></div>
+<div class="context-metric"><span>Version</span><span>2.0</span></div>
+<div class="context-metric"><span>Mode</span><span>Prototype</span></div>
+</div>
+</aside>
+
+</div>
+
+</body>
+</html>

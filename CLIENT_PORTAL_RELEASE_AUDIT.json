@@ -1,0 +1,14 @@
+{
+  "client_portal_built": true,
+  "portal_modules": [
+    "Dashboard",
+    "My Projects",
+    "Review Workflow",
+    "Messages",
+    "Downloads",
+    "Invoices",
+    "Appointments"
+  ],
+  "engine_public": false,
+  "security_issues": []
+}

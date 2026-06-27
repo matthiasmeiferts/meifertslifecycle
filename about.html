@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About | MEIFERTS Building Intelligence | Matthias Meiferts</title>
+  <meta name="description" content="About MEIFERTS Building Intelligence and Matthias Meiferts: technical property review, building risk, lifecycle assessment and decision support for real estate decisions." />
+  <meta name="robots" content="index,follow" />
+  <style>
+    :root {
+      --navy:#1B2B45;
+      --gold:#B8935A;
+      --cream:#F3EEE2;
+      --text:#1f2933;
+      --muted:#6b7280;
+      --line:rgba(27,43,69,0.16);
+      --white:#ffffff;
+    }
+
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      font-family:Inter, Arial, sans-serif;
+      background:var(--cream);
+      color:var(--text);
+      line-height:1.7;
+    }
+
+    header {
+      padding:28px 6vw;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:32px;
+      flex-wrap:wrap;
+    }
+
+    .brand {
+      text-decoration:none;
+      color:var(--navy);
+    }
+
+    .brand-title {
+      font-family:Georgia, "Times New Roman", serif;
+      font-size:26px;
+      letter-spacing:.08em;
+      font-weight:500;
+    }
+
+    .brand-subtitle {
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--gold);
+      margin-top:4px;
+    }
+
+    nav {
+      display:flex;
+      gap:22px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    nav a {
+      text-decoration:none;
+      color:var(--navy);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-size:13px;
+    }
+
+    nav a:hover { color:var(--gold); }
+
+    .nav-button {
+      border:1px solid var(--navy);
+      padding:10px 16px;
+    }
+
+    .nav-button:hover {
+      background:var(--navy);
+      color:var(--cream);
+    }
+
+    main {
+      padding:80px 6vw 100px;
+    }
+
+    .hero {
+      max-width:980px;
+      margin-bottom:90px;
+    }
+
+    .eyebrow {
+      color:var(--gold);
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      font-size:12px;
+      margin-bottom:20px;
+    }
+
+    h1 {
+      font-family:Georgia, "Times New Roman", serif;
+      font-size:clamp(44px,7vw,82px);
+      line-height:1.05;
+      color:var(--navy);
+      font-weight:400;
+      margin:0 0 28px;
+    }
+
+    .lead {
+      font-size:22px;
+      max-width:760px;
+      color:var(--navy);
+    }
+
+    .grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:70px;
+      max-width:1160px;
+      margin-bottom:70px;
+    }
+
+    section {
+      background:rgba(255,255,255,.38);
+      border:1px solid var(--line);
+      padding:44px;
+    }
+
+    h2 {
+      font-family:Georgia, "Times New Roman", serif;
+      font-size:34px;
+      font-weight:400;
+      color:var(--navy);
+      margin:0 0 22px;
+    }
+
+    p { margin:0 0 20px; }
+
+    ul {
+      margin:0;
+      padding-left:20px;
+    }
+
+    li { margin-bottom:10px; }
+
+    .dark {
+      background:var(--navy);
+      color:var(--cream);
+    }
+
+    .dark h2 {
+      color:var(--cream);
+    }
+
+    .label {
+      color:var(--gold);
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      font-size:11px;
+      display:block;
+      margin-bottom:6px;
+    }
+
+    .manifesto {
+      max-width:1160px;
+      background:var(--navy);
+      color:var(--cream);
+      padding:56px;
+      margin-bottom:70px;
+    }
+
+    .manifesto h2 {
+      color:var(--cream);
+    }
+
+    .manifesto p {
+      font-family:Georgia, "Times New Roman", serif;
+      font-size:30px;
+      line-height:1.35;
+      max-width:860px;
+    }
+
+    .cta {
+      display:inline-block;
+      margin-top:18px;
+      background:var(--navy);
+      color:var(--cream);
+      text-decoration:none;
+      padding:14px 22px;
+      letter-spacing:.12em;
+      font-size:12px;
+      text-transform:uppercase;
+    }
+
+    .cta:hover {
+      background:var(--gold);
+      color:var(--navy);
+    }
+
+    footer {
+      border-top:1px solid var(--line);
+      padding:34px 6vw;
+      color:var(--muted);
+      font-size:13px;
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+      flex-wrap:wrap;
+    }
+
+    footer a {
+      color:var(--muted);
+      text-decoration:none;
+      margin-left:18px;
+    }
+
+    footer a:hover { color:var(--gold); }
+
+    @media(max-width:900px) {
+      .grid { grid-template-columns:1fr; }
+      section, .manifesto { padding:32px; }
+      .manifesto p { font-size:24px; }
+      nav { gap:16px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <a class="brand" href="index.html">
+    <div class="brand-title">MEIFERTS</div>
+    <div class="brand-subtitle">Building Intelligence</div>
+  </a>
+
+  <nav>
+    <a href="methodology.html">Methodology</a>
+    <a href="reports.html">Reports</a>
+    <a href="research.html">Research</a>
+    <a href="publications.html">Publications</a>
+    <a href="portal/">Portal</a>
+    <a href="about.html" aria-current="page">About</a>
+    <a href="contact.html">Contact</a>
+    <a class="nav-button" href="request-review.html">Request Technical Review</a>
+  </nav>
+</header>
+
+<main>
+
+  <div class="hero">
+    <div class="eyebrow">About</div>
+    <h1>We help people make better decisions.</h1>
+    <p class="lead">
+      MEIFERTS Building Intelligence translates building complexity into decision clarity for property buyers, investors and professional real estate stakeholders.
+    </p>
+  </div>
+
+  <div class="grid">
+    <section>
+      <h2>Why MEIFERTS Exists</h2>
+      <p>
+        Buildings are complex.
+      </p>
+      <p>
+        Most property decisions are not made with too little information.
+        They are made with too much information and too little understanding.
+      </p>
+      <p>
+        MEIFERTS Building Intelligence was created to close that gap.
+      </p>
+    </section>
+
+    <section>
+      <h2>Building Intelligence</h2>
+      <p>
+        A building is never only a price, a location or a floor plan. It is a technical system with history, maintenance culture, lifecycle exposure and future capital requirements.
+      </p>
+      <p>
+        Understanding these factors before a decision is made can change the quality of the decision itself.
+      </p>
+    </section>
+  </div>
+
+  <div class="manifesto">
+    <h2>Brand Philosophy</h2>
+    <p>
+      Every building tells a story. Understanding it is where better decisions begin.
+    </p>
+    <p>
+      We do not create reports. We create understanding.
+    </p>
+  </div>
+
+  <div class="grid">
+    <section>
+      <h2>What We Do</h2>
+      <ul>
+        <li>Technical Property Reviews™</li>
+        <li>Building Risk Assessments™</li>
+        <li>Lifecycle Assessments™</li>
+        <li>CAPEX Forecasting™</li>
+        <li>Decision Support Reports™</li>
+        <li>Technical Due Diligence for property decisions</li>
+      </ul>
+    </section>
+
+    <section class="dark">
+      <h2>The Difference</h2>
+      <p>
+        Most reports describe buildings.
+      </p>
+      <p>
+        Our objective is to explain what a building means for a future decision.
+      </p>
+      <p>
+        The focus is not paperwork. The focus is clarity.
+      </p>
+    </section>
+  </div>
+
+  <div class="grid">
+    <section>
+      <h2>Founder</h2>
+      <p>
+        <span class="label">Matthias Meiferts</span>
+        Founder of MEIFERTS Building Intelligence and Technical Due Diligence Advisor.
+      </p>
+      <p>
+        Matthias Meiferts brings more than two decades of experience across property management, technical building operations, maintenance planning, investment property evaluation and technical due diligence.
+      </p>
+      <p>
+        His work focuses on helping buyers and investors understand technical risks, lifecycle exposure and future capital expenditure before important property decisions are made.
+      </p>
+    </section>
+
+    <section>
+      <h2>Core Perspective</h2>
+      <p>
+        A technically weak building can look attractive during a viewing.
+      </p>
+      <p>
+        A well-maintained building can remain underestimated in a market driven by surface impressions.
+      </p>
+      <p>
+        MEIFERTS exists to look beyond the surface and translate building reality into decision quality.
+      </p>
+      <a class="cta" href="request-review.html">Request Technical Review</a>
+    </section>
+  </div>
+
+</main>
+
+<footer>
+  <div>
+    © Matthias Meiferts · MEIFERTS Building Intelligence
+  </div>
+  <div>
+    <a href="imprint.html">Imprint</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="mailto:hello@meifertslifecycle.com">Email</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</footer>
+
+</body>
+</html>

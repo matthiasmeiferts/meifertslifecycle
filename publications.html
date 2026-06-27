@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Publications | MEIFERTS Building Intelligence | Books & White Papers</title>
+  <meta name="description" content="Books, white papers, methodology papers and technical guides from MEIFERTS Building Intelligence on property decisions, building risk, lifecycle assessment and CAPEX." />
+  <meta name="robots" content="index,follow" />
+
+  <style>
+    :root {
+      --navy:#1B2B45;
+      --gold:#B8935A;
+      --cream:#F3EEE2;
+      --text:#1f2933;
+      --muted:#6b7280;
+      --line:rgba(27,43,69,0.16);
+      --white:#ffffff;
+    }
+
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      font-family:Inter, Arial, sans-serif;
+      background:var(--cream);
+      color:var(--text);
+      line-height:1.7;
+    }
+
+    header {
+      padding:28px 6vw;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:32px;
+      flex-wrap:wrap;
+    }
+
+    .brand {
+      text-decoration:none;
+      color:var(--navy);
+    }
+
+    .brand-title {
+      font-family:Georgia, "Times New Roman", serif;
+      font-size:26px;
+      letter-spacing:.08em;
+      font-weight:500;
+    }
+
+    .brand-subtitle {
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--gold);
+      margin-top:4px;
+    }
+
+    nav {
+      display:flex;
+      gap:22px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    nav a {
+      text-decoration:none;
+      color:var(--navy);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-size:13px;
+    }
+
+    nav a:hover { color:var(--gold); }
+
+    .nav-button {
+      border:1px solid var(--navy);
+      padding:10px 16px;
+    }
+
+    .nav-button:hover {
+      background:var(--navy);
+      color:var(--cream);
+    }
+
+    main {
+      padding:80px 6vw 100px;
+    }
+
+    .hero {
+      max-width:980px;
+      margin-bottom:90px;
+    }
+
+    .eyebrow {
+      color:var(--gold);
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      font-size:12px;
+      margin-bottom:20px;
+    }
+
+    h1 {
+      font-family:Georgia, "Times New Roman", serif;
+      font-size:clamp(44px,7vw,82px);
+      line-height:1.05;
+      color:var(--navy);
+      font-weight:400;
+      margin:0 0 28px;
+    }
+
+    .lead {
+      font-size:22px;
+      max-width:780px;
+      color:var(--navy);
+    }
+
+    .grid {
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:34px;
+      max-width:1160px;
+      margin-bottom:70px;
+    }
+
+    section {
+      background:rgba(255,255,255,.38);
+      border:1px solid var(--line);
+      padding:44px;
+    }
+
+    h2 {
+      font-family:Georgia, "Times New Roman", serif;
+      font-size:34px;
+      font-weight:400;
+      color:var(--navy);
+      margin:0 0 22px;
+    }
+
+    h3 {
+      font-family:Georgia, "Times New Roman", serif;
+      color:var(--navy);
+      font-size:25px;
+      font-weight:400;
+      margin:0 0 14px;
+    }
+
+    p { margin:0 0 20px; }
+
+    .pub-meta {
+      color:var(--gold);
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      font-size:11px;
+      margin-bottom:12px;
+    }
+
+    .dark {
+      background:var(--navy);
+      color:var(--cream);
+    }
+
+    .dark h2,
+    .dark h3 {
+      color:var(--cream);
+    }
+
+    .dark p {
+      color:rgba(243,238,226,.84);
+    }
+
+    .cta {
+      display:inline-block;
+      margin-top:18px;
+      background:var(--navy);
+      color:var(--cream);
+      text-decoration:none;
+      padding:14px 22px;
+      letter-spacing:.12em;
+      font-size:12px;
+      text-transform:uppercase;
+    }
+
+    .cta:hover {
+      background:var(--gold);
+      color:var(--navy);
+    }
+
+    .dark .cta {
+      background:var(--cream);
+      color:var(--navy);
+    }
+
+    .dark .cta:hover {
+      background:var(--gold);
+      color:var(--navy);
+    }
+
+    footer {
+      border-top:1px solid var(--line);
+      padding:34px 6vw;
+      color:var(--muted);
+      font-size:13px;
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+      flex-wrap:wrap;
+    }
+
+    footer a {
+      color:var(--muted);
+      text-decoration:none;
+      margin-left:18px;
+    }
+
+    footer a:hover { color:var(--gold); }
+
+    @media(max-width:900px) {
+      .grid { grid-template-columns:1fr; }
+      section { padding:32px; }
+      nav { gap:16px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <a class="brand" href="index.html">
+    <div class="brand-title">MEIFERTS</div>
+    <div class="brand-subtitle">Building Intelligence</div>
+  </a>
+
+  <nav>
+    <a href="methodology.html">Methodology</a>
+    <a href="reports.html">Reports</a>
+    <a href="research.html">Research</a>
+    <a href="publications.html" aria-current="page">Publications</a>
+    <a href="portal/">Portal</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a class="nav-button" href="request-review.html">Request Technical Review</a>
+  </nav>
+</header>
+
+<main>
+
+  <div class="hero">
+    <div class="eyebrow">Publications</div>
+    <h1>Technical knowledge that survives the first impression.</h1>
+    <p class="lead">
+      Books, white papers, methodology papers and technical guides from MEIFERTS Building Intelligence.
+    </p>
+  </div>
+
+  <div class="grid">
+    <section>
+      <div class="pub-meta">Book · 2026</div>
+      <h2>Buying Real Estate in Thailand</h2>
+      <p>
+        A practical guide for international property buyers, combining acquisition awareness, technical due diligence, lifecycle thinking and decision support.
+      </p>
+      <p>
+        The publication is designed to help buyers look beyond brochures, finishes and sales narratives.
+      </p>
+    </section>
+
+    <section>
+      <div class="pub-meta">Methodology Paper · v1.0</div>
+      <h2>The MEIFERTS Standard™</h2>
+      <p>
+        The framework behind MEIFERTS Building Intelligence: evidence, findings, confidence, risk, lifecycle position and decision clarity.
+      </p>
+      <a class="cta" href="methodology.html">Read Methodology</a>
+    </section>
+  </div>
+
+  <div class="grid">
+    <section>
+      <div class="pub-meta">White Paper · Preview</div>
+      <h2>Building Risk Score™</h2>
+      <p>
+        A structured approach for translating technical observations into a clear, comparable and decision-oriented building risk profile.
+      </p>
+      <a class="cta" href="reports.html">Explore Reports</a>
+    </section>
+
+    <section>
+      <div class="pub-meta">Technical Guide · Preview</div>
+      <h2>CAPEX Forecast™</h2>
+      <p>
+        A practical guide to understanding future capital expenditure exposure before acquisition or major ownership decisions.
+      </p>
+      <a class="cta" href="request-review.html">Request Technical Review</a>
+    </section>
+  </div>
+
+  <section class="dark">
+    <h2>Publication Philosophy</h2>
+    <p>
+      Publications make the methodology durable. They turn field experience, technical review and decision logic into reusable knowledge.
+    </p>
+    <p>
+      The objective is not to produce documents for their own sake. The objective is to help buyers, owners and advisors understand the building before the building becomes expensive.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  <div>
+    © Matthias Meiferts · MEIFERTS Building Intelligence<br>
+    <a href="mailto:hello@meifertslifecycle.com">hello@meifertslifecycle.com</a> ·
+    <a href="tel:+4917644537849">+49 176 44537849</a>
+  </div>
+  <div>
+    <a href="imprint.html">Imprint</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</footer>
+
+</body>
+</html>

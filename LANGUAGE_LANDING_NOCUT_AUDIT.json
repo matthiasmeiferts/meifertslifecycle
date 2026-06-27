@@ -1,0 +1,10 @@
+{
+  "release": "language_landing_nocut_v1.3",
+  "base": "meiferts_language_landing_final.zip",
+  "changed": [
+    "assets/css/main.css"
+  ],
+  "fix": "Reduced vertical spacing and card heights so DE/EN cards fit above the fold on MacBook Air/iPad-style viewport.",
+  "broken_internal_links_count": 0,
+  "broken_internal_links_sample": []
+}

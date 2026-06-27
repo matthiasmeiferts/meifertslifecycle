@@ -1,0 +1,10 @@
+{
+  "release": "landing_inline_final_no_cache",
+  "base": "meiferts_landing_v3_strong.zip",
+  "changed": [
+    "index.html"
+  ],
+  "note": "Root index.html is fully self-contained with inline CSS. Old CSS cannot override it.",
+  "broken_internal_links_count": 0,
+  "broken_internal_links_sample": []
+}

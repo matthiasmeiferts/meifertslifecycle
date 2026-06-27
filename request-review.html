@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Request Technical Review | MEIFERTS Building Intelligence</title>
+<meta name="robots" content="index,follow">
+<meta name="description" content="Request a Technical Property Review™ from MEIFERTS Building Intelligence for building risk, evidence review, CAPEX and decision support.">
+<style>
+:root{--navy:#1B2B45;--gold:#B8935A;--cream:#F3EEE2;--text:#1f2933;--line:rgba(27,43,69,.16)}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--cream);color:var(--text);line-height:1.65}
+header{padding:28px 5vw;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:32px;flex-wrap:wrap;background:rgba(243,238,226,.96)}
+.brand{text-decoration:none;color:var(--navy)}
+.brand-title{font:28px Georgia,serif;letter-spacing:.12em;text-transform:uppercase}
+.brand-subtitle{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:700}
+nav{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+nav a{text-decoration:none;color:var(--navy);text-transform:uppercase;letter-spacing:.1em;font-size:12px;font-weight:700}
+.nav-button{border:1px solid var(--navy);padding:10px 16px}
+main{padding:82px 5vw 100px}
+.wrap{max-width:1180px;margin:auto}
+.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.22em;font-size:12px;font-weight:700;margin-bottom:22px}
+h1{font:clamp(54px,8vw,104px)/.95 Georgia,serif;color:var(--navy);font-weight:400;margin:0 0 34px}
+.lead{font-size:23px;color:var(--navy);max-width:860px;margin:0 0 48px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:34px}
+.panel{background:rgba(255,255,255,.42);border:1px solid var(--line);padding:42px}
+h2{font:42px Georgia,serif;color:var(--navy);font-weight:400;margin:0 0 24px}
+label{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700;margin:18px 0 7px}
+input,select,textarea{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.72);padding:14px;color:var(--text)}
+textarea{min-height:150px;resize:vertical}
+.button{display:inline-block;margin-top:22px;text-transform:uppercase;letter-spacing:.12em;font-size:12px;font-weight:700;padding:14px 20px;border:1px solid var(--navy);background:var(--navy);color:var(--cream);text-decoration:none}
+.note{font-size:14px;color:#6b7280;margin-top:14px}
+.card{border-top:1px solid var(--line);padding-top:18px;margin-top:22px}
+.card strong{font:24px Georgia,serif;color:var(--navy);font-weight:400;display:block;margin-bottom:8px}
+footer{background:var(--navy);color:var(--cream);padding:52px 5vw}
+.footer-inner{max-width:1180px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:50px}
+footer h3{font:30px Georgia,serif;letter-spacing:.08em;font-weight:400;margin:0 0 18px}
+footer p{color:rgba(243,238,226,.82);margin:0 0 14px}
+.footer-links{display:flex;gap:22px;flex-wrap:wrap;justify-content:flex-end}
+.footer-links a{color:var(--cream);text-decoration:none;text-transform:uppercase;letter-spacing:.12em;font-size:12px}
+@media(max-width:850px){.grid,.footer-inner{grid-template-columns:1fr}.footer-links{justify-content:flex-start}main{padding:56px 5vw 80px}.panel{padding:30px 24px}}
+</style>
+</head>
+<body>
+<header>
+<a class="brand" href="/">
+<div class="brand-title">MEIFERTS™</div>
+<div class="brand-subtitle">Building Intelligence™</div>
+</a>
+<nav>
+<a href="/methodology/">Methodology</a>
+<a href="/reports.html">Reports</a>
+<a href="/research.html">Research</a>
+<a href="/publications.html">Publications</a>
+<a href="/portal/">Portal</a>
+<a href="/contact.html">Contact</a>
+<a class="nav-button" href="/request-review.html" aria-current="page">Request Technical Review</a>
+</nav>
+</header>
+
+<main>
+<div class="wrap">
+<div class="eyebrow">Request Technical Review</div>
+<h1>Start with the building.</h1>
+<p class="lead">Use this page to request a Technical Property Review™, document review, building risk assessment or decision-support discussion.</p>
+
+<div class="grid">
+<section class="panel">
+<h2>Project request.</h2>
+<form action="https://formspree.io/f/xwkgyqvq" method="POST">
+<label>Name</label>
+<input name="name" required>
+<label>Email</label>
+<input name="email" type="email" required>
+<label>Company / Role</label>
+<input name="company">
+<label>Project Type</label>
+<select name="project_type">
+<option>Residential property</option>
+<option>Condominium / apartment building</option>
+<option>Commercial property</option>
+<option>Portfolio / advisory</option>
+<option>Document review only</option>
+</select>
+<label>Location</label>
+<input name="location" placeholder="City / Country (or confidential)">
+<label>Request Type</label>
+<select name="request_type">
+<option>Technical Property Review™</option>
+<option>Building Risk Score™</option>
+<option>CAPEX Forecast™</option>
+<option>Document / evidence review</option>
+<option>Decision Support Report™</option>
+</select>
+<label>Message</label>
+<textarea name="message" placeholder="Briefly describe the project, timing, available documents and key concerns."></textarea>
+<input type="hidden" name="_subject" value="New Technical Review Request">
+<button class="button" type="submit">Send Request</button>
+<p class="note">This form uses a form endpoint. If not yet connected in your hosting account, replace the Formspree endpoint with your final provider.</p>
+</form>
+</section>
+
+<section class="panel">
+<h2>What happens next.</h2>
+<div class="card"><strong>1. Initial review</strong><p>Project type, location, available information and decision objective are clarified.</p></div>
+<div class="card"><strong>2. Evidence request</strong><p>Relevant documents, photos, maintenance records or building information are requested where available.</p></div>
+<div class="card"><strong>3. Scope proposal</strong><p>The appropriate review scope is defined: technical review, document review, risk score, CAPEX forecast or report.</p></div>
+<div class="card"><strong>Contact</strong><p><a href="mailto:hello@meifertslifecycle.com">hello@meifertslifecycle.com</a><br><a href="tel:+4917644537849">+49 176 44537849</a></p></div>
+</section>
+</div>
+</div>
+</main>
+
+<footer>
+<div class="footer-inner">
+<div>
+<h3>MEIFERTS BUILDING INTELLIGENCE™</h3>
+<p>We help people make better decisions.</p>
+<p>Technical Due Diligence<br>Building Risk Assessment<br>Lifecycle Intelligence</p>
+<p>Hamburg · Germany</p>
+<p>hello@meifertslifecycle.com</p>
+<p>+49 176 44537849</p>
+<p>© Matthias Meiferts</p>
+</div>
+<div class="footer-links">
+<a href="/methodology/">Methodology</a><a href="/reports.html">Reports</a><a href="/research.html">Research</a><a href="/publications.html">Publications</a><a href="/portal/">Portal</a><a href="/contact.html">Contact</a><a href="/imprint.html">Imprint</a><a href="/privacy.html">Privacy</a>
+</div>
+</div>
+</footer>
+</body>
+</html>

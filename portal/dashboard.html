@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Dashboard | MEIFERTS Building Intelligence Platform</title>
+<meta name="description" content="Decision Intelligence Dashboard for MEIFERTS Building Intelligence Platform. Case readiness, evidence status, risk signals, CAPEX exposure and report output." />
+<meta name="robots" content="noindex,nofollow">
+
+<style>
+:root{
+--navy:#1B2B45;
+--navy2:#14213A;
+--gold:#B8935A;
+--cream:#F3EEE2;
+--paper:#FBF8EF;
+--white:#fff;
+--text:#1f2933;
+--muted:#6b7280;
+--line:rgba(27,43,69,.16);
+--soft:rgba(255,255,255,.46);
+--red:#9A5B52;
+--green:#5F7D65;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+margin:0;
+padding:0;
+min-height:100%;
+overflow-x:hidden;
+}
+
+body{
+font-family:Inter,Arial,sans-serif;
+background:
+radial-gradient(circle at top right,rgba(184,147,90,.12),transparent 34rem),
+var(--cream);
+color:var(--text);
+line-height:1.55;
+}
+
+a{text-decoration:none;color:inherit}
+
+.portal{
+min-height:100vh;
+display:grid;
+grid-template-columns:292px 1fr 360px;
+}
+
+.sidebar{
+background:var(--navy);
+color:var(--cream);
+padding:28px 24px;
+position:sticky;
+top:0;
+height:100vh;
+display:flex;
+flex-direction:column;
+box-shadow:18px 0 44px rgba(27,43,69,.08);
+}
+
+.brand{
+display:block;
+color:var(--cream);
+margin-bottom:34px;
+}
+
+.brand-title{
+font-family:Georgia,"Times New Roman",serif;
+font-size:27px;
+letter-spacing:.12em;
+font-weight:500;
+text-transform:uppercase;
+}
+
+.brand-subtitle{
+font-size:12px;
+letter-spacing:.22em;
+text-transform:uppercase;
+color:var(--gold);
+font-weight:700;
+margin-top:6px;
+}
+
+.workspace-label{
+font-size:11px;
+letter-spacing:.20em;
+text-transform:uppercase;
+color:rgba(243,238,226,.58);
+margin-top:16px;
+}
+
+.nav-group{margin:18px 0}
+
+.nav-heading{
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:.18em;
+color:rgba(243,238,226,.45);
+margin:0 0 10px;
+}
+
+.nav-link{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+color:rgba(243,238,226,.84);
+padding:11px 0;
+border-bottom:1px solid rgba(243,238,226,.10);
+font-size:14px;
+}
+
+.nav-link span{
+color:var(--gold);
+font-size:12px;
+}
+
+.nav-link:hover,
+.nav-link.active{color:var(--cream)}
+
+.sidebar-footer{
+margin-top:auto;
+font-size:12px;
+color:rgba(243,238,226,.55);
+line-height:1.6;
+}
+
+.main{
+padding:32px 4vw 80px;
+min-width:0;
+}
+
+.context{
+background:rgba(255,255,255,.36);
+border-left:1px solid var(--line);
+padding:28px 24px;
+position:sticky;
+top:0;
+height:100vh;
+overflow:auto;
+}
+
+.eyebrow{
+color:var(--gold);
+text-transform:uppercase;
+letter-spacing:.22em;
+font-size:12px;
+font-weight:700;
+margin-bottom:12px;
+}
+
+h1,h2,h3{
+font-family:Georgia,"Times New Roman",serif;
+font-weight:400;
+color:var(--navy);
+margin-top:0;
+}
+
+h1{
+font-size:clamp(44px,5vw,76px);
+line-height:.98;
+margin-bottom:0;
+}
+
+h2{
+font-size:clamp(31px,3.4vw,52px);
+line-height:1.05;
+margin-bottom:22px;
+}
+
+h3{
+font-size:27px;
+line-height:1.15;
+margin-bottom:14px;
+}
+
+p{
+font-size:16px;
+color:#4b5563;
+margin:0 0 18px;
+}
+
+.topbar{
+display:flex;
+align-items:flex-start;
+justify-content:space-between;
+gap:22px;
+margin-bottom:36px;
+}
+
+.status-group{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+justify-content:flex-end;
+}
+
+.status-pill{
+border:1px solid var(--line);
+background:rgba(255,255,255,.40);
+padding:11px 15px;
+font-size:11px;
+letter-spacing:.12em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--navy);
+white-space:nowrap;
+}
+
+.section{margin-bottom:40px}
+
+.grid-2{
+display:grid;
+grid-template-columns:1.18fr .82fr;
+gap:24px;
+}
+
+.grid-3{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
+}
+
+.grid-4{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:16px;
+}
+
+.panel,.card,.metric,.table-card,.task-row,.context-card,.engine-step{
+background:var(--soft);
+border:1px solid var(--line);
+}
+
+.panel{padding:30px}
+
+.panel.dark{
+background:var(--navy);
+color:var(--cream);
+border-color:rgba(184,147,90,.28);
+}
+
+.panel.dark h2,
+.panel.dark h3{color:var(--cream)}
+
+.panel.dark p{color:rgba(243,238,226,.78)}
+
+.actions{
+display:flex;
+gap:14px;
+flex-wrap:wrap;
+margin-top:24px;
+}
+
+.button{
+display:inline-block;
+text-transform:uppercase;
+letter-spacing:.12em;
+font-size:12px;
+font-weight:700;
+padding:13px 18px;
+border:1px solid var(--navy);
+color:var(--navy);
+min-width:165px;
+text-align:center;
+background:transparent;
+cursor:pointer;
+}
+
+.button.primary{
+background:var(--navy);
+color:var(--cream);
+}
+
+.button:hover{
+background:var(--gold);
+border-color:var(--gold);
+color:var(--navy);
+}
+
+.panel.dark .button{
+border-color:var(--cream);
+color:var(--cream);
+}
+
+.panel.dark .button.primary{
+background:var(--gold);
+border-color:var(--gold);
+color:var(--navy);
+}
+
+.metric{
+padding:24px;
+min-height:146px;
+}
+
+.metric-number{
+font-family:Georgia,"Times New Roman",serif;
+font-size:46px;
+line-height:1;
+color:var(--navy);
+margin-bottom:12px;
+}
+
+.metric-label{
+font-size:11px;
+letter-spacing:.16em;
+text-transform:uppercase;
+color:var(--gold);
+font-weight:700;
+margin-bottom:8px;
+}
+
+.card{
+padding:26px;
+min-height:190px;
+}
+
+.card p{font-size:15px}
+
+.tag{
+display:inline-block;
+border:1px solid rgba(184,147,90,.34);
+padding:6px 9px;
+font-size:10px;
+letter-spacing:.12em;
+text-transform:uppercase;
+color:var(--gold);
+font-weight:700;
+margin:4px 4px 0 0;
+}
+
+.tag.red{color:var(--red);border-color:rgba(154,91,82,.42)}
+.tag.green{color:var(--green);border-color:rgba(95,125,101,.42)}
+
+.progress-line{
+height:8px;
+background:rgba(27,43,69,.10);
+overflow:hidden;
+margin-top:16px;
+}
+
+.progress-line span{
+display:block;
+height:100%;
+background:var(--gold);
+}
+
+.command-strip{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:12px;
+margin-bottom:40px;
+}
+
+.command-button{
+background:rgba(255,255,255,.42);
+border:1px solid var(--line);
+padding:18px;
+cursor:pointer;
+min-height:92px;
+}
+
+.command-button:hover{
+border-color:rgba(184,147,90,.58);
+background:rgba(255,255,255,.62);
+}
+
+.command-button strong{
+display:block;
+font-family:Georgia,"Times New Roman",serif;
+font-size:22px;
+font-weight:400;
+color:var(--navy);
+margin-bottom:8px;
+}
+
+.command-button span{
+font-size:11px;
+letter-spacing:.13em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--gold);
+}
+
+.engine{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:12px;
+}
+
+.engine-step{
+padding:18px;
+min-height:140px;
+position:relative;
+}
+
+.engine-step strong{
+display:block;
+font-family:Georgia,"Times New Roman",serif;
+font-size:22px;
+font-weight:400;
+color:var(--navy);
+margin-bottom:10px;
+}
+
+.engine-step p{
+font-size:13px;
+margin:0;
+}
+
+.engine-step .number{
+position:absolute;
+right:14px;
+bottom:10px;
+font-family:Georgia,"Times New Roman",serif;
+font-size:34px;
+color:rgba(184,147,90,.34);
+}
+
+.table-card{
+padding:0;
+overflow:hidden;
+}
+
+.table-row{
+display:grid;
+grid-template-columns:1.4fr .75fr .75fr .75fr .75fr;
+gap:16px;
+padding:18px 22px;
+border-bottom:1px solid var(--line);
+align-items:center;
+}
+
+.table-row:last-child{border-bottom:0}
+
+.table-row.header{
+font-size:11px;
+letter-spacing:.14em;
+text-transform:uppercase;
+font-weight:700;
+color:var(--gold);
+}
+
+.table-row strong{
+font-family:Georgia,"Times New Roman",serif;
+font-size:22px;
+font-weight:400;
+color:var(--navy);
+}
+
+.task-row{
+padding:18px 22px;
+display:grid;
+grid-template-columns:1fr auto;
+gap:16px;
+border-bottom:1px solid var(--line);
+}
+
+.task-row:last-child{border-bottom:0}
+
+.task-row strong{
+font-family:Georgia,"Times New Roman",serif;
+font-size:21px;
+font-weight:400;
+color:var(--navy);
+}
+
+.task-row p{
+font-size:14px;
+margin:0;
+}
+
+.context-card{
+padding:0 0 20px;
+margin-bottom:20px;
+border:0;
+border-bottom:1px solid var(--line);
+background:transparent;
+}
+
+.context-card strong{
+font-family:Georgia,"Times New Roman",serif;
+font-size:25px;
+font-weight:400;
+color:var(--navy);
+display:block;
+margin-bottom:8px;
+}
+
+.context-metric{
+display:flex;
+justify-content:space-between;
+gap:16px;
+border-top:1px solid var(--line);
+padding:12px 0;
+font-size:14px;
+}
+
+.context-metric span:last-child{
+color:var(--gold);
+font-weight:700;
+}
+
+@media(max-width:1380px){
+.portal{grid-template-columns:292px 1fr}
+.context{display:none}
+.engine{grid-template-columns:repeat(3,1fr)}
+.command-strip,.grid-4{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:980px){
+.portal{grid-template-columns:1fr}
+.sidebar{position:relative;height:auto}
+.sidebar .nav-group,.sidebar .sidebar-footer{display:none}
+.main{padding:38px 5vw 70px}
+.grid-2{grid-template-columns:1fr}
+}
+
+@media(max-width:760px){
+.sidebar{padding:22px 5vw}
+.brand-title{font-size:24px}
+.main{padding:34px 5vw 70px}
+.topbar{flex-direction:column}
+.grid-2,.grid-3,.grid-4,.command-strip,.engine{grid-template-columns:1fr}
+.table-row,.task-row{grid-template-columns:1fr}
+.panel{padding:26px 22px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="portal">
+
+<aside class="sidebar">
+<a class="brand" href="../">
+<div class="brand-title">MEIFERTS™</div>
+<div class="brand-subtitle">Building Intelligence™</div>
+<div class="workspace-label">Professional Workspace</div>
+</a>
+
+<div class="nav-group">
+<div class="nav-heading">Workspace</div>
+<a class="nav-link active" href="dashboard.html">Dashboard <span>01</span></a>
+<a class="nav-link" href="projects.html">Cases <span>02</span></a>
+<a class="nav-link" href="inspection.html">Inspection <span>03</span></a>
+<a class="nav-link" href="evidence.html">Evidence <span>04</span></a>
+<a class="nav-link" href="ai-findings.html">AI Analysis <span>05</span></a>
+<a class="nav-link" href="risk.html">Decision Engine <span>06</span></a>
+<a class="nav-link" href="report-generator.html">Report Studio <span>07</span></a>
+</div>
+
+<div class="nav-group">
+<div class="nav-heading">System</div>
+<a class="nav-link" href="clients.html">Clients <span>08</span></a>
+<a class="nav-link" href="library.html">Library <span>09</span></a>
+<a class="nav-link" href="settings.html">Settings <span>10</span></a>
+<a class="nav-link" href="../">Public Website <span>↗</span></a>
+</div>
+
+<div class="sidebar-footer">
+<p>Evidence-first workspace for Technical Property Reviews™, Building Risk Score™, Lifecycle Assessment™, CAPEX Forecast™ and Decision Support Reports™.</p>
+<p>© Matthias Meiferts</p>
+</div>
+</aside>
+
+<main class="main">
+
+<section class="topbar">
+<div>
+<div class="eyebrow">MEIFERTS Building Intelligence Platform</div>
+<h1>Decision command for technical property risk.</h1>
+</div>
+<div class="status-group">
+<div class="status-pill">Dashboard v2.1</div>
+<div class="status-pill">Evidence First</div>
+<div class="status-pill">Local Data Layer</div>
+</div>
+</section>
+
+<section class="command-strip">
+<a class="command-button" href="projects.html"><strong>Open Case</strong><span>Case Workspace</span></a>
+<a class="command-button" href="evidence.html"><strong>Add Evidence</strong><span>Evidence Engine</span></a>
+<a class="command-button" href="inspection.html"><strong>New Observation</strong><span>Inspection Logic</span></a>
+<a class="command-button" href="risk.html"><strong>Review Decision</strong><span>Decision Engine</span></a>
+<a class="command-button" href="report-generator.html"><strong>Export Report</strong><span>Report Output</span></a>
+</section>
+
+<section class="grid-2 section">
+<div class="panel dark">
+<div class="eyebrow">Active Case</div>
+<h2 id="active-case-title">Coastal Residential Tower</h2>
+<p id="active-case-description">
+Technical Property Review™ in progress. Evidence collection is active, AI findings are pending expert validation, and the final decision output is not yet report-ready.
+</p>
+<div class="actions">
+<a class="button primary" href="inspection.html">Continue Workflow</a>
+<a class="button" href="evidence.html">Open Evidence</a>
+</div>
+</div>
+
+<div class="panel">
+<div class="eyebrow">Decision Readiness</div>
+<h2 id="decision-state">Not ready for final recommendation.</h2>
+<p>
+The case has sufficient evidence volume, but still contains unresolved high-risk signals, missing documentation and unvalidated CAPEX assumptions.
+</p>
+<div class="progress-line"><span id="readiness-bar" style="width:67%"></span></div>
+<div class="actions">
+<a class="button primary" href="risk.html">Open Decision Engine</a>
+</div>
+</div>
+</section>
+
+<section class="grid-4 section">
+<div class="metric">
+<div class="metric-label">Case Readiness</div>
+<div class="metric-number" data-mbip="readiness">67</div>
+<p>Workflow completion.</p>
+</div>
+
+<div class="metric">
+<div class="metric-label">Evidence Objects</div>
+<div class="metric-number" data-mbip="evidence">0</div>
+<p>Photos, notes, documents and measurements.</p>
+</div>
+
+<div class="metric">
+<div class="metric-label">Open Findings</div>
+<div class="metric-number" data-mbip="findings">0</div>
+<p>Require expert validation.</p>
+</div>
+
+<div class="metric">
+<div class="metric-label">High Risk Signals</div>
+<div class="metric-number" data-mbip="high-risk">0</div>
+<p>Decision blockers.</p>
+</div>
+</section>
+
+<section class="section">
+<div class="topbar">
+<div>
+<div class="eyebrow">Decision Intelligence Engine</div>
+<h2>Evidence to decision traceability.</h2>
+</div>
+<a class="button" href="risk.html">Open Engine</a>
+</div>
+
+<div class="engine">
+<div class="engine-step">
+<strong>Evidence</strong>
+<p>Photos, documents, measurements and notes.</p>
+<div class="number" data-mbip="evidence">0</div>
+</div>
+
+<div class="engine-step">
+<strong>AI Analysis</strong>
+<p>Pattern detection, classification and risk suggestions.</p>
+<div class="number" data-mbip="ai-signals">0</div>
+</div>
+
+<div class="engine-step">
+<strong>Observation</strong>
+<p>Expert-confirmed visible or documented conditions.</p>
+<div class="number">42</div>
+</div>
+
+<div class="engine-step">
+<strong>Finding</strong>
+<p>Relevant technical, financial or governance issue.</p>
+<div class="number" data-mbip="findings">0</div>
+</div>
+
+<div class="engine-step">
+<strong>Assessment</strong>
+<p>Severity, likelihood, lifecycle impact and confidence.</p>
+<div class="number">12</div>
+</div>
+
+<div class="engine-step">
+<strong>Recommendation</strong>
+<p>Action, further review, negotiation or decision support.</p>
+<div class="number">8</div>
+</div>
+
+<div class="engine-step">
+<strong>Decision</strong>
+<p>Proceed, pause, renegotiate or reject.</p>
+<div class="number">1</div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="topbar">
+<div>
+<div class="eyebrow">Case Command Table</div>
+<h2>Active workspaces.</h2>
+</div>
+<a class="button" href="projects.html">View Cases</a>
+</div>
+
+<div class="table-card">
+<div class="table-row header">
+<div>Case</div><div>Status</div><div>Risk</div><div>Evidence</div><div>Output</div>
+</div>
+
+<div id="case-table-rows">
+<div class="table-row">
+<div><strong>Coastal Residential Tower</strong></div>
+<div>Inspection</div>
+<div><span class="tag red">68</span></div>
+<div>124</div>
+<div>Draft</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="topbar">
+<div>
+<div class="eyebrow">Priority Queue</div>
+<h2>Decision blockers.</h2>
+</div>
+<a class="button" href="inspection.html">Open Queue</a>
+</div>
+
+<div class="table-card">
+<div class="task-row">
+<div>
+<strong>Waterproofing evidence requires validation</strong>
+<p>Linked to Building Envelope, CAPEX Forecast™ and acquisition recommendation.</p>
+</div>
+<span class="tag red">High</span>
+</div>
+
+<div class="task-row">
+<div>
+<strong>Reserve fund statement missing</strong>
+<p>Required for governance, deferred maintenance and future cost interpretation.</p>
+</div>
+<span class="tag">Document</span>
+</div>
+
+<div class="task-row">
+<div>
+<strong>AI findings awaiting expert review</strong>
+<p><span data-mbip="ai-signals">0</span> AI-generated signals need confirmation before they can become findings.</p>
+</div>
+<span class="tag">AI Review</span>
+</div>
+
+<div class="task-row">
+<div>
+<strong>CAPEX assumptions not validated</strong>
+<p>Short-term and medium-term expenditure ranges remain draft status.</p>
+</div>
+<span class="tag red">CAPEX</span>
+</div>
+</div>
+</section>
+
+<section class="grid-3 section">
+<div class="card">
+<div class="eyebrow">Risk Signal</div>
+<h3>Envelope and waterproofing</h3>
+<p>Moisture-related evidence indicates potential lifecycle and CAPEX relevance.</p>
+<span class="tag red">Priority</span>
+</div>
+
+<div class="card">
+<div class="eyebrow">Traceability</div>
+<h3>Every finding needs evidence</h3>
+<p>No assessment should enter the report without a linked evidence object.</p>
+<span class="tag green">Principle</span>
+</div>
+
+<div class="card">
+<div class="eyebrow">Report Readiness</div>
+<h3><span data-mbip="report-readiness">67</span>% complete</h3>
+<p>The report can be drafted, but not finalized until decision blockers are resolved.</p>
+<span class="tag">Draft</span>
+</div>
+</section>
+
+</main>
+
+<aside class="context">
+<div class="context-card">
+<div class="eyebrow">Active Case</div>
+<strong id="context-case-title">Coastal Residential Tower</strong>
+<p>Technical Property Review™<br><span id="context-case-location">Confidential Demo Location</span></p>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">Live Status</div>
+<div class="context-metric"><span>Case Readiness</span><span><span data-mbip="readiness">67</span>%</span></div>
+<div class="context-metric"><span>Evidence</span><span data-mbip="evidence">0</span></div>
+<div class="context-metric"><span>AI Signals</span><span data-mbip="ai-signals">0</span></div>
+<div class="context-metric"><span>Open Findings</span><span data-mbip="findings">0</span></div>
+<div class="context-metric"><span>Risk Score</span><span data-mbip="risk-score">0</span></div>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">Decision Blockers</div>
+<div class="context-metric"><span>High Risk</span><span data-mbip="high-risk">0</span></div>
+<div class="context-metric"><span>Missing Docs</span><span>4</span></div>
+<div class="context-metric"><span>Unvalidated CAPEX</span><span>3</span></div>
+</div>
+
+<div class="context-card">
+<div class="eyebrow">System</div>
+<div class="context-metric"><span>Module</span><span>Dashboard</span></div>
+<div class="context-metric"><span>Version</span><span>2.1</span></div>
+<div class="context-metric"><span>Mode</span><span>Local Data</span></div>
+</div>
+</aside>
+
+</div>
+
+<script src="js/mbip-data.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  if (!window.MBIP) return;
+
+  const stats = MBIP.getStats();
+  const activeCase = stats.activeCase;
+
+  if (activeCase) {
+    document.getElementById("active-case-title").textContent = activeCase.title;
+    document.getElementById("context-case-title").textContent = activeCase.title;
+    document.getElementById("context-case-location").textContent = activeCase.location;
+    document.getElementById("decision-state").textContent = activeCase.decision + ".";
+    document.getElementById("readiness-bar").style.width = activeCase.readiness + "%";
+  }
+
+  document.querySelectorAll('[data-mbip="readiness"]').forEach(el => el.textContent = activeCase ? activeCase.readiness : 0);
+  document.querySelectorAll('[data-mbip="evidence"]').forEach(el => el.textContent = stats.evidenceCount);
+  document.querySelectorAll('[data-mbip="findings"]').forEach(el => el.textContent = stats.findingsCount);
+  document.querySelectorAll('[data-mbip="ai-signals"]').forEach(el => el.textContent = stats.aiSignalsCount);
+  document.querySelectorAll('[data-mbip="high-risk"]').forEach(el => el.textContent = stats.highRiskCount);
+  document.querySelectorAll('[data-mbip="risk-score"]').forEach(el => el.textContent = stats.riskScore);
+  document.querySelectorAll('[data-mbip="report-readiness"]').forEach(el => el.textContent = stats.reportReadiness);
+
+  const caseRows = document.getElementById("case-table-rows");
+  if (caseRows) {
+    caseRows.innerHTML = MBIP.cases.map(item => `
+      <div class="table-row">
+        <div><strong>${item.title}</strong></div>
+        <div>${item.status}</div>
+        <div><span class="tag ${item.riskScore >= 70 ? "red" : ""}">${item.riskScore}</span></div>
+        <div>${MBIP.evidence.filter(e => e.caseId === item.id).length}</div>
+        <div>${item.reportStatus}</div>
+      </div>
+    `).join("");
+  }
+});
+</script>
+
+</body>
+</html>

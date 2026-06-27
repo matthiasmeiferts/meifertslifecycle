@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MEIFERTS™ Building Intelligence</title>
+
+<style>
+:root{
+--navy:#1B2B45;
+--gold:#B8935A;
+--cream:#F3EEE2;
+--white:#ffffff;
+--text:#1f2933;
+--muted:#6b7280;
+--line:rgba(27,43,69,.16);
+}
+
+*{box-sizing:border-box}
+
+html,body{
+margin:0;
+padding:0;
+overflow-x:hidden;
+}
+
+body{
+font-family:Inter,Arial,sans-serif;
+background:var(--cream);
+color:var(--text);
+line-height:1.65;
+}
+
+header{
+padding:28px 5vw;
+border-bottom:1px solid var(--line);
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:34px;
+flex-wrap:wrap;
+background:rgba(243,238,226,.96);
+}
+
+.brand{text-decoration:none;color:var(--navy);min-width:240px}
+
+.brand-title{
+font-family:Georgia,"Times New Roman",serif;
+font-size:28px;
+letter-spacing:.12em;
+font-weight:500;
+text-transform:uppercase;
+}
+
+.brand-subtitle{
+font-size:13px;
+letter-spacing:.20em;
+text-transform:uppercase;
+color:var(--gold);
+font-weight:700;
+margin-top:6px;
+}
+
+nav{
+display:flex;
+gap:24px;
+align-items:center;
+justify-content:flex-end;
+flex-wrap:wrap;
+}
+
+nav a{
+text-decoration:none;
+color:var(--navy);
+text-transform:uppercase;
+letter-spacing:.10em;
+font-size:12px;
+font-weight:700;
+white-space:nowrap;
+}
+
+nav a:hover{color:var(--gold)}
+
+.nav-button{
+border:1px solid var(--navy);
+padding:10px 16px;
+}
+
+.nav-button:hover{
+background:var(--navy);
+color:var(--cream);
+}
+
+main{padding:82px 5vw 100px}
+
+.hero{
+max-width:1180px;
+margin:0 auto 90px;
+}
+
+.eyebrow,.section-eyebrow{
+color:var(--gold);
+text-transform:uppercase;
+letter-spacing:.22em;
+font-size:12px;
+font-weight:700;
+margin-bottom:22px;
+}
+
+h1{
+font-family:Georgia,"Times New Roman",serif;
+font-size:clamp(58px,8vw,112px);
+line-height:.95;
+font-weight:400;
+color:var(--navy);
+margin:0 0 34px;
+max-width:980px;
+}
+
+.lead{
+font-size:25px;
+line-height:1.5;
+color:var(--navy);
+max-width:860px;
+margin:0 0 30px;
+}
+
+.hero-text{
+font-size:19px;
+color:#4b5563;
+max-width:760px;
+margin:0 0 38px;
+}
+
+.actions{
+display:flex;
+gap:18px;
+flex-wrap:wrap;
+}
+
+.button{
+display:inline-block;
+text-decoration:none;
+text-transform:uppercase;
+letter-spacing:.12em;
+font-size:12px;
+font-weight:700;
+padding:14px 22px;
+border:1px solid var(--navy);
+color:var(--navy);
+}
+
+.button.primary{
+background:var(--navy);
+color:var(--cream);
+}
+
+.button:hover{
+background:var(--gold);
+border-color:var(--gold);
+color:var(--navy);
+}
+
+.figure-section{
+max-width:1320px;
+margin:0 auto 90px;
+background:rgba(255,255,255,.35);
+border:1px solid var(--line);
+padding:26px;
+}
+
+.figure-section img{
+width:100%;
+height:auto;
+display:block;
+}
+
+.content-section{
+max-width:1180px;
+margin:0 auto 80px;
+background:rgba(255,255,255,.38);
+border:1px solid var(--line);
+padding:54px 48px;
+}
+
+.content-section p{
+font-size:18px;
+color:#4b5563;
+max-width:900px;
+margin:0 0 24px;
+}
+
+h2{
+font-family:Georgia,"Times New Roman",serif;
+font-size:clamp(38px,4.6vw,68px);
+line-height:1.05;
+font-weight:400;
+color:var(--navy);
+margin:0 0 34px;
+}
+
+.standard-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:22px;
+margin-top:34px;
+}
+
+.standard-card,
+.article-card{
+border:1px solid rgba(184,147,90,.28);
+background:rgba(255,255,255,.52);
+padding:30px;
+}
+
+.standard-card h3{
+font-family:Georgia,"Times New Roman",serif;
+font-size:25px;
+font-weight:400;
+color:var(--navy);
+margin:0 0 14px;
+}
+
+.standard-card p{
+font-size:15px;
+margin:0;
+}
+
+.evaluation-grid,.client-grid{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:16px;
+margin-top:34px;
+}
+
+.client-grid{
+grid-template-columns:repeat(3,1fr);
+}
+
+.evaluation-grid div,.client-grid div{
+border-top:1px solid var(--line);
+padding-top:16px;
+font-family:Georgia,"Times New Roman",serif;
+font-size:22px;
+color:var(--navy);
+}
+
+.behind-section{
+max-width:1180px;
+margin:0 auto 80px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:50px;
+align-items:stretch;
+}
+
+.behind-panel{
+border:1px solid var(--line);
+background:rgba(255,255,255,.38);
+padding:48px;
+}
+
+.behind-panel p{
+font-size:18px;
+color:#4b5563;
+margin:0 0 18px;
+}
+
+.signature{
+font-family:Georgia,"Times New Roman",serif;
+font-size:32px;
+line-height:1.25;
+color:var(--navy);
+margin-top:22px;
+}
+
+.article-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:22px;
+margin-top:34px;
+}
+
+.article-card{
+font-family:Georgia,"Times New Roman",serif;
+font-size:22px;
+line-height:1.3;
+color:var(--navy);
+min-height:150px;
+}
+
+footer{
+background:var(--navy);
+color:var(--cream);
+padding:52px 5vw;
+}
+
+.footer-inner{
+max-width:1180px;
+margin:0 auto;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:50px;
+}
+
+footer h3{
+font-family:Georgia,"Times New Roman",serif;
+font-size:30px;
+font-weight:400;
+letter-spacing:.08em;
+margin:0 0 18px;
+}
+
+footer p{
+margin:0 0 16px;
+color:rgba(243,238,226,.82);
+}
+
+.footer-links{
+display:flex;
+gap:22px;
+flex-wrap:wrap;
+justify-content:flex-end;
+align-items:flex-start;
+}
+
+.footer-links a{
+color:var(--cream);
+text-decoration:none;
+text-transform:uppercase;
+letter-spacing:.12em;
+font-size:12px;
+}
+
+@media(max-width:1100px){
+.standard-grid,.article-grid,.behind-section{
+grid-template-columns:1fr 1fr;
+}
+
+.evaluation-grid{
+grid-template-columns:1fr 1fr;
+}
+}
+
+@media(max-width:760px){
+header{align-items:flex-start}
+
+nav{
+justify-content:flex-start;
+gap:16px 20px;
+}
+
+nav a{font-size:11px}
+
+main{padding:56px 5vw 80px}
+
+h1{font-size:clamp(52px,15vw,74px)}
+
+.lead{font-size:20px}
+
+.content-section,.behind-panel{
+padding:32px 26px;
+}
+
+.figure-section{
+padding:12px;
+}
+
+.figure-section img{
+min-width:720px;
+}
+
+.figure-scroll{
+overflow-x:auto;
+}
+
+.standard-grid,.article-grid,.evaluation-grid,.client-grid,.behind-section,.footer-inner{
+grid-template-columns:1fr;
+}
+
+.footer-links{justify-content:flex-start}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<a class="brand" href="./">
+<div class="brand-title">MEIFERTS™</div>
+<div class="brand-subtitle">Building Intelligence™</div>
+</a>
+
+<nav>
+<a href="methodology/">Methodology</a>
+<a href="reports.html">Reports</a>
+<a href="research.html">Research</a>
+<a href="publications.html">Publications</a>
+<a href="portal/">Portal</a>
+<a href="contact.html">Contact</a>
+<a class="nav-button" href="request-review.html">Request Technical Review</a>
+</nav>
+</header>
+
+<main>
+
+<section class="hero">
+<div class="eyebrow">MEIFERTS™ Building Intelligence</div>
+
+<h1>The Building Behind The Brochure.</h1>
+
+<p class="lead">
+Technical Due Diligence and Building Intelligence for property buyers, investors and asset owners.
+</p>
+
+<p class="hero-text">
+Most buyers investigate the location.
+<br><br>
+Few investigate the building.
+<br><br>
+That imbalance creates risk.
+<br><br>
+MEIFERTS exists to close that gap.
+</p>
+
+<div class="actions">
+<a class="button primary" href="request-review.html">Request Technical Review</a>
+<a class="button" href="methodology/">Explore Methodology</a>
+</div>
+</section>
+
+<section class="figure-section">
+<div class="figure-scroll">
+<img src="meiferts-research-v3%202.svg" alt="Building Performance Over Time">
+</div>
+</section>
+
+<section class="content-section">
+<div class="section-eyebrow">Why Buildings Create Risk</div>
+<h2>Most risks are invisible during a viewing.</h2>
+
+<p>
+A building can appear attractive during a viewing while significant technical, financial and operational risks remain undiscovered.
+</p>
+
+<p>
+Deferred maintenance. Water intrusion. Building envelope failure. Electrical deficiencies. Governance issues. Future capital expenditure.
+</p>
+
+<p>
+Most become visible only after the purchase.
+</p>
+
+<p>
+That is where Technical Due Diligence begins.
+</p>
+</section>
+
+<section class="content-section">
+<div class="section-eyebrow">The MEIFERTS Standard™</div>
+<h2>Observe. Understand. Evaluate. Decide.</h2>
+
+<p>
+The MEIFERTS Standard™ transforms building observations into decision clarity.
+</p>
+
+<p>
+The objective is not to create more information. The objective is to create understanding.
+</p>
+</section>
+
+<section class="content-section">
+<div class="section-eyebrow">What We Do</div>
+<h2>Building Intelligence for better decisions.</h2>
+
+<p>
+MEIFERTS translates building complexity into structured decision support.
+</p>
+
+<div class="standard-grid">
+<div class="standard-card">
+<h3>Technical Property Review™</h3>
+<p>Identify visible and hidden technical risks before acquisition.</p>
+</div>
+
+<div class="standard-card">
+<h3>Building Risk Score™</h3>
+<p>Transform technical observations into a structured risk classification.</p>
+</div>
+
+<div class="standard-card">
+<h3>Lifecycle Assessment™</h3>
+<p>Evaluate asset maturity, remaining useful life and future risk drivers.</p>
+</div>
+
+<div class="standard-card">
+<h3>CAPEX Forecast™</h3>
+<p>Understand future capital expenditure before it becomes unavoidable.</p>
+</div>
+</div>
+</section>
+
+<section class="content-section">
+<div class="section-eyebrow">What We Evaluate</div>
+<h2>Beyond what can be seen during a viewing.</h2>
+
+<div class="evaluation-grid">
+<div>Structure</div>
+<div>Roofing</div>
+<div>Building Envelope</div>
+<div>Water Intrusion</div>
+<div>Electrical Systems</div>
+<div>Mechanical Systems</div>
+<div>Maintenance Culture</div>
+<div>Reserve Funds</div>
+<div>Governance</div>
+<div>Future CAPEX</div>
+</div>
+</section>
+
+<section class="content-section">
+<div class="section-eyebrow">Who We Work With</div>
+<h2>Built for decision makers.</h2>
+
+<div class="client-grid">
+<div>Property Buyers</div>
+<div>International Investors</div>
+<div>Cross-Border Investors</div>
+<div>Asset Owners</div>
+<div>Family Offices</div>
+<div>Real Estate Advisors</div>
+</div>
+</section>
+
+<section class="behind-section">
+<div class="behind-panel">
+<div class="section-eyebrow">Who Is Behind MEIFERTS</div>
+<h2>Experience translated into clarity.</h2>
+
+<p>
+MEIFERTS Building Intelligence combines more than 25 years of real estate experience with technical property management, lifecycle thinking and structured risk assessment.
+</p>
+
+<p>
+The objective is not to create more information.
+</p>
+
+<p>
+The objective is to create understanding.
+</p>
+
+<p>
+Understanding creates confidence. Confidence enables better decisions.
+</p>
+</div>
+
+<div class="behind-panel">
+<div class="section-eyebrow">Platform Logic</div>
+<h2>Workspace as professional tool.</h2>
+
+<p>
+The public website explains the methodology, reports and research.
+</p>
+
+<p>
+The internal workspace is used as professional inspection tooling: checklist, risk engine, lifecycle assessment, CAPEX logic and report preparation.
+</p>
+
+<p>
+Clients see clarity. The workspace remains the craft behind the decision.
+</p>
+
+<div class="signature">
+Every building tells a story.<br>
+Understanding it is where better decisions begin.
+</div>
+</div>
+</section>
+
+<section class="content-section">
+<div class="section-eyebrow">Research & Publications</div>
+<h2>Building Intelligence as a knowledge system.</h2>
+
+<div class="article-grid">
+<div class="article-card">The Most Expensive Question Property Buyers Never Ask</div>
+<div class="article-card">Your Condo Isn't The Risk. The Building Is.</div>
+<div class="article-card">Reserve Funds Matter More Than Marble Floors.</div>
+<div class="article-card">The Building Behind The Brochure.</div>
+</div>
+</section>
+
+</main>
+
+<footer>
+<div class="footer-inner">
+<div>
+<h3>MEIFERTS BUILDING INTELLIGENCE™</h3>
+<p>We help people make better decisions.</p>
+<p>
+Technical Due Diligence<br>
+Building Risk Assessment<br>
+Lifecycle Intelligence
+</p>
+<p>Hamburg · Germany</p>
+<p>hello@meifertslifecycle.com</p>
+<p>+49 176 44537849</p>
+<p>© Matthias Meiferts</p>
+</div>
+
+<div class="footer-links">
+<a href="methodology/">Methodology</a>
+<a href="reports.html">Reports</a>
+<a href="research.html">Research</a>
+<a href="publications.html">Publications</a>
+<a href="portal/">Portal</a>
+<a href="contact.html">Contact</a>
+</div>
+</div>
+</footer>
+
+</body>
+</html>
