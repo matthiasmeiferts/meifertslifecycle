@@ -1,6 +1,6 @@
-import IdGenerator from "../utils/IdGenerator.js";
-import StorageManager from "../storage/StorageManager.js";
-import EventBus from "../events/EventBus.js";
+import IdGenerator from "./utils/IdGenerator.js";
+import StorageManager from "./storage/StorageManager.js";
+import EventBus from "./events/EventBus.js";
 
 export default class InspectionManager {
 

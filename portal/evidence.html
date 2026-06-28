@@ -1,678 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-<title>Evidence Engine | MEIFERTS Building Intelligence Platform</title>
-<meta name="description" content="Evidence Engine for MEIFERTS Building Intelligence Platform. Capture, classify and link photos, documents, measurements, notes and thermal images to observations, findings, assessments and reports." />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Evidence | MEIFERTS Building Intelligence Platform</title>
 <meta name="robots" content="noindex,nofollow">
-
 <style>
-:root{
---navy:#1B2B45;
---gold:#B8935A;
---cream:#F3EEE2;
---text:#1f2933;
---line:rgba(27,43,69,.16);
---red:#9A5B52;
---green:#5F7D65;
---soft:rgba(255,255,255,.46);
-}
-
+:root{--navy:#1B2B45;--gold:#B8935A;--cream:#F3EEE2;--line:rgba(27,43,69,.16)}
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;min-height:100%;overflow-x:hidden}
-
-body{
-font-family:Inter,Arial,sans-serif;
-background:radial-gradient(circle at top right,rgba(184,147,90,.10),transparent 34rem),var(--cream);
-color:var(--text);
-line-height:1.55;
-}
-
-a{text-decoration:none;color:inherit}
-button,input,select{font:inherit}
-
-.portal{
-min-height:100vh;
-display:grid;
-grid-template-columns:292px 1fr 360px;
-}
-
-.sidebar{
-background:var(--navy);
-color:var(--cream);
-padding:28px 24px;
-position:sticky;
-top:0;
-height:100vh;
-display:flex;
-flex-direction:column;
-box-shadow:18px 0 44px rgba(27,43,69,.08);
-}
-
-.brand{display:block;color:var(--cream);margin-bottom:34px}
-.brand-title{font-family:Georgia,"Times New Roman",serif;font-size:27px;letter-spacing:.12em;font-weight:500;text-transform:uppercase}
-.brand-subtitle{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-top:6px}
-.workspace-label{font-size:11px;letter-spacing:.20em;text-transform:uppercase;color:rgba(243,238,226,.58);margin-top:16px}
-
-.nav-group{margin:18px 0}
-.nav-heading{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:rgba(243,238,226,.45);margin:0 0 10px}
-.nav-link{display:flex;align-items:center;justify-content:space-between;gap:12px;color:rgba(243,238,226,.84);padding:11px 0;border-bottom:1px solid rgba(243,238,226,.10);font-size:14px}
-.nav-link span{color:var(--gold);font-size:12px}
-.nav-link:hover,.nav-link.active{color:var(--cream)}
-
-.sidebar-footer{
-margin-top:auto;
-font-size:12px;
-color:rgba(243,238,226,.55);
-line-height:1.6;
-}
-
-.main{padding:32px 4vw 80px;min-width:0}
-
-.context{
-background:rgba(255,255,255,.36);
-border-left:1px solid var(--line);
-padding:28px 24px;
-position:sticky;
-top:0;
-height:100vh;
-overflow:auto;
-}
-
-.eyebrow{
-color:var(--gold);
-text-transform:uppercase;
-letter-spacing:.22em;
-font-size:12px;
-font-weight:700;
-margin-bottom:12px;
-}
-
-h1,h2,h3{
-font-family:Georgia,"Times New Roman",serif;
-font-weight:400;
-color:var(--navy);
-margin-top:0;
-}
-
-h1{font-size:clamp(44px,5vw,76px);line-height:.98;margin-bottom:0}
-h2{font-size:clamp(31px,3.4vw,52px);line-height:1.05;margin-bottom:22px}
-h3{font-size:24px;line-height:1.15;margin-bottom:12px}
-
-p{font-size:16px;color:#4b5563;margin:0 0 18px}
-
-.topbar{
-display:flex;
-align-items:flex-start;
-justify-content:space-between;
-gap:22px;
-margin-bottom:36px;
-}
-
-.status-group{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-
-.status-pill{
-border:1px solid var(--line);
-background:rgba(255,255,255,.40);
-padding:11px 15px;
-font-size:11px;
-letter-spacing:.12em;
-text-transform:uppercase;
-font-weight:700;
-color:var(--navy);
-white-space:nowrap;
-}
-
-.section{margin-bottom:40px}
-
-.grid-2{
-display:grid;
-grid-template-columns:1.15fr .85fr;
-gap:24px;
-}
-
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-
-.metric,.filter-card,.gallery-card,.context-card,.drop,.table-card,.panel,.chain-card{
-background:var(--soft);
-border:1px solid var(--line);
-}
-
-.metric{padding:24px;min-height:142px}
-.metric-number{font-family:Georgia,"Times New Roman",serif;font-size:46px;line-height:1;color:var(--navy);margin-bottom:12px}
-.metric-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px}
-
-.panel{padding:28px}
-
-.filter-card{padding:22px}
-.filter-row{display:grid;grid-template-columns:1.3fr .7fr .7fr .7fr auto;gap:12px;align-items:center}
-
-input,select{
-width:100%;
-border:1px solid var(--line);
-background:rgba(255,255,255,.56);
-padding:13px 14px;
-color:var(--navy);
-outline:none;
-}
-
-.button{
-display:inline-block;
-text-transform:uppercase;
-letter-spacing:.12em;
-font-size:12px;
-font-weight:700;
-padding:13px 18px;
-border:1px solid var(--navy);
-color:var(--navy);
-min-width:165px;
-text-align:center;
-background:transparent;
-cursor:pointer;
-}
-
-.button.primary{background:var(--navy);color:var(--cream)}
-.button:hover{background:var(--gold);border-color:var(--gold);color:var(--navy)}
-
-.evidence-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-
-.gallery-card{
-padding:16px;
-min-height:300px;
-display:flex;
-flex-direction:column;
-}
-
-.thumb{
-height:140px;
-background:linear-gradient(135deg,rgba(27,43,69,.12),rgba(184,147,90,.20));
-border:1px solid rgba(27,43,69,.10);
-margin-bottom:14px;
-position:relative;
-overflow:hidden;
-}
-
-.thumb:after{
-content:"";
-position:absolute;
-inset:18px;
-border:1px solid rgba(255,255,255,.36);
-}
-
-.gallery-card p{font-size:14px;margin-bottom:12px}
-
-.tag{
-display:inline-block;
-border:1px solid rgba(184,147,90,.34);
-padding:6px 9px;
-font-size:10px;
-letter-spacing:.12em;
-text-transform:uppercase;
-color:var(--gold);
-font-weight:700;
-margin:4px 4px 0 0;
-}
-
-.tag.red{color:var(--red);border-color:rgba(154,91,82,.42)}
-.tag.green{color:var(--green);border-color:rgba(95,125,101,.42)}
-
-.card-footer{
-margin-top:auto;
-padding-top:14px;
-border-top:1px solid var(--line);
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:12px;
-}
-
-.small-link{
-font-size:12px;
-letter-spacing:.12em;
-text-transform:uppercase;
-font-weight:700;
-color:var(--navy);
-border-bottom:1px solid var(--gold);
-padding-bottom:3px;
-white-space:nowrap;
-}
-
-.chain-grid{
-display:grid;
-grid-template-columns:repeat(5,1fr);
-gap:12px;
-}
-
-.chain-card{
-padding:18px;
-min-height:120px;
-position:relative;
-}
-
-.chain-card strong{
-display:block;
-font-family:Georgia,"Times New Roman",serif;
-font-size:22px;
-font-weight:400;
-color:var(--navy);
-margin-bottom:10px;
-}
-
-.chain-card p{font-size:13px;margin:0}
-
-.chain-card .count{
-position:absolute;
-right:14px;
-bottom:8px;
-font-family:Georgia,"Times New Roman",serif;
-font-size:34px;
-color:rgba(184,147,90,.34);
-}
-
-.drop{padding:34px;text-align:center}
-.drop strong{display:block;font-family:Georgia,"Times New Roman",serif;font-size:30px;font-weight:400;color:var(--navy);margin-bottom:8px}
-
-.table-card{padding:0;overflow:hidden}
-
-.table-row{
-display:grid;
-grid-template-columns:1.2fr .7fr .8fr .8fr .9fr .8fr;
-gap:16px;
-padding:18px 22px;
-border-bottom:1px solid var(--line);
-align-items:center;
-}
-
-.table-row:last-child{border-bottom:0}
-
-.table-row.header{
-font-size:11px;
-letter-spacing:.14em;
-text-transform:uppercase;
-font-weight:700;
-color:var(--gold);
-}
-
-.table-row strong{
-font-family:Georgia,"Times New Roman",serif;
-font-size:21px;
-font-weight:400;
-color:var(--navy);
-}
-
-.context-card{
-padding:0 0 20px;
-margin-bottom:20px;
-border:0;
-border-bottom:1px solid var(--line);
-background:transparent;
-}
-
-.context-card strong{
-font-family:Georgia,"Times New Roman",serif;
-font-size:25px;
-font-weight:400;
-color:var(--navy);
-display:block;
-margin-bottom:8px;
-}
-
-.context-metric{
-display:flex;
-justify-content:space-between;
-gap:16px;
-border-top:1px solid var(--line);
-padding:12px 0;
-font-size:14px;
-}
-
-.context-metric span:last-child{color:var(--gold);font-weight:700}
-
-@media(max-width:1380px){
-.portal{grid-template-columns:292px 1fr}
-.context{display:none}
-.grid-4,.evidence-grid,.chain-grid{grid-template-columns:1fr 1fr}
-.grid-3{grid-template-columns:1fr 1fr}
-.filter-row{grid-template-columns:1fr 1fr}
-.table-row{grid-template-columns:1fr 1fr}
-}
-
-@media(max-width:980px){
-.portal{grid-template-columns:1fr}
-.sidebar{position:relative;height:auto}
-.sidebar .nav-group,.sidebar .sidebar-footer{display:none}
-.main{padding:38px 5vw 70px}
-.grid-2{grid-template-columns:1fr}
-}
-
-@media(max-width:760px){
-.sidebar{padding:22px 5vw}
-.brand-title{font-size:24px}
-.main{padding:34px 5vw 70px}
-.topbar{flex-direction:column}
-.grid-2,.grid-3,.grid-4,.evidence-grid,.filter-row,.table-row,.chain-grid{grid-template-columns:1fr}
-.panel{padding:26px 22px}
-}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--cream);color:#1f2933}
+.wrap{max-width:1100px;margin:0 auto;padding:48px 5vw}
+h1,h2{font-family:Georgia,serif;font-weight:400;color:var(--navy)}
+h1{font-size:64px;line-height:.95}
+.panel{background:rgba(255,255,255,.55);border:1px solid var(--line);padding:28px;margin:24px 0}
+.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.22em;font-size:12px;font-weight:700}
+input,select,textarea{width:100%;padding:12px;margin:8px 0;border:1px solid var(--line)}
+textarea{min-height:90px}
+button,.button{display:inline-block;background:var(--navy);color:var(--cream);border:0;padding:13px 18px;text-transform:uppercase;letter-spacing:.12em;font-size:12px;font-weight:700;text-decoration:none;cursor:pointer}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.item{background:rgba(255,255,255,.6);border:1px solid var(--line);padding:18px;margin:12px 0}
+.tag{display:inline-block;border:1px solid rgba(184,147,90,.35);padding:5px 8px;color:var(--gold);font-size:11px;text-transform:uppercase;margin-right:6px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}h1{font-size:44px}}
 </style>
 </head>
-
 <body>
 
-<div class="portal">
+<div class="wrap">
 
-<aside class="sidebar">
-<a class="brand" href="../">
-<div class="brand-title">MEIFERTS™</div>
-<div class="brand-subtitle">Building Intelligence™</div>
-<div class="workspace-label">Professional Workspace</div>
-</a>
-
-<div class="nav-group">
-<div class="nav-heading">Workspace</div>
-<a class="nav-link" href="dashboard.html">Dashboard <span>01</span></a>
-<a class="nav-link" href="projects.html">Cases <span>02</span></a>
-<a class="nav-link" href="inspection.html">Inspection <span>03</span></a>
-<a class="nav-link active" href="evidence.html">Evidence <span>04</span></a>
-<a class="nav-link" href="ai-findings.html">AI Analysis <span>05</span></a>
-<a class="nav-link" href="risk.html">Decision Engine <span>06</span></a>
-<a class="nav-link" href="report-generator.html">Report Studio <span>07</span></a>
-</div>
-
-<div class="nav-group">
-<div class="nav-heading">System</div>
-<a class="nav-link" href="clients.html">Clients <span>08</span></a>
-<a class="nav-link" href="library.html">Library <span>09</span></a>
-<a class="nav-link" href="settings.html">Settings <span>10</span></a>
-<a class="nav-link" href="../">Public Website <span>↗</span></a>
-</div>
-
-<div class="sidebar-footer">
-<p>Evidence Engine for photos, documents, field notes, measurements and thermal images. Every decision object must remain traceable to evidence.</p>
-<p>© Matthias Meiferts</p>
-</div>
-</aside>
-
-<main class="main">
-
-<section class="topbar">
-<div>
-<div class="eyebrow">Evidence Engine</div>
-<h1>Evidence is the source of truth.</h1>
-</div>
-<div class="status-group">
-<div class="status-pill">Evidence v2.0</div>
-<div class="status-pill">124 Items</div>
-<div class="status-pill">Traceability Active</div>
-</div>
+<section class="panel" id="no-case" style="display:none">
+<div class="eyebrow">No Active Case</div>
+<h1>No case selected.</h1>
+<p>Please open a case first.</p>
+<a class="button" href="cases.html">Open Cases</a>
 </section>
 
-<section class="grid-4 section">
-<div class="metric"><div class="metric-label">Photos</div><div class="metric-number">68</div><p>Inspection images.</p></div>
-<div class="metric"><div class="metric-label">Documents</div><div class="metric-number">31</div><p>Maintenance, reserve and legal records.</p></div>
-<div class="metric"><div class="metric-label">Measurements</div><div class="metric-number">16</div><p>Moisture, thermal and field values.</p></div>
-<div class="metric"><div class="metric-label">Unassigned</div><div class="metric-number">16</div><p>Need classification.</p></div>
-</section>
+<div id="workspace">
+<div class="eyebrow">Evidence Workspace</div>
+<h1 id="case-title">Evidence.</h1>
+<p id="case-subtitle">Loading...</p>
 
-<section class="grid-2 section">
-<div class="panel">
-<div class="eyebrow">Evidence Principle</div>
-<h2>No finding without evidence.</h2>
-<p>
-Every observation, finding, assessment, recommendation and report statement must be traceable to one or more evidence objects.
-</p>
-<p>
-Evidence can be a photo, document, note, measurement, thermal image or client-provided record. The platform treats it as structured decision material, not as loose file storage.
-</p>
-</div>
+<div class="grid">
+<section class="panel">
+<div class="eyebrow">Capture Evidence</div>
+<h2>New evidence</h2>
 
-<div class="panel">
-<div class="eyebrow">Current Focus</div>
-<h2>Waterproofing evidence review.</h2>
-<p>
-Photos, rooftop notes and missing maintenance records are linked to the Building Envelope and Roofing decision chain.
-</p>
-<div>
-<span class="tag red">Decision Blocker</span>
-<span class="tag">Envelope</span>
-<span class="tag">CAPEX Relevant</span>
-</div>
-</div>
-</section>
-
-<section class="filter-card section">
-<div class="filter-row">
-<input placeholder="Search evidence, component, finding, risk tag or source..." />
-<select>
-<option>All Components</option>
-<option>Building Envelope</option>
-<option>Roofing</option>
-<option>Governance</option>
-<option>MEP</option>
-<option>Structure</option>
+<select id="type">
+<option value="photo">Photo</option>
+<option value="document">Document</option>
+<option value="note">Note</option>
+<option value="measurement">Measurement</option>
 </select>
-<select>
-<option>All Types</option>
-<option>Photo</option>
-<option>Document</option>
-<option>Thermal</option>
-<option>Measurement</option>
-<option>Note</option>
+
+<input id="title" placeholder="Title">
+<input id="location" placeholder="Location / area">
+<input id="system" placeholder="Building system">
+<select id="severity">
+<option>Unrated</option>
+<option>Low</option>
+<option>Medium</option>
+<option>High</option>
+<option>Critical</option>
 </select>
-<select>
-<option>All Status</option>
-<option>Classified</option>
-<option>Expert Review</option>
-<option>Unassigned</option>
-<option>Report Ready</option>
-</select>
-<a class="button primary" href="#">Upload</a>
-</div>
+<textarea id="description" placeholder="Description"></textarea>
+<button id="save">Save Evidence</button>
 </section>
 
-<section class="section">
-<div class="topbar">
-<div>
-<div class="eyebrow">Evidence Gallery</div>
-<h2>Classified evidence objects.</h2>
-</div>
-<a class="small-link" href="inspection.html">Back to Inspection</a>
-</div>
-
-<div class="evidence-grid">
-
-<div class="gallery-card">
-<div class="thumb"></div>
-<h3>Balcony moisture staining</h3>
-<p>Linked to Building Envelope, moisture observation and waterproofing finding.</p>
-<div>
-<span class="tag">Photo</span><span class="tag">Envelope</span><span class="tag red">Risk Signal</span>
-</div>
-<div class="card-footer"><span class="tag green">Linked</span><a class="small-link" href="inspection.html">Open</a></div>
-</div>
-
-<div class="gallery-card">
-<div class="thumb"></div>
-<h3>Reserve fund statement</h3>
-<p>Governance and financial risk documentation requiring expert interpretation.</p>
-<div>
-<span class="tag">Document</span><span class="tag">Governance</span><span class="tag">CAPEX</span>
-</div>
-<div class="card-footer"><span class="tag">Review</span><a class="small-link" href="risk.html">Decision</a></div>
-</div>
-
-<div class="gallery-card">
-<div class="thumb"></div>
-<h3>Rooftop waterproofing note</h3>
-<p>Field note linked to roof lifecycle and potential short-term cost exposure.</p>
-<div>
-<span class="tag">Note</span><span class="tag">Roof</span><span class="tag red">CAPEX</span>
-</div>
-<div class="card-footer"><span class="tag green">Assigned</span><a class="small-link" href="ai-findings.html">AI</a></div>
-</div>
-
-<div class="gallery-card">
-<div class="thumb"></div>
-<h3>Thermal image review</h3>
-<p>Thermal image awaiting component assignment and expert validation.</p>
-<div>
-<span class="tag">Thermal</span><span class="tag">Review</span>
-</div>
-<div class="card-footer"><span class="tag red">Unassigned</span><a class="small-link" href="inspection.html">Assign</a></div>
-</div>
-
-</div>
+<section class="panel">
+<div class="eyebrow">Current Case</div>
+<h2 id="current-case">Loading...</h2>
+<p>Status: <strong id="case-status">–</strong></p>
+<p>Risk: <strong id="case-risk">–</strong></p>
+<p>Evidence objects: <strong id="count">0</strong></p>
 </section>
-
-<section class="section">
-<div class="topbar">
-<div>
-<div class="eyebrow">Traceability Chain</div>
-<h2>Evidence to decision linkage.</h2>
-</div>
-<a class="small-link" href="risk.html">Open Decision Engine</a>
 </div>
 
-<div class="chain-grid">
-<div class="chain-card"><strong>Evidence</strong><p>Original source material captured or uploaded.</p><div class="count">124</div></div>
-<div class="chain-card"><strong>Observation</strong><p>Expert-confirmed building condition.</p><div class="count">42</div></div>
-<div class="chain-card"><strong>Finding</strong><p>Relevant technical or governance issue.</p><div class="count">17</div></div>
-<div class="chain-card"><strong>Assessment</strong><p>Severity, likelihood, confidence and impact.</p><div class="count">12</div></div>
-<div class="chain-card"><strong>Report</strong><p>Evidence-backed output statement.</p><div class="count">38</div></div>
-</div>
-</section>
-
-<section class="section">
-<div class="drop">
-<strong>Drag evidence into the workspace.</strong>
-<p>Photos, PDFs, maintenance records, inspection notes, measurements and thermal images become structured evidence objects.</p>
-<div style="margin-top:22px">
-<a class="button primary" href="#">Upload Files</a>
-<a class="button" href="inspection.html">Attach to Observation</a>
-</div>
-</div>
-</section>
-
-<section class="section">
-<div class="topbar">
-<div>
+<section class="panel">
 <div class="eyebrow">Evidence Register</div>
-<h2>Operational evidence status.</h2>
-</div>
-<a class="small-link" href="#">Export Register</a>
-</div>
-
-<div class="table-card">
-<div class="table-row header">
-<div>Evidence</div><div>Type</div><div>Component</div><div>Status</div><div>Linked To</div><div>Output</div>
-</div>
-
-<div class="table-row">
-<div><strong>Balcony moisture staining</strong></div>
-<div>Photo</div>
-<div>Envelope</div>
-<div><span class="tag green">Classified</span></div>
-<div>Observation 014</div>
-<div>Draft</div>
-</div>
-
-<div class="table-row">
-<div><strong>Reserve fund statement</strong></div>
-<div>Document</div>
-<div>Governance</div>
-<div><span class="tag">Review</span></div>
-<div>Assessment 006</div>
-<div>Pending</div>
-</div>
-
-<div class="table-row">
-<div><strong>Rooftop waterproofing note</strong></div>
-<div>Note</div>
-<div>Roof</div>
-<div><span class="tag green">Assigned</span></div>
-<div>Finding 009</div>
-<div>Draft</div>
-</div>
-
-<div class="table-row">
-<div><strong>Thermal image review</strong></div>
-<div>Thermal</div>
-<div>Unassigned</div>
-<div><span class="tag red">Review</span></div>
-<div>Open</div>
-<div>Open</div>
-</div>
-</div>
+<h2>Captured evidence</h2>
+<div id="list"></div>
 </section>
-
-<section class="grid-4 section">
-<div class="panel">
-<div class="eyebrow">Classification</div>
-<h3>16 items open</h3>
-<p>Assign unclassified evidence to components, observations or findings.</p>
-<span class="tag red">Review</span>
 </div>
 
-<div class="panel">
-<div class="eyebrow">Report Evidence</div>
-<h3>38 items selected</h3>
-<p>Evidence items ready for finding documentation and report appendix.</p>
-<span class="tag green">Ready</span>
 </div>
 
-<div class="panel">
-<div class="eyebrow">Missing Evidence</div>
-<h3>4 requests open</h3>
-<p>Waterproofing records and maintenance history remain missing.</p>
-<span class="tag red">Missing</span>
-</div>
+<script type="module">
+import CaseManager from "./core/CaseManager.js";
+import EvidenceManager from "./core/EvidenceManager.js";
 
-<div class="panel">
-<div class="eyebrow">Confidence</div>
-<h3>Evidence quality</h3>
-<p>Confidence depends on source, clarity, completeness and expert validation.</p>
-<span class="tag">Medium</span>
-</div>
-</section>
+console.log("CaseManager:", CaseManager);
+console.log("Current:", CaseManager.getCurrent());
+console.log("EvidenceManager:", EvidenceManager);
 
-</main>
+const noCase = document.getElementById("no-case");
+const workspace = document.getElementById("workspace");
 
-<aside class="context">
-<div class="context-card">
-<div class="eyebrow">Active Case</div>
-<strong>Coastal Residential Tower</strong>
-<p>Technical Property Review™<br>Confidential Demo Location</p>
-</div>
+let currentCase = CaseManager.getCurrent();
 
-<div class="context-card">
-<div class="eyebrow">Evidence Status</div>
-<div class="context-metric"><span>Total</span><span>124</span></div>
-<div class="context-metric"><span>Classified</span><span>108</span></div>
-<div class="context-metric"><span>Unassigned</span><span>16</span></div>
-<div class="context-metric"><span>Linked</span><span>92</span></div>
-<div class="context-metric"><span>Report Ready</span><span>38</span></div>
-</div>
+if (!currentCase) {
+    const storedCases = JSON.parse(localStorage.getItem("mbi:cases") || "[]");
+    currentCase = storedCases.length ? storedCases[storedCases.length - 1] : null;
+    if (currentCase) CaseManager.open(currentCase);
+}
 
-<div class="context-card">
-<div class="eyebrow">Current Focus</div>
-<strong>Waterproofing Evidence</strong>
-<div class="context-metric"><span>Photos</span><span>12</span></div>
-<div class="context-metric"><span>Documents</span><span>3</span></div>
-<div class="context-metric"><span>AI Signals</span><span>6</span></div>
-<div class="context-metric"><span>Status</span><span>Review</span></div>
-</div>
+if (!currentCase) {
+    noCase.style.display = "block";
+    workspace.style.display = "none";
+} else {
+    renderCase();
+    renderEvidence();
+}
 
-<div class="context-card">
-<div class="eyebrow">Module</div>
-<div class="context-metric"><span>Name</span><span>Evidence</span></div>
-<div class="context-metric"><span>Version</span><span>2.0</span></div>
-<div class="context-metric"><span>Mode</span><span>Prototype</span></div>
-</div>
-</aside>
+function renderCase() {
+    document.getElementById("case-title").textContent = currentCase.title;
+    document.getElementById("case-subtitle").textContent = `${currentCase.type} · ${currentCase.status}`;
+    document.getElementById("current-case").textContent = currentCase.title;
+    document.getElementById("case-status").textContent = currentCase.status || "–";
+    document.getElementById("case-risk").textContent = currentCase.riskScore ?? "–";
+}
 
-</div>
+function renderEvidence() {
+    const items = EvidenceManager.getByCase(currentCase.id);
+    document.getElementById("count").textContent = items.length;
+
+    const list = document.getElementById("list");
+
+    if (!items.length) {
+        list.innerHTML = `<div class="item"><strong>No evidence captured yet.</strong><p>Create the first evidence object above.</p></div>`;
+        return;
+    }
+
+    list.innerHTML = items.map(item => `
+        <div class="item">
+            <div class="eyebrow">${item.type} · ${item.category}</div>
+            <h2>${item.title}</h2>
+            <p>${item.description || "No description."}</p>
+            <span class="tag">${item.location || "No location"}</span>
+            <span class="tag">${item.buildingSystem || "No system"}</span>
+            <span class="tag">${item.severity}</span>
+        </div>
+    `).join("");
+}
+
+document.getElementById("save").addEventListener("click", () => {
+
+    if (!currentCase) {
+        alert("No active case.");
+        return;
+    }
+
+    const title = document.getElementById("title").value.trim();
+
+    if (!title) {
+        alert("Bitte Titel eingeben.");
+        return;
+    }
+
+    EvidenceManager.create({
+        id: `evidence-${Date.now()}`,
+        caseId: currentCase.id,
+        buildingId: currentCase.buildingId,
+        inspectionId: currentCase.inspectionId || null,
+        type: document.getElementById("type").value,
+        category: "Field Evidence",
+        title,
+        location: document.getElementById("location").value.trim(),
+        buildingSystem: document.getElementById("system").value.trim(),
+        severity: document.getElementById("severity").value,
+        description: document.getElementById("description").value.trim(),
+        status: "Captured",
+        createdBy: "Matthias Meiferts"
+    });
+
+    document.getElementById("title").value = "";
+    document.getElementById("location").value = "";
+    document.getElementById("system").value = "";
+    document.getElementById("description").value = "";
+
+    renderEvidence();
+});
+</script>
 
 </body>
 </html>
