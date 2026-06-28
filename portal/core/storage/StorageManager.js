@@ -2,7 +2,7 @@
  * ==========================================================
  * MEIFERTS Building Intelligence
  * StorageManager
- * Version 1.1.0
+ * Version 1.2.0
  * ==========================================================
  */
 
@@ -44,14 +44,22 @@ export default class StorageManager {
             throw new Error(`StorageManager: object already exists: ${object.id}`);
         }
 
+        object.createdAt = object.createdAt || new Date().toISOString();
+        object.updatedAt = new Date().toISOString();
+
         items.push(object);
-        localStorage.setItem(this.getKey(collection), JSON.stringify(items));
+
+        localStorage.setItem(
+            this.getKey(collection),
+            JSON.stringify(items)
+        );
 
         return object;
     }
 
     static load(collection, id) {
-        return this.loadAll(collection).find(item => item.id === id) || null;
+        return this.loadAll(collection)
+            .find(item => item.id === id) || null;
     }
 
     static update(collection, object) {
@@ -60,7 +68,10 @@ export default class StorageManager {
         }
 
         const items = this.loadAll(collection);
-        const index = items.findIndex(item => item.id === object.id);
+
+        const index = items.findIndex(
+            item => item.id === object.id
+        );
 
         if (index === -1) {
             throw new Error(`StorageManager: object not found: ${object.id}`);
@@ -72,16 +83,38 @@ export default class StorageManager {
             updatedAt: new Date().toISOString()
         };
 
-        localStorage.setItem(this.getKey(collection), JSON.stringify(items));
+        localStorage.setItem(
+            this.getKey(collection),
+            JSON.stringify(items)
+        );
 
         return items[index];
     }
 
-    static delete(collection, id) {
-        const items = this.loadAll(collection);
-        const filtered = items.filter(item => item.id !== id);
+    /**
+     * Save or update an object
+     */
+    static upsert(collection, object) {
 
-        localStorage.setItem(this.getKey(collection), JSON.stringify(filtered));
+        if (this.exists(collection, object.id)) {
+            return this.update(collection, object);
+        }
+
+        return this.save(collection, object);
+    }
+
+    static delete(collection, id) {
+
+        const items = this.loadAll(collection);
+
+        const filtered = items.filter(
+            item => item.id !== id
+        );
+
+        localStorage.setItem(
+            this.getKey(collection),
+            JSON.stringify(filtered)
+        );
 
         return true;
     }
@@ -90,13 +123,22 @@ export default class StorageManager {
         return this.load(collection, id) !== null;
     }
 
+    static count(collection) {
+        return this.loadAll(collection).length;
+    }
+
     static clear(collection) {
+
         if (!collection) {
             localStorage.clear();
             return true;
         }
 
-        localStorage.removeItem(this.getKey(collection));
+        localStorage.removeItem(
+            this.getKey(collection)
+        );
+
         return true;
     }
+
 }
