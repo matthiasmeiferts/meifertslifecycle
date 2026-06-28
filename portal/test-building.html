@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BuildingManager Test</title>
+</head>
+<body>
+
+<h1>MEIFERTS Building Intelligence</h1>
+<p>BuildingManager Test</p>
+
+<script type="module">
+
+import BuildingManager from "./core/workflow/BuildingManager.js";
+import InspectionManager from "./core/workflow/InspectionManager.js";
+
+localStorage.clear();
+
+const building = BuildingManager.createBuilding({
+    name: "Demo Building",
+    address: "123 ถนนสุขุมวิท",
+    city: "Bangkok",
+    country: "Thailand",
+    assetType: "Condominium"
+});
+
+const inspection = InspectionManager.createInspection({
+    buildingId: building.id,
+    inspectionType: "Technical Due Diligence",
+    title: "Initial Inspection"
+});
+
+console.log("Building:");
+console.log(building);
+
+console.log("Inspection:");
+console.log(inspection);
+
+console.log("All Buildings:");
+console.log(BuildingManager.getAllBuildings());
+
+console.log("All Inspections:");
+console.log(InspectionManager.getAllInspections());
+
+</script>
+
+</body>
+</html>

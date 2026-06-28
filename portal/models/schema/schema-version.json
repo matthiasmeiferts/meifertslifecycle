@@ -1,0 +1,16 @@
+{
+  "platform": "MEIFERTS Building Intelligence",
+  "schemaVersion": "1.0.0",
+  "created": "2026-06-27",
+  "author": "MEIFERTS",
+
+  "workflow": [
+    "Evidence",
+    "AI Analysis",
+    "Finding",
+    "Assessment",
+    "Recommendation",
+    "Decision",
+    "Report"
+  ]
+}
