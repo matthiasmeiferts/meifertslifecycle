@@ -1,5 +1,5 @@
 import WorkspaceController from "./controllers/WorkspaceController.js";
-import CasePage from "./ui/pages/CasePage.js";
+import EvidencePage from "./ui/pages/EvidencePage.js";
 
 function renderPage() {
 
@@ -16,7 +16,7 @@ function renderPage() {
     }
 
     main.appendChild(
-        CasePage.render()
+        EvidencePage.render()
     );
 
 }
