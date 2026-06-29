@@ -68,17 +68,7 @@ export default class ReportManager {
     }
 
     static getAll() {
-        const data = StorageManager.load(this.collection);
-
-        if (Array.isArray(data)) {
-            return data;
-        }
-
-        if (data && typeof data === "object") {
-            return Object.values(data);
-        }
-
-        return [];
+        return StorageManager.loadAll(this.collection);
     }
 
     static getByCase(caseId) {
