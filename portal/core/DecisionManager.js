@@ -119,14 +119,6 @@ export default class DecisionManager {
 
         );
 
-        console.log(
-
-            "Decision created:",
-
-            saved
-
-        );
-
         return saved;
 
     }
