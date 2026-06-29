@@ -100,14 +100,6 @@ export default class RecommendationManager {
 
         );
 
-        console.log(
-
-            "Recommendation created:",
-
-            saved
-
-        );
-
         return saved;
 
     }
