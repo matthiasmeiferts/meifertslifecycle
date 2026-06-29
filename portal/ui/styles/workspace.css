@@ -238,3 +238,33 @@ h2 {
     grid-template-columns: 1fr;
   }
 }
+.activity-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 12px;
+}
+
+.activity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.activity-header strong {
+  color: var(--navy);
+  font-size: 15px;
+}
+
+.activity-header span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.activity-body {
+  color: var(--muted);
+  line-height: 1.5;
+  font-size: 14px;
+}

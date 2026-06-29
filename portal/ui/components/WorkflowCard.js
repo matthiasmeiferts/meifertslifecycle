@@ -1,45 +1,43 @@
 export default class WorkflowCard {
 
-    static create(steps = [], currentStep = 0) {
-
+    static create(workflow = {}) {
         const card = document.createElement("section");
         card.className = "workflow-card";
 
-        const title = document.createElement("div");
-        title.className = "section-header";
-        title.innerHTML = `
-            <div>
-                <p class="eyebrow">Decision Workflow</p>
-                <h2>Evidence → Report</h2>
+        const steps = workflow.steps || [];
+        const progress = workflow.progress ?? 0;
+        const currentStep = workflow.currentStep ?? 0;
+
+        card.innerHTML = `
+            <div class="section-header">
+                <div>
+                    <p class="eyebrow">Decision Workflow</p>
+                    <h2>Evidence → Report</h2>
+                </div>
+                <span>${progress}%</span>
             </div>
+            <div class="workflow-steps"></div>
         `;
 
-        const container = document.createElement("div");
-        container.className = "workflow-steps";
+        const container = card.querySelector(".workflow-steps");
 
         steps.forEach((step, index) => {
-
             const item = document.createElement("div");
 
-            if (index < currentStep) {
+            if (step.complete) {
                 item.classList.add("completed");
-                item.innerHTML = `✓ ${step}`;
+                item.textContent = `✓ ${step.title}`;
             } else if (index === currentStep) {
                 item.classList.add("active");
-                item.innerHTML = `● ${step}`;
+                item.textContent = `● ${step.title}`;
             } else {
-                item.innerHTML = `○ ${step}`;
+                item.textContent = `○ ${step.title}`;
             }
 
             container.appendChild(item);
-
         });
 
-        card.appendChild(title);
-        card.appendChild(container);
-
         return card;
-
     }
 
 }
