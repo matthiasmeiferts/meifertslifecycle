@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MEIFERTS Building Intelligence | Professional Workspace</title>
+  <link rel="stylesheet" href="./ui/styles/workspace.css" />
+</head>
+<body>
+  <div id="app" class="workspace-shell">
+    <aside class="workspace-sidebar">
+      <div class="brand">
+        <div class="brand-mark">M</div>
+        <div>
+          <strong>MEIFERTS</strong>
+          <span>Building Intelligence</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="active" href="#">Dashboard</a>
+        <a href="#">Cases</a>
+        <a href="#">Building</a>
+        <a href="#">Inspection</a>
+        <a href="#">Evidence</a>
+        <a href="#">Findings</a>
+        <a href="#">Assessments</a>
+        <a href="#">Recommendations</a>
+        <a href="#">Decisions</a>
+        <a href="#">Reports</a>
+      </nav>
+    </aside>
+
+    <main class="workspace-main">
+      <header class="workspace-header">
+        <div>
+          <p class="eyebrow">Foundation Release 1.0</p>
+          <h1>Professional Workspace</h1>
+        </div>
+        <div class="status-pill">Engine connected</div>
+      </header>
+
+      <section class="hero-card">
+        <p class="eyebrow">Active Case</p>
+        <h2 id="active-case-title">No active case</h2>
+        <p id="active-case-subtitle">Create or open a case to begin the decision workflow.</p>
+      </section>
+
+      <section class="metrics-grid" id="metrics-grid"></section>
+
+      <section class="workflow-card">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Decision Workflow</p>
+            <h2>Evidence → Report</h2>
+          </div>
+          <span id="workflow-progress">0%</span>
+        </div>
+
+        <div class="workflow-steps">
+          <div>Building</div>
+          <div>Inspection</div>
+          <div>Evidence</div>
+          <div>Finding</div>
+          <div>Assessment</div>
+          <div>Recommendation</div>
+          <div>Decision</div>
+          <div>Report</div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="workspace-context">
+      <p class="eyebrow">Intelligence Sidebar</p>
+      <h2>Current Signal</h2>
+
+      <div class="context-item">
+        <span>Building Risk Score™</span>
+        <strong id="risk-score">Pending</strong>
+      </div>
+
+      <div class="context-item">
+        <span>Building Confidence™</span>
+        <strong id="confidence-score">Pending</strong>
+      </div>
+
+      <div class="context-item">
+        <span>Knowledge Coverage™</span>
+        <strong id="coverage-score">Pending</strong>
+      </div>
+    </aside>
+  </div>
+
+  <script type="module" src="./workspace.js"></script>
+</body>
+</html>

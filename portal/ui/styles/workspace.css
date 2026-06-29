@@ -1,0 +1,240 @@
+:root {
+  --navy: #1b2b45;
+  --cream: #f3eee2;
+  --gold: #b89968;
+  --ink: #172033;
+  --muted: #6f7787;
+  --card: #fffaf0;
+  --line: rgba(27, 43, 69, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, Arial, sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.workspace-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 260px 1fr 320px;
+}
+
+.workspace-sidebar,
+.workspace-context {
+  background: var(--navy);
+  color: white;
+  padding: 28px;
+}
+
+.brand {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 42px;
+}
+
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--gold);
+  display: grid;
+  place-items: center;
+  color: var(--gold);
+  font-family: Georgia, serif;
+  font-size: 24px;
+}
+
+.brand span {
+  display: block;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.nav {
+  display: grid;
+  gap: 8px;
+}
+
+.nav a {
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  padding: 12px 14px;
+  border-radius: 12px;
+}
+
+.nav a.active,
+.nav a:hover {
+  background: rgba(184, 153, 104, 0.16);
+  color: white;
+}
+
+.workspace-main {
+  padding: 32px;
+}
+
+.workspace-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+h1,
+h2 {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-weight: 500;
+}
+
+.status-pill {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--navy);
+  font-size: 13px;
+}
+
+.hero-card,
+.workflow-card,
+.metric-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 18px 50px rgba(27, 43, 69, 0.07);
+}
+
+.hero-card {
+  margin-bottom: 24px;
+}
+
+.hero-card p:last-child {
+  color: var(--muted);
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(140px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.metric-card strong {
+  font-size: 34px;
+  color: var(--navy);
+  font-family: Georgia, serif;
+  font-weight: 500;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.workflow-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.workflow-steps div {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.45);
+  color: var(--navy);
+  font-size: 13px;
+}
+
+.workflow-steps .completed {
+  background: rgba(63, 140, 92, 0.12);
+  border-color: rgba(63, 140, 92, 0.25);
+}
+
+.workflow-steps .active {
+  background: rgba(184, 153, 104, 0.18);
+  border-color: rgba(184, 153, 104, 0.45);
+  font-weight: 600;
+}
+
+.workspace-context {
+  background: #16243a;
+}
+
+.workspace-context h2 {
+  margin-bottom: 26px;
+}
+
+.context-item {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 18px 0;
+}
+
+.context-item span {
+  display: block;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.context-item strong {
+  font-family: Georgia, serif;
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--gold);
+}
+
+@media (max-width: 1100px) {
+  .workspace-shell {
+    grid-template-columns: 220px 1fr;
+  }
+
+  .workspace-context {
+    display: none;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .workspace-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace-sidebar {
+    display: none;
+  }
+
+  .metrics-grid,
+  .workflow-steps {
+    grid-template-columns: 1fr;
+  }
+}
