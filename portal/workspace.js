@@ -1,47 +1,28 @@
 import WorkspaceController from "./controllers/WorkspaceController.js";
-import MetricCard from "./ui/components/MetricCard.js";
-import WorkflowCard from "./ui/components/WorkflowCard.js";
+import CasePage from "./ui/pages/CasePage.js";
 
-function renderMetrics() {
-    const grid = document.getElementById("metrics-grid");
+function renderPage() {
 
-    if (!grid) return;
+    const main = document.querySelector(".workspace-main");
 
-    grid.innerHTML = "";
+    if (!main) return;
 
-    WorkspaceController.getMetrics().forEach(metric => {
-        grid.appendChild(
-            MetricCard.create(metric.title, metric.value)
-        );
-    });
-}
+    const header = main.querySelector(".workspace-header");
 
-function renderActiveCase() {
-    const summary = WorkspaceController.getActiveCaseSummary();
+    main.innerHTML = "";
 
-    const titleElement = document.getElementById("active-case-title");
-    const subtitleElement = document.getElementById("active-case-subtitle");
+    if (header) {
+        main.appendChild(header);
+    }
 
-    if (!titleElement || !subtitleElement) return;
-
-    titleElement.textContent = summary.title;
-    subtitleElement.textContent = summary.subtitle;
-}
-
-function renderWorkflow() {
-    const placeholder = document.getElementById("workflow-card-container");
-
-    if (!placeholder) return;
-
-    placeholder.innerHTML = "";
-    placeholder.appendChild(
-        WorkflowCard.create(
-            WorkspaceController.getWorkflowState()
-        )
+    main.appendChild(
+        CasePage.render()
     );
+
 }
 
 function renderSignals() {
+
     const signals = WorkspaceController.getSignals();
 
     const riskScore = document.getElementById("risk-score");
@@ -51,13 +32,14 @@ function renderSignals() {
     if (riskScore) riskScore.textContent = signals.riskScore;
     if (confidenceScore) confidenceScore.textContent = signals.confidenceScore;
     if (coverageScore) coverageScore.textContent = signals.coverageScore;
+
 }
 
 function initWorkspace() {
-    renderMetrics();
-    renderActiveCase();
-    renderWorkflow();
+
+    renderPage();
     renderSignals();
+
 }
 
 initWorkspace();
