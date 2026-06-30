@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MEIFERTS Building Intelligence | Professional Workspace</title>
-
     <link rel="stylesheet" href="./ui/styles/workspace.css">
 </head>
 
@@ -12,106 +11,50 @@
 
 <div id="app" class="workspace-shell">
 
-    <!-- ===================================================== -->
-    <!-- SIDEBAR -->
-    <!-- ===================================================== -->
-
     <aside class="workspace-sidebar">
-
         <div class="brand">
             <div class="brand-mark">M</div>
-
             <div>
                 <strong>MEIFERTS</strong>
                 <span>Building Intelligence</span>
             </div>
         </div>
 
-        <nav class="nav">
-            <a class="active" href="#">Dashboard</a>
-            <a href="#">Cases</a>
-            <a href="#">Building</a>
-            <a href="#">Inspection</a>
-            <a href="#">Evidence</a>
-            <a href="#">Findings</a>
-            <a href="#">Assessments</a>
-            <a href="#">Recommendations</a>
-            <a href="#">Decisions</a>
-            <a href="#">Reports</a>
+        <nav class="nav" id="workspace-nav">
+            <a href="#dashboard" data-route="dashboard">Dashboard</a>
+            <a href="#cases" data-route="cases">Cases</a>
+            <a href="#buildings" data-route="buildings">Buildings</a>
+            <a href="#inspections" data-route="inspections">Inspections</a>
+            <a href="#evidence" data-route="evidence">Evidence</a>
+            <a href="#findings" data-route="findings">Findings</a>
+            <a href="#assessments" data-route="assessments">Assessments</a>
+            <a href="#recommendations" data-route="recommendations">Recommendations</a>
+            <a href="#decisions" data-route="decisions">Decisions</a>
+            <a href="#reports" data-route="reports">Reports</a>
         </nav>
-
     </aside>
-
-    <!-- ===================================================== -->
-    <!-- MAIN -->
-    <!-- ===================================================== -->
 
     <main class="workspace-main">
 
         <header class="workspace-header">
-
             <div>
-                <p class="eyebrow">
-                    Foundation Release 1.0
-                </p>
-
-                <h1>
-                    Professional Workspace
-                </h1>
+                <p class="eyebrow">Foundation Release 1.0</p>
+                <h1>Professional Workspace</h1>
             </div>
 
             <div class="status-pill">
                 Engine connected
             </div>
-
         </header>
 
-        <!-- ACTIVE CASE -->
-
-        <section class="hero-card">
-
-            <p class="eyebrow">
-                Active Case
-            </p>
-
-            <h2 id="active-case-title">
-                No active case
-            </h2>
-
-            <p id="active-case-subtitle">
-                Create or open a case to begin the decision workflow.
-            </p>
-
-        </section>
-
-        <!-- KPI CARDS -->
-
-        <section
-            id="metrics-grid"
-            class="metrics-grid">
-        </section>
-
-        <!-- WORKFLOW COMPONENT -->
-
-        <section
-            id="workflow-card-container">
-        </section>
+        <section id="workspace-page"></section>
 
     </main>
 
-    <!-- ===================================================== -->
-    <!-- RIGHT SIDEBAR -->
-    <!-- ===================================================== -->
-
     <aside class="workspace-context">
+        <p class="eyebrow">Intelligence Sidebar</p>
 
-        <p class="eyebrow">
-            Intelligence Sidebar
-        </p>
-
-        <h2>
-            Current Signal
-        </h2>
+        <h2>Current Signal</h2>
 
         <div class="context-item">
             <span>Building Risk Score™</span>
@@ -127,15 +70,11 @@
             <span>Knowledge Coverage™</span>
             <strong id="coverage-score">Pending</strong>
         </div>
-
     </aside>
 
 </div>
 
-<script
-    type="module"
-    src="./workspace.js">
-</script>
+<script type="module" src="./workspace.js"></script>
 
 </body>
 </html>
