@@ -1,111 +1,158 @@
 import WorkspaceController from "../../controllers/WorkspaceController.js";
 import EvidenceManager from "../../core/EvidenceManager.js";
+import SectionHeader from "../components/SectionHeader.js";
+import ActionBar from "../components/ActionBar.js";
+import EmptyState from "../components/EmptyState.js";
+import DetailPanel from "../components/DetailPanel.js";
 import MetricCard from "../components/MetricCard.js";
 import StatusBadge from "../components/StatusBadge.js";
+import Notification from "../components/Notification.js";
 
 export default class EvidencePage {
 
     static render() {
         const fragment = document.createDocumentFragment();
 
-        fragment.appendChild(this.createHero());
+        fragment.appendChild(this.createHeader());
         fragment.appendChild(this.createMetrics());
-        fragment.appendChild(this.createEvidenceWorkspace());
+        fragment.appendChild(this.createToolbar());
+        fragment.appendChild(this.createMainLayout());
 
         return fragment;
     }
 
-    static createHero() {
+    static createHeader() {
         const summary = WorkspaceController.getActiveCaseSummary();
 
-        const hero = document.createElement("section");
-        hero.className = "hero-card";
-
-        hero.innerHTML = `
-            <p class="eyebrow">Evidence Workspace</p>
-            <h2>Evidence Collection</h2>
-            <p>${summary.title} · Capture, classify and prepare evidence for findings.</p>
-        `;
-
-        hero.appendChild(
-            StatusBadge.create("Evidence First", "warning")
-        );
-
-        return hero;
+        return SectionHeader.create({
+            eyebrow: "Evidence Workspace",
+            title: "Evidence Collection",
+            description: `${summary.title} · Capture, classify, and prepare evidence for findings.`,
+            actions: [
+                {
+                    id: "new-evidence",
+                    label: "+ New Evidence",
+                    onClick: () => this.showPendingFeature("Evidence creation")
+                }
+            ]
+        });
     }
 
     static createMetrics() {
-        const evidenceCount = WorkspaceController.safeValue(
-            () => EvidenceManager.count()
-        );
-
-        const byCase = WorkspaceController.safeValue(
-            () => EvidenceManager.getAll().length
-        );
+        const evidenceItems = this.getEvidenceItems();
+        const evidenceCount = evidenceItems.length;
 
         const grid = document.createElement("section");
         grid.className = "metrics-grid";
 
         grid.appendChild(MetricCard.create("Total Evidence", evidenceCount));
-        grid.appendChild(MetricCard.create("Current Set", byCase));
+        grid.appendChild(MetricCard.create("Current Set", evidenceCount));
         grid.appendChild(MetricCard.create("Linked Findings", "Pending"));
         grid.appendChild(MetricCard.create("Review Status", "Open"));
 
         return grid;
     }
 
-    static createEvidenceWorkspace() {
+    static createToolbar() {
         const wrapper = document.createElement("section");
-        wrapper.className = "evidence-workspace";
+        wrapper.className = "workflow-card";
 
-        wrapper.innerHTML = `
-            <div class="evidence-toolbar">
-                <button type="button">+ New Evidence</button>
-                <button type="button">Upload</button>
-                <button type="button">Filter</button>
-                <button type="button">Search</button>
-            </div>
-
-            <div class="evidence-layout">
-                <div class="evidence-list" id="evidence-list"></div>
-
-                <div class="evidence-preview">
-                    <p class="eyebrow">Preview</p>
-                    <h2>Select Evidence</h2>
-                    <p>Choose an evidence item to inspect metadata, tags, severity and linked findings.</p>
-                </div>
-            </div>
-        `;
-
-        const list = wrapper.querySelector("#evidence-list");
-        const evidenceItems = WorkspaceController.safeValue(
-            () => EvidenceManager.getAll(),
-            []
-        );
-
-        if (!evidenceItems.length) {
-            list.innerHTML = `
-                <div class="empty-state">
-                    <p class="eyebrow">No Evidence Yet</p>
-                    <h2>Start the evidence chain.</h2>
-                    <p>Add photos, documents or inspection notes to begin the technical decision workflow.</p>
-                </div>
-            `;
-        } else {
-            evidenceItems.forEach(item => {
-                const row = document.createElement("div");
-                row.className = "evidence-row";
-
-                row.innerHTML = `
-                    <strong>${item.title || item.name || item.id}</strong>
-                    <span>${item.type || "Evidence"} · ${item.status || "Open"}</span>
-                `;
-
-                list.appendChild(row);
-            });
-        }
+        wrapper.appendChild(ActionBar.create([
+            {
+                id: "refresh",
+                label: "Refresh",
+                onClick: () => this.refresh()
+            },
+            {
+                id: "upload-evidence",
+                label: "Upload",
+                onClick: () => this.showPendingFeature("Evidence upload")
+            },
+            {
+                id: "filter-evidence",
+                label: "Filter",
+                onClick: () => this.showPendingFeature("Evidence filters")
+            }
+        ]));
 
         return wrapper;
     }
 
-}
+    static createMainLayout() {
+        const layout = document.createElement("section");
+        layout.className = "case-workspace-layout";
+
+        layout.appendChild(this.createContent());
+        layout.appendChild(this.createDetailPanel());
+
+        return layout;
+    }
+
+    static createContent() {
+        const evidenceItems = this.getEvidenceItems();
+
+        if (!evidenceItems.length) {
+            return EmptyState.create({
+                eyebrow: "Evidence Workspace",
+                title: "No evidence available",
+                description: "Add photos, documents, inspection notes, or technical records to begin the evidence chain.",
+                actionLabel: "+ New Evidence",
+                onAction: () => this.showPendingFeature("Evidence creation")
+            });
+        }
+
+        const list = document.createElement("section");
+        list.className = "workflow-card evidence-list";
+
+        evidenceItems.forEach(item => {
+            const row = document.createElement("div");
+            row.className = "evidence-row";
+
+            const title = document.createElement("strong");
+            title.textContent = item.title || item.name || item.id || "Evidence Item";
+
+            const meta = document.createElement("span");
+            meta.textContent = `${item.type || "Evidence"} · ${item.status || "Open"}`;
+
+            const badge = StatusBadge.create(item.status || "Open", "warning");
+
+            row.appendChild(title);
+            row.appendChild(meta);
+            row.appendChild(badge);
+
+            list.appendChild(row);
+        });
+
+        return list;
+    }
+
+    static createDetailPanel() {
+        const evidenceItems = this.getEvidenceItems();
+
+        return DetailPanel.create("Evidence Context", [
+            { label: "Evidence Items", value: String(evidenceItems.length) },
+            { label: "Evidence Status", value: evidenceItems.length ? "In Review" : "Not started" },
+            { label: "Next Step", value: "Connect evidence to findings" }
+        ]);
+    }
+
+    static getEvidenceItems() {
+        return WorkspaceController.safeValue(
+            () => EvidenceManager.getAll(),
+            []
+        );
+    }
+
+    static refresh() {
+        const container = document.getElementById("workspace-page");
+
+        if (!container) return;
+
+        container.innerHTML = "";
+        container.appendChild(this.render());
+    }
+
+    static showPendingFeature(feature = "This feature") {
+        Notification.info(`${feature} will be added in the next foundation step.`);
+    }
+
