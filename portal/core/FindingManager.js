@@ -20,6 +20,9 @@ import EventBus from "./events/EventBus.js";
 export default class FindingManager {
 
     static collection = "findings";
+    static activeKey = "activeFindingId";
+
+    static defaultCreator = "System";
 
     // ==================== CONSTANTS ====================
 
@@ -73,8 +76,8 @@ export default class FindingManager {
      */
     static create(data) {
 
-        if (!data || !data.id) {
-            throw new Error("FindingManager: finding with id is required");
+        if (!data) {
+            throw new Error("FindingManager: data is required");
         }
 
         if (!data.caseId) {
@@ -82,7 +85,7 @@ export default class FindingManager {
         }
 
         const finding = {
-            id: data.id,
+            id: data.id || this.createId(),
             caseId: data.caseId,
             buildingId: data.buildingId || null,
             inspectionId: data.inspectionId || null,
@@ -107,7 +110,7 @@ export default class FindingManager {
             recommendationIds: data.recommendationIds || [],
             assessmentIds: data.assessmentIds || [],
 
-            createdBy: data.createdBy || "System",
+            createdBy: data.createdBy || this.defaultCreator,
             createdAt: data.createdAt || new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
@@ -117,15 +120,13 @@ export default class FindingManager {
         EventBus.emit("finding:created", saved);
         EventBus.emit("finding:changed", saved);
 
-        console.log("Finding created:", saved);
-
         return saved;
     }
 
     /**
      * Load finding by ID
      * 
-     * @param {string} id - Finding ID
+        * @param {string} id - Finding ID
      * @returns {Object|null} Finding object or null if not found
      */
     static load(id) {
@@ -176,7 +177,18 @@ export default class FindingManager {
             throw new Error("FindingManager: finding with id is required");
         }
 
-        const updated = StorageManager.update(this.collection, data);
+        const existing = this.load(data.id);
+
+        if (!existing) {
+            throw new Error(`FindingManager: finding not found: ${data.id}`);
+        }
+
+        const updated = StorageManager.update(this.collection, {
+            ...existing,
+            ...data,
+            id: data.id,
+            updatedAt: new Date().toISOString()
+        });
 
         EventBus.emit("finding:updated", updated);
         EventBus.emit("finding:changed", updated);
@@ -214,6 +226,9 @@ export default class FindingManager {
     static delete(id) {
 
         const result = StorageManager.delete(this.collection, id);
+        if (this.get()?.id === id) {
+            this.clear();
+        }
 
         EventBus.emit("finding:deleted", { id });
         EventBus.emit("finding:changed", { id });
@@ -240,6 +255,36 @@ export default class FindingManager {
         return StorageManager.count(this.collection);
     }
 
+    static set(finding) {
+        if (!finding || !finding.id) {
+            return null;
+        }
+
+        localStorage.setItem(this.activeKey, finding.id);
+        EventBus.emit("finding:selected", finding);
+
+        return finding;
+    }
+
+    static get() {
+        const id = localStorage.getItem(this.activeKey);
+
+        if (!id) {
+            return null;
+        }
+
+        return this.load(id);
+    }
+
+    static clear() {
+        localStorage.removeItem(this.activeKey);
+        EventBus.emit("finding:cleared", null);
+    }
+
+    static createId() {
+        return `FND-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+    }
+
     // ==================== VALIDATION METHODS ====================
 
     /**
@@ -256,7 +301,7 @@ export default class FindingManager {
             return errors;
         }
 
-        if (!data.id) errors.push("Finding ID is required");
+        if (!data.id) errors.push("Finding ID will be generated automatically");
         if (!data.caseId) errors.push("Case ID is required");
         if (!data.title || data.title.trim() === "") {
             errors.push("Title is required");
