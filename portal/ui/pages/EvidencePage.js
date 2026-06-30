@@ -156,3 +156,4 @@ export default class EvidencePage {
         Notification.info(`${feature} will be added in the next foundation step.`);
     }
 
+}
