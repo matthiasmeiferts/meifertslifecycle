@@ -21,6 +21,9 @@ import EventBus from "./events/EventBus.js";
 export default class EvidenceManager {
 
     static collection = "evidence";
+    static activeKey = "activeEvidenceId";
+
+    static defaultCreator = "System";
 
     // ==================== CONSTANTS ====================
 
@@ -100,11 +103,10 @@ export default class EvidenceManager {
      */
     static create(data) {
         if (!data) throw new Error("EvidenceManager: data required");
-        if (!data.id) throw new Error("EvidenceManager: id required");
         if (!data.caseId) throw new Error("EvidenceManager: caseId required");
 
         const evidence = {
-            id: data.id,
+            id: data.id || this.createId(),
             caseId: data.caseId,
             buildingId: data.buildingId || null,
             inspectionId: data.inspectionId || null,
@@ -128,7 +130,7 @@ export default class EvidenceManager {
             componentId: data.componentId || null,
             confidence: data.confidence || null,
             
-            createdBy: data.createdBy || "System",
+            createdBy: data.createdBy || this.defaultCreator,
             createdAt: data.createdAt || new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
@@ -137,8 +139,6 @@ export default class EvidenceManager {
 
         EventBus.emit("evidence:created", saved);
         EventBus.emit("evidence:changed", saved);
-
-        console.log("Evidence created:", saved);
 
         return saved;
     }
@@ -184,11 +184,21 @@ export default class EvidenceManager {
             throw new Error("EvidenceManager: evidence with id is required");
         }
 
-        const updated = StorageManager.update(this.collection, data);
+        const existing = this.load(data.id);
+
+        if (!existing) {
+            throw new Error(`EvidenceManager: evidence not found: ${data.id}`);
+        }
+
+        const updated = StorageManager.update(this.collection, {
+            ...existing,
+            ...data,
+            id: data.id,
+            updatedAt: new Date().toISOString()
+        });
+
         EventBus.emit("evidence:updated", updated);
         EventBus.emit("evidence:changed", updated);
-
-        console.log("Evidence updated:", updated);
 
         return updated;
     }
@@ -222,8 +232,6 @@ export default class EvidenceManager {
         EventBus.emit("evidence:deleted", { id });
         EventBus.emit("evidence:changed", { id });
 
-        console.log("Evidence deleted:", id);
-
         return result;
     }
 
@@ -234,6 +242,36 @@ export default class EvidenceManager {
      */
     static count() {
         return StorageManager.count(this.collection);
+    }
+
+    static set(evidence) {
+        if (!evidence || !evidence.id) {
+            return null;
+        }
+
+        localStorage.setItem(this.activeKey, evidence.id);
+        EventBus.emit("evidence:selected", evidence);
+
+        return evidence;
+    }
+
+    static get() {
+        const id = localStorage.getItem(this.activeKey);
+
+        if (!id) {
+            return null;
+        }
+
+        return this.load(id);
+    }
+
+    static clear() {
+        localStorage.removeItem(this.activeKey);
+        EventBus.emit("evidence:cleared", null);
+    }
+
+    static createId() {
+        return `EVD-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
     }
 
     /**
@@ -262,7 +300,7 @@ export default class EvidenceManager {
             return errors;
         }
 
-        if (!data.id) errors.push("Evidence ID is required");
+        if (!data.id) errors.push("Evidence ID will be generated automatically");
         if (!data.caseId) errors.push("Case ID is required");
         if (!data.type || !Object.values(this.TYPES).includes(data.type)) {
             errors.push(`Invalid type: ${data.type}`);
@@ -641,10 +679,6 @@ export default class EvidenceManager {
             }
         });
 
-        if (errors.length > 0) {
-            console.warn(`Created ${created.length} of ${dataArray.length} items. Errors:`, errors);
-        }
-
         return { created, errors };
     }
 
@@ -671,10 +705,6 @@ export default class EvidenceManager {
                 errors.push({ index, error: error.message });
             }
         });
-
-        if (errors.length > 0) {
-            console.warn(`Updated ${updated.length} of ${dataArray.length} items. Errors:`, errors);
-        }
 
         return { updated, errors };
     }
