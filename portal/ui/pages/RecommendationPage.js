@@ -1,6 +1,7 @@
 import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
 import DecisionManager from "../../core/DecisionManager.js";
+import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
@@ -494,20 +495,27 @@ export default class RecommendationPage {
             isReviewed
         ];
 
-        const completed = checks.filter(Boolean).length;
-        const total = checks.length;
-        const readinessPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
+        const readiness = IntelligenceEngine.getReadinessFromChecks(checks);
+        const completed = readiness.completed;
+        const total = readiness.total;
+        const readinessPercent = readiness.percent;
 
-        const confidenceScore = Math.min(
-            100,
-            Math.round(
-                readinessPercent * 0.64 +
-                (hasAction ? 10 : 0) +
-                (hasPriority ? 8 : 0) +
-                (hasAssessmentLink ? 8 : 0) +
-                (hasDecisionLink ? 10 : 0)
-            )
-        );
+        const confidenceScore = IntelligenceEngine.getConfidenceScore({
+            readinessPercent,
+            primarySignals:
+                (hasAction ? 1 : 0) +
+                (hasPriority ? 1 : 0),
+            downstreamSignals:
+                (hasAssessmentLink ? 1 : 0) +
+                (hasDecisionLink ? 1 : 0),
+            outputSignals: isReviewed ? 1 : 0,
+            weights: {
+                readiness: 0.64,
+                primary: 9,
+                downstream: 9,
+                output: 6
+            }
+        });
 
         let actionLogicSignal = {
             label: "Low action logic",

@@ -1,6 +1,7 @@
 import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
+import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
@@ -454,20 +455,25 @@ export default class AssessmentPage {
             isReviewed
         ];
 
-        const completed = checks.filter(Boolean).length;
-        const total = checks.length;
-        const readinessPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
+        const readiness = IntelligenceEngine.getReadinessFromChecks(checks);
+        const completed = readiness.completed;
+        const total = readiness.total;
+        const readinessPercent = readiness.percent;
 
-        const confidenceScore = Math.min(
-            100,
-            Math.round(
-                readinessPercent * 0.62 +
-                (hasRiskLevel ? 10 : 0) +
-                (hasSeverity && hasProbability && hasImpact ? 12 : 0) +
-                (hasRecommendationLink ? 10 : 0) +
-                (isReviewed ? 6 : 0)
-            )
-        );
+        const confidenceScore = IntelligenceEngine.getConfidenceScore({
+            readinessPercent,
+            primarySignals:
+                (hasRiskLevel ? 1 : 0) +
+                (hasSeverity && hasProbability && hasImpact ? 1 : 0),
+            downstreamSignals: hasRecommendationLink ? 1 : 0,
+            outputSignals: isReviewed ? 1 : 0,
+            weights: {
+                readiness: 0.62,
+                primary: 11,
+                downstream: 10,
+                output: 6
+            }
+        });
 
         let riskLogicSignal = {
             label: "Low risk logic",
