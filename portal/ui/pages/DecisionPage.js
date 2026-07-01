@@ -169,6 +169,7 @@ export default class DecisionPage {
     }
 
     static renderDecisionStatusBadge(decision = {}) {
+        decision = decision || {};
         const status = this.getDecisionStatus(decision);
         const label = this.statusLabels[status] || "Draft";
 
@@ -180,6 +181,7 @@ export default class DecisionPage {
     }
 
     static getNextAction(decision = {}) {
+        decision = decision || {};
         const status = this.getDecisionStatus
             ? this.getDecisionStatus(decision)
             : "draft";
@@ -246,6 +248,7 @@ export default class DecisionPage {
     }
 
     static getCompletionState(decision = {}) {
+        decision = decision || {};
         const hasTitle = Boolean(decision.title || decision.name);
         const hasDecision = Boolean(decision.decision || decision.outcome || decision.approved || decision.rejected);
         const hasDecisionMaker = Boolean(decision.decisionMaker || decision.approvedBy || decision.owner);
@@ -310,6 +313,7 @@ export default class DecisionPage {
     }
 
     static renderCompletionPanel(decision = {}) {
+        decision = decision || {};
         const completion = this.getCompletionState(decision);
         const percent = Math.round(completion.ratio * 100);
         const readinessLabel = completion.isReadyForReport
@@ -532,6 +536,7 @@ export default class DecisionPage {
     }
 
     static getDecisionIntelligence(decision = {}) {
+        decision = decision || {};
         const hasIdentity = Boolean(decision.title || decision.name);
         const hasDecision = Boolean(decision.decision || decision.outcome || decision.approved || decision.rejected);
         const hasDecisionMaker = Boolean(decision.decisionMaker || decision.approvedBy || decision.owner);
@@ -636,6 +641,7 @@ export default class DecisionPage {
     }
 
     static renderDecisionIntelligenceSnapshot(decision = {}) {
+        decision = decision || {};
         const intelligence = this.getDecisionIntelligence(decision);
 
         return `
