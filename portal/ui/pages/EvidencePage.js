@@ -40,6 +40,7 @@ export default class EvidencePage {
         fragment.appendChild(this.createHeader());
         fragment.appendChild(this.createFlowIndicator(activeEvidence));
         fragment.appendChild(this.createNextActionPanel(activeEvidence));
+        fragment.appendChild(this.createCompletionPanel(activeEvidence));
         fragment.appendChild(this.createMetrics());
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout());
@@ -124,6 +125,71 @@ export default class EvidencePage {
         };
     }
 
+    static getCompletionState(evidence = {}) {
+        const hasTitle = Boolean(evidence.title || evidence.name);
+        const hasType = Boolean(evidence.type || evidence.category);
+        const hasSource = Boolean(
+            evidence.source ||
+            evidence.inspectionId ||
+            evidence.buildingId ||
+            evidence.caseId
+        );
+        const hasContent = Boolean(
+            evidence.description ||
+            evidence.note ||
+            evidence.fileName ||
+            evidence.imageUrl ||
+            evidence.documentUrl ||
+            evidence.photoUrl
+        );
+        const hasFindingLink = Boolean(
+            evidence.findingId ||
+            evidence.linkedFindingId ||
+            evidence.finding ||
+            evidence.hasFinding
+        );
+
+        const checks = [
+            {
+                key: "identity",
+                label: "Evidence identified",
+                complete: hasTitle
+            },
+            {
+                key: "classification",
+                label: "Evidence classified",
+                complete: hasType
+            },
+            {
+                key: "source",
+                label: "Source linked",
+                complete: hasSource
+            },
+            {
+                key: "content",
+                label: "Content captured",
+                complete: hasContent
+            },
+            {
+                key: "finding",
+                label: "Finding connection",
+                complete: hasFindingLink
+            }
+        ];
+
+        const completed = checks.filter((check) => check.complete).length;
+        const total = checks.length;
+
+        return {
+            checks,
+            completed,
+            total,
+            ratio: total > 0 ? completed / total : 0,
+            isReadyForFinding: hasTitle && hasType && hasContent,
+            isComplete: completed === total
+        };
+    }
+
     static getFlowState(evidence = {}) {
         const hasFindingLink =
             Boolean(evidence.findingId) ||
@@ -142,6 +208,39 @@ export default class EvidencePage {
         const label = this.statusLabels[status] || "Draft";
 
         return `<span class="evidence-status evidence-status--${status}">${label}</span>`;
+    }
+
+    static renderCompletionPanel(evidence = {}) {
+        const completion = this.getCompletionState(evidence);
+        const percent = Math.round(completion.ratio * 100);
+        const readinessLabel = completion.isReadyForFinding
+            ? "Ready for Finding"
+            : "Needs more evidence data";
+
+        return `
+            <section class="completion-panel" aria-label="Evidence completion">
+                <div class="completion-panel__header">
+                    <div>
+                        <span class="completion-panel__eyebrow">Completion</span>
+                        <strong>${readinessLabel}</strong>
+                    </div>
+                    <span class="completion-panel__score">${percent}%</span>
+                </div>
+
+                <div class="completion-panel__bar" aria-hidden="true">
+                    <div class="completion-panel__bar-fill" style="width: ${percent}%"></div>
+                </div>
+
+                <div class="completion-panel__checks">
+                    ${completion.checks.map((check) => `
+                        <div class="completion-panel__check ${check.complete ? "is-complete" : "is-open"}">
+                            <span class="completion-panel__check-marker"></span>
+                            <span>${check.label}</span>
+                        </div>
+                    `).join("")}
+                </div>
+            </section>
+        `;
     }
 
     static renderNextActionPanel(evidence = {}) {
@@ -194,6 +293,13 @@ export default class EvidencePage {
         const container = document.createElement("section");
         container.className = "workflow-card";
         container.innerHTML = this.renderNextActionPanel(evidence);
+        return container;
+    }
+
+    static createCompletionPanel(evidence = {}) {
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderCompletionPanel(evidence);
         return container;
     }
 
