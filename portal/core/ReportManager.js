@@ -33,6 +33,10 @@ export default class ReportManager {
 
     static collection = "reports";
 
+    static activeKey = "activeReportId";
+
+    static defaultPreparedBy = "MEIFERTS Building Intelligence";
+
     // ==================== CONSTANTS ====================
 
     static STATUSES = {
@@ -74,7 +78,7 @@ export default class ReportManager {
         }
 
         const report = {
-            id: data.id || `report-${Date.now()}`,
+            id: data.id || this.createId(),
 
             caseId: data.caseId,
             buildingId:  data.buildingId  || null,
@@ -106,7 +110,7 @@ export default class ReportManager {
 
             status: data.status || "Draft",
 
-            preparedBy: data.preparedBy || "MEIFERTS Building Intelligence",
+            preparedBy: data.preparedBy || this.defaultPreparedBy,
             reviewedBy: data.reviewedBy || "",
             approvedBy: data.approvedBy || "",
 
@@ -115,6 +119,7 @@ export default class ReportManager {
         };
 
         const saved = StorageManager.upsert(this.collection, report);
+        this.set(saved);
         EventBus.emit("report:created", saved);
         EventBus.emit("report:changed", saved);
         return saved;
@@ -156,10 +161,21 @@ export default class ReportManager {
         if (!data.id) {
             throw new Error("ReportManager: id required");
         }
+
+        const existing = this.load(data.id);
+
+        if (!existing) {
+            throw new Error(`ReportManager: report not found: ${data.id}`);
+        }
+
         const saved = StorageManager.update(this.collection, {
+            ...existing,
             ...data,
+            id: data.id,
             updatedAt: new Date().toISOString()
         });
+
+        this.set(saved);
         EventBus.emit("report:updated", saved);
         EventBus.emit("report:changed", saved);
         return saved;
@@ -173,15 +189,16 @@ export default class ReportManager {
      */
     static upsert(data = {}) {
         if (!data.id) {
-            throw new Error("ReportManager: id required");
+            return this.create(data);
         }
-        const saved = StorageManager.upsert(this.collection, {
-            ...data,
-            updatedAt: new Date().toISOString()
-        });
-        EventBus.emit("report:saved", saved);
-        EventBus.emit("report:changed", saved);
-        return saved;
+
+        const existing = this.load(data.id);
+
+        if (!existing) {
+            return this.create(data);
+        }
+
+        return this.update(data);
     }
 
     /**
@@ -191,6 +208,9 @@ export default class ReportManager {
      */
     static delete(id) {
         StorageManager.delete(this.collection, id);
+        if (this.get()?.id === id) {
+            this.clear();
+        }
         EventBus.emit("report:deleted", { id });
         EventBus.emit("report:changed", { id });
         return true;
@@ -201,7 +221,53 @@ export default class ReportManager {
      * @returns {number}
      */
     static count() {
-        return StorageManager.count(this.collection);
+        return this.getAll().length;
+    }
+
+    /**
+     * Set the active report.
+     * @param {Object} report - Report object
+     * @returns {Object|null} The report if valid
+     */
+    static set(report) {
+        if (!report || !report.id) {
+            return null;
+        }
+
+        localStorage.setItem(this.activeKey, report.id);
+        EventBus.emit("report:selected", report);
+
+        return report;
+    }
+
+    /**
+     * Get the active report.
+     * @returns {Object|null} Active report or null
+     */
+    static get() {
+        const id = localStorage.getItem(this.activeKey);
+
+        if (!id) {
+            return null;
+        }
+
+        return this.load(id);
+    }
+
+    /**
+     * Clear the active report.
+     */
+    static clear() {
+        localStorage.removeItem(this.activeKey);
+        EventBus.emit("report:cleared", null);
+    }
+
+    /**
+     * Create a unique ID for a new report.
+     * @returns {string} Generated ID
+     */
+    static createId() {
+        return `RPT-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
     }
 
     /**
@@ -245,7 +311,7 @@ export default class ReportManager {
             capexMax,
             capexClass: this.getCapexClass(capexMax)
         };
-    }
+}
 
     /**
      * Build a decision summary object from an array of decision objects.
@@ -311,6 +377,9 @@ export default class ReportManager {
      */
     static approve(id, approvedBy = "") {
         const report = this.load(id);
+        if (!report) {
+            throw new Error(`ReportManager: report not found: ${id}`);
+        }
         return this.update({ ...report, id, status: "Approved", approvedBy });
     }
 
@@ -321,6 +390,9 @@ export default class ReportManager {
      */
     static archive(id) {
         const report = this.load(id);
+        if (!report) {
+            throw new Error(`ReportManager: report not found: ${id}`);
+        }
         return this.update({ ...report, id, status: "Archived" });
     }
 
