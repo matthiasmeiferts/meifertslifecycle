@@ -333,30 +333,30 @@ export default class BuildingPage {
         const intelligence = this.getBuildingIntelligence(building, data);
 
         return `
-            <section class="building-intelligence" aria-label="Building intelligence snapshot">
-                <div class="building-intelligence__header">
+            <section class="building-intelligence intelligence-snapshot" aria-label="Building intelligence snapshot">
+                <div class="building-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="building-intelligence__eyebrow">Building Intelligence</span>
+                        <span class="building-intelligence__eyebrow intelligence-snapshot__eyebrow">Building Intelligence</span>
                         <strong>${intelligence.label}</strong>
                         <p>${intelligence.completedStages}/${intelligence.totalStages} lifecycle stages represented</p>
                     </div>
-                    <span class="building-intelligence__score">${intelligence.confidenceScore}%</span>
+                    <span class="building-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
-                <div class="building-intelligence__grid">
-                    <article class="building-intelligence__card">
+                <div class="building-intelligence__grid intelligence-snapshot__grid">
+                    <article class="building-intelligence__card intelligence-snapshot__card">
                         <span>Lifecycle Readiness</span>
                         <strong>${intelligence.lifecycleReadiness}%</strong>
                         <p>Coverage across Inspection, Evidence, Finding, Assessment, Recommendation, Decision and Report.</p>
                     </article>
 
-                    <article class="building-intelligence__card building-intelligence__card--${intelligence.technicalRisk.tone}">
+                    <article class="building-intelligence__card intelligence-snapshot__card building-intelligence__card--${intelligence.technicalRisk.tone} intelligence-snapshot__card--${intelligence.technicalRisk.tone}">
                         <span>Technical Risk Signal</span>
                         <strong>${intelligence.technicalRisk.label}</strong>
                         <p>${intelligence.technicalRisk.description}</p>
                     </article>
 
-                    <article class="building-intelligence__card building-intelligence__card--${intelligence.nextAction.tone}">
+                    <article class="building-intelligence__card intelligence-snapshot__card building-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
                         <span>Next Building Action</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>

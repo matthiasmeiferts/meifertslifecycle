@@ -629,30 +629,30 @@ export default class EvidencePage {
         const intelligence = this.getEvidenceIntelligence(evidence);
 
         return `
-            <section class="evidence-intelligence" aria-label="Evidence intelligence snapshot">
-                <div class="evidence-intelligence__header">
+            <section class="evidence-intelligence intelligence-snapshot" aria-label="Evidence intelligence snapshot">
+                <div class="evidence-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="evidence-intelligence__eyebrow">Evidence Intelligence</span>
+                        <span class="evidence-intelligence__eyebrow intelligence-snapshot__eyebrow">Evidence Intelligence</span>
                         <strong>${intelligence.label}</strong>
                         <p>${intelligence.completed}/${intelligence.total} evidence intelligence checks completed</p>
                     </div>
-                    <span class="evidence-intelligence__score">${intelligence.confidenceScore}%</span>
+                    <span class="evidence-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
-                <div class="evidence-intelligence__grid">
-                    <article class="evidence-intelligence__card">
+                <div class="evidence-intelligence__grid intelligence-snapshot__grid">
+                    <article class="evidence-intelligence__card intelligence-snapshot__card">
                         <span>Finding Readiness</span>
                         <strong>${intelligence.readinessPercent}%</strong>
                         <p>Readiness based on identity, classification, source, content, finding link and review state.</p>
                     </article>
 
-                    <article class="evidence-intelligence__card evidence-intelligence__card--${intelligence.qualitySignal.tone}">
+                    <article class="evidence-intelligence__card intelligence-snapshot__card evidence-intelligence__card--${intelligence.qualitySignal.tone} intelligence-snapshot__card--${intelligence.qualitySignal.tone}">
                         <span>Evidence Quality Signal</span>
                         <strong>${intelligence.qualitySignal.label}</strong>
                         <p>${intelligence.qualitySignal.description}</p>
                     </article>
 
-                    <article class="evidence-intelligence__card evidence-intelligence__card--${intelligence.nextAction.tone}">
+                    <article class="evidence-intelligence__card intelligence-snapshot__card evidence-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
                         <span>Next Evidence Action</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>

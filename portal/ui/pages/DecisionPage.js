@@ -633,30 +633,30 @@ export default class DecisionPage {
         const intelligence = this.getDecisionIntelligence(decision);
 
         return `
-            <section class="decision-intelligence" aria-label="Decision intelligence snapshot">
-                <div class="decision-intelligence__header">
+            <section class="decision-intelligence intelligence-snapshot" aria-label="Decision intelligence snapshot">
+                <div class="decision-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="decision-intelligence__eyebrow">Decision Intelligence</span>
+                        <span class="decision-intelligence__eyebrow intelligence-snapshot__eyebrow">Decision Intelligence</span>
                         <strong>${intelligence.label}</strong>
                         <p>${intelligence.completed}/${intelligence.total} decision intelligence checks completed</p>
                     </div>
-                    <span class="decision-intelligence__score">${intelligence.confidenceScore}%</span>
+                    <span class="decision-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
-                <div class="decision-intelligence__grid">
-                    <article class="decision-intelligence__card">
+                <div class="decision-intelligence__grid intelligence-snapshot__grid">
+                    <article class="decision-intelligence__card intelligence-snapshot__card">
                         <span>Report Readiness</span>
                         <strong>${intelligence.readinessPercent}%</strong>
                         <p>Readiness based on identity, decision outcome, owner, date, recommendation link, report link and review state.</p>
                     </article>
 
-                    <article class="decision-intelligence__card decision-intelligence__card--${intelligence.governanceSignal.tone}">
+                    <article class="decision-intelligence__card intelligence-snapshot__card decision-intelligence__card--${intelligence.governanceSignal.tone} intelligence-snapshot__card--${intelligence.governanceSignal.tone}">
                         <span>Governance Signal</span>
                         <strong>${intelligence.governanceSignal.label}</strong>
                         <p>${intelligence.governanceSignal.description}</p>
                     </article>
 
-                    <article class="decision-intelligence__card decision-intelligence__card--${intelligence.nextAction.tone}">
+                    <article class="decision-intelligence__card intelligence-snapshot__card decision-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
                         <span>Next Decision Action</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>

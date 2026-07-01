@@ -364,30 +364,30 @@ export default class CasePage {
         const intelligence = this.getCaseIntelligence(caseItem, data);
 
         return `
-            <section class="case-intelligence" aria-label="Case intelligence snapshot">
-                <div class="case-intelligence__header">
+            <section class="case-intelligence intelligence-snapshot" aria-label="Case intelligence snapshot">
+                <div class="case-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="case-intelligence__eyebrow">Case Intelligence</span>
+                        <span class="case-intelligence__eyebrow intelligence-snapshot__eyebrow">Case Intelligence</span>
                         <strong>${intelligence.label}</strong>
                         <p>${intelligence.completedStages}/${intelligence.totalStages} workflow stages represented</p>
                     </div>
-                    <span class="case-intelligence__score">${intelligence.confidenceScore}%</span>
+                    <span class="case-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
-                <div class="case-intelligence__grid">
-                    <article class="case-intelligence__card">
+                <div class="case-intelligence__grid intelligence-snapshot__grid">
+                    <article class="case-intelligence__card intelligence-snapshot__card">
                         <span>Readiness</span>
                         <strong>${intelligence.readinessPercent}%</strong>
                         <p>Workflow coverage across Evidence, Finding, Assessment, Recommendation, Decision and Report.</p>
                     </article>
 
-                    <article class="case-intelligence__card case-intelligence__card--${intelligence.riskSignal.tone}">
+                    <article class="case-intelligence__card intelligence-snapshot__card case-intelligence__card--${intelligence.riskSignal.tone} intelligence-snapshot__card--${intelligence.riskSignal.tone}">
                         <span>Risk Signal</span>
                         <strong>${intelligence.riskSignal.label}</strong>
                         <p>${intelligence.riskSignal.description}</p>
                     </article>
 
-                    <article class="case-intelligence__card case-intelligence__card--${intelligence.nextAction.tone}">
+                    <article class="case-intelligence__card intelligence-snapshot__card case-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
                         <span>Next Case Action</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>

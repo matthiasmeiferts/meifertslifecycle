@@ -119,30 +119,30 @@ export default class InspectionPage {
         const intelligence = this.getInspectionIntelligence(inspection, data);
 
         return `
-            <section class="inspection-intelligence" aria-label="Inspection intelligence snapshot">
-                <div class="inspection-intelligence__header">
+            <section class="inspection-intelligence intelligence-snapshot" aria-label="Inspection intelligence snapshot">
+                <div class="inspection-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="inspection-intelligence__eyebrow">Inspection Intelligence</span>
+                        <span class="inspection-intelligence__eyebrow intelligence-snapshot__eyebrow">Inspection Intelligence</span>
                         <strong>${intelligence.label}</strong>
                         <p>${intelligence.completedStages}/${intelligence.totalStages} inspection stages represented</p>
                     </div>
-                    <span class="inspection-intelligence__score">${intelligence.confidenceScore}%</span>
+                    <span class="inspection-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
-                <div class="inspection-intelligence__grid">
-                    <article class="inspection-intelligence__card">
+                <div class="inspection-intelligence__grid intelligence-snapshot__grid">
+                    <article class="inspection-intelligence__card intelligence-snapshot__card">
                         <span>Evidence Coverage</span>
                         <strong>${intelligence.evidenceCoverage}%</strong>
                         <p>Coverage across Inspection, Evidence, Finding and Assessment.</p>
                     </article>
 
-                    <article class="inspection-intelligence__card inspection-intelligence__card--${intelligence.signalDensity.tone}">
+                    <article class="inspection-intelligence__card intelligence-snapshot__card inspection-intelligence__card--${intelligence.signalDensity.tone} intelligence-snapshot__card--${intelligence.signalDensity.tone}">
                         <span>Technical Signal Density</span>
                         <strong>${intelligence.signalDensity.label}</strong>
                         <p>${intelligence.signalDensity.description}</p>
                     </article>
 
-                    <article class="inspection-intelligence__card inspection-intelligence__card--${intelligence.nextAction.tone}">
+                    <article class="inspection-intelligence__card intelligence-snapshot__card inspection-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
                         <span>Next Inspection Action</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>

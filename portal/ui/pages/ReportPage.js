@@ -373,30 +373,30 @@ export default class ReportPage {
         const intelligence = this.getReportIntelligence(report);
 
         return `
-            <section class="report-intelligence" aria-label="Report intelligence snapshot">
-                <div class="report-intelligence__header">
+            <section class="report-intelligence intelligence-snapshot" aria-label="Report intelligence snapshot">
+                <div class="report-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="report-intelligence__eyebrow">Report Intelligence</span>
+                        <span class="report-intelligence__eyebrow intelligence-snapshot__eyebrow">Report Intelligence</span>
                         <strong>${intelligence.label}</strong>
                         <p>${intelligence.completed}/${intelligence.total} report intelligence checks completed</p>
                     </div>
-                    <span class="report-intelligence__score">${intelligence.confidenceScore}%</span>
+                    <span class="report-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
-                <div class="report-intelligence__grid">
-                    <article class="report-intelligence__card">
+                <div class="report-intelligence__grid intelligence-snapshot__grid">
+                    <article class="report-intelligence__card intelligence-snapshot__card">
                         <span>Final Review Readiness</span>
                         <strong>${intelligence.readinessPercent}%</strong>
                         <p>Readiness based on identity, report type, decision link, content, output, review and finalization.</p>
                     </article>
 
-                    <article class="report-intelligence__card report-intelligence__card--${intelligence.outputQualitySignal.tone}">
+                    <article class="report-intelligence__card intelligence-snapshot__card report-intelligence__card--${intelligence.outputQualitySignal.tone} intelligence-snapshot__card--${intelligence.outputQualitySignal.tone}">
                         <span>Output Quality Signal</span>
                         <strong>${intelligence.outputQualitySignal.label}</strong>
                         <p>${intelligence.outputQualitySignal.description}</p>
                     </article>
 
-                    <article class="report-intelligence__card report-intelligence__card--${intelligence.nextAction.tone}">
+                    <article class="report-intelligence__card intelligence-snapshot__card report-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
                         <span>Next Report Action</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>

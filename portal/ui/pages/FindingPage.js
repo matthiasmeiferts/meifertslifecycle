@@ -636,30 +636,30 @@ export default class FindingPage {
         const intelligence = this.getFindingIntelligence(finding);
 
         return `
-            <section class="finding-intelligence" aria-label="Finding intelligence snapshot">
-                <div class="finding-intelligence__header">
+            <section class="finding-intelligence intelligence-snapshot" aria-label="Finding intelligence snapshot">
+                <div class="finding-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="finding-intelligence__eyebrow">Finding Intelligence</span>
+                        <span class="finding-intelligence__eyebrow intelligence-snapshot__eyebrow">Finding Intelligence</span>
                         <strong>${intelligence.label}</strong>
                         <p>${intelligence.completed}/${intelligence.total} finding intelligence checks completed</p>
                     </div>
-                    <span class="finding-intelligence__score">${intelligence.confidenceScore}%</span>
+                    <span class="finding-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
-                <div class="finding-intelligence__grid">
-                    <article class="finding-intelligence__card">
+                <div class="finding-intelligence__grid intelligence-snapshot__grid">
+                    <article class="finding-intelligence__card intelligence-snapshot__card">
                         <span>Assessment Readiness</span>
                         <strong>${intelligence.readinessPercent}%</strong>
                         <p>Readiness based on identity, classification, severity, description, evidence link, assessment link and review state.</p>
                     </article>
 
-                    <article class="finding-intelligence__card finding-intelligence__card--${intelligence.severitySignal.tone}">
+                    <article class="finding-intelligence__card intelligence-snapshot__card finding-intelligence__card--${intelligence.severitySignal.tone} intelligence-snapshot__card--${intelligence.severitySignal.tone}">
                         <span>Severity Signal</span>
                         <strong>${intelligence.severitySignal.label}</strong>
                         <p>${intelligence.severitySignal.description}</p>
                     </article>
 
-                    <article class="finding-intelligence__card finding-intelligence__card--${intelligence.nextAction.tone}">
+                    <article class="finding-intelligence__card intelligence-snapshot__card finding-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
                         <span>Next Finding Action</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>

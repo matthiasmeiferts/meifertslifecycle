@@ -532,30 +532,30 @@ export default class AssessmentPage {
         const intelligence = this.getAssessmentIntelligence(assessment);
 
         return `
-            <section class="assessment-intelligence" aria-label="Assessment intelligence snapshot">
-                <div class="assessment-intelligence__header">
+            <section class="assessment-intelligence intelligence-snapshot" aria-label="Assessment intelligence snapshot">
+                <div class="assessment-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="assessment-intelligence__eyebrow">Assessment Intelligence</span>
+                        <span class="assessment-intelligence__eyebrow intelligence-snapshot__eyebrow">Assessment Intelligence</span>
                         <strong>${intelligence.label}</strong>
                         <p>${intelligence.completed}/${intelligence.total} assessment intelligence checks completed</p>
                     </div>
-                    <span class="assessment-intelligence__score">${intelligence.confidenceScore}%</span>
+                    <span class="assessment-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
-                <div class="assessment-intelligence__grid">
-                    <article class="assessment-intelligence__card">
+                <div class="assessment-intelligence__grid intelligence-snapshot__grid">
+                    <article class="assessment-intelligence__card intelligence-snapshot__card">
                         <span>Recommendation Readiness</span>
                         <strong>${intelligence.readinessPercent}%</strong>
                         <p>Readiness based on identity, risk logic, finding link, recommendation link and review state.</p>
                     </article>
 
-                    <article class="assessment-intelligence__card assessment-intelligence__card--${intelligence.riskLogicSignal.tone}">
+                    <article class="assessment-intelligence__card intelligence-snapshot__card assessment-intelligence__card--${intelligence.riskLogicSignal.tone} intelligence-snapshot__card--${intelligence.riskLogicSignal.tone}">
                         <span>Risk Logic Signal</span>
                         <strong>${intelligence.riskLogicSignal.label}</strong>
                         <p>${intelligence.riskLogicSignal.description}</p>
                     </article>
 
-                    <article class="assessment-intelligence__card assessment-intelligence__card--${intelligence.nextAction.tone}">
+                    <article class="assessment-intelligence__card intelligence-snapshot__card assessment-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
                         <span>Next Assessment Action</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>

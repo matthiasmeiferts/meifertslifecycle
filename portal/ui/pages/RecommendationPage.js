@@ -574,30 +574,30 @@ export default class RecommendationPage {
         const intelligence = this.getRecommendationIntelligence(recommendation);
 
         return `
-            <section class="recommendation-intelligence" aria-label="Recommendation intelligence snapshot">
-                <div class="recommendation-intelligence__header">
+            <section class="recommendation-intelligence intelligence-snapshot" aria-label="Recommendation intelligence snapshot">
+                <div class="recommendation-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="recommendation-intelligence__eyebrow">Recommendation Intelligence</span>
+                        <span class="recommendation-intelligence__eyebrow intelligence-snapshot__eyebrow">Recommendation Intelligence</span>
                         <strong>${intelligence.label}</strong>
                         <p>${intelligence.completed}/${intelligence.total} recommendation intelligence checks completed</p>
                     </div>
-                    <span class="recommendation-intelligence__score">${intelligence.confidenceScore}%</span>
+                    <span class="recommendation-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
-                <div class="recommendation-intelligence__grid">
-                    <article class="recommendation-intelligence__card">
+                <div class="recommendation-intelligence__grid intelligence-snapshot__grid">
+                    <article class="recommendation-intelligence__card intelligence-snapshot__card">
                         <span>Decision Readiness</span>
                         <strong>${intelligence.readinessPercent}%</strong>
                         <p>Readiness based on identity, action, priority, cost logic, assessment link, decision link and review state.</p>
                     </article>
 
-                    <article class="recommendation-intelligence__card recommendation-intelligence__card--${intelligence.actionLogicSignal.tone}">
+                    <article class="recommendation-intelligence__card intelligence-snapshot__card recommendation-intelligence__card--${intelligence.actionLogicSignal.tone} intelligence-snapshot__card--${intelligence.actionLogicSignal.tone}">
                         <span>Action Logic Signal</span>
                         <strong>${intelligence.actionLogicSignal.label}</strong>
                         <p>${intelligence.actionLogicSignal.description}</p>
                     </article>
 
-                    <article class="recommendation-intelligence__card recommendation-intelligence__card--${intelligence.nextAction.tone}">
+                    <article class="recommendation-intelligence__card intelligence-snapshot__card recommendation-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
                         <span>Next Recommendation Action</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>
