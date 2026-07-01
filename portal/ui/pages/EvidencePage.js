@@ -39,6 +39,7 @@ export default class EvidencePage {
 
         fragment.appendChild(this.createHeader());
         fragment.appendChild(this.createFlowIndicator(activeEvidence));
+        fragment.appendChild(this.createNextActionPanel(activeEvidence));
         fragment.appendChild(this.createMetrics());
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout());
@@ -79,6 +80,50 @@ export default class EvidencePage {
         return "draft";
     }
 
+    static getNextAction(evidence = {}) {
+        const status = this.getEvidenceStatus
+            ? this.getEvidenceStatus(evidence)
+            : "draft";
+
+        if (status === "blocked") {
+            return {
+                label: "Resolve blocker",
+                description: "This evidence cannot move forward until the blocker is cleared.",
+                tone: "blocked"
+            };
+        }
+
+        if (status === "reviewed") {
+            return {
+                label: "Create or confirm finding",
+                description: "Evidence is reviewed and ready to support a technical finding.",
+                tone: "ready"
+            };
+        }
+
+        if (status === "linked") {
+            return {
+                label: "Review linked finding",
+                description: "This evidence is already connected to a finding. Check completeness before assessment.",
+                tone: "linked"
+            };
+        }
+
+        if (status === "captured") {
+            return {
+                label: "Review evidence",
+                description: "Captured evidence should be checked before it is linked to a finding.",
+                tone: "active"
+            };
+        }
+
+        return {
+            label: "Capture evidence",
+            description: "Add a photo, document, note or inspection reference to start the workflow.",
+            tone: "draft"
+        };
+    }
+
     static getFlowState(evidence = {}) {
         const hasFindingLink =
             Boolean(evidence.findingId) ||
@@ -97,6 +142,20 @@ export default class EvidencePage {
         const label = this.statusLabels[status] || "Draft";
 
         return `<span class="evidence-status evidence-status--${status}">${label}</span>`;
+    }
+
+    static renderNextActionPanel(evidence = {}) {
+        const action = this.getNextAction(evidence);
+
+        return `
+            <section class="next-action next-action--${action.tone}" aria-label="Next action">
+                <div>
+                    <span class="next-action__eyebrow">Next Action</span>
+                    <strong>${action.label}</strong>
+                    <p>${action.description}</p>
+                </div>
+            </section>
+        `;
     }
 
     static renderActiveFlowIndicator(evidence = {}) {
@@ -128,6 +187,13 @@ export default class EvidencePage {
         const container = document.createElement("section");
         container.className = "workflow-card";
         container.innerHTML = this.renderActiveFlowIndicator(evidence);
+        return container;
+    }
+
+    static createNextActionPanel(evidence = {}) {
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderNextActionPanel(evidence);
         return container;
     }
 
