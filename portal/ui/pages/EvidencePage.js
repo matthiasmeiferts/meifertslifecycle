@@ -51,6 +51,7 @@ export default class EvidencePage {
     }
 
     static getEvidenceStatus(evidence = {}) {
+        evidence = evidence || {};
         if (evidence.blocked || evidence.status === "blocked") {
             return "blocked";
         }
@@ -128,6 +129,7 @@ export default class EvidencePage {
     }
 
     static getCompletionState(evidence = {}) {
+        evidence = evidence || {};
         const hasTitle = Boolean(evidence.title || evidence.name);
         const hasType = Boolean(evidence.type || evidence.category);
         const hasSource = Boolean(
@@ -193,6 +195,7 @@ export default class EvidencePage {
     }
 
     static getFlowState(evidence = {}) {
+        evidence = evidence || {};
         const hasFindingLink =
             Boolean(evidence.findingId) ||
             Boolean(evidence.linkedFindingId) ||
@@ -206,6 +209,7 @@ export default class EvidencePage {
     }
 
     static renderEvidenceStatusBadge(evidence = {}) {
+        evidence = evidence || {};
         const status = this.getEvidenceStatus(evidence);
         const label = this.statusLabels[status] || "Draft";
 
@@ -213,6 +217,7 @@ export default class EvidencePage {
     }
 
     static renderCompletionPanel(evidence = {}) {
+        evidence = evidence || {};
         const completion = this.getCompletionState(evidence);
         const percent = Math.round(completion.ratio * 100);
         const readinessLabel = completion.isReadyForFinding
@@ -260,6 +265,7 @@ export default class EvidencePage {
     }
 
     static renderActiveFlowIndicator(evidence = {}) {
+        evidence = evidence || {};
         const flowState = this.getFlowState(evidence);
 
         return `
@@ -521,6 +527,7 @@ export default class EvidencePage {
     }
 
     static getEvidenceIntelligence(evidence = {}) {
+        evidence = evidence || {};
         const hasIdentity = Boolean(evidence.title || evidence.name);
         const hasType = Boolean(evidence.type || evidence.category);
         const hasSource = Boolean(
@@ -626,6 +633,7 @@ export default class EvidencePage {
     }
 
     static renderEvidenceIntelligenceSnapshot(evidence = {}) {
+        evidence = evidence || {};
         const intelligence = this.getEvidenceIntelligence(evidence);
 
         return `
