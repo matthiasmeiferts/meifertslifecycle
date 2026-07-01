@@ -41,6 +41,7 @@ export default class DecisionPage {
         fragment.appendChild(this.createMetrics(decisions));
         if (activeDecision) {
             fragment.appendChild(this.createFlowIndicator(activeDecision));
+            fragment.appendChild(this.createNextActionPanel(activeDecision));
         }
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(decisions, activeDecision));
@@ -168,6 +169,71 @@ export default class DecisionPage {
                 ${label}
             </span>
         `;
+    }
+
+    static getNextAction(decision = {}) {
+        const status = this.getDecisionStatus
+            ? this.getDecisionStatus(decision)
+            : "draft";
+
+        if (status === "blocked") {
+            return {
+                label: "Resolve blocker",
+                description: "This decision cannot move forward until the blocker is cleared.",
+                tone: "blocked"
+            };
+        }
+
+        if (status === "reviewed") {
+            return {
+                label: "Prepare final report",
+                description: "Decision is reviewed and ready to be included in the final report output.",
+                tone: "ready"
+            };
+        }
+
+        if (status === "reported") {
+            return {
+                label: "Review linked report",
+                description: "This decision is already connected to a report. Check output consistency and completeness.",
+                tone: "linked"
+            };
+        }
+
+        if (status === "decided") {
+            return {
+                label: "Generate report section",
+                description: "The decision is complete enough to move into report generation.",
+                tone: "active"
+            };
+        }
+
+        return {
+            label: "Record decision",
+            description: "Add decision details, outcome, and confidence before generating report.",
+            tone: "draft"
+        };
+    }
+
+    static renderNextActionPanel(decision = {}) {
+        const action = this.getNextAction(decision);
+
+        return `
+            <section class="next-action next-action--${action.tone}" aria-label="Next action">
+                <div>
+                    <span class="next-action__eyebrow">Next Action</span>
+                    <strong>${action.label}</strong>
+                    <p>${action.description}</p>
+                </div>
+            </section>
+        `;
+    }
+
+    static createNextActionPanel(decision = {}) {
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderNextActionPanel(decision);
+        return container;
     }
 
     static createToolbar() {
