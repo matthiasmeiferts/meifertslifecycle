@@ -126,6 +126,7 @@ export default class RecommendationPage {
     }
 
     static getRecommendationStatus(recommendation = {}) {
+        recommendation = recommendation || {};
         if (recommendation.blocked || recommendation.status === "blocked") {
             return "blocked";
         }
@@ -160,6 +161,7 @@ export default class RecommendationPage {
     }
 
     static renderRecommendationStatusBadge(recommendation = {}) {
+        recommendation = recommendation || {};
         const status = this.getRecommendationStatus(recommendation);
         const label = this.statusLabels[status] || "Draft";
 
@@ -171,6 +173,7 @@ export default class RecommendationPage {
     }
 
     static getNextAction(recommendation = {}) {
+        recommendation = recommendation || {};
         const status = this.getRecommendationStatus
             ? this.getRecommendationStatus(recommendation)
             : "draft";
@@ -215,6 +218,7 @@ export default class RecommendationPage {
     }
 
     static renderNextActionPanel(recommendation = {}) {
+        recommendation = recommendation || {};
         const action = this.getNextAction(recommendation);
 
         return `
@@ -236,6 +240,7 @@ export default class RecommendationPage {
     }
 
     static getCompletionState(recommendation = {}) {
+        recommendation = recommendation || {};
         const hasTitle = Boolean(recommendation.title || recommendation.name);
         const hasAction = Boolean(recommendation.action || recommendation.recommendation || recommendation.description);
         const hasPriority = Boolean(recommendation.priority || recommendation.urgency);
@@ -300,6 +305,7 @@ export default class RecommendationPage {
     }
 
     static renderCompletionPanel(recommendation = {}) {
+        recommendation = recommendation || {};
         const completion = this.getCompletionState(recommendation);
         const percent = Math.round(completion.ratio * 100);
         const readinessLabel = completion.isReadyForDecision
@@ -467,6 +473,7 @@ export default class RecommendationPage {
     }
 
     static getRecommendationIntelligence(recommendation = {}) {
+        recommendation = recommendation || {};
         const hasIdentity = Boolean(recommendation.title || recommendation.name);
         const hasAction = Boolean(recommendation.action || recommendation.recommendation || recommendation.description);
         const hasPriority = Boolean(recommendation.priority || recommendation.urgency);
@@ -571,6 +578,7 @@ export default class RecommendationPage {
     }
 
     static renderRecommendationIntelligenceSnapshot(recommendation = {}) {
+        recommendation = recommendation || {};
         const intelligence = this.getRecommendationIntelligence(recommendation);
 
         return `
