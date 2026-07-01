@@ -66,6 +66,7 @@ export default class FindingPage {
     }
 
     static renderActiveFlowIndicator(finding = {}) {
+        finding = finding || {};
         const flowState = this.getFlowState(finding);
 
         return `
@@ -98,6 +99,7 @@ export default class FindingPage {
     }
 
     static getFindingStatus(finding = {}) {
+        finding = finding || {};
         if (finding.blocked || finding.status === "blocked") {
             return "blocked";
         }
@@ -132,6 +134,7 @@ export default class FindingPage {
     }
 
     static renderFindingStatusBadge(finding = {}) {
+        finding = finding || {};
         const status = this.getFindingStatus(finding);
         const label = this.statusLabels[status] || "Draft";
 
@@ -139,6 +142,7 @@ export default class FindingPage {
     }
 
     static getNextAction(finding = {}) {
+        finding = finding || {};
         const status = this.getFindingStatus
             ? this.getFindingStatus(finding)
             : "draft";
@@ -183,6 +187,7 @@ export default class FindingPage {
     }
 
     static renderNextActionPanel(finding = {}) {
+        finding = finding || {};
         const action = this.getNextAction(finding);
 
         return `
@@ -204,6 +209,7 @@ export default class FindingPage {
     }
 
     static getCompletionState(finding = {}) {
+        finding = finding || {};
         const hasTitle = Boolean(finding.title || finding.name);
         const hasCategory = Boolean(finding.category || finding.type);
         const hasSeverity = Boolean(finding.severity || finding.priority || finding.riskLevel);
@@ -269,6 +275,7 @@ export default class FindingPage {
     }
 
     static renderCompletionPanel(finding = {}) {
+        finding = finding || {};
         const completion = this.getCompletionState(finding);
         const percent = Math.round(completion.ratio * 100);
         const readinessLabel = completion.isReadyForAssessment
@@ -532,6 +539,7 @@ export default class FindingPage {
     }
 
     static getFindingIntelligence(finding = {}) {
+        finding = finding || {};
         const hasIdentity = Boolean(finding.title || finding.name);
         const hasCategory = Boolean(finding.category || finding.type);
         const hasSeverity = Boolean(finding.severity || finding.priority || finding.riskLevel);
@@ -635,6 +643,7 @@ export default class FindingPage {
     }
 
     static renderFindingIntelligenceSnapshot(finding = {}) {
+        finding = finding || {};
         const intelligence = this.getFindingIntelligence(finding);
 
         return `
