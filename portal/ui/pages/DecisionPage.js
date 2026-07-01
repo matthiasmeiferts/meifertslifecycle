@@ -43,6 +43,7 @@ export default class DecisionPage {
             fragment.appendChild(this.createFlowIndicator(activeDecision));
             fragment.appendChild(this.createNextActionPanel(activeDecision));
             fragment.appendChild(this.createCompletionPanel(activeDecision));
+            fragment.appendChild(this.createDecisionIntelligenceSnapshot(activeDecision));
         }
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(decisions, activeDecision));
@@ -521,6 +522,151 @@ export default class DecisionPage {
 
     static showPendingFeature(feature = "This feature") {
         Notification.info(`${feature} will be added in the next foundation step.`);
+    }
+
+    static getDecisionIntelligence(decision = {}) {
+        const hasIdentity = Boolean(decision.title || decision.name);
+        const hasDecision = Boolean(decision.decision || decision.outcome || decision.approved || decision.rejected);
+        const hasDecisionMaker = Boolean(decision.decisionMaker || decision.approvedBy || decision.owner);
+        const hasDate = Boolean(decision.decisionDate || decision.approvedAt || decision.date);
+        const hasRecommendationLink = Boolean(
+            decision.recommendationId ||
+            decision.linkedRecommendationId ||
+            decision.recommendation ||
+            decision.hasRecommendation
+        );
+        const hasReportLink = Boolean(
+            decision.reportId ||
+            decision.linkedReportId ||
+            decision.report ||
+            decision.hasReport
+        );
+        const isReviewed = Boolean(decision.reviewed || decision.status === "reviewed");
+
+        const checks = [
+            hasIdentity,
+            hasDecision,
+            hasDecisionMaker,
+            hasDate,
+            hasRecommendationLink,
+            hasReportLink,
+            isReviewed
+        ];
+
+        const completed = checks.filter(Boolean).length;
+        const total = checks.length;
+        const readinessPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        const confidenceScore = Math.min(
+            100,
+            Math.round(
+                readinessPercent * 0.64 +
+                (hasDecision ? 12 : 0) +
+                (hasDecisionMaker ? 8 : 0) +
+                (hasRecommendationLink ? 8 : 0) +
+                (hasReportLink ? 8 : 0)
+            )
+        );
+
+        let governanceSignal = {
+            label: "Low governance signal",
+            description: "Decision logic is still incomplete. Define outcome, owner and recommendation context.",
+            tone: "draft"
+        };
+
+        if (hasDecision && hasDecisionMaker && hasRecommendationLink && hasReportLink) {
+            governanceSignal = {
+                label: "Strong governance signal",
+                description: "Decision has clear governance context and is connected to final report output.",
+                tone: "ready"
+            };
+        } else if (hasDecision && hasDecisionMaker) {
+            governanceSignal = {
+                label: "Developing governance signal",
+                description: "Decision has usable governance context but may still need recommendation or report linkage.",
+                tone: "active"
+            };
+        }
+
+        const nextAction = hasReportLink
+            ? {
+                label: "Review linked report",
+                description: "Decision is connected to a report. Review whether the final output reflects the decision accurately.",
+                tone: "ready"
+            }
+            : hasDecision && hasDecisionMaker
+                ? {
+                    label: "Create or link report",
+                    description: "Decision is complete enough to move into report preparation.",
+                    tone: "active"
+                }
+                : {
+                    label: "Confirm decision logic",
+                    description: "Add decision outcome and decision owner before moving toward report output.",
+                    tone: "draft"
+                };
+
+        return {
+            completed,
+            total,
+            readinessPercent,
+            confidenceScore,
+            governanceSignal,
+            nextAction,
+            label: readinessPercent >= 100
+                ? "Decision intelligence complete"
+                : readinessPercent >= 50
+                    ? "Decision intelligence developing"
+                    : "Decision intelligence early"
+        };
+    }
+
+    static renderDecisionIntelligenceSnapshot(decision = {}) {
+        const intelligence = this.getDecisionIntelligence(decision);
+
+        return `
+            <section class="decision-intelligence" aria-label="Decision intelligence snapshot">
+                <div class="decision-intelligence__header">
+                    <div>
+                        <span class="decision-intelligence__eyebrow">Decision Intelligence</span>
+                        <strong>${intelligence.label}</strong>
+                        <p>${intelligence.completed}/${intelligence.total} decision intelligence checks completed</p>
+                    </div>
+                    <span class="decision-intelligence__score">${intelligence.confidenceScore}%</span>
+                </div>
+
+                <div class="decision-intelligence__grid">
+                    <article class="decision-intelligence__card">
+                        <span>Report Readiness</span>
+                        <strong>${intelligence.readinessPercent}%</strong>
+                        <p>Readiness based on identity, decision outcome, owner, date, recommendation link, report link and review state.</p>
+                    </article>
+
+                    <article class="decision-intelligence__card decision-intelligence__card--${intelligence.governanceSignal.tone}">
+                        <span>Governance Signal</span>
+                        <strong>${intelligence.governanceSignal.label}</strong>
+                        <p>${intelligence.governanceSignal.description}</p>
+                    </article>
+
+                    <article class="decision-intelligence__card decision-intelligence__card--${intelligence.nextAction.tone}">
+                        <span>Next Decision Action</span>
+                        <strong>${intelligence.nextAction.label}</strong>
+                        <p>${intelligence.nextAction.description}</p>
+                    </article>
+                </div>
+            </section>
+        `;
+    }
+
+    static createDecisionIntelligenceSnapshot(decision = DecisionManager.get()) {
+        if (!decision || !decision.id) {
+            return document.createElement("section");
+        }
+
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderDecisionIntelligenceSnapshot(decision);
+        return container;
     }
 
 }
