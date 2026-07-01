@@ -28,6 +28,7 @@ export default class RecommendationPage {
         fragment.appendChild(this.createMetrics(recommendations));
         if (activeRecommendation) {
             fragment.appendChild(this.createNextActionPanel(activeRecommendation));
+            fragment.appendChild(this.createCompletionPanel(activeRecommendation));
         }
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(recommendations, activeRecommendation));
@@ -229,6 +230,110 @@ export default class RecommendationPage {
         const container = document.createElement("section");
         container.className = "workflow-card";
         container.innerHTML = this.renderNextActionPanel(recommendation);
+        return container;
+    }
+
+    static getCompletionState(recommendation = {}) {
+        const hasTitle = Boolean(recommendation.title || recommendation.name);
+        const hasAction = Boolean(recommendation.action || recommendation.recommendation || recommendation.description);
+        const hasPriority = Boolean(recommendation.priority || recommendation.urgency);
+        const hasCost = Boolean(recommendation.costEstimate || recommendation.capex || recommendation.budget);
+        const hasAssessmentLink = Boolean(
+            recommendation.assessmentId ||
+            recommendation.linkedAssessmentId ||
+            recommendation.assessment ||
+            recommendation.hasAssessment
+        );
+        const hasDecisionLink = Boolean(
+            recommendation.decisionId ||
+            recommendation.linkedDecisionId ||
+            recommendation.decision ||
+            recommendation.hasDecision
+        );
+
+        const checks = [
+            {
+                key: "identity",
+                label: "Recommendation identified",
+                complete: hasTitle
+            },
+            {
+                key: "action",
+                label: "Action defined",
+                complete: hasAction
+            },
+            {
+                key: "priority",
+                label: "Priority defined",
+                complete: hasPriority
+            },
+            {
+                key: "cost",
+                label: "Cost logic captured",
+                complete: hasCost
+            },
+            {
+                key: "assessment",
+                label: "Assessment linked",
+                complete: hasAssessmentLink
+            },
+            {
+                key: "decision",
+                label: "Decision connection",
+                complete: hasDecisionLink
+            }
+        ];
+
+        const completed = checks.filter((check) => check.complete).length;
+        const total = checks.length;
+
+        return {
+            checks,
+            completed,
+            total,
+            ratio: total > 0 ? completed / total : 0,
+            isReadyForDecision: hasTitle && hasAction && hasPriority,
+            isComplete: completed === total
+        };
+    }
+
+    static renderCompletionPanel(recommendation = {}) {
+        const completion = this.getCompletionState(recommendation);
+        const percent = Math.round(completion.ratio * 100);
+        const readinessLabel = completion.isReadyForDecision
+            ? "Ready for Decision"
+            : "Needs more recommendation data";
+
+        return `
+            <section class="completion-panel" aria-label="Recommendation completion">
+                <div class="completion-panel__header">
+                    <div>
+                        <span class="completion-panel__eyebrow">Completion</span>
+                        <strong>${readinessLabel}</strong>
+                    </div>
+                    <span class="completion-panel__score">${percent}%</span>
+                </div>
+
+                <div class="completion-panel__bar" aria-hidden="true">
+                    <div class="completion-panel__bar-fill" style="width: ${percent}%"></div>
+                </div>
+
+                <div class="completion-panel__checks">
+                    ${completion.checks.map((check) => `
+                        <div class="completion-panel__check ${check.complete ? "is-complete" : "is-open"}">
+                            <span class="completion-panel__check-marker"></span>
+                            <span>${check.label}</span>
+                        </div>
+                    `).join("")}
+                </div>
+            </section>
+        `;
+    }
+
+    static createCompletionPanel(recommendation = {}) {
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderCompletionPanel(recommendation);
         return container;
     }
 
