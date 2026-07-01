@@ -1,6 +1,7 @@
 import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import DecisionManager from "../../core/DecisionManager.js";
 import ReportManager from "../../core/ReportManager.js";
+import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
@@ -553,20 +554,27 @@ export default class DecisionPage {
             isReviewed
         ];
 
-        const completed = checks.filter(Boolean).length;
-        const total = checks.length;
-        const readinessPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
+        const readiness = IntelligenceEngine.getReadinessFromChecks(checks);
+        const completed = readiness.completed;
+        const total = readiness.total;
+        const readinessPercent = readiness.percent;
 
-        const confidenceScore = Math.min(
-            100,
-            Math.round(
-                readinessPercent * 0.64 +
-                (hasDecision ? 12 : 0) +
-                (hasDecisionMaker ? 8 : 0) +
-                (hasRecommendationLink ? 8 : 0) +
-                (hasReportLink ? 8 : 0)
-            )
-        );
+        const confidenceScore = IntelligenceEngine.getConfidenceScore({
+            readinessPercent,
+            primarySignals:
+                (hasDecision ? 1 : 0) +
+                (hasDecisionMaker ? 1 : 0),
+            downstreamSignals:
+                (hasRecommendationLink ? 1 : 0) +
+                (hasReportLink ? 1 : 0),
+            outputSignals: isReviewed ? 1 : 0,
+            weights: {
+                readiness: 0.64,
+                primary: 10,
+                downstream: 8,
+                output: 6
+            }
+        });
 
         let governanceSignal = {
             label: "Low governance signal",

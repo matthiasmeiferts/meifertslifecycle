@@ -1,4 +1,5 @@
 import ReportManager from "../../core/ReportManager.js";
+import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
@@ -172,20 +173,25 @@ export default class ReportPage {
             isFinalized
         ];
 
-        const completed = checks.filter(Boolean).length;
-        const total = checks.length;
-        const readinessPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
+        const readiness = IntelligenceEngine.getReadinessFromChecks(checks);
+        const completed = readiness.completed;
+        const total = readiness.total;
+        const readinessPercent = readiness.percent;
 
-        const confidenceScore = Math.min(
-            100,
-            Math.round(
-                readinessPercent * 0.64 +
-                (hasContent ? 10 : 0) +
-                (hasDecisionLink ? 8 : 0) +
-                (hasOutput ? 8 : 0) +
-                (isFinalized ? 10 : 0)
-            )
-        );
+        const confidenceScore = IntelligenceEngine.getConfidenceScore({
+            readinessPercent,
+            primarySignals:
+                (hasContent ? 1 : 0) +
+                (hasDecisionLink ? 1 : 0),
+            downstreamSignals: hasOutput ? 1 : 0,
+            outputSignals: isFinalized ? 1 : 0,
+            weights: {
+                readiness: 0.64,
+                primary: 9,
+                downstream: 8,
+                output: 10
+            }
+        });
 
         let outputQualitySignal = {
             label: "Low output quality",
