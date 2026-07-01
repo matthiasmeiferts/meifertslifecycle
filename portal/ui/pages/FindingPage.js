@@ -1,3 +1,4 @@
+import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import WorkspaceController from "../../controllers/WorkspaceController.js";
 import FindingManager from "../../core/FindingManager.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
@@ -207,7 +208,7 @@ export default class FindingPage {
 
         AssessmentManager.set(assessment);
         Notification.success("Assessment created from selected finding.");
-        this.refresh();
+        WorkspaceRouter.navigate("assessments");
     }
 
     static refresh() {
