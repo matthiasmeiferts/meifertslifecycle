@@ -1,3 +1,4 @@
+import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
 import DecisionManager from "../../core/DecisionManager.js";
 import SectionHeader from "../components/SectionHeader.js";
@@ -190,7 +191,7 @@ export default class RecommendationPage {
 
         DecisionManager.set(decision);
         Notification.success("Decision created from selected recommendation.");
-        this.refresh();
+        WorkspaceRouter.navigate("decisions");
     }
 
     static getRecommendations() {
