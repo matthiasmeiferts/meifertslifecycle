@@ -537,3 +537,4 @@ export default class DashboardPage {
         container.innerHTML = this.renderPlatformIntelligence(data);
         return container;
     }
+}
