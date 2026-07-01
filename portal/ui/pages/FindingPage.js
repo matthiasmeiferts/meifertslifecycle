@@ -41,6 +41,7 @@ export default class FindingPage {
         fragment.appendChild(this.createFlowIndicator(activeFinding));
         fragment.appendChild(this.createNextActionPanel(activeFinding));
         fragment.appendChild(this.createCompletionPanel(activeFinding));
+        fragment.appendChild(this.createFindingIntelligenceSnapshot(activeFinding));
         fragment.appendChild(this.createMetrics());
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout());
@@ -525,6 +526,152 @@ export default class FindingPage {
 
     static showPendingFeature(feature = "This feature") {
         Notification.info(`${feature} will be added in the next foundation step.`);
+    }
+
+    static getFindingIntelligence(finding = {}) {
+        const hasIdentity = Boolean(finding.title || finding.name);
+        const hasCategory = Boolean(finding.category || finding.type);
+        const hasSeverity = Boolean(finding.severity || finding.priority || finding.riskLevel);
+        const hasDescription = Boolean(finding.description || finding.summary || finding.note);
+        const hasEvidenceLink = Boolean(
+            finding.evidenceId ||
+            finding.linkedEvidenceId ||
+            finding.evidence ||
+            finding.evidenceIds ||
+            finding.hasEvidence
+        );
+        const hasAssessmentLink = Boolean(
+            finding.assessmentId ||
+            finding.linkedAssessmentId ||
+            finding.assessment ||
+            finding.hasAssessment
+        );
+        const isReviewed = Boolean(finding.reviewed || finding.status === "reviewed");
+
+        const checks = [
+            hasIdentity,
+            hasCategory,
+            hasSeverity,
+            hasDescription,
+            hasEvidenceLink,
+            hasAssessmentLink,
+            isReviewed
+        ];
+
+        const completed = checks.filter(Boolean).length;
+        const total = checks.length;
+        const readinessPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        const confidenceScore = Math.min(
+            100,
+            Math.round(
+                readinessPercent * 0.66 +
+                (hasSeverity ? 10 : 0) +
+                (hasEvidenceLink ? 8 : 0) +
+                (hasAssessmentLink ? 10 : 0) +
+                (isReviewed ? 6 : 0)
+            )
+        );
+
+        let severitySignal = {
+            label: "Low severity signal",
+            description: "Finding severity is still unclear. Define severity, probability or risk level before assessment.",
+            tone: "draft"
+        };
+
+        if (hasSeverity && hasEvidenceLink && hasAssessmentLink) {
+            severitySignal = {
+                label: "Strong severity signal",
+                description: "Finding has severity context, evidence support and downstream assessment connection.",
+                tone: "ready"
+            };
+        } else if (hasSeverity && hasDescription) {
+            severitySignal = {
+                label: "Developing severity signal",
+                description: "Finding has useful severity context but may still need evidence or assessment linkage.",
+                tone: "active"
+            };
+        }
+
+        const nextAction = hasAssessmentLink
+            ? {
+                label: "Review linked assessment",
+                description: "Finding is connected to an assessment. Review whether risk logic reflects the finding accurately.",
+                tone: "ready"
+            }
+            : hasSeverity && hasDescription
+                ? {
+                    label: "Create or link assessment",
+                    description: "Finding is sufficiently described. Connect it to a technical assessment.",
+                    tone: "active"
+                }
+                : {
+                    label: "Define finding severity",
+                    description: "Add severity, description and evidence context before moving toward assessment.",
+                    tone: "draft"
+                };
+
+        return {
+            completed,
+            total,
+            readinessPercent,
+            confidenceScore,
+            severitySignal,
+            nextAction,
+            label: readinessPercent >= 100
+                ? "Finding intelligence complete"
+                : readinessPercent >= 50
+                    ? "Finding intelligence developing"
+                    : "Finding intelligence early"
+        };
+    }
+
+    static renderFindingIntelligenceSnapshot(finding = {}) {
+        const intelligence = this.getFindingIntelligence(finding);
+
+        return `
+            <section class="finding-intelligence" aria-label="Finding intelligence snapshot">
+                <div class="finding-intelligence__header">
+                    <div>
+                        <span class="finding-intelligence__eyebrow">Finding Intelligence</span>
+                        <strong>${intelligence.label}</strong>
+                        <p>${intelligence.completed}/${intelligence.total} finding intelligence checks completed</p>
+                    </div>
+                    <span class="finding-intelligence__score">${intelligence.confidenceScore}%</span>
+                </div>
+
+                <div class="finding-intelligence__grid">
+                    <article class="finding-intelligence__card">
+                        <span>Assessment Readiness</span>
+                        <strong>${intelligence.readinessPercent}%</strong>
+                        <p>Readiness based on identity, classification, severity, description, evidence link, assessment link and review state.</p>
+                    </article>
+
+                    <article class="finding-intelligence__card finding-intelligence__card--${intelligence.severitySignal.tone}">
+                        <span>Severity Signal</span>
+                        <strong>${intelligence.severitySignal.label}</strong>
+                        <p>${intelligence.severitySignal.description}</p>
+                    </article>
+
+                    <article class="finding-intelligence__card finding-intelligence__card--${intelligence.nextAction.tone}">
+                        <span>Next Finding Action</span>
+                        <strong>${intelligence.nextAction.label}</strong>
+                        <p>${intelligence.nextAction.description}</p>
+                    </article>
+                </div>
+            </section>
+        `;
+    }
+
+    static createFindingIntelligenceSnapshot(finding = FindingManager.get()) {
+        if (!finding || !finding.id) {
+            return document.createElement("section");
+        }
+
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderFindingIntelligenceSnapshot(finding);
+        return container;
     }
 
 }
