@@ -183,6 +183,8 @@ export default class InspectionPage {
             label: "Assessment"
         }
     ];
+
+    static render() {
         const fragment = document.createDocumentFragment();
         const inspections = InspectionManager.getAll();
         const activeInspection = InspectionManager.get();
