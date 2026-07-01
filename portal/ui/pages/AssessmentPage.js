@@ -1,4 +1,5 @@
 import AssessmentManager from "../../core/AssessmentManager.js";
+import RecommendationManager from "../../core/RecommendationManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
@@ -50,7 +51,7 @@ export default class AssessmentPage {
         grid.appendChild(MetricCard.create("Assessments", assessments.length));
         grid.appendChild(MetricCard.create("High Risk", highRiskCount));
         grid.appendChild(MetricCard.create("Accepted", acceptedCount));
-        grid.appendChild(MetricCard.create("Highest Risk", highestRisk));
+        grid.appendChild(MetricCard.create("Linked Recommendations", this.countRecommendationsLinkedToAssessment()));
 
         return grid;
     }
@@ -71,9 +72,9 @@ export default class AssessmentPage {
                 onClick: () => this.createSampleAssessment()
             },
             {
-                id: "capex-model",
-                label: "CAPEX Model",
-                onClick: () => this.showPendingFeature("CAPEX model")
+                id: "create-recommendation",
+                label: "Create Recommendation",
+                onClick: () => this.createRecommendationFromSelectedAssessment()
             }
         ]));
 
@@ -149,8 +150,53 @@ export default class AssessmentPage {
             { label: "Selected Assessment", value: activeAssessment.title || activeAssessment.id },
             { label: "Severity", value: activeAssessment.severity || "Unrated" },
             { label: "Risk Score", value: String(activeAssessment.riskScore || 0) },
-            { label: "Status", value: activeAssessment.status || "Draft" }
+            { label: "Linked Recommendations", value: String(this.countRecommendationsLinkedToAssessment(activeAssessment.id)) }
         ]);
+    }
+
+    static countRecommendationsLinkedToAssessment(assessmentId = null) {
+        const targetAssessmentId = assessmentId || AssessmentManager.get()?.id;
+
+        if (!targetAssessmentId) {
+            return 0;
+        }
+
+        return RecommendationManager.getAll()
+            .filter(recommendation => (recommendation.assessmentIds || []).includes(targetAssessmentId))
+            .length;
+    }
+
+    static createRecommendationFromSelectedAssessment() {
+        const assessment = AssessmentManager.get();
+
+        if (!assessment) {
+            Notification.warning("Select an assessment first.");
+            return;
+        }
+
+        const recommendation = RecommendationManager.create({
+            caseId: assessment.caseId,
+            buildingId: assessment.buildingId,
+            inspectionId: assessment.inspectionId,
+            assessmentIds: [assessment.id],
+            findingIds: assessment.findingIds || [],
+            title: `Recommendation from ${assessment.title || assessment.id}`,
+            description: assessment.description || "Recommendation generated from selected assessment.",
+            action: "Review and implement corrective action.",
+            priority: assessment.priority || "Medium",
+            timeframe: (assessment.riskScore || 0) >= 60 ? "Immediate"
+                : (assessment.riskScore || 0) >= 30 ? "Short Term"
+                : "Planned",
+            estimatedCost: 0,
+            currency: "EUR",
+            responsible: "Owner",
+            decisionImpact: (assessment.riskScore || 0) >= 60 ? "High" : "Medium",
+            status: "Draft"
+        });
+
+        RecommendationManager.set(recommendation);
+        Notification.success("Recommendation created from selected assessment.");
+        this.refresh();
     }
 
     static getAssessments() {
