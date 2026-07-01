@@ -1,19 +1,23 @@
+import AssessmentManager from "../../core/AssessmentManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
 import DetailPanel from "../components/DetailPanel.js";
 import MetricCard from "../components/MetricCard.js";
+import StatusBadge from "../components/StatusBadge.js";
 import Notification from "../components/Notification.js";
 
 export default class AssessmentPage {
 
     static render() {
         const fragment = document.createDocumentFragment();
+        const assessments = this.getAssessments();
+        const activeAssessment = AssessmentManager.get();
 
         fragment.appendChild(this.createHeader());
-        fragment.appendChild(this.createMetrics());
+        fragment.appendChild(this.createMetrics(assessments));
         fragment.appendChild(this.createToolbar());
-        fragment.appendChild(this.createMainLayout());
+        fragment.appendChild(this.createMainLayout(assessments, activeAssessment));
 
         return fragment;
     }
@@ -27,20 +31,26 @@ export default class AssessmentPage {
                 {
                     id: "new-assessment",
                     label: "+ New Assessment",
-                    onClick: () => this.showPendingFeature("Assessment creation")
+                    onClick: () => this.createSampleAssessment()
                 }
             ]
         });
     }
 
-    static createMetrics() {
+    static createMetrics(assessments = this.getAssessments()) {
+        const highRiskCount = assessments.filter(item => item.severity === "High" || item.severity === "Critical").length;
+        const acceptedCount = assessments.filter(item => item.status === "Accepted").length;
+        const highestRisk = assessments.length
+            ? Math.max(...assessments.map(item => item.riskScore || 0))
+            : 0;
+
         const grid = document.createElement("section");
         grid.className = "metrics-grid";
 
-        grid.appendChild(MetricCard.create("Assessments", "0"));
-        grid.appendChild(MetricCard.create("Risk Items", "Pending"));
-        grid.appendChild(MetricCard.create("RUL", "Pending"));
-        grid.appendChild(MetricCard.create("CAPEX", "Pending"));
+        grid.appendChild(MetricCard.create("Assessments", assessments.length));
+        grid.appendChild(MetricCard.create("High Risk", highRiskCount));
+        grid.appendChild(MetricCard.create("Accepted", acceptedCount));
+        grid.appendChild(MetricCard.create("Highest Risk", highestRisk));
 
         return grid;
     }
@@ -58,7 +68,7 @@ export default class AssessmentPage {
             {
                 id: "risk-model",
                 label: "Risk Model",
-                onClick: () => this.showPendingFeature("Risk model")
+                onClick: () => this.createSampleAssessment()
             },
             {
                 id: "capex-model",
@@ -70,33 +80,106 @@ export default class AssessmentPage {
         return wrapper;
     }
 
-    static createMainLayout() {
+    static createMainLayout(assessments = this.getAssessments(), activeAssessment = AssessmentManager.get()) {
         const layout = document.createElement("section");
         layout.className = "case-workspace-layout";
 
-        layout.appendChild(this.createContent());
-        layout.appendChild(this.createDetailPanel());
+        layout.appendChild(this.createContent(assessments));
+        layout.appendChild(this.createDetailPanel(activeAssessment, assessments));
 
         return layout;
     }
 
-    static createContent() {
-        return EmptyState.create({
-            eyebrow: "Assessment Workspace",
-            title: "No assessments available",
-            description: "Assessment records will translate findings into condition, risk, remaining useful life, and CAPEX logic.",
-            actionLabel: "+ New Assessment",
-            onAction: () => this.showPendingFeature("Assessment creation")
+    static createContent(assessments = this.getAssessments()) {
+        if (!assessments.length) {
+            return EmptyState.create({
+                eyebrow: "Assessment Workspace",
+                title: "No assessments available",
+                description: "Assessment records will translate findings into condition, risk, remaining useful life, and CAPEX logic.",
+                actionLabel: "+ New Assessment",
+                onAction: () => this.createSampleAssessment()
+            });
+        }
+
+        const list = document.createElement("section");
+        list.className = "workflow-card evidence-list";
+
+        assessments.forEach(assessment => {
+            list.appendChild(this.createAssessmentRow(assessment));
         });
+
+        return list;
     }
 
-    static createDetailPanel() {
+    static createAssessmentRow(assessment) {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = "evidence-row";
+        row.addEventListener("click", () => {
+            AssessmentManager.set(assessment);
+            this.refresh();
+        });
+
+        const title = document.createElement("strong");
+        title.textContent = assessment.title || assessment.id || "Assessment Item";
+
+        const meta = document.createElement("span");
+        meta.textContent = `${assessment.severity || "Unrated"} · Risk ${assessment.riskScore || 0}`;
+
+        const badge = StatusBadge.create(assessment.status || "Draft", "warning");
+
+        row.appendChild(title);
+        row.appendChild(meta);
+        row.appendChild(badge);
+
+        return row;
+    }
+
+    static createDetailPanel(activeAssessment = AssessmentManager.get(), assessments = this.getAssessments()) {
+        if (!activeAssessment) {
+            return DetailPanel.create("Assessment Context", [
+                { label: "Assessments", value: String(assessments.length) },
+                { label: "Selected Assessment", value: "Not selected" },
+                { label: "Technical Risk", value: assessments.length ? "In Review" : "Pending" },
+                { label: "Next Step", value: "Create or select an assessment" }
+            ]);
+        }
+
         return DetailPanel.create("Assessment Context", [
-            { label: "Condition", value: "Not assessed" },
-            { label: "Technical Risk", value: "Pending" },
-            { label: "Remaining Useful Life", value: "Pending" },
-            { label: "Next Step", value: "Create AssessmentManager" }
+            { label: "Selected Assessment", value: activeAssessment.title || activeAssessment.id },
+            { label: "Severity", value: activeAssessment.severity || "Unrated" },
+            { label: "Risk Score", value: String(activeAssessment.riskScore || 0) },
+            { label: "Status", value: activeAssessment.status || "Draft" }
         ]);
+    }
+
+    static getAssessments() {
+        return AssessmentManager.getAll();
+    }
+
+    static createSampleAssessment() {
+        const severity = "Medium";
+        const probability = "Medium";
+        const consequence = "Medium";
+
+        const assessment = AssessmentManager.create({
+            caseId: "demo-case",
+            buildingId: "demo-building",
+            inspectionId: "demo-inspection",
+            title: "Sample Assessment",
+            description: "Initial assessment record created from the workspace.",
+            category: "General",
+            severity,
+            probability,
+            consequence,
+            riskScore: AssessmentManager.calculateRiskScore(severity, probability, consequence),
+            priority: "Medium",
+            status: "Draft"
+        });
+
+        AssessmentManager.set(assessment);
+        Notification.success("Assessment created.");
+        this.refresh();
     }
 
     static refresh() {
