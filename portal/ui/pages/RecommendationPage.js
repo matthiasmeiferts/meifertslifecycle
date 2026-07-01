@@ -1,19 +1,23 @@
+import RecommendationManager from "../../core/RecommendationManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
 import DetailPanel from "../components/DetailPanel.js";
 import MetricCard from "../components/MetricCard.js";
+import StatusBadge from "../components/StatusBadge.js";
 import Notification from "../components/Notification.js";
 
 export default class RecommendationPage {
 
     static render() {
         const fragment = document.createDocumentFragment();
+        const recommendations = this.getRecommendations();
+        const activeRecommendation = RecommendationManager.get();
 
         fragment.appendChild(this.createHeader());
-        fragment.appendChild(this.createMetrics());
+        fragment.appendChild(this.createMetrics(recommendations));
         fragment.appendChild(this.createToolbar());
-        fragment.appendChild(this.createMainLayout());
+        fragment.appendChild(this.createMainLayout(recommendations, activeRecommendation));
 
         return fragment;
     }
@@ -27,20 +31,24 @@ export default class RecommendationPage {
                 {
                     id: "new-recommendation",
                     label: "+ New Recommendation",
-                    onClick: () => this.showPendingFeature("Recommendation creation")
+                    onClick: () => this.createSampleRecommendation()
                 }
             ]
         });
     }
 
-    static createMetrics() {
+    static createMetrics(recommendations = this.getRecommendations()) {
+        const highPriorityCount = recommendations.filter(item => item.priority === "High" || item.priority === "Critical").length;
+        const acceptedCount = recommendations.filter(item => item.status === "Accepted").length;
+        const immediateCount = recommendations.filter(item => item.timeframe === "Immediate").length;
+
         const grid = document.createElement("section");
         grid.className = "metrics-grid";
 
-        grid.appendChild(MetricCard.create("Recommendations", "0"));
-        grid.appendChild(MetricCard.create("High Priority", "Pending"));
-        grid.appendChild(MetricCard.create("CAPEX Range", "Pending"));
-        grid.appendChild(MetricCard.create("Decision Ready", "No"));
+        grid.appendChild(MetricCard.create("Recommendations", recommendations.length));
+        grid.appendChild(MetricCard.create("High Priority", highPriorityCount));
+        grid.appendChild(MetricCard.create("Immediate", immediateCount));
+        grid.appendChild(MetricCard.create("Accepted", acceptedCount));
 
         return grid;
     }
@@ -58,7 +66,7 @@ export default class RecommendationPage {
             {
                 id: "prioritize",
                 label: "Prioritize",
-                onClick: () => this.showPendingFeature("Recommendation prioritization")
+                onClick: () => this.createSampleRecommendation()
             },
             {
                 id: "capex-review",
@@ -70,33 +78,103 @@ export default class RecommendationPage {
         return wrapper;
     }
 
-    static createMainLayout() {
+    static createMainLayout(recommendations = this.getRecommendations(), activeRecommendation = RecommendationManager.get()) {
         const layout = document.createElement("section");
         layout.className = "case-workspace-layout";
 
-        layout.appendChild(this.createContent());
-        layout.appendChild(this.createDetailPanel());
+        layout.appendChild(this.createContent(recommendations));
+        layout.appendChild(this.createDetailPanel(activeRecommendation, recommendations));
 
         return layout;
     }
 
-    static createContent() {
-        return EmptyState.create({
-            eyebrow: "Recommendation Workspace",
-            title: "No recommendations available",
-            description: "Recommendations will translate assessment results into prioritized technical actions and decision support.",
-            actionLabel: "+ New Recommendation",
-            onAction: () => this.showPendingFeature("Recommendation creation")
+    static createContent(recommendations = this.getRecommendations()) {
+        if (!recommendations.length) {
+            return EmptyState.create({
+                eyebrow: "Recommendation Workspace",
+                title: "No recommendations available",
+                description: "Recommendations will translate assessment results into prioritized technical actions and decision support.",
+                actionLabel: "+ New Recommendation",
+                onAction: () => this.createSampleRecommendation()
+            });
+        }
+
+        const list = document.createElement("section");
+        list.className = "workflow-card evidence-list";
+
+        recommendations.forEach(recommendation => {
+            list.appendChild(this.createRecommendationRow(recommendation));
         });
+
+        return list;
     }
 
-    static createDetailPanel() {
+    static createRecommendationRow(recommendation) {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = "evidence-row";
+        row.addEventListener("click", () => {
+            RecommendationManager.set(recommendation);
+            this.refresh();
+        });
+
+        const title = document.createElement("strong");
+        title.textContent = recommendation.title || recommendation.id || "Recommendation Item";
+
+        const meta = document.createElement("span");
+        meta.textContent = `${recommendation.priority || "Medium"} · ${recommendation.timeframe || "Short Term"}`;
+
+        const badge = StatusBadge.create(recommendation.status || "Draft", "warning");
+
+        row.appendChild(title);
+        row.appendChild(meta);
+        row.appendChild(badge);
+
+        return row;
+    }
+
+    static createDetailPanel(activeRecommendation = RecommendationManager.get(), recommendations = this.getRecommendations()) {
+        if (!activeRecommendation) {
+            return DetailPanel.create("Recommendation Context", [
+                { label: "Recommendations", value: String(recommendations.length) },
+                { label: "Selected Recommendation", value: "Not selected" },
+                { label: "Decision Relevance", value: recommendations.length ? "In Review" : "Pending" },
+                { label: "Next Step", value: "Create or select a recommendation" }
+            ]);
+        }
+
         return DetailPanel.create("Recommendation Context", [
-            { label: "Priority", value: "Not defined" },
-            { label: "CAPEX Impact", value: "Pending" },
-            { label: "Decision Relevance", value: "Pending" },
-            { label: "Next Step", value: "Create RecommendationManager" }
+            { label: "Selected Recommendation", value: activeRecommendation.title || activeRecommendation.id },
+            { label: "Priority", value: activeRecommendation.priority || "Medium" },
+            { label: "Timeframe", value: activeRecommendation.timeframe || "Short Term" },
+            { label: "Status", value: activeRecommendation.status || "Draft" }
         ]);
+    }
+
+    static getRecommendations() {
+        return RecommendationManager.getAll();
+    }
+
+    static createSampleRecommendation() {
+        const recommendation = RecommendationManager.create({
+            caseId: "demo-case",
+            buildingId: "demo-building",
+            inspectionId: "demo-inspection",
+            title: "Sample Recommendation",
+            description: "Initial recommendation record created from the workspace.",
+            action: "Review and implement corrective action.",
+            priority: "Medium",
+            timeframe: "Short Term",
+            estimatedCost: 0,
+            currency: "EUR",
+            responsible: "Owner",
+            decisionImpact: "Medium",
+            status: "Draft"
+        });
+
+        RecommendationManager.set(recommendation);
+        Notification.success("Recommendation created.");
+        this.refresh();
     }
 
     static refresh() {
