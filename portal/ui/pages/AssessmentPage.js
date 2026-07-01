@@ -40,6 +40,7 @@ export default class AssessmentPage {
         fragment.appendChild(this.createHeader());
         fragment.appendChild(this.createFlowIndicator(activeAssessment));
         fragment.appendChild(this.createNextActionPanel(activeAssessment));
+        fragment.appendChild(this.createAssessmentIntelligenceSnapshot(activeAssessment));
         fragment.appendChild(this.createMetrics(assessments));
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(assessments, activeAssessment));
@@ -420,6 +421,153 @@ export default class AssessmentPage {
 
     static showPendingFeature(feature = "This feature") {
         Notification.info(`${feature} will be added in the next foundation step.`);
+    }
+
+    static getAssessmentIntelligence(assessment = {}) {
+        const hasIdentity = Boolean(assessment.title || assessment.name);
+        const hasRiskLevel = Boolean(assessment.riskLevel || assessment.riskScore);
+        const hasSeverity = Boolean(assessment.severity);
+        const hasProbability = Boolean(assessment.probability);
+        const hasImpact = Boolean(assessment.impact);
+        const hasFindingLink = Boolean(
+            assessment.findingId ||
+            assessment.linkedFindingId ||
+            assessment.finding ||
+            assessment.hasFinding
+        );
+        const hasRecommendationLink = Boolean(
+            assessment.recommendationId ||
+            assessment.linkedRecommendationId ||
+            assessment.recommendation ||
+            assessment.hasRecommendation
+        );
+        const isReviewed = Boolean(assessment.reviewed || assessment.status === "reviewed");
+
+        const checks = [
+            hasIdentity,
+            hasRiskLevel,
+            hasSeverity,
+            hasProbability,
+            hasImpact,
+            hasFindingLink,
+            hasRecommendationLink,
+            isReviewed
+        ];
+
+        const completed = checks.filter(Boolean).length;
+        const total = checks.length;
+        const readinessPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        const confidenceScore = Math.min(
+            100,
+            Math.round(
+                readinessPercent * 0.62 +
+                (hasRiskLevel ? 10 : 0) +
+                (hasSeverity && hasProbability && hasImpact ? 12 : 0) +
+                (hasRecommendationLink ? 10 : 0) +
+                (isReviewed ? 6 : 0)
+            )
+        );
+
+        let riskLogicSignal = {
+            label: "Low risk logic",
+            description: "Assessment risk logic is still incomplete. Define risk level, severity, probability and impact.",
+            tone: "draft"
+        };
+
+        if (hasRiskLevel && hasSeverity && hasProbability && hasImpact && hasRecommendationLink) {
+            riskLogicSignal = {
+                label: "Strong risk logic",
+                description: "Assessment contains complete risk logic and is connected to downstream recommendation.",
+                tone: "ready"
+            };
+        } else if (hasRiskLevel && (hasSeverity || hasProbability || hasImpact)) {
+            riskLogicSignal = {
+                label: "Developing risk logic",
+                description: "Assessment contains useful risk context but still needs complete risk parameters or recommendation linkage.",
+                tone: "active"
+            };
+        }
+
+        const nextAction = hasRecommendationLink
+            ? {
+                label: "Review linked recommendation",
+                description: "Assessment is connected to a recommendation. Review whether action logic reflects the risk assessment.",
+                tone: "ready"
+            }
+            : hasRiskLevel && hasSeverity && hasProbability && hasImpact
+                ? {
+                    label: "Create or link recommendation",
+                    description: "Risk logic is complete enough to derive a recommended action.",
+                    tone: "active"
+                }
+                : {
+                    label: "Complete risk logic",
+                    description: "Define risk level, severity, probability and impact before creating a recommendation.",
+                    tone: "draft"
+                };
+
+        return {
+            completed,
+            total,
+            readinessPercent,
+            confidenceScore,
+            riskLogicSignal,
+            nextAction,
+            label: readinessPercent >= 100
+                ? "Assessment intelligence complete"
+                : readinessPercent >= 50
+                    ? "Assessment intelligence developing"
+                    : "Assessment intelligence early"
+        };
+    }
+
+    static renderAssessmentIntelligenceSnapshot(assessment = {}) {
+        const intelligence = this.getAssessmentIntelligence(assessment);
+
+        return `
+            <section class="assessment-intelligence" aria-label="Assessment intelligence snapshot">
+                <div class="assessment-intelligence__header">
+                    <div>
+                        <span class="assessment-intelligence__eyebrow">Assessment Intelligence</span>
+                        <strong>${intelligence.label}</strong>
+                        <p>${intelligence.completed}/${intelligence.total} assessment intelligence checks completed</p>
+                    </div>
+                    <span class="assessment-intelligence__score">${intelligence.confidenceScore}%</span>
+                </div>
+
+                <div class="assessment-intelligence__grid">
+                    <article class="assessment-intelligence__card">
+                        <span>Recommendation Readiness</span>
+                        <strong>${intelligence.readinessPercent}%</strong>
+                        <p>Readiness based on identity, risk logic, finding link, recommendation link and review state.</p>
+                    </article>
+
+                    <article class="assessment-intelligence__card assessment-intelligence__card--${intelligence.riskLogicSignal.tone}">
+                        <span>Risk Logic Signal</span>
+                        <strong>${intelligence.riskLogicSignal.label}</strong>
+                        <p>${intelligence.riskLogicSignal.description}</p>
+                    </article>
+
+                    <article class="assessment-intelligence__card assessment-intelligence__card--${intelligence.nextAction.tone}">
+                        <span>Next Assessment Action</span>
+                        <strong>${intelligence.nextAction.label}</strong>
+                        <p>${intelligence.nextAction.description}</p>
+                    </article>
+                </div>
+            </section>
+        `;
+    }
+
+    static createAssessmentIntelligenceSnapshot(assessment = AssessmentManager.get()) {
+        if (!assessment || !assessment.id) {
+            return document.createElement("section");
+        }
+
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderAssessmentIntelligenceSnapshot(assessment);
+        return container;
     }
 
 }
