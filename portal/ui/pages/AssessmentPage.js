@@ -24,6 +24,14 @@ export default class AssessmentPage {
         }
     ];
 
+    static statusLabels = {
+        draft: "Draft",
+        assessed: "Assessed",
+        recommended: "Recommended",
+        reviewed: "Reviewed",
+        blocked: "Blocked"
+    };
+
     static render() {
         const fragment = document.createDocumentFragment();
         const assessments = this.getAssessments();
@@ -81,6 +89,47 @@ export default class AssessmentPage {
         container.className = "workflow-card";
         container.innerHTML = this.renderActiveFlowIndicator(assessment);
         return container;
+    }
+
+    static getAssessmentStatus(assessment = {}) {
+        if (assessment.blocked || assessment.status === "blocked") {
+            return "blocked";
+        }
+
+        if (assessment.reviewed || assessment.status === "reviewed") {
+            return "reviewed";
+        }
+
+        if (
+            assessment.recommendationId ||
+            assessment.linkedRecommendationId ||
+            assessment.recommendation ||
+            assessment.hasRecommendation ||
+            assessment.status === "recommended"
+        ) {
+            return "recommended";
+        }
+
+        if (
+            assessment.assessed ||
+            assessment.riskLevel ||
+            assessment.riskScore ||
+            assessment.severity ||
+            assessment.probability ||
+            assessment.impact ||
+            assessment.status === "assessed"
+        ) {
+            return "assessed";
+        }
+
+        return "draft";
+    }
+
+    static renderAssessmentStatusBadge(assessment = {}) {
+        const status = this.getAssessmentStatus(assessment);
+        const label = this.statusLabels[status] || "Draft";
+
+        return `<span class="evidence-status evidence-status--${status}">${label}</span>`;
     }
 
     static createHeader() {
@@ -187,11 +236,13 @@ export default class AssessmentPage {
         const meta = document.createElement("span");
         meta.textContent = `${assessment.severity || "Unrated"} · Risk ${assessment.riskScore || 0}`;
 
-        const badge = StatusBadge.create(assessment.status || "Draft", "warning");
+        const statusContainer = document.createElement("div");
+        statusContainer.innerHTML = this.renderAssessmentStatusBadge(assessment);
+        const statusBadge = statusContainer.firstChild;
 
         row.appendChild(title);
         row.appendChild(meta);
-        row.appendChild(badge);
+        row.appendChild(statusBadge);
 
         return row;
     }
@@ -202,12 +253,16 @@ export default class AssessmentPage {
                 { label: "Assessments", value: String(assessments.length) },
                 { label: "Selected Assessment", value: "Not selected" },
                 { label: "Technical Risk", value: assessments.length ? "In Review" : "Pending" },
+                { label: "Workspace Status", value: "—" },
                 { label: "Next Step", value: "Create or select an assessment" }
             ]);
         }
 
+        const statusLabel = this.statusLabels[this.getAssessmentStatus(activeAssessment)] || "Draft";
+
         return DetailPanel.create("Assessment Context", [
             { label: "Selected Assessment", value: activeAssessment.title || activeAssessment.id },
+            { label: "Workspace Status", value: statusLabel },
             { label: "Severity", value: activeAssessment.severity || "Unrated" },
             { label: "Risk Score", value: String(activeAssessment.riskScore || 0) },
             { label: "Linked Recommendations", value: String(this.countRecommendationsLinkedToAssessment(activeAssessment.id)) }
