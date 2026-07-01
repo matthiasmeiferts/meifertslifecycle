@@ -40,12 +40,14 @@ export default class DecisionPage {
 
         fragment.appendChild(this.createHeader());
         fragment.appendChild(this.createMetrics(decisions));
+        fragment.appendChild(this.createFlowIndicator(activeDecision));
+        fragment.appendChild(this.createNextActionPanel(activeDecision));
+        fragment.appendChild(this.createCompletionPanel(activeDecision));
+
         if (activeDecision) {
-            fragment.appendChild(this.createFlowIndicator(activeDecision));
-            fragment.appendChild(this.createNextActionPanel(activeDecision));
-            fragment.appendChild(this.createCompletionPanel(activeDecision));
             fragment.appendChild(this.createDecisionIntelligenceSnapshot(activeDecision));
         }
+
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(decisions, activeDecision));
 
@@ -86,6 +88,7 @@ export default class DecisionPage {
     }
 
     static getFlowState(decision = {}) {
+        decision = decision || {};
         const hasReportLink =
             Boolean(decision.reportId) ||
             Boolean(decision.linkedReportId) ||
@@ -99,6 +102,7 @@ export default class DecisionPage {
     }
 
     static renderActiveFlowIndicator(decision = {}) {
+        decision = decision || {};
         const flowState = this.getFlowState(decision);
 
         return `
@@ -131,6 +135,7 @@ export default class DecisionPage {
     }
 
     static getDecisionStatus(decision = {}) {
+        decision = decision || {};
         if (decision.blocked || decision.status === "blocked") {
             return "blocked";
         }
@@ -219,6 +224,7 @@ export default class DecisionPage {
     }
 
     static renderNextActionPanel(decision = {}) {
+        decision = decision || {};
         const action = this.getNextAction(decision);
 
         return `
