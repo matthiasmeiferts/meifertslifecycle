@@ -32,7 +32,7 @@ export default class EvidencePage {
                 {
                     id: "new-evidence",
                     label: "+ New Evidence",
-                    onClick: () => this.showPendingFeature("Evidence creation")
+                    onClick: () => this.createSampleEvidence()
                 }
             ]
         });
@@ -46,7 +46,7 @@ export default class EvidencePage {
         grid.className = "metrics-grid";
 
         grid.appendChild(MetricCard.create("Total Evidence", evidenceCount));
-        grid.appendChild(MetricCard.create("Current Set", evidenceCount));
+        grid.appendChild(MetricCard.create("Selected", EvidenceManager.get() ? "1" : "0"));
         grid.appendChild(MetricCard.create("Linked Findings", "Pending"));
         grid.appendChild(MetricCard.create("Review Status", "Open"));
 
@@ -66,7 +66,7 @@ export default class EvidencePage {
             {
                 id: "upload-evidence",
                 label: "Upload",
-                onClick: () => this.showPendingFeature("Evidence upload")
+                onClick: () => this.createSampleEvidence()
             },
             {
                 id: "filter-evidence",
@@ -79,25 +79,26 @@ export default class EvidencePage {
     }
 
     static createMainLayout() {
+        const evidenceItems = this.getEvidenceItems();
+        const activeEvidence = EvidenceManager.get();
+
         const layout = document.createElement("section");
         layout.className = "case-workspace-layout";
 
-        layout.appendChild(this.createContent());
-        layout.appendChild(this.createDetailPanel());
+        layout.appendChild(this.createContent(evidenceItems));
+        layout.appendChild(this.createDetailPanel(activeEvidence, evidenceItems));
 
         return layout;
     }
 
-    static createContent() {
-        const evidenceItems = this.getEvidenceItems();
-
+    static createContent(evidenceItems = this.getEvidenceItems()) {
         if (!evidenceItems.length) {
             return EmptyState.create({
                 eyebrow: "Evidence Workspace",
                 title: "No evidence available",
                 description: "Add photos, documents, inspection notes, or technical records to begin the evidence chain.",
                 actionLabel: "+ New Evidence",
-                onAction: () => this.showPendingFeature("Evidence creation")
+                onAction: () => this.createSampleEvidence()
             });
         }
 
@@ -105,33 +106,50 @@ export default class EvidencePage {
         list.className = "workflow-card evidence-list";
 
         evidenceItems.forEach(item => {
-            const row = document.createElement("div");
-            row.className = "evidence-row";
-
-            const title = document.createElement("strong");
-            title.textContent = item.title || item.name || item.id || "Evidence Item";
-
-            const meta = document.createElement("span");
-            meta.textContent = `${item.type || "Evidence"} · ${item.status || "Open"}`;
-
-            const badge = StatusBadge.create(item.status || "Open", "warning");
-
-            row.appendChild(title);
-            row.appendChild(meta);
-            row.appendChild(badge);
-
-            list.appendChild(row);
+            list.appendChild(this.createEvidenceRow(item));
         });
 
         return list;
     }
 
-    static createDetailPanel() {
-        const evidenceItems = this.getEvidenceItems();
+    static createEvidenceRow(item) {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = "evidence-row";
+        row.addEventListener("click", () => {
+            EvidenceManager.set(item);
+            this.refresh();
+        });
+
+        const title = document.createElement("strong");
+        title.textContent = item.title || item.name || item.id || "Evidence Item";
+
+        const meta = document.createElement("span");
+        meta.textContent = `${item.evidenceType || item.type || "Evidence"} · ${item.status || "Open"}`;
+
+        const badge = StatusBadge.create(item.status || "Open", "warning");
+
+        row.appendChild(title);
+        row.appendChild(meta);
+        row.appendChild(badge);
+
+        return row;
+    }
+
+    static createDetailPanel(activeEvidence = EvidenceManager.get(), evidenceItems = this.getEvidenceItems()) {
+        if (!activeEvidence) {
+            return DetailPanel.create("Evidence Context", [
+                { label: "Evidence Items", value: String(evidenceItems.length) },
+                { label: "Selected Evidence", value: "Not selected" },
+                { label: "Evidence Status", value: evidenceItems.length ? "In Review" : "Not started" },
+                { label: "Next Step", value: "Create or select evidence" }
+            ]);
+        }
 
         return DetailPanel.create("Evidence Context", [
-            { label: "Evidence Items", value: String(evidenceItems.length) },
-            { label: "Evidence Status", value: evidenceItems.length ? "In Review" : "Not started" },
+            { label: "Selected Evidence", value: activeEvidence.title || activeEvidence.id },
+            { label: "Evidence Status", value: activeEvidence.status || "Open" },
+            { label: "Case ID", value: activeEvidence.caseId || "Not linked" },
             { label: "Next Step", value: "Connect evidence to findings" }
         ]);
     }
@@ -150,6 +168,22 @@ export default class EvidencePage {
 
         container.innerHTML = "";
         container.appendChild(this.render());
+    }
+
+    static createSampleEvidence() {
+        const evidence = EvidenceManager.create({
+            caseId: "demo-case",
+            buildingId: "demo-building",
+            inspectionId: "demo-inspection",
+            title: "Sample Evidence",
+            description: "Initial evidence record created from the workspace.",
+            evidenceType: "Photo",
+            status: "Open"
+        });
+
+        EvidenceManager.set(evidence);
+        Notification.success("Evidence created.");
+        this.refresh();
     }
 
     static showPendingFeature(feature = "This feature") {
