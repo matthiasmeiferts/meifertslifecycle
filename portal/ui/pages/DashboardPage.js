@@ -44,6 +44,7 @@ export default class DashboardPage {
         const metrics = this.createMetrics();
         const readinessOverview = this.createWorkflowReadinessOverview();
         const readinessCards = this.createWorkspaceReadinessCards();
+        const bottleneckIndicator = this.createWorkflowBottleneckIndicator();
         const workflow = WorkflowCard.create(
             WorkspaceController.getWorkflowState()
         );
@@ -52,6 +53,7 @@ export default class DashboardPage {
         fragment.appendChild(metrics);
         fragment.appendChild(readinessOverview);
         fragment.appendChild(readinessCards);
+        fragment.appendChild(bottleneckIndicator);
         fragment.appendChild(workflow);
 
         return fragment;
@@ -209,5 +211,65 @@ export default class DashboardPage {
         const container = document.createElement("section");
         container.className = "dashboard-cards-wrapper";
         container.innerHTML = this.renderWorkspaceReadinessCards(data);
+        return container;
+    }
+
+    static getWorkflowBottleneck(data = {}) {
+        const readiness = this.getWorkflowReadiness
+            ? this.getWorkflowReadiness(data)
+            : {
+                counts: {},
+                percent: 0,
+                isComplete: false
+            };
+
+        if (readiness.isComplete) {
+            return {
+                key: "complete",
+                label: "Workflow Complete",
+                description: "All workflow stages contain data. Review final output quality and completeness.",
+                tone: "ready"
+            };
+        }
+
+        const firstOpenStage = this.workflowStages.find((stage) => {
+            const count = readiness.counts[stage.key] || 0;
+            return count === 0;
+        });
+
+        if (!firstOpenStage) {
+            return {
+                key: "review",
+                label: "Review workflow",
+                description: "Workflow data is present. Review stage quality before moving forward.",
+                tone: "linked"
+            };
+        }
+
+        return {
+            key: firstOpenStage.key,
+            label: `Next attention: ${firstOpenStage.label}`,
+            description: `${firstOpenStage.description} is still missing or not yet represented in the workflow.`,
+            tone: "active"
+        };
+    }
+
+    static renderWorkflowBottleneckIndicator(data = {}) {
+        const bottleneck = this.getWorkflowBottleneck(data);
+
+        return `
+            <section class="next-action next-action--${bottleneck.tone}" aria-label="Workflow bottleneck">
+                <div>
+                    <span class="next-action__eyebrow">Workflow Bottleneck</span>
+                    <strong>${bottleneck.label}</strong>
+                    <p>${bottleneck.description}</p>
+                </div>
+            </section>
+        `;
+    }
+
+    static createWorkflowBottleneckIndicator(data = {}) {
+        const container = document.createElement("section");
+        container.innerHTML = this.renderWorkflowBottleneckIndicator(data);
         return container;
     }
