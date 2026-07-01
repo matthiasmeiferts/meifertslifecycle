@@ -32,7 +32,7 @@ export default class FindingPage {
                 {
                     id: "new-finding",
                     label: "+ New Finding",
-                    onClick: () => this.showPendingFeature("Finding creation")
+                    onClick: () => this.createSampleFinding()
                 }
             ]
         });
@@ -50,7 +50,7 @@ export default class FindingPage {
         grid.appendChild(MetricCard.create("Findings", findingCount));
         grid.appendChild(MetricCard.create("Critical", criticalCount));
         grid.appendChild(MetricCard.create("Open", findingCount - reviewedCount));
-        grid.appendChild(MetricCard.create("Reviewed", reviewedCount));
+        grid.appendChild(MetricCard.create("Selected", FindingManager.get() ? "1" : "0"));
 
         return grid;
     }
@@ -68,7 +68,7 @@ export default class FindingPage {
             {
                 id: "link-evidence",
                 label: "Link Evidence",
-                onClick: () => this.showPendingFeature("Evidence linking")
+                onClick: () => this.createSampleFinding()
             },
             {
                 id: "review-findings",
@@ -81,25 +81,26 @@ export default class FindingPage {
     }
 
     static createMainLayout() {
+        const findings = this.getFindings();
+        const activeFinding = FindingManager.get();
+
         const layout = document.createElement("section");
         layout.className = "case-workspace-layout";
 
-        layout.appendChild(this.createContent());
-        layout.appendChild(this.createDetailPanel());
+        layout.appendChild(this.createContent(findings));
+        layout.appendChild(this.createDetailPanel(activeFinding, findings));
 
         return layout;
     }
 
-    static createContent() {
-        const findings = this.getFindings();
-
+    static createContent(findings = this.getFindings()) {
         if (!findings.length) {
             return EmptyState.create({
                 eyebrow: "Finding Workspace",
                 title: "No findings available",
                 description: "Select verified evidence and document the technical observation to begin the finding chain.",
                 actionLabel: "+ New Finding",
-                onAction: () => this.showPendingFeature("Finding creation")
+                onAction: () => this.createSampleFinding()
             });
         }
 
@@ -107,33 +108,50 @@ export default class FindingPage {
         list.className = "workflow-card evidence-list";
 
         findings.forEach(finding => {
-            const row = document.createElement("div");
-            row.className = "evidence-row";
-
-            const title = document.createElement("strong");
-            title.textContent = finding.title || finding.name || finding.id || "Finding Item";
-
-            const meta = document.createElement("span");
-            meta.textContent = `${finding.severity || "Normal"} · ${finding.status || "Open"}`;
-
-            const badge = StatusBadge.create(finding.status || "Open", "warning");
-
-            row.appendChild(title);
-            row.appendChild(meta);
-            row.appendChild(badge);
-
-            list.appendChild(row);
+            list.appendChild(this.createFindingRow(finding));
         });
 
         return list;
     }
 
-    static createDetailPanel() {
-        const findings = this.getFindings();
+    static createFindingRow(finding) {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = "evidence-row";
+        row.addEventListener("click", () => {
+            FindingManager.set(finding);
+            this.refresh();
+        });
+
+        const title = document.createElement("strong");
+        title.textContent = finding.title || finding.name || finding.id || "Finding Item";
+
+        const meta = document.createElement("span");
+        meta.textContent = `${finding.severity || "Normal"} · ${finding.status || "Open"}`;
+
+        const badge = StatusBadge.create(finding.status || "Open", "warning");
+
+        row.appendChild(title);
+        row.appendChild(meta);
+        row.appendChild(badge);
+
+        return row;
+    }
+
+    static createDetailPanel(activeFinding = FindingManager.get(), findings = this.getFindings()) {
+        if (!activeFinding) {
+            return DetailPanel.create("Finding Context", [
+                { label: "Findings", value: String(findings.length) },
+                { label: "Selected Finding", value: "Not selected" },
+                { label: "Finding Status", value: findings.length ? "In Review" : "Not started" },
+                { label: "Next Step", value: "Create or select a finding" }
+            ]);
+        }
 
         return DetailPanel.create("Finding Context", [
-            { label: "Findings", value: String(findings.length) },
-            { label: "Finding Status", value: findings.length ? "In Review" : "Not started" },
+            { label: "Selected Finding", value: activeFinding.title || activeFinding.id },
+            { label: "Severity", value: activeFinding.severity || "Normal" },
+            { label: "Status", value: activeFinding.status || "Open" },
             { label: "Next Step", value: "Assess technical relevance and risk" }
         ]);
     }
@@ -152,6 +170,23 @@ export default class FindingPage {
 
         container.innerHTML = "";
         container.appendChild(this.render());
+    }
+
+    static createSampleFinding() {
+        const finding = FindingManager.create({
+            caseId: "demo-case",
+            buildingId: "demo-building",
+            inspectionId: "demo-inspection",
+            title: "Sample Finding",
+            description: "Initial finding record created from the workspace.",
+            category: "General",
+            severity: "Medium",
+            status: "Open"
+        });
+
+        FindingManager.set(finding);
+        Notification.success("Finding created.");
+        this.refresh();
     }
 
     static showPendingFeature(feature = "This feature") {
