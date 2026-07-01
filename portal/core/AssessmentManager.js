@@ -29,6 +29,10 @@ export default class AssessmentManager {
 
     static collection = "assessments";
 
+    static activeKey = "activeAssessmentId";
+
+    static defaultCreator = "System";
+
     // ==================== CONSTANTS ====================
 
     static STATUSES = {
@@ -87,12 +91,11 @@ export default class AssessmentManager {
     static create(data) {
 
         if (!data) throw new Error("AssessmentManager: data required");
-        if (!data.id) throw new Error("AssessmentManager: id required");
         if (!data.caseId) throw new Error("AssessmentManager: caseId required");
 
         const assessment = {
 
-            id: data.id,
+            id: data.id || this.createId(),
 
             caseId: data.caseId,
             buildingId: data.buildingId || null,
@@ -119,7 +122,7 @@ export default class AssessmentManager {
 
             recommendationIds: data.recommendationIds || [],
 
-            createdBy: data.createdBy || "System",
+            createdBy: data.createdBy || this.defaultCreator,
 
             createdAt: data.createdAt || new Date().toISOString(),
             updatedAt: new Date().toISOString()
@@ -174,7 +177,20 @@ export default class AssessmentManager {
      */
     static update(data) {
         if (!data || !data.id) throw new Error("AssessmentManager: id required");
-        const updated = StorageManager.update(this.collection, { ...data, updatedAt: new Date().toISOString() });
+
+        const existing = this.load(data.id);
+
+        if (!existing) {
+            throw new Error(`AssessmentManager: assessment not found: ${data.id}`);
+        }
+
+        const updated = StorageManager.update(this.collection, {
+            ...existing,
+            ...data,
+            id: data.id,
+            updatedAt: new Date().toISOString()
+        });
+
         EventBus.emit("assessment:updated", updated);
         EventBus.emit("assessment:changed", updated);
         return updated;
@@ -201,6 +217,9 @@ export default class AssessmentManager {
      */
     static delete(id) {
         StorageManager.delete(this.collection, id);
+        if (this.get()?.id === id) {
+            this.clear();
+        }
         EventBus.emit("assessment:deleted", { id });
         EventBus.emit("assessment:changed", { id });
         return true;
@@ -221,6 +240,52 @@ export default class AssessmentManager {
      */
     static countByCase(caseId) {
         return this.getByCase(caseId).length;
+    }
+
+    /**
+     * Set the active assessment.
+     * @param {Object} assessment - Assessment object
+     * @returns {Object|null} The assessment if valid
+     */
+    static set(assessment) {
+        if (!assessment || !assessment.id) {
+            return null;
+        }
+
+        localStorage.setItem(this.activeKey, assessment.id);
+        EventBus.emit("assessment:selected", assessment);
+
+        return assessment;
+    }
+
+    /**
+     * Get the active assessment.
+     * @returns {Object|null} Active assessment or null
+     */
+    static get() {
+        const id = localStorage.getItem(this.activeKey);
+
+        if (!id) {
+            return null;
+        }
+
+        return this.load(id);
+    }
+
+    /**
+     * Clear the active assessment.
+     */
+    static clear() {
+        localStorage.removeItem(this.activeKey);
+        EventBus.emit("assessment:cleared", null);
+    }
+
+    /**
+     * Create a unique ID for a new assessment.
+     * @returns {string} Generated ID
+     */
+    static createId() {
+        return `ASM-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
     }
 
     /**
@@ -251,7 +316,6 @@ export default class AssessmentManager {
      */
     static createFromFinding(finding) {
         return this.create({
-            id:          `assessment-${Date.now()}`,
             caseId:      finding.caseId,
             buildingId:  finding.buildingId,
             inspectionId: finding.inspectionId,
@@ -269,7 +333,7 @@ export default class AssessmentManager {
             ),
             priority:  "Medium",
             status:    "Draft",
-            createdBy: "System"
+            createdBy: this.defaultCreator
         });
     }
 
@@ -283,7 +347,7 @@ export default class AssessmentManager {
     static validate(data) {
         const errors = [];
         if (!data) { errors.push("Assessment data is required"); return errors; }
-        if (!data.id) errors.push("Assessment ID is required");
+        if (!data.id) errors.push("Assessment ID will be generated automatically");
         if (!data.caseId) errors.push("Case ID is required");
         if (!data.title || data.title.trim() === "") errors.push("Title is required");
         if (data.status && !this.isValidStatus(data.status)) {
