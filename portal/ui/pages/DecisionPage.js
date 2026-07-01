@@ -24,6 +24,14 @@ export default class DecisionPage {
         }
     ];
 
+    static statusLabels = {
+        draft: "Draft",
+        decided: "Decided",
+        reported: "Reported",
+        reviewed: "Reviewed",
+        blocked: "Blocked"
+    };
+
     static render() {
         const fragment = document.createDocumentFragment();
         const decisions = this.getDecisions();
@@ -118,6 +126,50 @@ export default class DecisionPage {
         return container;
     }
 
+    static getDecisionStatus(decision = {}) {
+        if (decision.blocked || decision.status === "blocked") {
+            return "blocked";
+        }
+
+        if (decision.reviewed || decision.status === "reviewed") {
+            return "reviewed";
+        }
+
+        if (
+            decision.reportId ||
+            decision.linkedReportId ||
+            decision.report ||
+            decision.hasReport ||
+            decision.status === "reported"
+        ) {
+            return "reported";
+        }
+
+        if (
+            decision.decided ||
+            decision.decision ||
+            decision.outcome ||
+            decision.approved ||
+            decision.rejected ||
+            decision.status === "decided"
+        ) {
+            return "decided";
+        }
+
+        return "draft";
+    }
+
+    static renderDecisionStatusBadge(decision = {}) {
+        const status = this.getDecisionStatus(decision);
+        const label = this.statusLabels[status] || "Draft";
+
+        return `
+            <span class="evidence-status evidence-status--${status}">
+                ${label}
+            </span>
+        `;
+    }
+
     static createToolbar() {
         const wrapper = document.createElement("section");
         wrapper.className = "workflow-card";
@@ -189,11 +241,12 @@ export default class DecisionPage {
         const meta = document.createElement("span");
         meta.textContent = `${decision.decisionType || "Monitor"} · ${decision.riskLevel || "Medium"}`;
 
-        const badge = StatusBadge.create(decision.status || "Draft", "warning");
+        const statusContainer = document.createElement("span");
+        statusContainer.innerHTML = this.renderDecisionStatusBadge(decision);
 
         row.appendChild(title);
         row.appendChild(meta);
-        row.appendChild(badge);
+        row.appendChild(statusContainer);
 
         return row;
     }
@@ -203,13 +256,17 @@ export default class DecisionPage {
             return DetailPanel.create("Decision Context", [
                 { label: "Decisions", value: String(decisions.length) },
                 { label: "Selected Decision", value: "Not selected" },
+                { label: "Workspace Status", value: "No selection" },
                 { label: "Approval", value: decisions.length ? "In Review" : "Pending" },
                 { label: "Next Step", value: "Create or select a decision" }
             ]);
         }
 
+        const statusLabel = this.statusLabels[this.getDecisionStatus(activeDecision)] || "Draft";
+
         return DetailPanel.create("Decision Context", [
             { label: "Selected Decision", value: activeDecision.title || activeDecision.id },
+            { label: "Workspace Status", value: statusLabel },
             { label: "Decision Type", value: activeDecision.decisionType || "Monitor" },
             { label: "Risk Level", value: activeDecision.riskLevel || "Medium" },
             { label: "Linked Reports", value: String(this.countReportsLinkedToDecision(activeDecision.id)) }
