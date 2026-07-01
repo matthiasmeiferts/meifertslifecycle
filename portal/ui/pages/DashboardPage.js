@@ -58,6 +58,11 @@ export default class DashboardPage {
         fragment.appendChild(qualitySummary);
         fragment.appendChild(workflow);
 
+        // Bind navigation events after appending to DOM
+        setTimeout(() => {
+            this.bindReadinessCardActions();
+        }, 0);
+
         return fragment;
     }
 
@@ -181,7 +186,8 @@ export default class DashboardPage {
                 description: stage.description,
                 count,
                 status: isActive ? "active" : "open",
-                actionLabel: isActive ? "Review workspace" : "Start workspace"
+                actionLabel: isActive ? "Review workspace" : "Start workspace",
+                route: this.getWorkspaceRoute(stage.key)
             };
         });
     }
@@ -201,7 +207,13 @@ export default class DashboardPage {
 
                         <div class="dashboard-readiness-card__footer">
                             <span class="dashboard-readiness-card__count">${card.count}</span>
-                            <span class="dashboard-readiness-card__action">${card.actionLabel}</span>
+                            <button
+                                type="button"
+                                class="dashboard-readiness-card__action"
+                                data-workspace-route="${card.route}"
+                            >
+                                ${card.actionLabel}
+                            </button>
                         </div>
                     </article>
                 `).join("")}
@@ -341,4 +353,41 @@ export default class DashboardPage {
         const container = document.createElement("section");
         container.innerHTML = this.renderWorkflowQualitySummary(data);
         return container;
+    }
+
+    static getWorkspaceRoute(stageKey = "") {
+        const routes = {
+            evidence: "evidence",
+            finding: "findings",
+            assessment: "assessments",
+            recommendation: "recommendations",
+            decision: "decisions",
+            report: "reports"
+        };
+
+        return routes[stageKey] || "dashboard";
+    }
+
+    static bindReadinessCardActions() {
+        document.querySelectorAll("[data-workspace-route]").forEach((button) => {
+            button.addEventListener("click", (event) => {
+                const route = event.currentTarget.dataset.workspaceRoute;
+
+                if (!route) {
+                    return;
+                }
+
+                if (typeof WorkspaceRouter !== "undefined" && WorkspaceRouter.navigate) {
+                    WorkspaceRouter.navigate(route);
+                    return;
+                }
+
+                if (window.location.hash !== undefined) {
+                    window.location.hash = route;
+                    return;
+                }
+
+                window.location.href = `${route}.html`;
+            });
+        });
     }
