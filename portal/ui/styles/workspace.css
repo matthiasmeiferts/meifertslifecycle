@@ -1055,3 +1055,27 @@ h2 {
         min-height: auto;
     }
 }
+
+/* Foundation Framework 1.9 - Dashboard Navigation Actions */
+
+button.dashboard-readiness-card__action {
+    appearance: none;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+}
+
+button.dashboard-readiness-card__action:hover,
+button.dashboard-readiness-card__action:focus-visible {
+    color: #1B2B45;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+button.dashboard-readiness-card__action:focus-visible {
+    outline: 2px solid rgba(184, 153, 104, 0.48);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
