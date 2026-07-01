@@ -11,6 +11,19 @@ import Notification from "../components/Notification.js";
 
 export default class DecisionPage {
 
+    static flowSteps = [
+        {
+            key: "decision",
+            label: "Decision",
+            description: "Governance decision confirmed"
+        },
+        {
+            key: "report",
+            label: "Report",
+            description: "Report output prepared"
+        }
+    ];
+
     static render() {
         const fragment = document.createDocumentFragment();
         const decisions = this.getDecisions();
@@ -18,6 +31,9 @@ export default class DecisionPage {
 
         fragment.appendChild(this.createHeader());
         fragment.appendChild(this.createMetrics(decisions));
+        if (activeDecision) {
+            fragment.appendChild(this.createFlowIndicator(activeDecision));
+        }
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(decisions, activeDecision));
 
@@ -55,6 +71,51 @@ export default class DecisionPage {
         grid.appendChild(MetricCard.create("Linked Reports", this.countReportsLinkedToDecision()));
 
         return grid;
+    }
+
+    static getFlowState(decision = {}) {
+        const hasReportLink =
+            Boolean(decision.reportId) ||
+            Boolean(decision.linkedReportId) ||
+            Boolean(decision.report) ||
+            Boolean(decision.hasReport);
+
+        return {
+            decision: "active",
+            report: hasReportLink ? "complete" : "next"
+        };
+    }
+
+    static renderActiveFlowIndicator(decision = {}) {
+        const flowState = this.getFlowState(decision);
+
+        return `
+            <section class="workspace-flow" aria-label="Active workflow state">
+                <div class="workspace-flow__header">
+                    <span class="workspace-flow__eyebrow">Active Flow</span>
+                    <strong>Decision → Report</strong>
+                </div>
+
+                <div class="workspace-flow__steps">
+                    ${this.flowSteps.map((step) => `
+                        <div class="workspace-flow__step workspace-flow__step--${flowState[step.key]}">
+                            <div class="workspace-flow__marker"></div>
+                            <div>
+                                <strong>${step.label}</strong>
+                                <span>${step.description}</span>
+                            </div>
+                        </div>
+                    `).join("")}
+                </div>
+            </section>
+        `;
+    }
+
+    static createFlowIndicator(decision = {}) {
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderActiveFlowIndicator(decision);
+        return container;
     }
 
     static createToolbar() {
