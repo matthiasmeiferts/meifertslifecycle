@@ -46,6 +46,7 @@ export default class DashboardPage {
         const readinessCards = this.createWorkspaceReadinessCards();
         const bottleneckIndicator = this.createWorkflowBottleneckIndicator();
         const qualitySummary = this.createWorkflowQualitySummary();
+        const platformIntelligence = this.createPlatformIntelligence();
         const workflow = WorkflowCard.create(
             WorkspaceController.getWorkflowState()
         );
@@ -56,6 +57,7 @@ export default class DashboardPage {
         fragment.appendChild(readinessCards);
         fragment.appendChild(bottleneckIndicator);
         fragment.appendChild(qualitySummary);
+        fragment.appendChild(platformIntelligence);
         fragment.appendChild(workflow);
 
         // Bind navigation events after appending to DOM
@@ -390,4 +392,159 @@ export default class DashboardPage {
                 window.location.href = `${route}.html`;
             });
         });
+    }
+
+    static getPlatformIntelligence(data = {}) {
+        const readiness = this.getWorkflowReadiness
+            ? this.getWorkflowReadiness(data)
+            : {
+                counts: {},
+                percent: 0,
+                completedStages: 0,
+                totalStages: 6,
+                isComplete: false
+            };
+
+        const counts = readiness.counts || {};
+        const riskInputs = [
+            counts.finding || 0,
+            counts.assessment || 0,
+            counts.recommendation || 0,
+            counts.decision || 0
+        ];
+
+        const downstreamCoverage = ["assessment", "recommendation", "decision", "report"]
+            .filter((key) => (counts[key] || 0) > 0).length;
+
+        const evidenceDepth = counts.evidence || 0;
+        const findingDepth = counts.finding || 0;
+        const reportDepth = counts.report || 0;
+
+        const confidenceScore = Math.min(
+            100,
+            Math.round(
+                readiness.percent * 0.55 +
+                downstreamCoverage * 10 +
+                Math.min(evidenceDepth, 5) * 3 +
+                Math.min(findingDepth, 5) * 2 +
+                Math.min(reportDepth, 2) * 4
+            )
+        );
+
+        const riskSignalScore = riskInputs.reduce((sum, value) => sum + value, 0);
+
+        let riskSignal = {
+            label: "Low signal density",
+            description: "Risk logic is still light. More findings and assessments are needed before strong conclusions.",
+            tone: "draft"
+        };
+
+        if (riskSignalScore >= 8) {
+            riskSignal = {
+                label: "High signal density",
+                description: "Multiple downstream risk signals are present. Review consistency before decision output.",
+                tone: "ready"
+            };
+        } else if (riskSignalScore >= 4) {
+            riskSignal = {
+                label: "Moderate signal density",
+                description: "The workflow contains usable risk signals, but decision confidence depends on review quality.",
+                tone: "active"
+            };
+        }
+
+        let confidence = {
+            label: "Low confidence",
+            description: "The workflow is not yet sufficiently connected for reliable decision support.",
+            score: confidenceScore,
+            tone: "draft"
+        };
+
+        if (confidenceScore >= 80) {
+            confidence = {
+                label: "High confidence",
+                description: "The workflow is strongly represented and ready for executive-level review.",
+                score: confidenceScore,
+                tone: "ready"
+            };
+        } else if (confidenceScore >= 55) {
+            confidence = {
+                label: "Developing confidence",
+                description: "The platform has enough structure for directional insight, but key gaps may remain.",
+                score: confidenceScore,
+                tone: "active"
+            };
+        }
+
+        const nextStrategicAction = readiness.isComplete
+            ? {
+                label: "Review executive output",
+                description: "All workflow stages are represented. Focus on final report quality, consistency and decision confidence.",
+                tone: "ready"
+            }
+            : this.getWorkflowBottleneck
+                ? this.getWorkflowBottleneck(data)
+                : {
+                    label: "Complete workflow chain",
+                    description: "Continue building the workflow from evidence through report.",
+                    tone: "active"
+                };
+
+        return {
+            readiness,
+            confidence,
+            riskSignal,
+            nextStrategicAction,
+            executiveSummary: {
+                label: readiness.isComplete
+                    ? "Decision workflow is fully represented."
+                    : "Decision workflow is still developing.",
+                description: readiness.isComplete
+                    ? "The platform has enough cross-workspace coverage to support final review and reporting."
+                    : "The platform should continue closing workflow gaps before relying on the output for final decisions."
+            }
+        };
+    }
+
+    static renderPlatformIntelligence(data = {}) {
+        const intelligence = this.getPlatformIntelligence(data);
+
+        return `
+            <section class="platform-intelligence" aria-label="Platform intelligence">
+                <div class="platform-intelligence__header">
+                    <div>
+                        <span class="platform-intelligence__eyebrow">Platform Intelligence</span>
+                        <strong>${intelligence.executiveSummary.label}</strong>
+                        <p>${intelligence.executiveSummary.description}</p>
+                    </div>
+                    <span class="platform-intelligence__score">${intelligence.confidence.score}%</span>
+                </div>
+
+                <div class="platform-intelligence__grid">
+                    <article class="platform-intelligence__card platform-intelligence__card--${intelligence.confidence.tone}">
+                        <span>Workflow Confidence</span>
+                        <strong>${intelligence.confidence.label}</strong>
+                        <p>${intelligence.confidence.description}</p>
+                    </article>
+
+                    <article class="platform-intelligence__card platform-intelligence__card--${intelligence.riskSignal.tone}">
+                        <span>Risk Signal Overview</span>
+                        <strong>${intelligence.riskSignal.label}</strong>
+                        <p>${intelligence.riskSignal.description}</p>
+                    </article>
+
+                    <article class="platform-intelligence__card platform-intelligence__card--${intelligence.nextStrategicAction.tone}">
+                        <span>Next Strategic Action</span>
+                        <strong>${intelligence.nextStrategicAction.label}</strong>
+                        <p>${intelligence.nextStrategicAction.description}</p>
+                    </article>
+                </div>
+            </section>
+        `;
+    }
+
+    static createPlatformIntelligence(data = {}) {
+        const container = document.createElement("section");
+        container.innerHTML = this.renderPlatformIntelligence(data);
+        return container;
     }
