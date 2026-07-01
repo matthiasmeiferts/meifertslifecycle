@@ -151,12 +151,12 @@ export default class CasePage {
                 },
                 {
                     key: "progress",
-                    label: "Progress",
+                    label: "Prog.",
                     render: row => `${row.progress || 0}%`
                 },
                 {
                     key: "updatedAt",
-                    label: "Updated",
+                    label: "Upd.",
                     render: row => this.formatDate(row.updatedAt)
                 },
                 {
