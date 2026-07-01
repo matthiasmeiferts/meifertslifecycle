@@ -12,15 +12,75 @@ import Notification from "../components/Notification.js";
 
 export default class EvidencePage {
 
+    static flowSteps = [
+        {
+            key: "evidence",
+            label: "Evidence",
+            description: "Inspection evidence captured"
+        },
+        {
+            key: "finding",
+            label: "Finding",
+            description: "Technical finding derived"
+        }
+    ];
+
     static render() {
         const fragment = document.createDocumentFragment();
+        const activeEvidence = EvidenceManager.get();
 
         fragment.appendChild(this.createHeader());
+        fragment.appendChild(this.createFlowIndicator(activeEvidence));
         fragment.appendChild(this.createMetrics());
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout());
 
         return fragment;
+    }
+
+    static getFlowState(evidence = {}) {
+        const hasFindingLink =
+            Boolean(evidence.findingId) ||
+            Boolean(evidence.linkedFindingId) ||
+            Boolean(evidence.finding) ||
+            Boolean(evidence.hasFinding);
+
+        return {
+            evidence: "active",
+            finding: hasFindingLink ? "complete" : "next"
+        };
+    }
+
+    static renderActiveFlowIndicator(evidence = {}) {
+        const flowState = this.getFlowState(evidence);
+
+        return `
+            <section class="workspace-flow" aria-label="Active workflow state">
+                <div class="workspace-flow__header">
+                    <span class="workspace-flow__eyebrow">Active Flow</span>
+                    <strong>Evidence → Finding</strong>
+                </div>
+
+                <div class="workspace-flow__steps">
+                    ${this.flowSteps.map((step) => `
+                        <div class="workspace-flow__step workspace-flow__step--${flowState[step.key]}">
+                            <div class="workspace-flow__marker"></div>
+                            <div>
+                                <strong>${step.label}</strong>
+                                <span>${step.description}</span>
+                            </div>
+                        </div>
+                    `).join("")}
+                </div>
+            </section>
+        `;
+    }
+
+    static createFlowIndicator(evidence = {}) {
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderActiveFlowIndicator(evidence);
+        return container;
     }
 
     static createHeader() {
@@ -173,6 +233,10 @@ export default class EvidencePage {
         return FindingManager.getAll()
             .filter(finding => (finding.evidenceIds || []).includes(targetEvidenceId))
             .length;
+    }
+
+    static getActiveEvidenceForFlow() {
+        return EvidenceManager.get() || {};
     }
 
     static createFindingFromSelectedEvidence() {
