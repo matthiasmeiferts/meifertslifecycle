@@ -1,3 +1,4 @@
+import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import DecisionManager from "../../core/DecisionManager.js";
 import ReportManager from "../../core/ReportManager.js";
 import SectionHeader from "../components/SectionHeader.js";
@@ -194,7 +195,7 @@ export default class DecisionPage {
 
         ReportManager.set(report);
         Notification.success("Report created from selected decision.");
-        this.refresh();
+        WorkspaceRouter.navigate("reports");
     }
 
     static getDecisions() {
