@@ -41,6 +41,7 @@ export default class EvidencePage {
         fragment.appendChild(this.createFlowIndicator(activeEvidence));
         fragment.appendChild(this.createNextActionPanel(activeEvidence));
         fragment.appendChild(this.createCompletionPanel(activeEvidence));
+        fragment.appendChild(this.createEvidenceIntelligenceSnapshot(activeEvidence));
         fragment.appendChild(this.createMetrics());
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout());
@@ -516,6 +517,155 @@ export default class EvidencePage {
 
     static showPendingFeature(feature = "This feature") {
         Notification.info(`${feature} will be added in the next foundation step.`);
+    }
+
+    static getEvidenceIntelligence(evidence = {}) {
+        const hasIdentity = Boolean(evidence.title || evidence.name);
+        const hasType = Boolean(evidence.type || evidence.category);
+        const hasSource = Boolean(
+            evidence.source ||
+            evidence.inspectionId ||
+            evidence.buildingId ||
+            evidence.caseId
+        );
+        const hasContent = Boolean(
+            evidence.description ||
+            evidence.note ||
+            evidence.fileName ||
+            evidence.imageUrl ||
+            evidence.documentUrl ||
+            evidence.photoUrl
+        );
+        const hasFindingLink = Boolean(
+            evidence.findingId ||
+            evidence.linkedFindingId ||
+            evidence.finding ||
+            evidence.hasFinding
+        );
+        const isReviewed = Boolean(evidence.reviewed || evidence.status === "reviewed");
+
+        const checks = [
+            hasIdentity,
+            hasType,
+            hasSource,
+            hasContent,
+            hasFindingLink,
+            isReviewed
+        ];
+
+        const completed = checks.filter(Boolean).length;
+        const total = checks.length;
+        const readinessPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        const confidenceScore = Math.min(
+            100,
+            Math.round(
+                readinessPercent * 0.7 +
+                (hasContent ? 10 : 0) +
+                (hasFindingLink ? 10 : 0) +
+                (isReviewed ? 10 : 0)
+            )
+        );
+
+        let qualitySignal = {
+            label: "Low evidence quality",
+            description: "Evidence is still incomplete. Add content, source and classification before deriving a finding.",
+            tone: "draft"
+        };
+
+        if (hasIdentity && hasType && hasSource && hasContent && hasFindingLink) {
+            qualitySignal = {
+                label: "Strong evidence quality",
+                description: "Evidence is well structured and connected to the downstream finding workflow.",
+                tone: "ready"
+            };
+        } else if (hasIdentity && hasType && hasContent) {
+            qualitySignal = {
+                label: "Developing evidence quality",
+                description: "Evidence has useful substance, but source or finding linkage may still be missing.",
+                tone: "active"
+            };
+        }
+
+        const nextAction = hasFindingLink
+            ? {
+                label: "Review linked finding",
+                description: "Evidence is connected to a finding. Review whether the finding reflects the evidence accurately.",
+                tone: "ready"
+            }
+            : hasContent
+                ? {
+                    label: "Create or link finding",
+                    description: "Evidence content is available. Connect it to a technical finding.",
+                    tone: "active"
+                }
+                : {
+                    label: "Capture evidence content",
+                    description: "Add a note, document, photo or description before moving toward finding creation.",
+                    tone: "draft"
+                };
+
+        return {
+            completed,
+            total,
+            readinessPercent,
+            confidenceScore,
+            qualitySignal,
+            nextAction,
+            label: readinessPercent >= 100
+                ? "Evidence intelligence complete"
+                : readinessPercent >= 50
+                    ? "Evidence intelligence developing"
+                    : "Evidence intelligence early"
+        };
+    }
+
+    static renderEvidenceIntelligenceSnapshot(evidence = {}) {
+        const intelligence = this.getEvidenceIntelligence(evidence);
+
+        return `
+            <section class="evidence-intelligence" aria-label="Evidence intelligence snapshot">
+                <div class="evidence-intelligence__header">
+                    <div>
+                        <span class="evidence-intelligence__eyebrow">Evidence Intelligence</span>
+                        <strong>${intelligence.label}</strong>
+                        <p>${intelligence.completed}/${intelligence.total} evidence intelligence checks completed</p>
+                    </div>
+                    <span class="evidence-intelligence__score">${intelligence.confidenceScore}%</span>
+                </div>
+
+                <div class="evidence-intelligence__grid">
+                    <article class="evidence-intelligence__card">
+                        <span>Finding Readiness</span>
+                        <strong>${intelligence.readinessPercent}%</strong>
+                        <p>Readiness based on identity, classification, source, content, finding link and review state.</p>
+                    </article>
+
+                    <article class="evidence-intelligence__card evidence-intelligence__card--${intelligence.qualitySignal.tone}">
+                        <span>Evidence Quality Signal</span>
+                        <strong>${intelligence.qualitySignal.label}</strong>
+                        <p>${intelligence.qualitySignal.description}</p>
+                    </article>
+
+                    <article class="evidence-intelligence__card evidence-intelligence__card--${intelligence.nextAction.tone}">
+                        <span>Next Evidence Action</span>
+                        <strong>${intelligence.nextAction.label}</strong>
+                        <p>${intelligence.nextAction.description}</p>
+                    </article>
+                </div>
+            </section>
+        `;
+    }
+
+    static createEvidenceIntelligenceSnapshot(evidence = EvidenceManager.get()) {
+        if (!evidence || !evidence.id) {
+            return document.createElement("section");
+        }
+
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderEvidenceIntelligenceSnapshot(evidence);
+        return container;
     }
 
 }
