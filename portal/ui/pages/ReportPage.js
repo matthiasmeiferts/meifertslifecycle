@@ -40,6 +40,7 @@ export default class ReportPage {
         fragment.appendChild(this.createMetrics(reports));
         if (activeReport) {
             fragment.appendChild(this.createFinalOutputState(activeReport));
+            fragment.appendChild(this.createCompletionPanel(activeReport));
         }
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(reports, activeReport));
@@ -127,6 +128,123 @@ export default class ReportPage {
         const container = document.createElement("section");
         container.className = "workflow-card";
         container.innerHTML = this.renderFinalOutputState(report);
+        return container;
+    }
+
+    static getCompletionState(report = {}) {
+        const hasTitle = Boolean(report.title || report.name);
+        const hasReportType = Boolean(report.reportType || report.type || report.template);
+        const hasDecisionLink = Boolean(
+            report.decisionId ||
+            report.linkedDecisionId ||
+            report.decision ||
+            report.hasDecision
+        );
+        const hasContent = Boolean(
+            report.summary ||
+            report.executiveSummary ||
+            report.content ||
+            report.sections
+        );
+        const hasOutput = Boolean(
+            report.generated ||
+            report.generatedAt ||
+            report.fileUrl ||
+            report.pdfUrl
+        );
+        const isFinalized = Boolean(
+            report.finalized ||
+            report.approved ||
+            report.status === "final" ||
+            report.status === "finalized" ||
+            report.status === "approved"
+        );
+
+        const checks = [
+            {
+                key: "identity",
+                label: "Report identified",
+                complete: hasTitle
+            },
+            {
+                key: "type",
+                label: "Report type defined",
+                complete: hasReportType
+            },
+            {
+                key: "decision",
+                label: "Decision linked",
+                complete: hasDecisionLink
+            },
+            {
+                key: "content",
+                label: "Content prepared",
+                complete: hasContent
+            },
+            {
+                key: "output",
+                label: "Output generated",
+                complete: hasOutput
+            },
+            {
+                key: "final",
+                label: "Report finalized",
+                complete: isFinalized
+            }
+        ];
+
+        const completed = checks.filter((check) => check.complete).length;
+        const total = checks.length;
+
+        return {
+            checks,
+            completed,
+            total,
+            ratio: total > 0 ? completed / total : 0,
+            isReadyForFinalReview: hasTitle && hasReportType && hasDecisionLink && hasContent,
+            isComplete: completed === total
+        };
+    }
+
+    static renderCompletionPanel(report = {}) {
+        const completion = this.getCompletionState(report);
+        const percent = Math.round(completion.ratio * 100);
+        const readinessLabel = completion.isComplete
+            ? "Final Report Complete"
+            : completion.isReadyForFinalReview
+                ? "Ready for Final Review"
+                : "Needs more report data";
+
+        return `
+            <section class="completion-panel" aria-label="Report completion">
+                <div class="completion-panel__header">
+                    <div>
+                        <span class="completion-panel__eyebrow">Completion</span>
+                        <strong>${readinessLabel}</strong>
+                    </div>
+                    <span class="completion-panel__score">${percent}%</span>
+                </div>
+
+                <div class="completion-panel__bar" aria-hidden="true">
+                    <div class="completion-panel__bar-fill" style="width: ${percent}%"></div>
+                </div>
+
+                <div class="completion-panel__checks">
+                    ${completion.checks.map((check) => `
+                        <div class="completion-panel__check ${check.complete ? "is-complete" : "is-open"}">
+                            <span class="completion-panel__check-marker"></span>
+                            <span>${check.label}</span>
+                        </div>
+                    `).join("")}
+                </div>
+            </section>
+        `;
+    }
+
+    static createCompletionPanel(report = {}) {
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderCompletionPanel(report);
         return container;
     }
 
