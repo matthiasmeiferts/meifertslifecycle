@@ -11,6 +11,14 @@ import Notification from "../components/Notification.js";
 
 export default class RecommendationPage {
 
+    static statusLabels = {
+        draft: "Draft",
+        recommended: "Recommended",
+        decided: "Decided",
+        reviewed: "Reviewed",
+        blocked: "Blocked"
+    };
+
     static render() {
         const fragment = document.createDocumentFragment();
         const recommendations = this.getRecommendations();
@@ -111,6 +119,51 @@ export default class RecommendationPage {
         return list;
     }
 
+    static getRecommendationStatus(recommendation = {}) {
+        if (recommendation.blocked || recommendation.status === "blocked") {
+            return "blocked";
+        }
+
+        if (recommendation.reviewed || recommendation.status === "reviewed") {
+            return "reviewed";
+        }
+
+        if (
+            recommendation.decisionId ||
+            recommendation.linkedDecisionId ||
+            recommendation.decision ||
+            recommendation.hasDecision ||
+            recommendation.status === "decided"
+        ) {
+            return "decided";
+        }
+
+        if (
+            recommendation.recommended ||
+            recommendation.title ||
+            recommendation.name ||
+            recommendation.action ||
+            recommendation.recommendation ||
+            recommendation.priority ||
+            recommendation.status === "recommended"
+        ) {
+            return "recommended";
+        }
+
+        return "draft";
+    }
+
+    static renderRecommendationStatusBadge(recommendation = {}) {
+        const status = this.getRecommendationStatus(recommendation);
+        const label = this.statusLabels[status] || "Draft";
+
+        return `
+            <span class="evidence-status evidence-status--${status}">
+                ${label}
+            </span>
+        `;
+    }
+
     static createRecommendationRow(recommendation) {
         const row = document.createElement("button");
         row.type = "button";
@@ -126,11 +179,12 @@ export default class RecommendationPage {
         const meta = document.createElement("span");
         meta.textContent = `${recommendation.priority || "Medium"} · ${recommendation.timeframe || "Short Term"}`;
 
-        const badge = StatusBadge.create(recommendation.status || "Draft", "warning");
+        const statusContainer = document.createElement("span");
+        statusContainer.innerHTML = this.renderRecommendationStatusBadge(recommendation);
 
         row.appendChild(title);
         row.appendChild(meta);
-        row.appendChild(badge);
+        row.appendChild(statusContainer);
 
         return row;
     }
@@ -140,13 +194,17 @@ export default class RecommendationPage {
             return DetailPanel.create("Recommendation Context", [
                 { label: "Recommendations", value: String(recommendations.length) },
                 { label: "Selected Recommendation", value: "Not selected" },
+                { label: "Workspace Status", value: "No selection" },
                 { label: "Decision Relevance", value: recommendations.length ? "In Review" : "Pending" },
                 { label: "Next Step", value: "Create or select a recommendation" }
             ]);
         }
 
+        const statusLabel = this.statusLabels[this.getRecommendationStatus(activeRecommendation)] || "Draft";
+
         return DetailPanel.create("Recommendation Context", [
             { label: "Selected Recommendation", value: activeRecommendation.title || activeRecommendation.id },
+            { label: "Workspace Status", value: statusLabel },
             { label: "Priority", value: activeRecommendation.priority || "Medium" },
             { label: "Timeframe", value: activeRecommendation.timeframe || "Short Term" },
             { label: "Linked Decisions", value: String(this.countDecisionsLinkedToRecommendation(activeRecommendation.id)) }
