@@ -947,3 +947,111 @@ h2 {
         margin-top: 10px;
     }
 }
+
+/* Foundation Framework 1.9 - Dashboard Readiness */
+
+.dashboard-readiness-cards {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+    margin: 16px 0 24px;
+}
+
+.dashboard-readiness-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 158px;
+    padding: 15px;
+    border: 1px solid rgba(27, 43, 69, 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.72);
+    color: #1B2B45;
+}
+
+.dashboard-readiness-card--active {
+    border-color: rgba(61, 125, 91, 0.3);
+    background: rgba(61, 125, 91, 0.08);
+}
+
+.dashboard-readiness-card--open {
+    border-color: rgba(201, 189, 170, 0.34);
+    background: rgba(246, 242, 233, 0.58);
+}
+
+.dashboard-readiness-card__eyebrow {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8E744D;
+}
+
+.dashboard-readiness-card--active .dashboard-readiness-card__eyebrow {
+    color: #2F684A;
+}
+
+.dashboard-readiness-card strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.96rem;
+    color: #1B2B45;
+}
+
+.dashboard-readiness-card p {
+    margin: 0;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: rgba(27, 43, 69, 0.66);
+}
+
+.dashboard-readiness-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.dashboard-readiness-card__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 30px;
+    padding: 0 9px;
+    border-radius: 999px;
+    background: #1B2B45;
+    color: #FFFFFF;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.dashboard-readiness-card--active .dashboard-readiness-card__count {
+    background: #3D7D5B;
+}
+
+.dashboard-readiness-card__action {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: rgba(27, 43, 69, 0.62);
+    text-align: right;
+}
+
+@media (max-width: 1180px) {
+    .dashboard-readiness-cards {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .dashboard-readiness-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-readiness-card {
+        min-height: auto;
+    }
+}
