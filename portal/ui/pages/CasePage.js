@@ -11,6 +11,33 @@ export default class CasePage {
 
     static searchQuery = "";
 
+    static intelligenceStages = [
+        {
+            key: "evidence",
+            label: "Evidence"
+        },
+        {
+            key: "finding",
+            label: "Finding"
+        },
+        {
+            key: "assessment",
+            label: "Assessment"
+        },
+        {
+            key: "recommendation",
+            label: "Recommendation"
+        },
+        {
+            key: "decision",
+            label: "Decision"
+        },
+        {
+            key: "report",
+            label: "Report"
+        }
+    ];
+
     static render() {
         const fragment = document.createDocumentFragment();
 
@@ -80,6 +107,11 @@ export default class CasePage {
     static createMainLayout() {
         const layout = document.createElement("section");
         layout.className = "case-workspace-layout";
+
+        const intelligenceSnapshot = this.createCaseIntelligenceSnapshot();
+        if (intelligenceSnapshot) {
+            layout.appendChild(intelligenceSnapshot);
+        }
 
         layout.appendChild(this.createContent());
         layout.appendChild(this.createDetailPanel());
@@ -215,6 +247,162 @@ export default class CasePage {
         });
 
         return wrapper;
+    }
+
+    static getCaseIntelligence(caseItem = {}, data = {}) {
+        const caseId = caseItem.id || caseItem.caseId;
+
+        const filterByCase = (items = []) => {
+            if (!Array.isArray(items)) {
+                return [];
+            }
+
+            if (!caseId) {
+                return items;
+            }
+
+            return items.filter((item) =>
+                item.caseId === caseId ||
+                item.linkedCaseId === caseId ||
+                item.case === caseId
+            );
+        };
+
+        const evidence = filterByCase(data.evidence || data.evidences || []);
+        const findings = filterByCase(data.findings || []);
+        const assessments = filterByCase(data.assessments || []);
+        const recommendations = filterByCase(data.recommendations || []);
+        const decisions = filterByCase(data.decisions || []);
+        const reports = filterByCase(data.reports || []);
+
+        const counts = {
+            evidence: evidence.length,
+            finding: findings.length,
+            assessment: assessments.length,
+            recommendation: recommendations.length,
+            decision: decisions.length,
+            report: reports.length
+        };
+
+        const completedStages = this.intelligenceStages.filter((stage) => counts[stage.key] > 0).length;
+        const totalStages = this.intelligenceStages.length;
+        const readinessPercent = totalStages > 0
+            ? Math.round((completedStages / totalStages) * 100)
+            : 0;
+
+        const downstreamSignals =
+            counts.finding +
+            counts.assessment +
+            counts.recommendation +
+            counts.decision;
+
+        const confidenceScore = Math.min(
+            100,
+            Math.round(
+                readinessPercent * 0.6 +
+                Math.min(counts.evidence, 5) * 4 +
+                Math.min(downstreamSignals, 8) * 3
+            )
+        );
+
+        let riskSignal = {
+            label: "Low risk signal",
+            description: "Case risk logic is still light. More evidence and findings are needed.",
+            tone: "draft"
+        };
+
+        if (downstreamSignals >= 8) {
+            riskSignal = {
+                label: "High risk signal",
+                description: "Multiple downstream risk signals are present. Review before recommendation or decision.",
+                tone: "ready"
+            };
+        } else if (downstreamSignals >= 4) {
+            riskSignal = {
+                label: "Moderate risk signal",
+                description: "The case contains usable risk signals, but downstream validation may still be needed.",
+                tone: "active"
+            };
+        }
+
+        const firstOpenStage = this.intelligenceStages.find((stage) => counts[stage.key] === 0);
+
+        const nextAction = firstOpenStage
+            ? {
+                label: `Strengthen ${firstOpenStage.label}`,
+                description: `${firstOpenStage.label} data is missing for this case. Complete this stage before relying on final output.`,
+                tone: "active"
+            }
+            : {
+                label: "Review case output",
+                description: "All workflow stages are represented for this case. Review consistency and final report confidence.",
+                tone: "ready"
+            };
+
+        return {
+            counts,
+            completedStages,
+            totalStages,
+            readinessPercent,
+            confidenceScore,
+            riskSignal,
+            nextAction,
+            label: readinessPercent >= 100
+                ? "Case workflow complete"
+                : readinessPercent >= 50
+                    ? "Case workflow developing"
+                    : "Case workflow early"
+        };
+    }
+
+    static renderCaseIntelligenceSnapshot(caseItem = {}, data = {}) {
+        const intelligence = this.getCaseIntelligence(caseItem, data);
+
+        return `
+            <section class="case-intelligence" aria-label="Case intelligence snapshot">
+                <div class="case-intelligence__header">
+                    <div>
+                        <span class="case-intelligence__eyebrow">Case Intelligence</span>
+                        <strong>${intelligence.label}</strong>
+                        <p>${intelligence.completedStages}/${intelligence.totalStages} workflow stages represented</p>
+                    </div>
+                    <span class="case-intelligence__score">${intelligence.confidenceScore}%</span>
+                </div>
+
+                <div class="case-intelligence__grid">
+                    <article class="case-intelligence__card">
+                        <span>Readiness</span>
+                        <strong>${intelligence.readinessPercent}%</strong>
+                        <p>Workflow coverage across Evidence, Finding, Assessment, Recommendation, Decision and Report.</p>
+                    </article>
+
+                    <article class="case-intelligence__card case-intelligence__card--${intelligence.riskSignal.tone}">
+                        <span>Risk Signal</span>
+                        <strong>${intelligence.riskSignal.label}</strong>
+                        <p>${intelligence.riskSignal.description}</p>
+                    </article>
+
+                    <article class="case-intelligence__card case-intelligence__card--${intelligence.nextAction.tone}">
+                        <span>Next Case Action</span>
+                        <strong>${intelligence.nextAction.label}</strong>
+                        <p>${intelligence.nextAction.description}</p>
+                    </article>
+                </div>
+            </section>
+        `;
+    }
+
+    static createCaseIntelligenceSnapshot(caseItem = null, data = null) {
+        const currentCase = caseItem || CaseManager.getCurrent();
+
+        if (!currentCase) {
+            return null;
+        }
+
+        const caseData = data || {};
+        const container = document.createElement("section");
+        container.innerHTML = this.renderCaseIntelligenceSnapshot(currentCase, caseData);
+        return container;
     }
 
     static bindActions() {
