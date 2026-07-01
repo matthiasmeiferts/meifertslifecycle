@@ -11,17 +11,76 @@ import Notification from "../components/Notification.js";
 
 export default class AssessmentPage {
 
+    static flowSteps = [
+        {
+            key: "assessment",
+            label: "Assessment",
+            description: "Risk assessment defined"
+        },
+        {
+            key: "recommendation",
+            label: "Recommendation",
+            description: "Action recommendation derived"
+        }
+    ];
+
     static render() {
         const fragment = document.createDocumentFragment();
         const assessments = this.getAssessments();
         const activeAssessment = AssessmentManager.get();
 
         fragment.appendChild(this.createHeader());
+        fragment.appendChild(this.createFlowIndicator(activeAssessment));
         fragment.appendChild(this.createMetrics(assessments));
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(assessments, activeAssessment));
 
         return fragment;
+    }
+
+    static getFlowState(assessment = {}) {
+        const hasRecommendationLink =
+            Boolean(assessment.recommendationId) ||
+            Boolean(assessment.linkedRecommendationId) ||
+            Boolean(assessment.recommendation) ||
+            Boolean(assessment.hasRecommendation);
+
+        return {
+            assessment: "active",
+            recommendation: hasRecommendationLink ? "complete" : "next"
+        };
+    }
+
+    static renderActiveFlowIndicator(assessment = {}) {
+        const flowState = this.getFlowState(assessment);
+
+        return `
+            <section class="workspace-flow" aria-label="Active workflow state">
+                <div class="workspace-flow__header">
+                    <span class="workspace-flow__eyebrow">Active Flow</span>
+                    <strong>Assessment → Recommendation</strong>
+                </div>
+
+                <div class="workspace-flow__steps">
+                    ${this.flowSteps.map((step) => `
+                        <div class="workspace-flow__step workspace-flow__step--${flowState[step.key]}">
+                            <div class="workspace-flow__marker"></div>
+                            <div>
+                                <strong>${step.label}</strong>
+                                <span>${step.description}</span>
+                            </div>
+                        </div>
+                    `).join("")}
+                </div>
+            </section>
+        `;
+    }
+
+    static createFlowIndicator(assessment = {}) {
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderActiveFlowIndicator(assessment);
+        return container;
     }
 
     static createHeader() {
