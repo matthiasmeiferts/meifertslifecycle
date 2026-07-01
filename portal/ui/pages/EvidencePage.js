@@ -1,5 +1,6 @@
 import WorkspaceController from "../../controllers/WorkspaceController.js";
 import EvidenceManager from "../../core/EvidenceManager.js";
+import FindingManager from "../../core/FindingManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
@@ -47,7 +48,7 @@ export default class EvidencePage {
 
         grid.appendChild(MetricCard.create("Total Evidence", evidenceCount));
         grid.appendChild(MetricCard.create("Selected", EvidenceManager.get() ? "1" : "0"));
-        grid.appendChild(MetricCard.create("Linked Findings", "Pending"));
+        grid.appendChild(MetricCard.create("Linked Findings", this.countFindingsLinkedToEvidence()));
         grid.appendChild(MetricCard.create("Review Status", "Open"));
 
         return grid;
@@ -69,9 +70,9 @@ export default class EvidencePage {
                 onClick: () => this.createSampleEvidence()
             },
             {
-                id: "filter-evidence",
-                label: "Filter",
-                onClick: () => this.showPendingFeature("Evidence filters")
+                id: "create-finding",
+                label: "Create Finding",
+                onClick: () => this.createFindingFromSelectedEvidence()
             }
         ]));
 
@@ -150,7 +151,7 @@ export default class EvidencePage {
             { label: "Selected Evidence", value: activeEvidence.title || activeEvidence.id },
             { label: "Evidence Status", value: activeEvidence.status || "Open" },
             { label: "Case ID", value: activeEvidence.caseId || "Not linked" },
-            { label: "Next Step", value: "Connect evidence to findings" }
+            { label: "Linked Findings", value: String(this.countFindingsLinkedToEvidence(activeEvidence.id)) }
         ]);
     }
 
@@ -159,6 +160,43 @@ export default class EvidencePage {
             () => EvidenceManager.getAll(),
             []
         );
+    }
+
+    static countFindingsLinkedToEvidence(evidenceId = null) {
+        const targetEvidenceId = evidenceId || EvidenceManager.get()?.id;
+
+        if (!targetEvidenceId) {
+            return 0;
+        }
+
+        return FindingManager.getAll()
+            .filter(finding => (finding.evidenceIds || []).includes(targetEvidenceId))
+            .length;
+    }
+
+    static createFindingFromSelectedEvidence() {
+        const evidence = EvidenceManager.get();
+
+        if (!evidence) {
+            Notification.warning("Select evidence first.");
+            return;
+        }
+
+        const finding = FindingManager.create({
+            caseId: evidence.caseId,
+            buildingId: evidence.buildingId,
+            inspectionId: evidence.inspectionId,
+            evidenceIds: [evidence.id],
+            title: `Finding from ${evidence.title || evidence.id}`,
+            description: evidence.description || "Finding generated from selected evidence.",
+            category: evidence.evidenceType || evidence.type || "General",
+            severity: "Medium",
+            status: "Open"
+        });
+
+        FindingManager.set(finding);
+        Notification.success("Finding created from selected evidence.");
+        this.refresh();
     }
 
     static refresh() {
