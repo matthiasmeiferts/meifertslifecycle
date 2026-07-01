@@ -39,11 +39,13 @@ export default class ReportPage {
 
         fragment.appendChild(this.createHeader());
         fragment.appendChild(this.createMetrics(reports));
+        fragment.appendChild(this.createFinalOutputState(activeReport));
+        fragment.appendChild(this.createCompletionPanel(activeReport));
+
         if (activeReport) {
-            fragment.appendChild(this.createFinalOutputState(activeReport));
-            fragment.appendChild(this.createCompletionPanel(activeReport));
             fragment.appendChild(this.createReportIntelligenceSnapshot(activeReport));
         }
+
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(reports, activeReport));
 
@@ -82,6 +84,7 @@ export default class ReportPage {
     }
 
     static getOutputState(report = {}) {
+        report = report || {};
         const hasDecisionLink =
             Boolean(report.decisionId) ||
             Boolean(report.linkedDecisionId) ||
@@ -102,6 +105,7 @@ export default class ReportPage {
     }
 
     static renderFinalOutputState(report = {}) {
+        report = report || {};
         const outputState = this.getOutputState(report);
 
         return `
@@ -253,6 +257,7 @@ export default class ReportPage {
     }
 
     static getCompletionState(report = {}) {
+        report = report || {};
         const hasTitle = Boolean(report.title || report.name);
         const hasReportType = Boolean(report.reportType || report.type || report.template);
         const hasDecisionLink = Boolean(
@@ -328,6 +333,7 @@ export default class ReportPage {
     }
 
     static renderCompletionPanel(report = {}) {
+        report = report || {};
         const completion = this.getCompletionState(report);
         const percent = Math.round(completion.ratio * 100);
         const readinessLabel = completion.isComplete
@@ -370,6 +376,7 @@ export default class ReportPage {
     }
 
     static renderReportIntelligenceSnapshot(report = {}) {
+        report = report || {};
         const intelligence = this.getReportIntelligence(report);
 
         return `
@@ -457,6 +464,7 @@ export default class ReportPage {
     }
 
     static renderReportStatusBadge(report = {}) {
+        report = report || {};
         const status = this.getReportStatus(report);
         const label = this.statusLabels[status] || "Draft";
 
