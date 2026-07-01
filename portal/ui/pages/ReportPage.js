@@ -9,13 +9,27 @@ import Notification from "../components/Notification.js";
 
 export default class ReportPage {
 
-    static render() {
+    static outputSteps = [
+        {
+            key: "decision",
+            label: "Decision",
+            description: "Governance decision confirmed"
+        },
+        {
+            key: "report",
+            label: "Report",
+            description: "Final report output prepared"
+        }
+    ];
         const fragment = document.createDocumentFragment();
         const reports = this.getReports();
         const activeReport = ReportManager.get();
 
         fragment.appendChild(this.createHeader());
         fragment.appendChild(this.createMetrics(reports));
+        if (activeReport) {
+            fragment.appendChild(this.createFinalOutputState(activeReport));
+        }
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(reports, activeReport));
 
@@ -51,6 +65,58 @@ export default class ReportPage {
         grid.appendChild(MetricCard.create("Archived", archivedCount));
 
         return grid;
+    }
+
+    static getOutputState(report = {}) {
+        const hasDecisionLink =
+            Boolean(report.decisionId) ||
+            Boolean(report.linkedDecisionId) ||
+            Boolean(report.decision) ||
+            Boolean(report.hasDecision);
+
+        const isFinalized =
+            Boolean(report.finalized) ||
+            Boolean(report.approved) ||
+            report.status === "final" ||
+            report.status === "finalized" ||
+            report.status === "approved";
+
+        return {
+            decision: hasDecisionLink ? "complete" : "next",
+            report: isFinalized ? "complete" : "active"
+        };
+    }
+
+    static renderFinalOutputState(report = {}) {
+        const outputState = this.getOutputState(report);
+
+        return `
+            <section class="workspace-flow" aria-label="Final output state">
+                <div class="workspace-flow__header">
+                    <span class="workspace-flow__eyebrow">Final Output</span>
+                    <strong>Decision → Report</strong>
+                </div>
+
+                <div class="workspace-flow__steps">
+                    ${this.outputSteps.map((step) => `
+                        <div class="workspace-flow__step workspace-flow__step--${outputState[step.key]}">
+                            <div class="workspace-flow__marker"></div>
+                            <div>
+                                <strong>${step.label}</strong>
+                                <span>${step.description}</span>
+                            </div>
+                        </div>
+                    `).join("")}
+                </div>
+            </section>
+        `;
+    }
+
+    static createFinalOutputState(report = {}) {
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderFinalOutputState(report);
+        return container;
     }
 
     static createToolbar() {
