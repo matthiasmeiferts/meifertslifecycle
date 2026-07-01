@@ -41,6 +41,7 @@ export default class ReportPage {
         if (activeReport) {
             fragment.appendChild(this.createFinalOutputState(activeReport));
             fragment.appendChild(this.createCompletionPanel(activeReport));
+            fragment.appendChild(this.createReportIntelligenceSnapshot(activeReport));
         }
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(reports, activeReport));
@@ -129,6 +130,120 @@ export default class ReportPage {
         container.className = "workflow-card";
         container.innerHTML = this.renderFinalOutputState(report);
         return container;
+    }
+
+    static getReportIntelligence(report = {}) {
+        const hasIdentity = Boolean(report.title || report.name);
+        const hasReportType = Boolean(report.reportType || report.type || report.template);
+        const hasDecisionLink = Boolean(
+            report.decisionId ||
+            report.linkedDecisionId ||
+            report.decision ||
+            report.hasDecision
+        );
+        const hasContent = Boolean(
+            report.summary ||
+            report.executiveSummary ||
+            report.content ||
+            report.sections
+        );
+        const hasOutput = Boolean(
+            report.generated ||
+            report.generatedAt ||
+            report.fileUrl ||
+            report.pdfUrl
+        );
+        const isReviewed = Boolean(report.reviewed || report.status === "reviewed");
+        const isFinalized = Boolean(
+            report.finalized ||
+            report.approved ||
+            report.status === "final" ||
+            report.status === "finalized" ||
+            report.status === "approved"
+        );
+
+        const checks = [
+            hasIdentity,
+            hasReportType,
+            hasDecisionLink,
+            hasContent,
+            hasOutput,
+            isReviewed,
+            isFinalized
+        ];
+
+        const completed = checks.filter(Boolean).length;
+        const total = checks.length;
+        const readinessPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        const confidenceScore = Math.min(
+            100,
+            Math.round(
+                readinessPercent * 0.64 +
+                (hasContent ? 10 : 0) +
+                (hasDecisionLink ? 8 : 0) +
+                (hasOutput ? 8 : 0) +
+                (isFinalized ? 10 : 0)
+            )
+        );
+
+        let outputQualitySignal = {
+            label: "Low output quality",
+            description: "Report output is still incomplete. Prepare content, link decision and generate output.",
+            tone: "draft"
+        };
+
+        if (hasContent && hasDecisionLink && hasOutput && isFinalized) {
+            outputQualitySignal = {
+                label: "Strong output quality",
+                description: "Report contains decision context, prepared content, generated output and final approval.",
+                tone: "ready"
+            };
+        } else if (hasContent && hasDecisionLink) {
+            outputQualitySignal = {
+                label: "Developing output quality",
+                description: "Report has meaningful content and decision context, but output generation or finalization may still be missing.",
+                tone: "active"
+            };
+        }
+
+        const nextAction = isFinalized
+            ? {
+                label: "Archive or publish report",
+                description: "Report is finalized. Confirm publication, export or archive workflow.",
+                tone: "ready"
+            }
+            : hasOutput
+                ? {
+                    label: "Review and finalize report",
+                    description: "Report output exists. Complete final review and approval.",
+                    tone: "active"
+                }
+                : hasContent && hasDecisionLink
+                    ? {
+                        label: "Generate report output",
+                        description: "Report content and decision context are available. Generate the final output.",
+                        tone: "active"
+                    }
+                    : {
+                        label: "Prepare report content",
+                        description: "Add report content, type and decision context before generating output.",
+                        tone: "draft"
+                    };
+
+        return {
+            completed,
+            total,
+            readinessPercent,
+            confidenceScore,
+            outputQualitySignal,
+            nextAction,
+            label: readinessPercent >= 100
+                ? "Report intelligence complete"
+                : readinessPercent >= 50
+                    ? "Report intelligence developing"
+                    : "Report intelligence early"
+        };
     }
 
     static getCompletionState(report = {}) {
@@ -245,6 +360,50 @@ export default class ReportPage {
         const container = document.createElement("section");
         container.className = "workflow-card";
         container.innerHTML = this.renderCompletionPanel(report);
+        return container;
+    }
+
+    static renderReportIntelligenceSnapshot(report = {}) {
+        const intelligence = this.getReportIntelligence(report);
+
+        return `
+            <section class="report-intelligence" aria-label="Report intelligence snapshot">
+                <div class="report-intelligence__header">
+                    <div>
+                        <span class="report-intelligence__eyebrow">Report Intelligence</span>
+                        <strong>${intelligence.label}</strong>
+                        <p>${intelligence.completed}/${intelligence.total} report intelligence checks completed</p>
+                    </div>
+                    <span class="report-intelligence__score">${intelligence.confidenceScore}%</span>
+                </div>
+
+                <div class="report-intelligence__grid">
+                    <article class="report-intelligence__card">
+                        <span>Final Review Readiness</span>
+                        <strong>${intelligence.readinessPercent}%</strong>
+                        <p>Readiness based on identity, report type, decision link, content, output, review and finalization.</p>
+                    </article>
+
+                    <article class="report-intelligence__card report-intelligence__card--${intelligence.outputQualitySignal.tone}">
+                        <span>Output Quality Signal</span>
+                        <strong>${intelligence.outputQualitySignal.label}</strong>
+                        <p>${intelligence.outputQualitySignal.description}</p>
+                    </article>
+
+                    <article class="report-intelligence__card report-intelligence__card--${intelligence.nextAction.tone}">
+                        <span>Next Report Action</span>
+                        <strong>${intelligence.nextAction.label}</strong>
+                        <p>${intelligence.nextAction.description}</p>
+                    </article>
+                </div>
+            </section>
+        `;
+    }
+
+    static createReportIntelligenceSnapshot(report = {}) {
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderReportIntelligenceSnapshot(report);
         return container;
     }
 
