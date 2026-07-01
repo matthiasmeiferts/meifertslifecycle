@@ -153,7 +153,7 @@ export default class InspectionPage {
     }
 
     static createInspectionIntelligenceSnapshot(inspection = null, data = null) {
-        const currentInspection = inspection || InspectionManager.get();
+        const currentInspection = inspection || InspectionManager.getInspection();
 
         if (!currentInspection) {
             return null;
@@ -186,8 +186,8 @@ export default class InspectionPage {
 
     static render() {
         const fragment = document.createDocumentFragment();
-        const inspections = InspectionManager.getAll();
-        const activeInspection = InspectionManager.get();
+        const inspections = InspectionManager.getAllInspections();
+        const activeInspection = InspectionManager.getInspection();
 
         fragment.appendChild(this.createHeader());
         fragment.appendChild(this.createMetrics(inspections));
