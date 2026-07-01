@@ -1,3 +1,4 @@
+import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import WorkspaceController from "../../controllers/WorkspaceController.js";
 import EvidenceManager from "../../core/EvidenceManager.js";
 import FindingManager from "../../core/FindingManager.js";
@@ -196,7 +197,7 @@ export default class EvidencePage {
 
         FindingManager.set(finding);
         Notification.success("Finding created from selected evidence.");
-        this.refresh();
+        WorkspaceRouter.navigate("findings");
     }
 
     static refresh() {

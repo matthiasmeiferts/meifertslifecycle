@@ -35,6 +35,14 @@ export default class WorkspaceRouter {
         return this.routes[route] || this.routes[this.fallbackRoute];
     }
 
+    static navigate(route) {
+        if (!route || !this.routes[route]) {
+            route = this.fallbackRoute;
+        }
+
+        window.location.hash = route;
+    }
+
     static render(container) {
 
         if (!container) return;
