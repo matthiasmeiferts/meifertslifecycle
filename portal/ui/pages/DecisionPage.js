@@ -186,8 +186,8 @@ export default class DecisionPage {
 
         if (status === "reviewed") {
             return {
-                label: "Prepare final report",
-                description: "Decision is reviewed and ready to be included in the final report output.",
+                label: "Create or confirm report",
+                description: "Decision is reviewed and ready to support the final report output.",
                 tone: "ready"
             };
         }
@@ -195,22 +195,22 @@ export default class DecisionPage {
         if (status === "reported") {
             return {
                 label: "Review linked report",
-                description: "This decision is already connected to a report. Check output consistency and completeness.",
+                description: "This decision is already connected to a report. Check final output completeness.",
                 tone: "linked"
             };
         }
 
         if (status === "decided") {
             return {
-                label: "Generate report section",
-                description: "The decision is complete enough to move into report generation.",
+                label: "Prepare report",
+                description: "The decision is complete enough to move into report preparation.",
                 tone: "active"
             };
         }
 
         return {
-            label: "Record decision",
-            description: "Add decision details, outcome, and confidence before generating report.",
+            label: "Confirm decision",
+            description: "Add a clear decision, outcome or approval state before preparing the report.",
             tone: "draft"
         };
     }
