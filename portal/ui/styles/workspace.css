@@ -1,5 +1,3 @@
-git diff -- portal/ui/styles/workspace.css
-git add portal/ui/styles/workspace.css
 :root {
   --navy: #1b2b45;
   --cream: #f3eee2;
@@ -79,6 +77,8 @@ body {
 
 .workspace-main {
   padding: 32px;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 .workspace-header {
@@ -279,6 +279,8 @@ h2 {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .section-header {
@@ -299,6 +301,8 @@ h2 {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
+    min-width: 0;
+    flex-wrap: wrap;
 }
 
 .search-bar {
@@ -339,7 +343,10 @@ h2 {
 }
 
 .table-card {
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
+    min-width: 0;
+    max-width: 100%;
     border-radius: 22px;
     background: rgba(255, 255, 255, 0.58);
     border: 1px solid rgba(27, 43, 69, 0.08);
@@ -349,6 +356,7 @@ h2 {
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
+    min-width: 620px;
 }
 
 .workspace-table th {
@@ -2420,5 +2428,32 @@ button.dashboard-readiness-card__action:focus-visible {
 
     .intelligence-snapshot__score {
         margin-top: 14px;
+    }
+}
+
+/* ==========================================================
+   Workspace Horizontal Overflow Fix
+   ========================================================== */
+
+.workspace-layout,
+.workspace-grid,
+.workspace-main-layout,
+.workspace-content,
+.workspace-detail-layout {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.workspace-layout,
+.workspace-main-layout,
+.workspace-detail-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+}
+
+@media (max-width: 1280px) {
+    .workspace-layout,
+    .workspace-main-layout,
+    .workspace-detail-layout {
+        grid-template-columns: 1fr;
     }
 }
