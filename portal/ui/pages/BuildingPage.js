@@ -562,6 +562,18 @@ export default class BuildingPage {
         ];
     }
 
+    static refresh() {
+
+        const container = document.getElementById("workspace-page");
+
+        if (!container) return;
+
+        container.innerHTML = "";
+
+        container.appendChild(this.render());
+
+    }
+
     static formatDate(value) {
         if (!value) return "—";
 
