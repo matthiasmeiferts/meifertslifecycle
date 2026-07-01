@@ -21,6 +21,17 @@ export default class ReportPage {
             description: "Final report output prepared"
         }
     ];
+
+    static statusLabels = {
+        draft: "Draft",
+        prepared: "Prepared",
+        generated: "Generated",
+        reviewed: "Reviewed",
+        finalized: "Finalized",
+        blocked: "Blocked"
+    };
+
+    static render() {
         const fragment = document.createDocumentFragment();
         const reports = this.getReports();
         const activeReport = ReportManager.get();
@@ -119,6 +130,60 @@ export default class ReportPage {
         return container;
     }
 
+    static getReportStatus(report = {}) {
+        if (report.blocked || report.status === "blocked") {
+            return "blocked";
+        }
+
+        if (
+            report.finalized ||
+            report.approved ||
+            report.status === "final" ||
+            report.status === "finalized" ||
+            report.status === "approved"
+        ) {
+            return "finalized";
+        }
+
+        if (report.reviewed || report.status === "reviewed") {
+            return "reviewed";
+        }
+
+        if (
+            report.generated ||
+            report.generatedAt ||
+            report.fileUrl ||
+            report.pdfUrl ||
+            report.status === "generated"
+        ) {
+            return "generated";
+        }
+
+        if (
+            report.prepared ||
+            report.title ||
+            report.name ||
+            report.reportType ||
+            report.template ||
+            report.status === "prepared"
+        ) {
+            return "prepared";
+        }
+
+        return "draft";
+    }
+
+    static renderReportStatusBadge(report = {}) {
+        const status = this.getReportStatus(report);
+        const label = this.statusLabels[status] || "Draft";
+
+        return `
+            <span class="evidence-status evidence-status--${status}">
+                ${label}
+            </span>
+        `;
+    }
+
     static createToolbar() {
         const wrapper = document.createElement("section");
         wrapper.className = "workflow-card";
@@ -190,11 +255,12 @@ export default class ReportPage {
         const meta = document.createElement("span");
         meta.textContent = `${report.reportType || "Technical Due Diligence"} · ${report.version || "1.0.0"}`;
 
-        const badge = StatusBadge.create(report.status || "Draft", "warning");
+        const statusContainer = document.createElement("span");
+        statusContainer.innerHTML = this.renderReportStatusBadge(report);
 
         row.appendChild(title);
         row.appendChild(meta);
-        row.appendChild(badge);
+        row.appendChild(statusContainer);
 
         return row;
     }
