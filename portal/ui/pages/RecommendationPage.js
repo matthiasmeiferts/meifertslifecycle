@@ -1,4 +1,5 @@
 import RecommendationManager from "../../core/RecommendationManager.js";
+import DecisionManager from "../../core/DecisionManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
@@ -48,7 +49,7 @@ export default class RecommendationPage {
         grid.appendChild(MetricCard.create("Recommendations", recommendations.length));
         grid.appendChild(MetricCard.create("High Priority", highPriorityCount));
         grid.appendChild(MetricCard.create("Immediate", immediateCount));
-        grid.appendChild(MetricCard.create("Accepted", acceptedCount));
+        grid.appendChild(MetricCard.create("Linked Decisions", this.countDecisionsLinkedToRecommendation()));
 
         return grid;
     }
@@ -69,9 +70,9 @@ export default class RecommendationPage {
                 onClick: () => this.createSampleRecommendation()
             },
             {
-                id: "capex-review",
-                label: "CAPEX Review",
-                onClick: () => this.showPendingFeature("CAPEX review")
+                id: "create-decision",
+                label: "Create Decision",
+                onClick: () => this.createDecisionFromSelectedRecommendation()
             }
         ]));
 
@@ -147,8 +148,49 @@ export default class RecommendationPage {
             { label: "Selected Recommendation", value: activeRecommendation.title || activeRecommendation.id },
             { label: "Priority", value: activeRecommendation.priority || "Medium" },
             { label: "Timeframe", value: activeRecommendation.timeframe || "Short Term" },
-            { label: "Status", value: activeRecommendation.status || "Draft" }
+            { label: "Linked Decisions", value: String(this.countDecisionsLinkedToRecommendation(activeRecommendation.id)) }
         ]);
+    }
+
+    static countDecisionsLinkedToRecommendation(recommendationId = null) {
+        const targetRecommendationId = recommendationId || RecommendationManager.get()?.id;
+
+        if (!targetRecommendationId) {
+            return 0;
+        }
+
+        return DecisionManager.getAll()
+            .filter(decision => (decision.recommendationIds || []).includes(targetRecommendationId))
+            .length;
+    }
+
+    static createDecisionFromSelectedRecommendation() {
+        const recommendation = RecommendationManager.get();
+
+        if (!recommendation) {
+            Notification.warning("Select a recommendation first.");
+            return;
+        }
+
+        const decision = DecisionManager.create({
+            caseId: recommendation.caseId,
+            buildingId: recommendation.buildingId,
+            inspectionId: recommendation.inspectionId,
+            recommendationIds: [recommendation.id],
+            assessmentIds: recommendation.assessmentIds || [],
+            findingIds: recommendation.findingIds || [],
+            title: `Decision from ${recommendation.title || recommendation.id}`,
+            description: recommendation.description || "Decision generated from selected recommendation.",
+            decisionType: "Monitor",
+            rationale: recommendation.action || recommendation.description || "",
+            riskLevel: recommendation.decisionImpact || recommendation.priority || "Medium",
+            confidence: 70,
+            status: "Draft"
+        });
+
+        DecisionManager.set(decision);
+        Notification.success("Decision created from selected recommendation.");
+        this.refresh();
     }
 
     static getRecommendations() {
