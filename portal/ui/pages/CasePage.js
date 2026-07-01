@@ -6,6 +6,7 @@ import WorkspaceTable from "../components/WorkspaceTable.js";
 import EmptyState from "../components/EmptyState.js";
 import StatusBadge from "../components/StatusBadge.js";
 import DetailPanel from "../components/DetailPanel.js";
+import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 
 export default class CasePage {
 
@@ -284,11 +285,11 @@ export default class CasePage {
             report: reports.length
         };
 
-        const completedStages = this.intelligenceStages.filter((stage) => counts[stage.key] > 0).length;
-        const totalStages = this.intelligenceStages.length;
-        const readinessPercent = totalStages > 0
-            ? Math.round((completedStages / totalStages) * 100)
-            : 0;
+        const stageKeys = this.intelligenceStages.map((stage) => stage.key);
+        const readiness = IntelligenceEngine.getStageReadiness(counts, stageKeys);
+        const readinessPercent = readiness.percent;
+        const completedStages = readiness.completedStages;
+        const totalStages = readiness.totalStages;
 
         const downstreamSignals =
             counts.finding +
@@ -296,14 +297,18 @@ export default class CasePage {
             counts.recommendation +
             counts.decision;
 
-        const confidenceScore = Math.min(
-            100,
-            Math.round(
-                readinessPercent * 0.6 +
-                Math.min(counts.evidence, 5) * 4 +
-                Math.min(downstreamSignals, 8) * 3
-            )
-        );
+        const confidenceScore = IntelligenceEngine.getConfidenceScore({
+            readinessPercent,
+            primarySignals: counts.evidence,
+            downstreamSignals,
+            outputSignals: counts.report,
+            weights: {
+                readiness: 0.6,
+                primary: 4,
+                downstream: 3,
+                output: 4
+            }
+        });
 
         let riskSignal = {
             label: "Low risk signal",

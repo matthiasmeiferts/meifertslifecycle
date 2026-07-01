@@ -4,6 +4,7 @@ import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
 import DetailPanel from "../components/DetailPanel.js";
 import Notification from "../components/Notification.js";
+import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 
 export default class InspectionPage {
 
@@ -40,25 +41,29 @@ export default class InspectionPage {
             assessment: assessments.length
         };
 
-        const completedStages = this.intelligenceStages.filter((stage) => counts[stage.key] > 0).length;
-        const totalStages = this.intelligenceStages.length;
-        const evidenceCoverage = totalStages > 0
-            ? Math.round((completedStages / totalStages) * 100)
-            : 0;
+        const stageKeys = this.intelligenceStages.map((stage) => stage.key);
+        const readiness = IntelligenceEngine.getStageReadiness(counts, stageKeys);
+        const evidenceCoverage = readiness.percent;
+        const completedStages = readiness.completedStages;
+        const totalStages = readiness.totalStages;
 
         const technicalSignals =
             counts.evidence +
             counts.finding +
             counts.assessment;
 
-        const confidenceScore = Math.min(
-            100,
-            Math.round(
-                evidenceCoverage * 0.65 +
-                Math.min(counts.evidence, 8) * 4 +
-                Math.min(counts.finding + counts.assessment, 6) * 3
-            )
-        );
+        const confidenceScore = IntelligenceEngine.getConfidenceScore({
+            readinessPercent: evidenceCoverage,
+            primarySignals: counts.evidence,
+            downstreamSignals: counts.finding + counts.assessment,
+            outputSignals: 0,
+            weights: {
+                readiness: 0.65,
+                primary: 4,
+                downstream: 3,
+                output: 0
+            }
+        });
 
         let signalDensity = {
             label: "Low signal density",

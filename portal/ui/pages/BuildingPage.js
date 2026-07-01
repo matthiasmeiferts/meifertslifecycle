@@ -9,6 +9,7 @@ import StatusBadge from "../components/StatusBadge.js";
 import FormDialog from "../components/FormDialog.js";
 import ModalDialog from "../components/ModalDialog.js";
 import Notification from "../components/Notification.js";
+import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 
 export default class BuildingPage {
 
@@ -248,11 +249,11 @@ export default class BuildingPage {
             report: reports.length
         };
 
-        const completedStages = this.intelligenceStages.filter((stage) => counts[stage.key] > 0).length;
-        const totalStages = this.intelligenceStages.length;
-        const lifecycleReadiness = totalStages > 0
-            ? Math.round((completedStages / totalStages) * 100)
-            : 0;
+        const stageKeys = this.intelligenceStages.map((stage) => stage.key);
+        const readiness = IntelligenceEngine.getStageReadiness(counts, stageKeys);
+        const lifecycleReadiness = readiness.percent;
+        const completedStages = readiness.completedStages;
+        const totalStages = readiness.totalStages;
 
         const technicalSignals =
             counts.inspection +
@@ -265,14 +266,18 @@ export default class BuildingPage {
             counts.decision +
             counts.report;
 
-        const confidenceScore = Math.min(
-            100,
-            Math.round(
-                lifecycleReadiness * 0.58 +
-                Math.min(technicalSignals, 10) * 3 +
-                Math.min(downstreamSignals, 6) * 2
-            )
-        );
+        const confidenceScore = IntelligenceEngine.getConfidenceScore({
+            readinessPercent: lifecycleReadiness,
+            primarySignals: technicalSignals,
+            downstreamSignals,
+            outputSignals: counts.report,
+            weights: {
+                readiness: 0.58,
+                primary: 3,
+                downstream: 2,
+                output: 2
+            }
+        });
 
         let technicalRisk = {
             label: "Low technical signal",
