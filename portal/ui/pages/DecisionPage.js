@@ -1,4 +1,5 @@
 import DecisionManager from "../../core/DecisionManager.js";
+import ReportManager from "../../core/ReportManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
@@ -50,7 +51,7 @@ export default class DecisionPage {
         grid.appendChild(MetricCard.create("Decisions", decisions.length));
         grid.appendChild(MetricCard.create("Pending", pendingCount));
         grid.appendChild(MetricCard.create("Approved", approvedCount));
-        grid.appendChild(MetricCard.create("Confidence", averageConfidence));
+        grid.appendChild(MetricCard.create("Linked Reports", this.countReportsLinkedToDecision()));
 
         return grid;
     }
@@ -71,9 +72,9 @@ export default class DecisionPage {
                 onClick: () => this.createSampleDecision()
             },
             {
-                id: "approval-flow",
-                label: "Approval Flow",
-                onClick: () => this.showPendingFeature("Approval flow")
+                id: "create-report",
+                label: "Create Report",
+                onClick: () => this.createReportFromSelectedDecision()
             }
         ]));
 
@@ -149,8 +150,51 @@ export default class DecisionPage {
             { label: "Selected Decision", value: activeDecision.title || activeDecision.id },
             { label: "Decision Type", value: activeDecision.decisionType || "Monitor" },
             { label: "Risk Level", value: activeDecision.riskLevel || "Medium" },
-            { label: "Status", value: activeDecision.status || "Draft" }
+            { label: "Linked Reports", value: String(this.countReportsLinkedToDecision(activeDecision.id)) }
         ]);
+    }
+
+    static countReportsLinkedToDecision(decisionId = null) {
+        const targetDecisionId = decisionId || DecisionManager.get()?.id;
+
+        if (!targetDecisionId) {
+            return 0;
+        }
+
+        return ReportManager.getAll()
+            .filter(report => (report.decisionIds || []).includes(targetDecisionId))
+            .length;
+    }
+
+    static createReportFromSelectedDecision() {
+        const decision = DecisionManager.get();
+
+        if (!decision) {
+            Notification.warning("Select a decision first.");
+            return;
+        }
+
+        const report = ReportManager.create({
+            caseId: decision.caseId,
+            buildingId: decision.buildingId,
+            inspectionId: decision.inspectionId,
+            decisionIds: [decision.id],
+            recommendationIds: decision.recommendationIds || [],
+            assessmentIds: decision.assessmentIds || [],
+            findingIds: decision.findingIds || [],
+            title: `Report from ${decision.title || decision.id}`,
+            reportType: "Technical Due Diligence",
+            version: "1.0.0",
+            executiveSummary: decision.description || "Report generated from selected decision.",
+            scope: "Decision-based technical due diligence report.",
+            methodology: "Evidence-first workflow chain review.",
+            decisions: [decision],
+            status: "Draft"
+        });
+
+        ReportManager.set(report);
+        Notification.success("Report created from selected decision.");
+        this.refresh();
     }
 
     static getDecisions() {
