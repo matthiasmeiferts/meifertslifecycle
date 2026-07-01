@@ -50,6 +50,7 @@ export default class AssessmentPage {
     }
 
     static getFlowState(assessment = {}) {
+        assessment = assessment || {};
         const hasRecommendationLink =
             Boolean(assessment.recommendationId) ||
             Boolean(assessment.linkedRecommendationId) ||
@@ -63,6 +64,7 @@ export default class AssessmentPage {
     }
 
     static renderActiveFlowIndicator(assessment = {}) {
+        assessment = assessment || {};
         const flowState = this.getFlowState(assessment);
 
         return `
@@ -95,6 +97,7 @@ export default class AssessmentPage {
     }
 
     static getAssessmentStatus(assessment = {}) {
+        assessment = assessment || {};
         if (assessment.blocked || assessment.status === "blocked") {
             return "blocked";
         }
@@ -129,6 +132,7 @@ export default class AssessmentPage {
     }
 
     static renderAssessmentStatusBadge(assessment = {}) {
+        assessment = assessment || {};
         const status = this.getAssessmentStatus(assessment);
         const label = this.statusLabels[status] || "Draft";
 
@@ -136,6 +140,7 @@ export default class AssessmentPage {
     }
 
     static getNextAction(assessment = {}) {
+        assessment = assessment || {};
         const status = this.getAssessmentStatus
             ? this.getAssessmentStatus(assessment)
             : "draft";
@@ -180,6 +185,7 @@ export default class AssessmentPage {
     }
 
     static renderNextActionPanel(assessment = {}) {
+        assessment = assessment || {};
         const action = this.getNextAction(assessment);
 
         return `
@@ -425,6 +431,7 @@ export default class AssessmentPage {
     }
 
     static getAssessmentIntelligence(assessment = {}) {
+        assessment = assessment || {};
         const hasIdentity = Boolean(assessment.title || assessment.name);
         const hasRiskLevel = Boolean(assessment.riskLevel || assessment.riskScore);
         const hasSeverity = Boolean(assessment.severity);
@@ -529,6 +536,7 @@ export default class AssessmentPage {
     }
 
     static renderAssessmentIntelligenceSnapshot(assessment = {}) {
+        assessment = assessment || {};
         const intelligence = this.getAssessmentIntelligence(assessment);
 
         return `
