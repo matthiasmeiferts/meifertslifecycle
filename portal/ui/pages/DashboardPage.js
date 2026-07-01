@@ -1,6 +1,7 @@
 import WorkspaceController from "../../controllers/WorkspaceController.js";
 import MetricCard from "../components/MetricCard.js";
 import WorkflowCard from "../components/WorkflowCard.js";
+import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 
 export default class DashboardPage {
 
@@ -97,33 +98,19 @@ export default class DashboardPage {
     }
 
     static getWorkflowReadiness(data = {}) {
-        const evidence = data.evidence || data.evidences || [];
-        const findings = data.findings || [];
-        const assessments = data.assessments || [];
-        const recommendations = data.recommendations || [];
-        const decisions = data.decisions || [];
-        const reports = data.reports || [];
-
-        const counts = {
-            evidence: Array.isArray(evidence) ? evidence.length : 0,
-            finding: Array.isArray(findings) ? findings.length : 0,
-            assessment: Array.isArray(assessments) ? assessments.length : 0,
-            recommendation: Array.isArray(recommendations) ? recommendations.length : 0,
-            decision: Array.isArray(decisions) ? decisions.length : 0,
-            report: Array.isArray(reports) ? reports.length : 0
-        };
-
-        const completedStages = this.workflowStages.filter((stage) => counts[stage.key] > 0).length;
-        const totalStages = this.workflowStages.length;
-        const ratio = totalStages > 0 ? completedStages / totalStages : 0;
+        const counts = IntelligenceEngine.getWorkflowCounts(data);
+        const stageKeys = this.workflowStages.map((stage) => stage.key);
+        const readiness = IntelligenceEngine.getStageReadiness(counts, stageKeys);
 
         return {
             counts,
-            completedStages,
-            totalStages,
-            ratio,
-            percent: Math.round(ratio * 100),
-            isComplete: completedStages === totalStages
+            completedStages: readiness.completedStages,
+            totalStages: readiness.totalStages,
+            ratio: readiness.totalStages > 0
+                ? readiness.completedStages / readiness.totalStages
+                : 0,
+            percent: readiness.percent,
+            isComplete: readiness.isComplete
         };
     }
 
@@ -420,16 +407,18 @@ export default class DashboardPage {
         const findingDepth = counts.finding || 0;
         const reportDepth = counts.report || 0;
 
-        const confidenceScore = Math.min(
-            100,
-            Math.round(
-                readiness.percent * 0.55 +
-                downstreamCoverage * 10 +
-                Math.min(evidenceDepth, 5) * 3 +
-                Math.min(findingDepth, 5) * 2 +
-                Math.min(reportDepth, 2) * 4
-            )
-        );
+        const confidenceScore = IntelligenceEngine.getConfidenceScore({
+            readinessPercent: readiness.percent,
+            primarySignals: evidenceDepth + findingDepth,
+            downstreamSignals: downstreamCoverage,
+            outputSignals: reportDepth,
+            weights: {
+                readiness: 0.55,
+                primary: 3,
+                downstream: 10,
+                output: 4
+            }
+        });
 
         const riskSignalScore = riskInputs.reduce((sum, value) => sum + value, 0);
 
