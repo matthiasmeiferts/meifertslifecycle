@@ -7,7 +7,177 @@ import Notification from "../components/Notification.js";
 
 export default class InspectionPage {
 
-    static render() {
+    static getInspectionIntelligence(inspection = {}, data = {}) {
+        const inspectionId = inspection.id || inspection.inspectionId;
+        const buildingId = inspection.buildingId || inspection.linkedBuildingId;
+
+        const filterByInspection = (items = []) => {
+            if (!Array.isArray(items)) {
+                return [];
+            }
+
+            if (!inspectionId && !buildingId) {
+                return items;
+            }
+
+            return items.filter((item) =>
+                item.inspectionId === inspectionId ||
+                item.linkedInspectionId === inspectionId ||
+                item.inspection === inspectionId ||
+                item.buildingId === buildingId ||
+                item.linkedBuildingId === buildingId
+            );
+        };
+
+        const evidence = filterByInspection(data.evidence || data.evidences || []);
+        const findings = filterByInspection(data.findings || []);
+        const assessments = filterByInspection(data.assessments || []);
+
+        const counts = {
+            inspection: inspectionId || inspection.title || inspection.name ? 1 : 0,
+            evidence: evidence.length,
+            finding: findings.length,
+            assessment: assessments.length
+        };
+
+        const completedStages = this.intelligenceStages.filter((stage) => counts[stage.key] > 0).length;
+        const totalStages = this.intelligenceStages.length;
+        const evidenceCoverage = totalStages > 0
+            ? Math.round((completedStages / totalStages) * 100)
+            : 0;
+
+        const technicalSignals =
+            counts.evidence +
+            counts.finding +
+            counts.assessment;
+
+        const confidenceScore = Math.min(
+            100,
+            Math.round(
+                evidenceCoverage * 0.65 +
+                Math.min(counts.evidence, 8) * 4 +
+                Math.min(counts.finding + counts.assessment, 6) * 3
+            )
+        );
+
+        let signalDensity = {
+            label: "Low signal density",
+            description: "Inspection output is still light. More evidence and findings are needed.",
+            tone: "draft"
+        };
+
+        if (technicalSignals >= 10) {
+            signalDensity = {
+                label: "High signal density",
+                description: "Inspection contains multiple technical signals. Review consistency before downstream assessment.",
+                tone: "ready"
+            };
+        } else if (technicalSignals >= 5) {
+            signalDensity = {
+                label: "Moderate signal density",
+                description: "Inspection contains useful technical signals, but further validation may still be needed.",
+                tone: "active"
+            };
+        }
+
+        const firstOpenStage = this.intelligenceStages.find((stage) => counts[stage.key] === 0);
+
+        const nextAction = firstOpenStage
+            ? {
+                label: `Strengthen ${firstOpenStage.label}`,
+                description: `${firstOpenStage.label} data is missing for this inspection. Complete this stage before relying on downstream assessment.`,
+                tone: "active"
+            }
+            : {
+                label: "Review inspection output",
+                description: "Inspection evidence, findings and assessments are represented. Review consistency before recommendations.",
+                tone: "ready"
+            };
+
+        return {
+            counts,
+            completedStages,
+            totalStages,
+            evidenceCoverage,
+            confidenceScore,
+            signalDensity,
+            nextAction,
+            label: evidenceCoverage >= 100
+                ? "Inspection workflow complete"
+                : evidenceCoverage >= 50
+                    ? "Inspection workflow developing"
+                    : "Inspection workflow early"
+        };
+    }
+
+    static renderInspectionIntelligenceSnapshot(inspection = {}, data = {}) {
+        const intelligence = this.getInspectionIntelligence(inspection, data);
+
+        return `
+            <section class="inspection-intelligence" aria-label="Inspection intelligence snapshot">
+                <div class="inspection-intelligence__header">
+                    <div>
+                        <span class="inspection-intelligence__eyebrow">Inspection Intelligence</span>
+                        <strong>${intelligence.label}</strong>
+                        <p>${intelligence.completedStages}/${intelligence.totalStages} inspection stages represented</p>
+                    </div>
+                    <span class="inspection-intelligence__score">${intelligence.confidenceScore}%</span>
+                </div>
+
+                <div class="inspection-intelligence__grid">
+                    <article class="inspection-intelligence__card">
+                        <span>Evidence Coverage</span>
+                        <strong>${intelligence.evidenceCoverage}%</strong>
+                        <p>Coverage across Inspection, Evidence, Finding and Assessment.</p>
+                    </article>
+
+                    <article class="inspection-intelligence__card inspection-intelligence__card--${intelligence.signalDensity.tone}">
+                        <span>Technical Signal Density</span>
+                        <strong>${intelligence.signalDensity.label}</strong>
+                        <p>${intelligence.signalDensity.description}</p>
+                    </article>
+
+                    <article class="inspection-intelligence__card inspection-intelligence__card--${intelligence.nextAction.tone}">
+                        <span>Next Inspection Action</span>
+                        <strong>${intelligence.nextAction.label}</strong>
+                        <p>${intelligence.nextAction.description}</p>
+                    </article>
+                </div>
+            </section>
+        `;
+    }
+
+    static createInspectionIntelligenceSnapshot(inspection = null, data = null) {
+        const currentInspection = inspection || InspectionManager.get();
+
+        if (!currentInspection) {
+            return null;
+        }
+
+        const inspectionData = data || {};
+        const container = document.createElement("section");
+        container.innerHTML = this.renderInspectionIntelligenceSnapshot(currentInspection, inspectionData);
+        return container;
+    }
+
+    static intelligenceStages = [
+        {
+            key: "inspection",
+            label: "Inspection"
+        },
+        {
+            key: "evidence",
+            label: "Evidence"
+        },
+        {
+            key: "finding",
+            label: "Finding"
+        },
+        {
+            key: "assessment",
+            label: "Assessment"
+        }
+    ];
         const fragment = document.createDocumentFragment();
         const inspections = InspectionManager.getAll();
         const activeInspection = InspectionManager.get();
@@ -90,6 +260,11 @@ export default class InspectionPage {
     static createMainLayout(inspections = [], activeInspection = null) {
         const layout = document.createElement("section");
         layout.className = "case-workspace-layout";
+
+        const intelligenceSnapshot = this.createInspectionIntelligenceSnapshot(activeInspection);
+        if (intelligenceSnapshot) {
+            layout.appendChild(intelligenceSnapshot);
+        }
 
         layout.appendChild(this.createContent(inspections));
         layout.appendChild(this.createDetailPanel(activeInspection));
