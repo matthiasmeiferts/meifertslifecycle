@@ -5,6 +5,8 @@ import EventBus from "./events/EventBus.js";
 export default class InspectionManager {
 
     static collection = "inspections";
+    static currentKey = "mbi:currentInspection";
+    static currentInspection = null;
 
     static createInspection(data = {}) {
         if (!data.buildingId) {
@@ -33,12 +35,54 @@ export default class InspectionManager {
         return inspection;
     }
 
-    static getInspection(id) {
-        return StorageManager.load(this.collection, id);
+    static create(data = {}) {
+        return this.createInspection(data);
+    }
+
+    static getInspection(id = null) {
+        if (id) {
+            return StorageManager.load(this.collection, id);
+        }
+
+        return this.get();
+    }
+
+    static set(inspection) {
+        this.currentInspection = inspection;
+        localStorage.setItem(this.currentKey, JSON.stringify(inspection));
+        return inspection;
+    }
+
+    static get() {
+        if (this.currentInspection) return this.currentInspection;
+
+        const raw = localStorage.getItem(this.currentKey);
+
+        if (!raw) return null;
+
+        try {
+            this.currentInspection = JSON.parse(raw);
+            return this.currentInspection;
+        } catch {
+            return null;
+        }
+    }
+
+    static clear() {
+        this.currentInspection = null;
+        localStorage.removeItem(this.currentKey);
+    }
+
+    static load(id) {
+        return this.getInspection(id);
     }
 
     static getAllInspections() {
         return StorageManager.loadAll(this.collection);
+    }
+
+    static getAll() {
+        return this.getAllInspections();
     }
 
     static getInspectionsByBuilding(buildingId) {

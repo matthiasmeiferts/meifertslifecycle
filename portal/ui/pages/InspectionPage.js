@@ -189,7 +189,7 @@ export default class InspectionPage {
         const inspections = InspectionManager.getAllInspections();
         const activeInspection = InspectionManager.getInspection();
 
-        fragment.appendChild(this.createHeader());
+        fragment.appendChild(this.createHeader(activeInspection));
         fragment.appendChild(this.createMetrics(inspections));
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(inspections, activeInspection));
@@ -197,11 +197,13 @@ export default class InspectionPage {
         return fragment;
     }
 
-    static createHeader() {
+    static createHeader(activeInspection = null) {
         return SectionHeader.create({
             eyebrow: "Inspection Workspace",
             title: "Inspections",
-            description: "Plan, document, and manage technical inspections linked to buildings, cases, and evidence.",
+            description: activeInspection
+                ? `Active inspection: `
+                : "Plan, document, and manage technical inspections linked to buildings, cases, and evidence.",
             actions: [
                 {
                     id: "new-inspection",
@@ -255,9 +257,17 @@ export default class InspectionPage {
                 onClick: () => this.refresh()
             },
             {
-                id: "inspection-template",
-                label: "Inspection Template",
+                id: "new-inspection",
+                label: "+ New Inspection",
                 onClick: () => this.createSampleInspection()
+            },
+            {
+                id: "close-inspection",
+                label: "Close Inspection",
+                onClick: () => {
+                    InspectionManager.clear();
+                    this.refresh();
+                }
             }
         ]));
 
