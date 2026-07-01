@@ -14,6 +14,37 @@ export default class BuildingPage {
 
     static searchQuery = "";
 
+    static intelligenceStages = [
+        {
+            key: "inspection",
+            label: "Inspection"
+        },
+        {
+            key: "evidence",
+            label: "Evidence"
+        },
+        {
+            key: "finding",
+            label: "Finding"
+        },
+        {
+            key: "assessment",
+            label: "Assessment"
+        },
+        {
+            key: "recommendation",
+            label: "Recommendation"
+        },
+        {
+            key: "decision",
+            label: "Decision"
+        },
+        {
+            key: "report",
+            label: "Report"
+        }
+    ];
+
     static render() {
         const fragment = document.createDocumentFragment();
 
@@ -79,6 +110,11 @@ export default class BuildingPage {
     static createMainLayout() {
         const layout = document.createElement("section");
         layout.className = "case-workspace-layout";
+
+        const intelligenceSnapshot = this.createBuildingIntelligenceSnapshot();
+        if (intelligenceSnapshot) {
+            layout.appendChild(intelligenceSnapshot);
+        }
 
         layout.appendChild(this.createContent());
         layout.appendChild(this.createDetailPanel());
@@ -173,6 +209,169 @@ export default class BuildingPage {
         });
 
         return wrapper;
+    }
+
+    static getBuildingIntelligence(building = {}, data = {}) {
+        const buildingId = building.id || building.buildingId;
+
+        const filterByBuilding = (items = []) => {
+            if (!Array.isArray(items)) {
+                return [];
+            }
+
+            if (!buildingId) {
+                return items;
+            }
+
+            return items.filter((item) =>
+                item.buildingId === buildingId ||
+                item.linkedBuildingId === buildingId ||
+                item.building === buildingId
+            );
+        };
+
+        const inspections = filterByBuilding(data.inspections || []);
+        const evidence = filterByBuilding(data.evidence || data.evidences || []);
+        const findings = filterByBuilding(data.findings || []);
+        const assessments = filterByBuilding(data.assessments || []);
+        const recommendations = filterByBuilding(data.recommendations || []);
+        const decisions = filterByBuilding(data.decisions || []);
+        const reports = filterByBuilding(data.reports || []);
+
+        const counts = {
+            inspection: inspections.length,
+            evidence: evidence.length,
+            finding: findings.length,
+            assessment: assessments.length,
+            recommendation: recommendations.length,
+            decision: decisions.length,
+            report: reports.length
+        };
+
+        const completedStages = this.intelligenceStages.filter((stage) => counts[stage.key] > 0).length;
+        const totalStages = this.intelligenceStages.length;
+        const lifecycleReadiness = totalStages > 0
+            ? Math.round((completedStages / totalStages) * 100)
+            : 0;
+
+        const technicalSignals =
+            counts.inspection +
+            counts.evidence +
+            counts.finding +
+            counts.assessment;
+
+        const downstreamSignals =
+            counts.recommendation +
+            counts.decision +
+            counts.report;
+
+        const confidenceScore = Math.min(
+            100,
+            Math.round(
+                lifecycleReadiness * 0.58 +
+                Math.min(technicalSignals, 10) * 3 +
+                Math.min(downstreamSignals, 6) * 2
+            )
+        );
+
+        let technicalRisk = {
+            label: "Low technical signal",
+            description: "Building risk logic is still light. More inspection evidence and findings are needed.",
+            tone: "draft"
+        };
+
+        if (technicalSignals >= 10) {
+            technicalRisk = {
+                label: "High technical signal",
+                description: "Multiple technical signals are present. Review lifecycle impact before recommendation or decision.",
+                tone: "ready"
+            };
+        } else if (technicalSignals >= 5) {
+            technicalRisk = {
+                label: "Moderate technical signal",
+                description: "The building contains usable technical signals, but validation may still be needed.",
+                tone: "active"
+            };
+        }
+
+        const firstOpenStage = this.intelligenceStages.find((stage) => counts[stage.key] === 0);
+
+        const nextAction = firstOpenStage
+            ? {
+                label: `Strengthen ${firstOpenStage.label}`,
+                description: `${firstOpenStage.label} data is missing for this building. Complete this stage before relying on final lifecycle output.`,
+                tone: "active"
+            }
+            : {
+                label: "Review building lifecycle output",
+                description: "All building intelligence stages are represented. Review consistency and final decision confidence.",
+                tone: "ready"
+            };
+
+        return {
+            counts,
+            completedStages,
+            totalStages,
+            lifecycleReadiness,
+            confidenceScore,
+            technicalRisk,
+            nextAction,
+            label: lifecycleReadiness >= 100
+                ? "Building lifecycle complete"
+                : lifecycleReadiness >= 50
+                    ? "Building lifecycle developing"
+                    : "Building lifecycle early"
+        };
+    }
+
+    static renderBuildingIntelligenceSnapshot(building = {}, data = {}) {
+        const intelligence = this.getBuildingIntelligence(building, data);
+
+        return `
+            <section class="building-intelligence" aria-label="Building intelligence snapshot">
+                <div class="building-intelligence__header">
+                    <div>
+                        <span class="building-intelligence__eyebrow">Building Intelligence</span>
+                        <strong>${intelligence.label}</strong>
+                        <p>${intelligence.completedStages}/${intelligence.totalStages} lifecycle stages represented</p>
+                    </div>
+                    <span class="building-intelligence__score">${intelligence.confidenceScore}%</span>
+                </div>
+
+                <div class="building-intelligence__grid">
+                    <article class="building-intelligence__card">
+                        <span>Lifecycle Readiness</span>
+                        <strong>${intelligence.lifecycleReadiness}%</strong>
+                        <p>Coverage across Inspection, Evidence, Finding, Assessment, Recommendation, Decision and Report.</p>
+                    </article>
+
+                    <article class="building-intelligence__card building-intelligence__card--${intelligence.technicalRisk.tone}">
+                        <span>Technical Risk Signal</span>
+                        <strong>${intelligence.technicalRisk.label}</strong>
+                        <p>${intelligence.technicalRisk.description}</p>
+                    </article>
+
+                    <article class="building-intelligence__card building-intelligence__card--${intelligence.nextAction.tone}">
+                        <span>Next Building Action</span>
+                        <strong>${intelligence.nextAction.label}</strong>
+                        <p>${intelligence.nextAction.description}</p>
+                    </article>
+                </div>
+            </section>
+        `;
+    }
+
+    static createBuildingIntelligenceSnapshot(building = null, data = null) {
+        const currentBuilding = building || BuildingManager.get();
+
+        if (!currentBuilding) {
+            return null;
+        }
+
+        const buildingData = data || {};
+        const container = document.createElement("section");
+        container.innerHTML = this.renderBuildingIntelligenceSnapshot(currentBuilding, buildingData);
+        return container;
     }
 
     static bindActions() {
