@@ -25,6 +25,14 @@ export default class EvidencePage {
         }
     ];
 
+    static statusLabels = {
+        draft: "Draft",
+        captured: "Captured",
+        linked: "Linked",
+        reviewed: "Reviewed",
+        blocked: "Blocked"
+    };
+
     static render() {
         const fragment = document.createDocumentFragment();
         const activeEvidence = EvidenceManager.get();
@@ -38,6 +46,39 @@ export default class EvidencePage {
         return fragment;
     }
 
+    static getEvidenceStatus(evidence = {}) {
+        if (evidence.blocked || evidence.status === "blocked") {
+            return "blocked";
+        }
+
+        if (evidence.reviewed || evidence.status === "reviewed") {
+            return "reviewed";
+        }
+
+        if (
+            evidence.findingId ||
+            evidence.linkedFindingId ||
+            evidence.finding ||
+            evidence.hasFinding ||
+            evidence.status === "linked"
+        ) {
+            return "linked";
+        }
+
+        if (
+            evidence.captured ||
+            evidence.fileName ||
+            evidence.imageUrl ||
+            evidence.documentUrl ||
+            evidence.photoUrl ||
+            evidence.status === "captured"
+        ) {
+            return "captured";
+        }
+
+        return "draft";
+    }
+
     static getFlowState(evidence = {}) {
         const hasFindingLink =
             Boolean(evidence.findingId) ||
@@ -49,6 +90,13 @@ export default class EvidencePage {
             evidence: "active",
             finding: hasFindingLink ? "complete" : "next"
         };
+    }
+
+    static renderEvidenceStatusBadge(evidence = {}) {
+        const status = this.getEvidenceStatus(evidence);
+        const label = this.statusLabels[status] || "Draft";
+
+        return `<span class="evidence-status evidence-status--${status}">${label}</span>`;
     }
 
     static renderActiveFlowIndicator(evidence = {}) {
@@ -187,13 +235,15 @@ export default class EvidencePage {
         title.textContent = item.title || item.name || item.id || "Evidence Item";
 
         const meta = document.createElement("span");
-        meta.textContent = `${item.evidenceType || item.type || "Evidence"} · ${item.status || "Open"}`;
+        meta.textContent = `${item.evidenceType || item.type || "Evidence"}`;
 
-        const badge = StatusBadge.create(item.status || "Open", "warning");
+        const statusContainer = document.createElement("div");
+        statusContainer.innerHTML = this.renderEvidenceStatusBadge(item);
+        const statusBadge = statusContainer.firstChild;
 
         row.appendChild(title);
         row.appendChild(meta);
-        row.appendChild(badge);
+        row.appendChild(statusBadge);
 
         return row;
     }
@@ -204,13 +254,16 @@ export default class EvidencePage {
                 { label: "Evidence Items", value: String(evidenceItems.length) },
                 { label: "Selected Evidence", value: "Not selected" },
                 { label: "Evidence Status", value: evidenceItems.length ? "In Review" : "Not started" },
+                { label: "Workspace Status", value: "—" },
                 { label: "Next Step", value: "Create or select evidence" }
             ]);
         }
 
+        const statusLabel = this.statusLabels[this.getEvidenceStatus(activeEvidence)] || "Draft";
+
         return DetailPanel.create("Evidence Context", [
             { label: "Selected Evidence", value: activeEvidence.title || activeEvidence.id },
-            { label: "Evidence Status", value: activeEvidence.status || "Open" },
+            { label: "Workspace Status", value: statusLabel },
             { label: "Case ID", value: activeEvidence.caseId || "Not linked" },
             { label: "Linked Findings", value: String(this.countFindingsLinkedToEvidence(activeEvidence.id)) }
         ]);
