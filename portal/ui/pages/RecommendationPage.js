@@ -29,6 +29,7 @@ export default class RecommendationPage {
         if (activeRecommendation) {
             fragment.appendChild(this.createNextActionPanel(activeRecommendation));
             fragment.appendChild(this.createCompletionPanel(activeRecommendation));
+            fragment.appendChild(this.createRecommendationIntelligenceSnapshot(activeRecommendation));
         }
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(recommendations, activeRecommendation));
@@ -462,6 +463,151 @@ export default class RecommendationPage {
 
     static showPendingFeature(feature = "This feature") {
         Notification.info(`${feature} will be added in the next foundation step.`);
+    }
+
+    static getRecommendationIntelligence(recommendation = {}) {
+        const hasIdentity = Boolean(recommendation.title || recommendation.name);
+        const hasAction = Boolean(recommendation.action || recommendation.recommendation || recommendation.description);
+        const hasPriority = Boolean(recommendation.priority || recommendation.urgency);
+        const hasCost = Boolean(recommendation.costEstimate || recommendation.capex || recommendation.budget);
+        const hasAssessmentLink = Boolean(
+            recommendation.assessmentId ||
+            recommendation.linkedAssessmentId ||
+            recommendation.assessment ||
+            recommendation.hasAssessment
+        );
+        const hasDecisionLink = Boolean(
+            recommendation.decisionId ||
+            recommendation.linkedDecisionId ||
+            recommendation.decision ||
+            recommendation.hasDecision
+        );
+        const isReviewed = Boolean(recommendation.reviewed || recommendation.status === "reviewed");
+
+        const checks = [
+            hasIdentity,
+            hasAction,
+            hasPriority,
+            hasCost,
+            hasAssessmentLink,
+            hasDecisionLink,
+            isReviewed
+        ];
+
+        const completed = checks.filter(Boolean).length;
+        const total = checks.length;
+        const readinessPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        const confidenceScore = Math.min(
+            100,
+            Math.round(
+                readinessPercent * 0.64 +
+                (hasAction ? 10 : 0) +
+                (hasPriority ? 8 : 0) +
+                (hasAssessmentLink ? 8 : 0) +
+                (hasDecisionLink ? 10 : 0)
+            )
+        );
+
+        let actionLogicSignal = {
+            label: "Low action logic",
+            description: "Recommendation logic is still incomplete. Define action, priority and assessment context.",
+            tone: "draft"
+        };
+
+        if (hasAction && hasPriority && hasAssessmentLink && hasDecisionLink) {
+            actionLogicSignal = {
+                label: "Strong action logic",
+                description: "Recommendation has clear action logic and is connected to downstream decision workflow.",
+                tone: "ready"
+            };
+        } else if (hasAction && hasPriority) {
+            actionLogicSignal = {
+                label: "Developing action logic",
+                description: "Recommendation has usable action logic but may still need cost, assessment or decision linkage.",
+                tone: "active"
+            };
+        }
+
+        const nextAction = hasDecisionLink
+            ? {
+                label: "Review linked decision",
+                description: "Recommendation is connected to a decision. Review whether governance logic reflects the recommendation.",
+                tone: "ready"
+            }
+            : hasAction && hasPriority
+                ? {
+                    label: "Create or link decision",
+                    description: "Recommendation is complete enough to move into decision review.",
+                    tone: "active"
+                }
+                : {
+                    label: "Define recommended action",
+                    description: "Add a clear action and priority before moving toward decision.",
+                    tone: "draft"
+                };
+
+        return {
+            completed,
+            total,
+            readinessPercent,
+            confidenceScore,
+            actionLogicSignal,
+            nextAction,
+            label: readinessPercent >= 100
+                ? "Recommendation intelligence complete"
+                : readinessPercent >= 50
+                    ? "Recommendation intelligence developing"
+                    : "Recommendation intelligence early"
+        };
+    }
+
+    static renderRecommendationIntelligenceSnapshot(recommendation = {}) {
+        const intelligence = this.getRecommendationIntelligence(recommendation);
+
+        return `
+            <section class="recommendation-intelligence" aria-label="Recommendation intelligence snapshot">
+                <div class="recommendation-intelligence__header">
+                    <div>
+                        <span class="recommendation-intelligence__eyebrow">Recommendation Intelligence</span>
+                        <strong>${intelligence.label}</strong>
+                        <p>${intelligence.completed}/${intelligence.total} recommendation intelligence checks completed</p>
+                    </div>
+                    <span class="recommendation-intelligence__score">${intelligence.confidenceScore}%</span>
+                </div>
+
+                <div class="recommendation-intelligence__grid">
+                    <article class="recommendation-intelligence__card">
+                        <span>Decision Readiness</span>
+                        <strong>${intelligence.readinessPercent}%</strong>
+                        <p>Readiness based on identity, action, priority, cost logic, assessment link, decision link and review state.</p>
+                    </article>
+
+                    <article class="recommendation-intelligence__card recommendation-intelligence__card--${intelligence.actionLogicSignal.tone}">
+                        <span>Action Logic Signal</span>
+                        <strong>${intelligence.actionLogicSignal.label}</strong>
+                        <p>${intelligence.actionLogicSignal.description}</p>
+                    </article>
+
+                    <article class="recommendation-intelligence__card recommendation-intelligence__card--${intelligence.nextAction.tone}">
+                        <span>Next Recommendation Action</span>
+                        <strong>${intelligence.nextAction.label}</strong>
+                        <p>${intelligence.nextAction.description}</p>
+                    </article>
+                </div>
+            </section>
+        `;
+    }
+
+    static createRecommendationIntelligenceSnapshot(recommendation = RecommendationManager.get()) {
+        if (!recommendation || !recommendation.id) {
+            return document.createElement("section");
+        }
+
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderRecommendationIntelligenceSnapshot(recommendation);
+        return container;
     }
 
 }
