@@ -27,15 +27,72 @@ export default class RecommendationPage {
 
         fragment.appendChild(this.createHeader());
         fragment.appendChild(this.createMetrics(recommendations));
+        fragment.appendChild(this.createFlowIndicator(activeRecommendation));
+        fragment.appendChild(this.createNextActionPanel(activeRecommendation));
+        fragment.appendChild(this.createCompletionPanel(activeRecommendation));
+
         if (activeRecommendation) {
-            fragment.appendChild(this.createNextActionPanel(activeRecommendation));
-            fragment.appendChild(this.createCompletionPanel(activeRecommendation));
             fragment.appendChild(this.createRecommendationIntelligenceSnapshot(activeRecommendation));
         }
+
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(recommendations, activeRecommendation));
 
         return fragment;
+    }
+
+    static getFlowState(recommendation = {}) {
+        recommendation = recommendation || {};
+
+        const hasDecisionLink =
+            Boolean(recommendation.decisionId) ||
+            Boolean(recommendation.linkedDecisionId) ||
+            Boolean(recommendation.decision) ||
+            Boolean(recommendation.hasDecision) ||
+            recommendation.status === "decided";
+
+        return {
+            recommendation: "active",
+            decision: hasDecisionLink ? "complete" : "next"
+        };
+    }
+
+    static renderActiveFlowIndicator(recommendation = {}) {
+        recommendation = recommendation || {};
+        const flowState = this.getFlowState(recommendation);
+
+        return `
+            <section class="workspace-flow" aria-label="Active workflow state">
+                <div class="workspace-flow__header">
+                    <span class="workspace-flow__eyebrow">Active Flow</span>
+                    <strong>Recommendation → Decision</strong>
+                </div>
+
+                <div class="workspace-flow__steps">
+                    <div class="workspace-flow__step workspace-flow__step--${flowState.recommendation}">
+                        <span class="workspace-flow__dot"></span>
+                        <div>
+                            <strong>Recommendation</strong>
+                            <p>Technical action recommended</p>
+                        </div>
+                    </div>
+
+                    <div class="workspace-flow__step workspace-flow__step--${flowState.decision}">
+                        <span class="workspace-flow__dot"></span>
+                        <div>
+                            <strong>Decision</strong>
+                            <p>Governance decision derived</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        `;
+    }
+
+    static createFlowIndicator(recommendation = {}) {
+        const container = document.createElement("section");
+        container.innerHTML = this.renderActiveFlowIndicator(recommendation);
+        return container;
     }
 
     static createHeader() {
