@@ -1,5 +1,6 @@
 import WorkspaceController from "../../controllers/WorkspaceController.js";
 import FindingManager from "../../core/FindingManager.js";
+import AssessmentManager from "../../core/AssessmentManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
@@ -50,7 +51,7 @@ export default class FindingPage {
         grid.appendChild(MetricCard.create("Findings", findingCount));
         grid.appendChild(MetricCard.create("Critical", criticalCount));
         grid.appendChild(MetricCard.create("Open", findingCount - reviewedCount));
-        grid.appendChild(MetricCard.create("Selected", FindingManager.get() ? "1" : "0"));
+        grid.appendChild(MetricCard.create("Linked Assessments", this.countAssessmentsLinkedToFinding()));
 
         return grid;
     }
@@ -71,9 +72,9 @@ export default class FindingPage {
                 onClick: () => this.createSampleFinding()
             },
             {
-                id: "review-findings",
-                label: "Review",
-                onClick: () => this.showPendingFeature("Finding review")
+                id: "create-assessment",
+                label: "Create Assessment",
+                onClick: () => this.createAssessmentFromSelectedFinding()
             }
         ]));
 
@@ -152,7 +153,7 @@ export default class FindingPage {
             { label: "Selected Finding", value: activeFinding.title || activeFinding.id },
             { label: "Severity", value: activeFinding.severity || "Normal" },
             { label: "Status", value: activeFinding.status || "Open" },
-            { label: "Next Step", value: "Assess technical relevance and risk" }
+            { label: "Linked Assessments", value: String(this.countAssessmentsLinkedToFinding(activeFinding.id)) }
         ]);
     }
 
@@ -161,6 +162,52 @@ export default class FindingPage {
             () => FindingManager.getAll(),
             []
         );
+    }
+
+    static countAssessmentsLinkedToFinding(findingId = null) {
+        const targetFindingId = findingId || FindingManager.get()?.id;
+
+        if (!targetFindingId) {
+            return 0;
+        }
+
+        return AssessmentManager.getAll()
+            .filter(assessment => (assessment.findingIds || []).includes(targetFindingId))
+            .length;
+    }
+
+    static createAssessmentFromSelectedFinding() {
+        const finding = FindingManager.get();
+
+        if (!finding) {
+            Notification.warning("Select a finding first.");
+            return;
+        }
+
+        const severity = finding.severity || "Medium";
+        const probability = finding.probability || "Medium";
+        const consequence = "Medium";
+
+        const assessment = AssessmentManager.create({
+            caseId: finding.caseId,
+            buildingId: finding.buildingId,
+            inspectionId: finding.inspectionId,
+            findingIds: [finding.id],
+            evidenceIds: finding.evidenceIds || [],
+            title: `Assessment from ${finding.title || finding.id}`,
+            description: finding.description || "Assessment generated from selected finding.",
+            category: finding.category || "General",
+            severity,
+            probability,
+            consequence,
+            riskScore: AssessmentManager.calculateRiskScore(severity, probability, consequence),
+            priority: finding.priority || "Medium",
+            status: "Draft"
+        });
+
+        AssessmentManager.set(assessment);
+        Notification.success("Assessment created from selected finding.");
+        this.refresh();
     }
 
     static refresh() {
