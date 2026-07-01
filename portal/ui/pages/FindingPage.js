@@ -51,6 +51,8 @@ export default class FindingPage {
     }
 
     static getFlowState(finding = {}) {
+        finding = finding || {};
+
         const hasAssessmentLink =
             Boolean(finding.assessmentId) ||
             Boolean(finding.linkedAssessmentId) ||
