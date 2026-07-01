@@ -39,6 +39,7 @@ export default class FindingPage {
 
         fragment.appendChild(this.createHeader());
         fragment.appendChild(this.createFlowIndicator(activeFinding));
+        fragment.appendChild(this.createNextActionPanel(activeFinding));
         fragment.appendChild(this.createMetrics());
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout());
@@ -130,6 +131,71 @@ export default class FindingPage {
         const label = this.statusLabels[status] || "Draft";
 
         return `<span class="evidence-status evidence-status--${status}">${label}</span>`;
+    }
+
+    static getNextAction(finding = {}) {
+        const status = this.getFindingStatus
+            ? this.getFindingStatus(finding)
+            : "draft";
+
+        if (status === "blocked") {
+            return {
+                label: "Resolve blocker",
+                description: "This finding cannot move forward until the blocker is cleared.",
+                tone: "blocked"
+            };
+        }
+
+        if (status === "reviewed") {
+            return {
+                label: "Create or confirm assessment",
+                description: "Finding is reviewed and ready to support a technical assessment.",
+                tone: "ready"
+            };
+        }
+
+        if (status === "assessed") {
+            return {
+                label: "Review linked assessment",
+                description: "This finding is already connected to an assessment. Check risk logic and completeness.",
+                tone: "linked"
+            };
+        }
+
+        if (status === "identified") {
+            return {
+                label: "Assess finding",
+                description: "The finding is identified and should now be assessed for severity, probability and risk impact.",
+                tone: "active"
+            };
+        }
+
+        return {
+            label: "Identify finding",
+            description: "Add a clear technical finding before moving into assessment.",
+            tone: "draft"
+        };
+    }
+
+    static renderNextActionPanel(finding = {}) {
+        const action = this.getNextAction(finding);
+
+        return `
+            <section class="next-action next-action--${action.tone}" aria-label="Next action">
+                <div>
+                    <span class="next-action__eyebrow">Next Action</span>
+                    <strong>${action.label}</strong>
+                    <p>${action.description}</p>
+                </div>
+            </section>
+        `;
+    }
+
+    static createNextActionPanel(finding = {}) {
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderNextActionPanel(finding);
+        return container;
     }
 
     static createHeader() {
