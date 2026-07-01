@@ -28,6 +28,10 @@ export default class RecommendationManager {
 
     static collection = "recommendations";
 
+    static activeKey = "activeRecommendationId";
+
+    static defaultCreator = "System";
+
     // ==================== CONSTANTS ====================
 
     static STATUSES = {
@@ -75,11 +79,10 @@ export default class RecommendationManager {
      */
     static create(data) {
         if (!data) throw new Error("RecommendationManager: data required");
-        if (!data.id) throw new Error("RecommendationManager: id required");
         if (!data.caseId) throw new Error("RecommendationManager: caseId required");
 
         const recommendation = {
-            id: data.id,
+            id: data.id || this.createId(),
             caseId: data.caseId,
             buildingId:  data.buildingId  || null,
             inspectionId: data.inspectionId || null,
@@ -99,7 +102,7 @@ export default class RecommendationManager {
             status:         data.status         || "Draft",
             decisionImpact: data.decisionImpact || "Medium",
 
-            createdBy: data.createdBy || "System",
+            createdBy: data.createdBy || this.defaultCreator,
             createdAt: data.createdAt || new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
@@ -153,7 +156,20 @@ export default class RecommendationManager {
      */
     static update(data) {
         if (!data || !data.id) throw new Error("RecommendationManager: id required");
-        const updated = StorageManager.update(this.collection, { ...data, updatedAt: new Date().toISOString() });
+
+        const existing = this.load(data.id);
+
+        if (!existing) {
+            throw new Error(`RecommendationManager: recommendation not found: ${data.id}`);
+        }
+
+        const updated = StorageManager.update(this.collection, {
+            ...existing,
+            ...data,
+            id: data.id,
+            updatedAt: new Date().toISOString()
+        });
+
         EventBus.emit("recommendation:updated", updated);
         EventBus.emit("recommendation:changed", updated);
         return updated;
@@ -180,6 +196,9 @@ export default class RecommendationManager {
      */
     static delete(id) {
         StorageManager.delete(this.collection, id);
+        if (this.get()?.id === id) {
+            this.clear();
+        }
         EventBus.emit("recommendation:deleted", { id });
         EventBus.emit("recommendation:changed", { id });
         return true;
@@ -203,6 +222,52 @@ export default class RecommendationManager {
     }
 
     /**
+     * Set the active recommendation.
+     * @param {Object} recommendation - Recommendation object
+     * @returns {Object|null} The recommendation if valid
+     */
+    static set(recommendation) {
+        if (!recommendation || !recommendation.id) {
+            return null;
+        }
+
+        localStorage.setItem(this.activeKey, recommendation.id);
+        EventBus.emit("recommendation:selected", recommendation);
+
+        return recommendation;
+    }
+
+    /**
+     * Get the active recommendation.
+     * @returns {Object|null} Active recommendation or null
+     */
+    static get() {
+        const id = localStorage.getItem(this.activeKey);
+
+        if (!id) {
+            return null;
+        }
+
+        return this.load(id);
+    }
+
+    /**
+     * Clear the active recommendation.
+     */
+    static clear() {
+        localStorage.removeItem(this.activeKey);
+        EventBus.emit("recommendation:cleared", null);
+    }
+
+    /**
+     * Create a unique ID for a new recommendation.
+     * @returns {string} Generated ID
+     */
+    static createId() {
+        return `REC-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+    }
+
+    /**
      * Create a recommendation pre-filled from an assessment object.
      * Timeframe and decisionImpact are derived from the assessment risk score.
      * @param {Object} assessment - Source assessment
@@ -210,7 +275,6 @@ export default class RecommendationManager {
      */
     static createFromAssessment(assessment) {
         return this.create({
-            id:          `recommendation-${Date.now()}`,
             caseId:      assessment.caseId,
             buildingId:  assessment.buildingId,
             inspectionId: assessment.inspectionId,
@@ -228,7 +292,7 @@ export default class RecommendationManager {
             responsible:    "Owner",
             decisionImpact: assessment.riskScore >= 60 ? "High" : "Medium",
             status:    "Draft",
-            createdBy: "System"
+            createdBy: this.defaultCreator
         });
     }
 
@@ -242,7 +306,7 @@ export default class RecommendationManager {
     static validate(data) {
         const errors = [];
         if (!data) { errors.push("Recommendation data is required"); return errors; }
-        if (!data.id) errors.push("Recommendation ID is required");
+        if (!data.id) errors.push("Recommendation ID will be generated automatically");
         if (!data.caseId) errors.push("Case ID is required");
         if (!data.title || data.title.trim() === "") errors.push("Title is required");
         if (data.status && !this.isValidStatus(data.status)) {
