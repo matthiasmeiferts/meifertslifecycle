@@ -26,6 +26,9 @@ export default class RecommendationPage {
 
         fragment.appendChild(this.createHeader());
         fragment.appendChild(this.createMetrics(recommendations));
+        if (activeRecommendation) {
+            fragment.appendChild(this.createNextActionPanel(activeRecommendation));
+        }
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(recommendations, activeRecommendation));
 
@@ -162,6 +165,71 @@ export default class RecommendationPage {
                 ${label}
             </span>
         `;
+    }
+
+    static getNextAction(recommendation = {}) {
+        const status = this.getRecommendationStatus
+            ? this.getRecommendationStatus(recommendation)
+            : "draft";
+
+        if (status === "blocked") {
+            return {
+                label: "Resolve blocker",
+                description: "This recommendation cannot move forward until the blocker is cleared.",
+                tone: "blocked"
+            };
+        }
+
+        if (status === "reviewed") {
+            return {
+                label: "Create or confirm decision",
+                description: "Recommendation is reviewed and ready to support a governance decision.",
+                tone: "ready"
+            };
+        }
+
+        if (status === "decided") {
+            return {
+                label: "Review linked decision",
+                description: "This recommendation is already connected to a decision. Check governance logic and completeness.",
+                tone: "linked"
+            };
+        }
+
+        if (status === "recommended") {
+            return {
+                label: "Prepare decision",
+                description: "The recommendation is complete enough to move into decision review.",
+                tone: "active"
+            };
+        }
+
+        return {
+            label: "Define recommendation",
+            description: "Add a clear action, priority or recommendation before moving into decision.",
+            tone: "draft"
+        };
+    }
+
+    static renderNextActionPanel(recommendation = {}) {
+        const action = this.getNextAction(recommendation);
+
+        return `
+            <section class="next-action next-action--${action.tone}" aria-label="Next action">
+                <div>
+                    <span class="next-action__eyebrow">Next Action</span>
+                    <strong>${action.label}</strong>
+                    <p>${action.description}</p>
+                </div>
+            </section>
+        `;
+    }
+
+    static createNextActionPanel(recommendation = {}) {
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderNextActionPanel(recommendation);
+        return container;
     }
 
     static createRecommendationRow(recommendation) {
