@@ -39,6 +39,7 @@ export default class AssessmentPage {
 
         fragment.appendChild(this.createHeader());
         fragment.appendChild(this.createFlowIndicator(activeAssessment));
+        fragment.appendChild(this.createNextActionPanel(activeAssessment));
         fragment.appendChild(this.createMetrics(assessments));
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(assessments, activeAssessment));
@@ -130,6 +131,71 @@ export default class AssessmentPage {
         const label = this.statusLabels[status] || "Draft";
 
         return `<span class="evidence-status evidence-status--${status}">${label}</span>`;
+    }
+
+    static getNextAction(assessment = {}) {
+        const status = this.getAssessmentStatus
+            ? this.getAssessmentStatus(assessment)
+            : "draft";
+
+        if (status === "blocked") {
+            return {
+                label: "Resolve blocker",
+                description: "This assessment cannot move forward until the blocker is cleared.",
+                tone: "blocked"
+            };
+        }
+
+        if (status === "reviewed") {
+            return {
+                label: "Create or confirm recommendation",
+                description: "Assessment is reviewed and ready to support an action recommendation.",
+                tone: "ready"
+            };
+        }
+
+        if (status === "recommended") {
+            return {
+                label: "Review linked recommendation",
+                description: "This assessment is already connected to a recommendation. Check action logic and completeness.",
+                tone: "linked"
+            };
+        }
+
+        if (status === "assessed") {
+            return {
+                label: "Create recommendation",
+                description: "The assessment is complete enough to derive a recommended action.",
+                tone: "active"
+            };
+        }
+
+        return {
+            label: "Complete assessment",
+            description: "Define risk level, severity, probability or impact before creating a recommendation.",
+            tone: "draft"
+        };
+    }
+
+    static renderNextActionPanel(assessment = {}) {
+        const action = this.getNextAction(assessment);
+
+        return `
+            <section class="next-action next-action--${action.tone}" aria-label="Next action">
+                <div>
+                    <span class="next-action__eyebrow">Next Action</span>
+                    <strong>${action.label}</strong>
+                    <p>${action.description}</p>
+                </div>
+            </section>
+        `;
+    }
+
+    static createNextActionPanel(assessment = {}) {
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderNextActionPanel(assessment);
+        return container;
     }
 
     static createHeader() {
