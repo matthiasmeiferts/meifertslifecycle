@@ -2,6 +2,7 @@ import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import WorkspaceController from "../../controllers/WorkspaceController.js";
 import FindingManager from "../../core/FindingManager.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
+import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
@@ -558,20 +559,25 @@ export default class FindingPage {
             isReviewed
         ];
 
-        const completed = checks.filter(Boolean).length;
-        const total = checks.length;
-        const readinessPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
+        const readiness = IntelligenceEngine.getReadinessFromChecks(checks);
+        const completed = readiness.completed;
+        const total = readiness.total;
+        const readinessPercent = readiness.percent;
 
-        const confidenceScore = Math.min(
-            100,
-            Math.round(
-                readinessPercent * 0.66 +
-                (hasSeverity ? 10 : 0) +
-                (hasEvidenceLink ? 8 : 0) +
-                (hasAssessmentLink ? 10 : 0) +
-                (isReviewed ? 6 : 0)
-            )
-        );
+        const confidenceScore = IntelligenceEngine.getConfidenceScore({
+            readinessPercent,
+            primarySignals: hasSeverity ? 1 : 0,
+            downstreamSignals:
+                (hasEvidenceLink ? 1 : 0) +
+                (hasAssessmentLink ? 1 : 0),
+            outputSignals: isReviewed ? 1 : 0,
+            weights: {
+                readiness: 0.66,
+                primary: 10,
+                downstream: 9,
+                output: 6
+            }
+        });
 
         let severitySignal = {
             label: "Low severity signal",

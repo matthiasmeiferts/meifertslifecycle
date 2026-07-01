@@ -2,6 +2,7 @@ import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import WorkspaceController from "../../controllers/WorkspaceController.js";
 import EvidenceManager from "../../core/EvidenceManager.js";
 import FindingManager from "../../core/FindingManager.js";
+import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
@@ -553,19 +554,23 @@ export default class EvidencePage {
             isReviewed
         ];
 
-        const completed = checks.filter(Boolean).length;
-        const total = checks.length;
-        const readinessPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
+        const readiness = IntelligenceEngine.getReadinessFromChecks(checks);
+        const completed = readiness.completed;
+        const total = readiness.total;
+        const readinessPercent = readiness.percent;
 
-        const confidenceScore = Math.min(
-            100,
-            Math.round(
-                readinessPercent * 0.7 +
-                (hasContent ? 10 : 0) +
-                (hasFindingLink ? 10 : 0) +
-                (isReviewed ? 10 : 0)
-            )
-        );
+        const confidenceScore = IntelligenceEngine.getConfidenceScore({
+            readinessPercent,
+            primarySignals: hasContent ? 1 : 0,
+            downstreamSignals: hasFindingLink ? 1 : 0,
+            outputSignals: isReviewed ? 1 : 0,
+            weights: {
+                readiness: 0.7,
+                primary: 10,
+                downstream: 10,
+                output: 10
+            }
+        });
 
         let qualitySignal = {
             label: "Low evidence quality",
