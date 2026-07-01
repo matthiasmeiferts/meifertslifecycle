@@ -25,6 +25,14 @@ export default class FindingPage {
         }
     ];
 
+    static statusLabels = {
+        draft: "Draft",
+        identified: "Identified",
+        assessed: "Assessed",
+        reviewed: "Reviewed",
+        blocked: "Blocked"
+    };
+
     static render() {
         const fragment = document.createDocumentFragment();
         const activeFinding = FindingManager.get();
@@ -82,6 +90,49 @@ export default class FindingPage {
         container.innerHTML = this.renderActiveFlowIndicator(finding);
         return container;
     }
+
+    static getFindingStatus(finding = {}) {
+        if (finding.blocked || finding.status === "blocked") {
+            return "blocked";
+        }
+
+        if (finding.reviewed || finding.status === "reviewed") {
+            return "reviewed";
+        }
+
+        if (
+            finding.assessmentId ||
+            finding.linkedAssessmentId ||
+            finding.assessment ||
+            finding.hasAssessment ||
+            finding.status === "assessed"
+        ) {
+            return "assessed";
+        }
+
+        if (
+            finding.identified ||
+            finding.title ||
+            finding.name ||
+            finding.description ||
+            finding.severity ||
+            finding.priority ||
+            finding.status === "identified"
+        ) {
+            return "identified";
+        }
+
+        return "draft";
+    }
+
+    static renderFindingStatusBadge(finding = {}) {
+        const status = this.getFindingStatus(finding);
+        const label = this.statusLabels[status] || "Draft";
+
+        return `<span class="evidence-status evidence-status--${status}">${label}</span>`;
+    }
+
+    static createHeader() {
         const summary = WorkspaceController.getActiveCaseSummary();
 
         return SectionHeader.create({
@@ -91,7 +142,7 @@ export default class FindingPage {
             actions: [
                 {
                     id: "new-finding",
-                    label: "+New Finding",
+                    label: "+ New Finding",
                     onClick: () => this.createSampleFinding()
                 }
             ]
@@ -187,13 +238,15 @@ export default class FindingPage {
         title.textContent = finding.title || finding.name || finding.id || "Finding Item";
 
         const meta = document.createElement("span");
-        meta.textContent = `${finding.severity || "Normal"} · ${finding.status || "Open"}`;
+        meta.textContent = `${finding.severity || "Normal"}`;
 
-        const badge = StatusBadge.create(finding.status || "Open", "warning");
+        const statusContainer = document.createElement("div");
+        statusContainer.innerHTML = this.renderFindingStatusBadge(finding);
+        const statusBadge = statusContainer.firstChild;
 
         row.appendChild(title);
         row.appendChild(meta);
-        row.appendChild(badge);
+        row.appendChild(statusBadge);
 
         return row;
     }
@@ -204,14 +257,17 @@ export default class FindingPage {
                 { label: "Findings", value: String(findings.length) },
                 { label: "Selected Finding", value: "Not selected" },
                 { label: "Finding Status", value: findings.length ? "In Review" : "Not started" },
+                { label: "Workspace Status", value: "—" },
                 { label: "Next Step", value: "Create or select a finding" }
             ]);
         }
 
+        const statusLabel = this.statusLabels[this.getFindingStatus(activeFinding)] || "Draft";
+
         return DetailPanel.create("Finding Context", [
             { label: "Selected Finding", value: activeFinding.title || activeFinding.id },
+            { label: "Workspace Status", value: statusLabel },
             { label: "Severity", value: activeFinding.severity || "Normal" },
-            { label: "Status", value: activeFinding.status || "Open" },
             { label: "Linked Assessments", value: String(this.countAssessmentsLinkedToFinding(activeFinding.id)) }
         ]);
     }
