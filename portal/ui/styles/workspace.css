@@ -1482,3 +1482,137 @@ button.dashboard-readiness-card__action:focus-visible {
         margin-top: 14px;
     }
 }
+
+/* Foundation Framework 2.4 - Evidence Intelligence Snapshot */
+
+.evidence-intelligence {
+    margin: 18px 0 24px;
+    padding: 18px;
+    border: 1px solid rgba(27, 43, 69, 0.14);
+    border-radius: 8px;
+    background: rgba(246, 242, 233, 0.78);
+    color: #1B2B45;
+}
+
+.evidence-intelligence__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 16px;
+}
+
+.evidence-intelligence__eyebrow {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8E744D;
+}
+
+.evidence-intelligence__header strong {
+    display: block;
+    font-size: 1.04rem;
+    color: #1B2B45;
+}
+
+.evidence-intelligence__header p {
+    margin: 7px 0 0;
+    color: rgba(27, 43, 69, 0.68);
+    line-height: 1.45;
+}
+
+.evidence-intelligence__score {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #1B2B45;
+    color: #FFFFFF;
+    font-size: 1rem;
+    font-weight: 900;
+    flex: 0 0 auto;
+}
+
+.evidence-intelligence__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.evidence-intelligence__card {
+    min-height: 136px;
+    padding: 15px;
+    border: 1px solid rgba(27, 43, 69, 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.evidence-intelligence__card span {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8E744D;
+}
+
+.evidence-intelligence__card strong {
+    display: block;
+    margin-bottom: 7px;
+    color: #1B2B45;
+    font-size: 0.94rem;
+}
+
+.evidence-intelligence__card p {
+    margin: 0;
+    color: rgba(27, 43, 69, 0.66);
+    font-size: 0.8rem;
+    line-height: 1.48;
+}
+
+.evidence-intelligence__card--ready {
+    border-color: rgba(61, 125, 91, 0.32);
+    background: rgba(61, 125, 91, 0.08);
+}
+
+.evidence-intelligence__card--ready span {
+    color: #2F684A;
+}
+
+.evidence-intelligence__card--active,
+.evidence-intelligence__card--linked {
+    border-color: rgba(184, 153, 104, 0.36);
+    background: rgba(184, 153, 104, 0.08);
+}
+
+.evidence-intelligence__card--draft {
+    border-color: rgba(201, 189, 170, 0.34);
+    background: rgba(246, 242, 233, 0.58);
+}
+
+.evidence-intelligence__card--blocked {
+    border-color: rgba(148, 58, 58, 0.34);
+    background: rgba(148, 58, 58, 0.08);
+}
+
+@media (max-width: 980px) {
+    .evidence-intelligence__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    .evidence-intelligence__header {
+        display: block;
+    }
+
+    .evidence-intelligence__score {
+        margin-top: 14px;
+    }
+}
