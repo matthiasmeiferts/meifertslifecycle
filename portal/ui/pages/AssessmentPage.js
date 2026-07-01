@@ -1,3 +1,4 @@
+import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
 import SectionHeader from "../components/SectionHeader.js";
@@ -196,7 +197,7 @@ export default class AssessmentPage {
 
         RecommendationManager.set(recommendation);
         Notification.success("Recommendation created from selected assessment.");
-        this.refresh();
+        WorkspaceRouter.navigate("recommendations");
     }
 
     static getAssessments() {
