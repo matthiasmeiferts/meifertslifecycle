@@ -12,10 +12,25 @@ import Notification from "../components/Notification.js";
 
 export default class FindingPage {
 
+    static flowSteps = [
+        {
+            key: "finding",
+            label: "Finding",
+            description: "Technical finding identified"
+        },
+        {
+            key: "assessment",
+            label: "Assessment",
+            description: "Risk assessment derived"
+        }
+    ];
+
     static render() {
         const fragment = document.createDocumentFragment();
+        const activeFinding = FindingManager.get();
 
         fragment.appendChild(this.createHeader());
+        fragment.appendChild(this.createFlowIndicator(activeFinding));
         fragment.appendChild(this.createMetrics());
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout());
@@ -23,7 +38,50 @@ export default class FindingPage {
         return fragment;
     }
 
-    static createHeader() {
+    static getFlowState(finding = {}) {
+        const hasAssessmentLink =
+            Boolean(finding.assessmentId) ||
+            Boolean(finding.linkedAssessmentId) ||
+            Boolean(finding.assessment) ||
+            Boolean(finding.hasAssessment);
+
+        return {
+            finding: "active",
+            assessment: hasAssessmentLink ? "complete" : "next"
+        };
+    }
+
+    static renderActiveFlowIndicator(finding = {}) {
+        const flowState = this.getFlowState(finding);
+
+        return `
+            <section class="workspace-flow" aria-label="Active workflow state">
+                <div class="workspace-flow__header">
+                    <span class="workspace-flow__eyebrow">Active Flow</span>
+                    <strong>Finding → Assessment</strong>
+                </div>
+
+                <div class="workspace-flow__steps">
+                    ${this.flowSteps.map((step) => `
+                        <div class="workspace-flow__step workspace-flow__step--${flowState[step.key]}">
+                            <div class="workspace-flow__marker"></div>
+                            <div>
+                                <strong>${step.label}</strong>
+                                <span>${step.description}</span>
+                            </div>
+                        </div>
+                    `).join("")}
+                </div>
+            </section>
+        `;
+    }
+
+    static createFlowIndicator(finding = {}) {
+        const container = document.createElement("section");
+        container.className = "workflow-card";
+        container.innerHTML = this.renderActiveFlowIndicator(finding);
+        return container;
+    }
         const summary = WorkspaceController.getActiveCaseSummary();
 
         return SectionHeader.create({
@@ -33,7 +91,7 @@ export default class FindingPage {
             actions: [
                 {
                     id: "new-finding",
-                    label: "+ New Finding",
+                    label: "+New Finding",
                     onClick: () => this.createSampleFinding()
                 }
             ]
