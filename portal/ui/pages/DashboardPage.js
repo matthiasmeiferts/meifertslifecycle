@@ -45,6 +45,7 @@ export default class DashboardPage {
         const readinessOverview = this.createWorkflowReadinessOverview();
         const readinessCards = this.createWorkspaceReadinessCards();
         const bottleneckIndicator = this.createWorkflowBottleneckIndicator();
+        const qualitySummary = this.createWorkflowQualitySummary();
         const workflow = WorkflowCard.create(
             WorkspaceController.getWorkflowState()
         );
@@ -54,6 +55,7 @@ export default class DashboardPage {
         fragment.appendChild(readinessOverview);
         fragment.appendChild(readinessCards);
         fragment.appendChild(bottleneckIndicator);
+        fragment.appendChild(qualitySummary);
         fragment.appendChild(workflow);
 
         return fragment;
@@ -271,5 +273,72 @@ export default class DashboardPage {
     static createWorkflowBottleneckIndicator(data = {}) {
         const container = document.createElement("section");
         container.innerHTML = this.renderWorkflowBottleneckIndicator(data);
+        return container;
+    }
+
+    static getWorkflowQualitySummary(data = {}) {
+        const readiness = this.getWorkflowReadiness
+            ? this.getWorkflowReadiness(data)
+            : {
+                completedStages: 0,
+                totalStages: 6,
+                percent: 0
+            };
+
+        if (readiness.percent >= 100) {
+            return {
+                label: "Complete workflow coverage",
+                description: "All workflow stages are represented. Focus on review quality, consistency and final report confidence.",
+                score: "High",
+                tone: "ready"
+            };
+        }
+
+        if (readiness.percent >= 67) {
+            return {
+                label: "Strong workflow progress",
+                description: "Most workflow stages are represented. Remaining gaps should be closed before final decision or report output.",
+                score: "Medium High",
+                tone: "linked"
+            };
+        }
+
+        if (readiness.percent >= 34) {
+            return {
+                label: "Partial workflow coverage",
+                description: "The workflow is active but still incomplete. Continue linking evidence, findings and downstream decisions.",
+                score: "Medium",
+                tone: "active"
+            };
+        }
+
+        return {
+            label: "Early workflow stage",
+            description: "Only the first workflow stages are represented. Start with evidence capture and finding creation.",
+            score: "Low",
+            tone: "draft"
+        };
+    }
+
+    static renderWorkflowQualitySummary(data = {}) {
+        const summary = this.getWorkflowQualitySummary(data);
+
+        return `
+            <section class="next-action next-action--${summary.tone}" aria-label="Workflow quality summary">
+                <div>
+                    <span class="next-action__eyebrow">Workflow Quality</span>
+                    <strong>${summary.label}</strong>
+                    <p>${summary.description}</p>
+                </div>
+                <span class="evidence-status evidence-status--${summary.tone}">
+                    ${summary.score}
+                </span>
+            </section>
+        `;
+    }
+
+    static createWorkflowQualitySummary(data = {}) {
+        const container = document.createElement("section");
+        container.innerHTML = this.renderWorkflowQualitySummary(data);
         return container;
     }
