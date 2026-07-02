@@ -38,7 +38,7 @@ export default class EvidencePage {
         const fragment = document.createDocumentFragment();
         const activeEvidence = EvidenceManager.get();
 
-        fragment.appendChild(this.createHeader());
+        fragment.appendChild(this.createHeader(activeEvidence));
         fragment.appendChild(this.createFlowIndicator(activeEvidence));
         fragment.appendChild(this.createNextActionPanel(activeEvidence));
         fragment.appendChild(this.createCompletionPanel(activeEvidence));
@@ -311,13 +311,15 @@ export default class EvidencePage {
         return container;
     }
 
-    static createHeader() {
+    static createHeader(activeEvidence = null) {
         const summary = WorkspaceController.getActiveCaseSummary();
 
         return SectionHeader.create({
             eyebrow: "Evidence Workspace",
             title: "Evidence Collection",
-            description: `${summary.title} · Capture, classify, and prepare evidence for findings.`,
+            description: activeEvidence
+                ? `Active evidence: ${activeEvidence.title || activeEvidence.id}`
+                : `${summary.title} · Capture, classify, and prepare evidence for findings.`,
             actions: [
                 {
                     id: "new-evidence",
