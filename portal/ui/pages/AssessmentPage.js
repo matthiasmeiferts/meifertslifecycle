@@ -39,8 +39,12 @@ export default class AssessmentPage {
         const activeAssessment = AssessmentManager.get();
 
         fragment.appendChild(this.createHeader(activeAssessment));
-        fragment.appendChild(this.createFlowIndicator(activeAssessment));
-        fragment.appendChild(this.createNextActionPanel(activeAssessment));
+        const assessmentOverview = document.createElement("section");
+        assessmentOverview.className = "assessment-polish-stack";
+        assessmentOverview.appendChild(this.createFlowIndicator(activeAssessment));
+        assessmentOverview.appendChild(this.createNextActionPanel(activeAssessment));
+
+        fragment.appendChild(assessmentOverview);
         fragment.appendChild(this.createAssessmentIntelligenceSnapshot(activeAssessment));
         fragment.appendChild(this.createMetrics(assessments));
         fragment.appendChild(this.createToolbar());

@@ -2673,3 +2673,23 @@ button.dashboard-readiness-card__action:focus-visible {
     max-width: 860px;
     width: 100%;
 }
+
+/* Foundation Framework 3.8-O: align assessment overview cards */
+.assessment-polish-stack {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.assessment-polish-stack > .workflow-card {
+    margin: 0;
+    width: 100%;
+}
+
+.assessment-polish-stack .workspace-flow,
+.assessment-polish-stack .next-action {
+    max-width: 860px;
+    width: 100%;
+}
