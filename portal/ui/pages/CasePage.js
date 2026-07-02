@@ -167,7 +167,12 @@ export default class CasePage {
                     label: "Case",
                     render: row => {
                         const wrapper = document.createElement("div");
-                        wrapper.className = "case-title-cell";
+                        const currentCase = CaseManager.getCurrent();
+                        const isActive = currentCase?.id === row.id;
+
+                        wrapper.className = isActive
+                            ? "case-title-cell is-active-case"
+                            : "case-title-cell";
 
                         const title = document.createElement("strong");
                         title.textContent = row.title || "Untitled case";
@@ -175,6 +180,13 @@ export default class CasePage {
                         const meta = document.createElement("div");
                         meta.className = "case-title-meta";
                         meta.appendChild(StatusBadge.create(row.status || "Draft", "warning"));
+
+                        if (isActive) {
+                            const active = document.createElement("span");
+                            active.className = "active-case-pill";
+                            active.textContent = "Active";
+                            meta.appendChild(active);
+                        }
 
                         wrapper.appendChild(title);
                         wrapper.appendChild(meta);
