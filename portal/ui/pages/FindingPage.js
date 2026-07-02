@@ -38,7 +38,7 @@ export default class FindingPage {
         const fragment = document.createDocumentFragment();
         const activeFinding = FindingManager.get();
 
-        fragment.appendChild(this.createHeader());
+        fragment.appendChild(this.createHeader(activeFinding));
         fragment.appendChild(this.createFlowIndicator(activeFinding));
         fragment.appendChild(this.createNextActionPanel(activeFinding));
         fragment.appendChild(this.createCompletionPanel(activeFinding));
@@ -315,13 +315,15 @@ export default class FindingPage {
         return container;
     }
 
-    static createHeader() {
+    static createHeader(activeFinding = null) {
         const summary = WorkspaceController.getActiveCaseSummary();
 
         return SectionHeader.create({
             eyebrow: "Finding Workspace",
             title: "Technical Findings",
-            description: `${summary.title} · Convert verified evidence into structured findings.`,
+            description: activeFinding
+                ? `Active finding: ${activeFinding.title || activeFinding.id}`
+                : `${summary.title} · Convert verified evidence into structured findings.`,
             actions: [
                 {
                     id: "new-finding",
@@ -358,6 +360,14 @@ export default class FindingPage {
                 id: "refresh",
                 label: "Refresh",
                 onClick: () => this.refresh()
+            },
+            {
+                id: "close-finding",
+                label: "Close Finding",
+                onClick: () => {
+                    FindingManager.clear();
+                    this.refresh();
+                }
             },
             {
                 id: "link-evidence",
