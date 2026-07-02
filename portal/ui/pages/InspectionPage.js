@@ -202,7 +202,7 @@ export default class InspectionPage {
             eyebrow: "Inspection Workspace",
             title: "Inspections",
             description: activeInspection
-                ? `Active inspection: `
+                ? `Active inspection: ${activeInspection.title || activeInspection.id}`
                 : "Plan, document, and manage technical inspections linked to buildings, cases, and evidence.",
             actions: [
                 {
