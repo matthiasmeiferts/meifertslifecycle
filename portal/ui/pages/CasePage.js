@@ -43,7 +43,6 @@ export default class CasePage {
         const fragment = document.createDocumentFragment();
 
         fragment.appendChild(this.createHeader());
-        fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout());
 
         setTimeout(() => this.bindActions(), 0);
@@ -111,6 +110,8 @@ export default class CasePage {
 
         const primaryColumn = document.createElement("div");
         primaryColumn.className = "workspace-primary-column";
+
+        primaryColumn.appendChild(this.createToolbar());
 
         const intelligenceSnapshot = this.createCaseIntelligenceSnapshot();
         if (intelligenceSnapshot) {

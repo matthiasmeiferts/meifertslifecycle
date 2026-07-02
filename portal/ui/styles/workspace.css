@@ -2547,3 +2547,15 @@ button.dashboard-readiness-card__action:focus-visible {
 .workspace-primary-column > .intelligence-snapshot {
     height: 100%;
 }
+
+/* Foundation Framework 3.8-E: contain case workspace tables */
+.case-workspace-layout > .workspace-primary-column .table-card,
+.case-workspace-layout > .table-card {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.case-workspace-layout > .workspace-primary-column .workspace-table {
+    min-width: 620px;
+}
+
