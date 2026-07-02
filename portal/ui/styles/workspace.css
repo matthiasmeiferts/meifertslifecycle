@@ -2605,3 +2605,50 @@ button.dashboard-readiness-card__action:focus-visible {
 .inspection-workspace-layout > .detail-panel {
     margin-top: 0;
 }
+
+/* Foundation Framework 3.8-L: full-width case toolbar */
+.case-workspace-layout--cases > .workspace-full-width {
+    grid-column: 1 / -1;
+}
+
+.case-workspace-layout--cases > .detail-panel {
+    margin-top: 0;
+}
+
+/* Foundation Framework 3.8-L: full-width case toolbar */
+.case-workspace-layout--cases > .workspace-full-width {
+    grid-column: 1 / -1;
+}
+
+.case-workspace-layout--cases > .detail-panel {
+    margin-top: 0;
+}
+
+/* Foundation Framework 3.8-M: align evidence inner card widths */
+.evidence-polish-stack .workspace-flow,
+.evidence-polish-stack .next-action,
+.evidence-polish-stack .completion-panel {
+    max-width: 860px;
+    width: 100%;
+}
+
+/* Foundation Framework 3.8-M: align evidence overview cards */
+.evidence-polish-stack {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.evidence-polish-stack > .workflow-card {
+    margin: 0;
+    width: 100%;
+}
+
+.evidence-polish-stack .workspace-flow,
+.evidence-polish-stack .next-action,
+.evidence-polish-stack .completion-panel {
+    max-width: 860px;
+    width: 100%;
+}

@@ -39,9 +39,13 @@ export default class EvidencePage {
         const activeEvidence = EvidenceManager.get();
 
         fragment.appendChild(this.createHeader(activeEvidence));
-        fragment.appendChild(this.createFlowIndicator(activeEvidence));
-        fragment.appendChild(this.createNextActionPanel(activeEvidence));
-        fragment.appendChild(this.createCompletionPanel(activeEvidence));
+        const evidenceOverview = document.createElement("section");
+        evidenceOverview.className = "evidence-polish-stack";
+        evidenceOverview.appendChild(this.createFlowIndicator(activeEvidence));
+        evidenceOverview.appendChild(this.createNextActionPanel(activeEvidence));
+        evidenceOverview.appendChild(this.createCompletionPanel(activeEvidence));
+
+        fragment.appendChild(evidenceOverview);
         fragment.appendChild(this.createEvidenceIntelligenceSnapshot(activeEvidence));
         fragment.appendChild(this.createMetrics());
         fragment.appendChild(this.createToolbar());
