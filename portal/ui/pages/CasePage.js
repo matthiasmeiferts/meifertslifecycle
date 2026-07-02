@@ -111,7 +111,8 @@ export default class CasePage {
         const primaryColumn = document.createElement("div");
         primaryColumn.className = "workspace-primary-column";
 
-        primaryColumn.appendChild(this.createToolbar());
+        const toolbar = this.createToolbar();
+        toolbar.classList.add("workspace-full-width");
 
         const intelligenceSnapshot = this.createCaseIntelligenceSnapshot();
         if (intelligenceSnapshot) {
@@ -120,6 +121,7 @@ export default class CasePage {
 
         primaryColumn.appendChild(this.createContent());
 
+        layout.appendChild(toolbar);
         layout.appendChild(primaryColumn);
         layout.appendChild(this.createDetailPanel());
 
