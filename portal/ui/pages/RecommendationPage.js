@@ -137,6 +137,14 @@ export default class RecommendationPage {
                 onClick: () => this.refresh()
             },
             {
+                id: "close-recommendation",
+                label: "Close Recommendation",
+                onClick: () => {
+                    RecommendationManager.clear();
+                    this.refresh();
+                }
+            },
+            {
                 id: "prioritize",
                 label: "Prioritize",
                 onClick: () => this.createSampleRecommendation()
