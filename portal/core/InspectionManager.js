@@ -14,7 +14,7 @@ export default class InspectionManager {
         }
 
         const inspection = {
-            id: IdGenerator.generate("INSP"),
+            id: data.id || "INSP-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
             type: "inspection",
             status: "draft",
             buildingId: data.buildingId,
