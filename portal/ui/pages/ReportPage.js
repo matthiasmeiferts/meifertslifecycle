@@ -586,7 +586,6 @@ export default class ReportPage {
             { label: "Generated", value: activeReport.generatedAt ? new Date(activeReport.generatedAt).toLocaleString() : "Not generated" },
             { label: "Report Type", value: activeReport.reportType || "Technical Due Diligence" },
             { label: "Export Format", value: activeReport.exportFormat || "PDF pending" },
-            { label: "Export Requested", value: activeReport.exportRequestedAt ? new Date(activeReport.exportRequestedAt).toLocaleString() : "Not requested" },
             { label: "Export Requested", value: activeReport.exportRequestedAt ? new Date(activeReport.exportRequestedAt).toLocaleString() : "Not requested" }
         ]);
     }
