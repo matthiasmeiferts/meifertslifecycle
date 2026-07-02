@@ -2510,3 +2510,40 @@ button.dashboard-readiness-card__action:focus-visible {
     max-width: 860px;
     width: 100%;
 }
+
+/* Foundation Framework 3.8-B: workflow height balance */
+.workflow-card:has(.workspace-flow),
+.workflow-card:has(.next-action),
+.workflow-card:has(.completion-panel) {
+    padding-top: 24px;
+    padding-bottom: 24px;
+}
+
+.workflow-card .workspace-flow,
+.workflow-card .next-action,
+.workflow-card .completion-panel {
+    margin: 0;
+}
+
+.workspace-flow {
+    min-height: 132px;
+}
+
+.next-action {
+    min-height: 96px;
+}
+
+.completion-panel {
+    min-height: 132px;
+}
+
+
+/* Foundation Framework 3.8-D: building page column height balance */
+.case-workspace-layout > .workspace-primary-column,
+.case-workspace-layout > .workspace-secondary-column {
+    align-self: stretch;
+}
+
+.workspace-primary-column > .intelligence-snapshot {
+    height: 100%;
+}

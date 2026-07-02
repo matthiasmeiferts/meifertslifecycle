@@ -112,13 +112,22 @@ export default class BuildingPage {
         const layout = document.createElement("section");
         layout.className = "case-workspace-layout";
 
+        const primaryColumn = document.createElement("div");
+        primaryColumn.className = "workspace-primary-column";
+
+        const secondaryColumn = document.createElement("div");
+        secondaryColumn.className = "workspace-secondary-column";
+
         const intelligenceSnapshot = this.createBuildingIntelligenceSnapshot();
         if (intelligenceSnapshot) {
-            layout.appendChild(intelligenceSnapshot);
+            primaryColumn.appendChild(intelligenceSnapshot);
         }
 
-        layout.appendChild(this.createContent());
-        layout.appendChild(this.createDetailPanel());
+        secondaryColumn.appendChild(this.createContent());
+        secondaryColumn.appendChild(this.createDetailPanel());
+
+        layout.appendChild(primaryColumn);
+        layout.appendChild(secondaryColumn);
 
         return layout;
     }
