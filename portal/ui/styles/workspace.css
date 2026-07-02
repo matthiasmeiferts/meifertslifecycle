@@ -2559,3 +2559,9 @@ button.dashboard-readiness-card__action:focus-visible {
     min-width: 620px;
 }
 
+
+
+/* Foundation Framework 3.8-F: align case detail with case table */
+.case-workspace-layout--cases > .detail-panel {
+    margin-top: 142px;
+}

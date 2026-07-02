@@ -106,7 +106,7 @@ export default class CasePage {
 
     static createMainLayout() {
         const layout = document.createElement("section");
-        layout.className = "case-workspace-layout";
+        layout.className = "case-workspace-layout case-workspace-layout--cases";
 
         const primaryColumn = document.createElement("div");
         primaryColumn.className = "workspace-primary-column";
