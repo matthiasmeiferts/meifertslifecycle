@@ -109,12 +109,17 @@ export default class CasePage {
         const layout = document.createElement("section");
         layout.className = "case-workspace-layout";
 
+        const primaryColumn = document.createElement("div");
+        primaryColumn.className = "workspace-primary-column";
+
         const intelligenceSnapshot = this.createCaseIntelligenceSnapshot();
         if (intelligenceSnapshot) {
-            layout.appendChild(intelligenceSnapshot);
+            primaryColumn.appendChild(intelligenceSnapshot);
         }
 
-        layout.appendChild(this.createContent());
+        primaryColumn.appendChild(this.createContent());
+
+        layout.appendChild(primaryColumn);
         layout.appendChild(this.createDetailPanel());
 
         return layout;

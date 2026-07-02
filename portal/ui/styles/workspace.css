@@ -433,7 +433,7 @@ h2 {
 }
 
 .case-workspace-layout .workspace-table {
-    min-width: 680px;
+    min-width: 620px;
 }
 
 .detail-panel {
@@ -2462,4 +2462,30 @@ button.dashboard-readiness-card__action:focus-visible {
     .workspace-detail-layout {
         grid-template-columns: 1fr;
     }
+}
+
+/* Foundation Framework 3.7-E1: page overflow containment */
+.workspace-shell,
+.workspace-main,
+.workspace-content,
+.case-workspace-layout {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.case-workspace-layout .table-card {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+/* Foundation Framework 3.7-E2: workspace primary column alignment */
+.workspace-primary-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+.workspace-primary-column .intelligence-snapshot {
+    margin: 0;
 }
