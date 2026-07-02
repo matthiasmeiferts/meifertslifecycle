@@ -1,4 +1,8 @@
 import ReportManager from "../../core/ReportManager.js";
+import CaseManager from "../../core/CaseManager.js";
+import BuildingManager from "../../core/BuildingManager.js";
+import InspectionManager from "../../core/InspectionManager.js";
+import DecisionManager from "../../core/DecisionManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
@@ -637,10 +641,21 @@ export default class ReportPage {
     }
 
     static createSampleReport(options = {}) {
+        const currentCase = CaseManager.getCurrent();
+        const currentBuilding = BuildingManager.get();
+        const currentInspection = InspectionManager.get();
+        const activeDecision = DecisionManager.get();
+
+        if (!currentCase && !activeDecision) {
+            Notification.info("Open a case or decision before creating a report.");
+            return;
+        }
+
         const report = ReportManager.create({
-            caseId: "demo-case",
-            buildingId: "demo-building",
-            inspectionId: "demo-inspection",
+            caseId: activeDecision?.caseId || currentCase.id,
+            buildingId: activeDecision?.buildingId || currentBuilding?.id || null,
+            inspectionId: activeDecision?.inspectionId || currentInspection?.id || null,
+            decisionIds: activeDecision ? [activeDecision.id] : [],
             title: "Sample Building Intelligence Report",
             reportType: "Technical Due Diligence",
             version: "1.0.0",

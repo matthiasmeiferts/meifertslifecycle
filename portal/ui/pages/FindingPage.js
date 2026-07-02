@@ -1,6 +1,10 @@
 import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import WorkspaceController from "../../controllers/WorkspaceController.js";
 import FindingManager from "../../core/FindingManager.js";
+import EvidenceManager from "../../core/EvidenceManager.js";
+import CaseManager from "../../core/CaseManager.js";
+import BuildingManager from "../../core/BuildingManager.js";
+import InspectionManager from "../../core/InspectionManager.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
@@ -532,10 +536,21 @@ export default class FindingPage {
     }
 
     static createSampleFinding() {
+        const currentCase = CaseManager.getCurrent();
+        const currentBuilding = BuildingManager.get();
+        const currentInspection = InspectionManager.get();
+        const activeEvidence = EvidenceManager.get();
+
+        if (!currentCase) {
+            Notification.info("Open a case before creating a finding.");
+            return;
+        }
+
         const finding = FindingManager.create({
-            caseId: "demo-case",
-            buildingId: "demo-building",
-            inspectionId: "demo-inspection",
+            caseId: activeEvidence?.caseId || currentCase.id,
+            buildingId: activeEvidence?.buildingId || currentBuilding?.id || null,
+            inspectionId: activeEvidence?.inspectionId || currentInspection?.id || null,
+            evidenceIds: activeEvidence ? [activeEvidence.id] : [],
             title: "Sample Finding",
             description: "Initial finding record created from the workspace.",
             category: "General",

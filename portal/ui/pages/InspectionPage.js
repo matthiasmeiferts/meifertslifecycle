@@ -1,4 +1,6 @@
 import InspectionManager from "../../core/InspectionManager.js";
+import CaseManager from "../../core/CaseManager.js";
+import BuildingManager from "../../core/BuildingManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
@@ -373,9 +375,17 @@ export default class InspectionPage {
     }
 
     static createSampleInspection() {
+        const currentCase = CaseManager.getCurrent();
+        const currentBuilding = BuildingManager.get();
+
+        if (!currentCase || !currentBuilding) {
+            Notification.info("Open a case and building before creating an inspection.");
+            return;
+        }
+
         const inspection = InspectionManager.create({
-            buildingId: "demo-building",
-            caseId: "demo-case",
+            buildingId: currentBuilding.id,
+            caseId: currentCase.id,
             title: "Technical Property Review",
             location: "Demo Property",
             notes: "Initial inspection record created from the workspace."

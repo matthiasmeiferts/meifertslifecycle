@@ -1,6 +1,9 @@
 import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import WorkspaceController from "../../controllers/WorkspaceController.js";
 import EvidenceManager from "../../core/EvidenceManager.js";
+import CaseManager from "../../core/CaseManager.js";
+import BuildingManager from "../../core/BuildingManager.js";
+import InspectionManager from "../../core/InspectionManager.js";
 import FindingManager from "../../core/FindingManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
@@ -521,10 +524,19 @@ export default class EvidencePage {
     }
 
     static createSampleEvidence() {
+        const currentCase = CaseManager.getCurrent();
+        const currentBuilding = BuildingManager.get();
+        const currentInspection = InspectionManager.get();
+
+        if (!currentCase) {
+            Notification.info("Open a case before creating evidence.");
+            return;
+        }
+
         const evidence = EvidenceManager.create({
-            caseId: "demo-case",
-            buildingId: "demo-building",
-            inspectionId: "demo-inspection",
+            caseId: currentCase.id,
+            buildingId: currentBuilding?.id || null,
+            inspectionId: currentInspection?.id || null,
             title: "Sample Evidence",
             description: "Initial evidence record created from the workspace.",
             evidenceType: "Photo",

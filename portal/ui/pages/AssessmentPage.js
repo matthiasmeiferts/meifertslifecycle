@@ -1,5 +1,9 @@
 import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
+import FindingManager from "../../core/FindingManager.js";
+import CaseManager from "../../core/CaseManager.js";
+import BuildingManager from "../../core/BuildingManager.js";
+import InspectionManager from "../../core/InspectionManager.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
@@ -407,14 +411,25 @@ export default class AssessmentPage {
     }
 
     static createSampleAssessment() {
-        const severity = "Medium";
+        const currentCase = CaseManager.getCurrent();
+        const currentBuilding = BuildingManager.get();
+        const currentInspection = InspectionManager.get();
+        const activeFinding = FindingManager.get();
+
+        if (!currentCase) {
+            Notification.info("Open a case before creating an assessment.");
+            return;
+        }
+
+        const severity = activeFinding?.severity || "Medium";
         const probability = "Medium";
         const consequence = "Medium";
 
         const assessment = AssessmentManager.create({
-            caseId: "demo-case",
-            buildingId: "demo-building",
-            inspectionId: "demo-inspection",
+            caseId: activeFinding?.caseId || currentCase.id,
+            buildingId: activeFinding?.buildingId || currentBuilding?.id || null,
+            inspectionId: activeFinding?.inspectionId || currentInspection?.id || null,
+            findingIds: activeFinding ? [activeFinding.id] : [],
             title: "Sample Assessment",
             description: "Initial assessment record created from the workspace.",
             category: "General",

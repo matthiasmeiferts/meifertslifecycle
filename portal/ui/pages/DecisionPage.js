@@ -1,6 +1,9 @@
 import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import DecisionManager from "../../core/DecisionManager.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
+import CaseManager from "../../core/CaseManager.js";
+import BuildingManager from "../../core/BuildingManager.js";
+import InspectionManager from "../../core/InspectionManager.js";
 import ReportManager from "../../core/ReportManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
@@ -518,12 +521,20 @@ export default class DecisionPage {
 
     static createSampleDecision() {
         const activeRecommendation = RecommendationManager.get();
+        const currentCase = CaseManager.getCurrent();
+        const currentBuilding = BuildingManager.get();
+        const currentInspection = InspectionManager.get();
+
+        if (!activeRecommendation && !currentCase) {
+            Notification.info("Open a case or recommendation before creating a decision.");
+            return;
+        }
         const decision = activeRecommendation
             ? DecisionManager.createFromRecommendation(activeRecommendation)
             : DecisionManager.create({
-                caseId: "demo-case",
-                buildingId: "demo-building",
-                inspectionId: "demo-inspection",
+                caseId: currentCase.id,
+                buildingId: currentBuilding?.id || null,
+                inspectionId: currentInspection?.id || null,
                 title: "Sample Decision",
                 description: "Initial decision record created from the workspace.",
                 decisionType: "Monitor",

@@ -1,5 +1,9 @@
 import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
+import AssessmentManager from "../../core/AssessmentManager.js";
+import CaseManager from "../../core/CaseManager.js";
+import BuildingManager from "../../core/BuildingManager.js";
+import InspectionManager from "../../core/InspectionManager.js";
 import DecisionManager from "../../core/DecisionManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
@@ -503,10 +507,21 @@ export default class RecommendationPage {
     }
 
     static createSampleRecommendation() {
+        const currentCase = CaseManager.getCurrent();
+        const currentBuilding = BuildingManager.get();
+        const currentInspection = InspectionManager.get();
+        const activeAssessment = AssessmentManager.get();
+
+        if (!currentCase) {
+            Notification.info("Open a case before creating a recommendation.");
+            return;
+        }
+
         const recommendation = RecommendationManager.create({
-            caseId: "demo-case",
-            buildingId: "demo-building",
-            inspectionId: "demo-inspection",
+            caseId: activeAssessment?.caseId || currentCase.id,
+            buildingId: activeAssessment?.buildingId || currentBuilding?.id || null,
+            inspectionId: activeAssessment?.inspectionId || currentInspection?.id || null,
+            assessmentIds: activeAssessment ? [activeAssessment.id] : [],
             title: "Sample Recommendation",
             description: "Initial recommendation record created from the workspace.",
             action: "Review and implement corrective action.",
