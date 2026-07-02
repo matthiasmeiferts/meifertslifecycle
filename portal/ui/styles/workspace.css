@@ -2565,3 +2565,28 @@ button.dashboard-readiness-card__action:focus-visible {
 .case-workspace-layout--cases > .detail-panel {
     margin-top: 132px;
 }
+
+/* Foundation Framework 3.8-H: building register visual label */
+.building-workspace-layout .workspace-secondary-column {
+    gap: 30px;
+}
+
+.building-workspace-layout .workspace-secondary-column > .table-card::before {
+    content: "BUILDING REGISTER";
+    display: block;
+    padding: 18px 24px 10px;
+    color: #8E744D;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* Foundation Framework 3.8-I: building detail spacing and tone */
+.building-workspace-layout .workspace-secondary-column > .detail-panel {
+    margin-top: 16px;
+}
+
+.building-workspace-layout .workspace-secondary-column > .detail-panel h2 {
+    color: #1B2B45;
+}

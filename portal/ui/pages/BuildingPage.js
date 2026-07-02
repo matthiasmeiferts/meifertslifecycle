@@ -110,7 +110,7 @@ export default class BuildingPage {
 
     static createMainLayout() {
         const layout = document.createElement("section");
-        layout.className = "case-workspace-layout";
+        layout.className = "case-workspace-layout building-workspace-layout";
 
         const primaryColumn = document.createElement("div");
         primaryColumn.className = "workspace-primary-column";
