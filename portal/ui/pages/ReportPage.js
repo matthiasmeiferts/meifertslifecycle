@@ -37,7 +37,7 @@ export default class ReportPage {
         const reports = this.getReports();
         const activeReport = ReportManager.get();
 
-        fragment.appendChild(this.createHeader());
+        fragment.appendChild(this.createHeader(activeReport));
         fragment.appendChild(this.createMetrics(reports));
         fragment.appendChild(this.createFinalOutputState(activeReport));
         fragment.appendChild(this.createCompletionPanel(activeReport));
@@ -52,11 +52,13 @@ export default class ReportPage {
         return fragment;
     }
 
-    static createHeader() {
+    static createHeader(activeReport = null) {
         return SectionHeader.create({
             eyebrow: "Report Workspace",
             title: "Reports",
-            description: "Generate professional Technical Due Diligence reports, executive summaries, and Building Intelligence documents.",
+            description: activeReport
+                ? `Active report: ${activeReport.title || activeReport.id}`
+                : "Generate professional Technical Due Diligence reports, executive summaries, and Building Intelligence documents.",
             actions: [
                 {
                     id: "new-report",
@@ -486,14 +488,22 @@ export default class ReportPage {
                 onClick: () => this.refresh()
             },
             {
+                id: "close-report",
+                label: "Close Report",
+                onClick: () => {
+                    ReportManager.clear();
+                    this.refresh();
+                }
+            },
+            {
                 id: "generate-report",
                 label: "Generate Report",
-                onClick: () => this.createSampleReport()
+                onClick: () => this.generateReportOutput()
             },
             {
                 id: "export-pdf",
                 label: "Export PDF",
-                onClick: () => this.showPendingFeature("PDF export")
+                onClick: () => this.exportPdf()
             }
         ]));
 
@@ -544,7 +554,11 @@ export default class ReportPage {
         title.textContent = report.title || report.id || "Report Item";
 
         const meta = document.createElement("span");
-        meta.textContent = `${report.reportType || "Technical Due Diligence"} · ${report.version || "1.0.0"}`;
+        meta.textContent = [
+            report.reportType || "Technical Due Diligence",
+            report.version || "1.0.0",
+            this.statusLabels[this.getReportStatus(report)] || "Draft"
+        ].join(" · ");
 
         const statusContainer = document.createElement("span");
         statusContainer.innerHTML = this.renderReportStatusBadge(report);
@@ -569,8 +583,11 @@ export default class ReportPage {
         return DetailPanel.create("Report Context", [
             { label: "Selected Report", value: activeReport.title || activeReport.id },
             { label: "Report Status", value: activeReport.status || "Draft" },
+            { label: "Generated", value: activeReport.generatedAt ? new Date(activeReport.generatedAt).toLocaleString() : "Not generated" },
             { label: "Report Type", value: activeReport.reportType || "Technical Due Diligence" },
-            { label: "Export Format", value: "PDF pending" }
+            { label: "Export Format", value: activeReport.exportFormat || "PDF pending" },
+            { label: "Export Requested", value: activeReport.exportRequestedAt ? new Date(activeReport.exportRequestedAt).toLocaleString() : "Not requested" },
+            { label: "Export Requested", value: activeReport.exportRequestedAt ? new Date(activeReport.exportRequestedAt).toLocaleString() : "Not requested" }
         ]);
     }
 
@@ -578,7 +595,45 @@ export default class ReportPage {
         return ReportManager.getAll();
     }
 
-    static createSampleReport() {
+    static generateReportOutput() {
+        const existingReport = ReportManager.get();
+        const sourceReport = existingReport || this.createSampleReport({ silent: true });
+
+        const report = ReportManager.update({
+            ...sourceReport,
+            status: "generated",
+            generated: true,
+            generatedAt: new Date().toISOString(),
+            executiveSummary: sourceReport.executiveSummary || "Generated Building Intelligence report output.",
+            scope: sourceReport.scope || "Technical due diligence report scope.",
+            methodology: sourceReport.methodology || "Evidence-first Building Intelligence workflow review."
+        });
+
+        ReportManager.set(report);
+        Notification.success("Report generated.");
+        this.refresh();
+    }
+
+    static exportPdf() {
+        const report = ReportManager.get();
+
+        if (!report) {
+            Notification.warning("Generate or select a report first.");
+            return;
+        }
+
+        const updated = ReportManager.update({
+            ...report,
+            exportFormat: "PDF",
+            exportRequestedAt: new Date().toISOString()
+        });
+
+        ReportManager.set(updated);
+        Notification.info("PDF export hook prepared. Premium PDF pipeline follows in the next report foundation step.");
+        this.refresh();
+    }
+
+    static createSampleReport(options = {}) {
         const report = ReportManager.create({
             caseId: "demo-case",
             buildingId: "demo-building",
@@ -593,8 +648,12 @@ export default class ReportPage {
         });
 
         ReportManager.set(report);
-        Notification.success("Report created.");
-        this.refresh();
+        if (!options.silent) {
+            Notification.success("Report created.");
+            this.refresh();
+        }
+
+        return report;
     }
 
     static refresh() {
