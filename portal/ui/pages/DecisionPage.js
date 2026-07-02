@@ -364,6 +364,14 @@ export default class DecisionPage {
                 onClick: () => this.refresh()
             },
             {
+                id: "close-decision",
+                label: "Close Decision",
+                onClick: () => {
+                    DecisionManager.clear();
+                    this.refresh();
+                }
+            },
+            {
                 id: "decision-log",
                 label: "Decision Log",
                 onClick: () => this.createSampleDecision()
