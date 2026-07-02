@@ -39,8 +39,12 @@ export default class ReportPage {
 
         fragment.appendChild(this.createHeader(activeReport));
         fragment.appendChild(this.createMetrics(reports));
-        fragment.appendChild(this.createFinalOutputState(activeReport));
-        fragment.appendChild(this.createCompletionPanel(activeReport));
+        const reportOverview = document.createElement("section");
+        reportOverview.className = "report-polish-stack";
+        reportOverview.appendChild(this.createFinalOutputState(activeReport));
+        reportOverview.appendChild(this.createCompletionPanel(activeReport));
+
+        fragment.appendChild(reportOverview);
 
         if (activeReport) {
             fragment.appendChild(this.createReportIntelligenceSnapshot(activeReport));

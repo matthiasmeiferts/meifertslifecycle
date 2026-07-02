@@ -2489,3 +2489,24 @@ button.dashboard-readiness-card__action:focus-visible {
 .workspace-primary-column .intelligence-snapshot {
     margin: 0;
 }
+
+/* Foundation Framework 3.8: report visual polish */
+.report-polish-stack {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.report-polish-stack > .workflow-card {
+    margin: 0;
+    width: 100%;
+}
+
+/* Foundation Framework 3.8-A: report card inner width alignment */
+.report-polish-stack .workspace-flow,
+.report-polish-stack .completion-panel {
+    max-width: 860px;
+    width: 100%;
+}
