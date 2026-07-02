@@ -2693,3 +2693,24 @@ button.dashboard-readiness-card__action:focus-visible {
     max-width: 860px;
     width: 100%;
 }
+
+/* Foundation Framework 3.8-P: align decision overview cards */
+.decision-polish-stack {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.decision-polish-stack > .workflow-card {
+    margin: 0;
+    width: 100%;
+}
+
+.decision-polish-stack .workspace-flow,
+.decision-polish-stack .next-action,
+.decision-polish-stack .completion-panel {
+    max-width: 860px;
+    width: 100%;
+}

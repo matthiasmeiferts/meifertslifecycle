@@ -40,9 +40,13 @@ export default class DecisionPage {
 
         fragment.appendChild(this.createHeader());
         fragment.appendChild(this.createMetrics(decisions));
-        fragment.appendChild(this.createFlowIndicator(activeDecision));
-        fragment.appendChild(this.createNextActionPanel(activeDecision));
-        fragment.appendChild(this.createCompletionPanel(activeDecision));
+        const decisionOverview = document.createElement("section");
+        decisionOverview.className = "decision-polish-stack";
+        decisionOverview.appendChild(this.createFlowIndicator(activeDecision));
+        decisionOverview.appendChild(this.createNextActionPanel(activeDecision));
+        decisionOverview.appendChild(this.createCompletionPanel(activeDecision));
+
+        fragment.appendChild(decisionOverview);
 
         if (activeDecision) {
             fragment.appendChild(this.createDecisionIntelligenceSnapshot(activeDecision));
