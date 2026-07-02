@@ -2796,3 +2796,78 @@ button.dashboard-readiness-card__action:focus-visible {
     letter-spacing: 0.04em;
     text-transform: uppercase;
 }
+
+/* Foundation Framework 3.8-S
+   Case workflow continuation actions */
+.case-workflow-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.case-workflow-actions__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.case-workflow-actions__header strong {
+    color: var(--color-navy, #1B2B45);
+    font-size: 1.05rem;
+}
+
+.case-workflow-actions__header p {
+    margin: 0;
+    color: rgba(27, 43, 69, 0.68);
+}
+
+.case-workflow-actions__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.case-workflow-action {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.35rem 0.65rem;
+    align-items: start;
+    width: 100%;
+    padding: 0.85rem;
+    border: 1px solid rgba(27, 43, 69, 0.12);
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.66);
+    color: var(--color-navy, #1B2B45);
+    text-align: left;
+    cursor: pointer;
+}
+
+.case-workflow-action:hover:not(:disabled) {
+    border-color: rgba(184, 153, 104, 0.55);
+    background: rgba(184, 153, 104, 0.08);
+}
+
+.case-workflow-action:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.case-workflow-action__step {
+    grid-row: span 2;
+    color: rgba(184, 153, 104, 0.95);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.case-workflow-action strong {
+    font-size: 0.95rem;
+    line-height: 1.1;
+}
+
+.case-workflow-action p {
+    margin: 0;
+    color: rgba(27, 43, 69, 0.64);
+    font-size: 0.82rem;
+    line-height: 1.35;
+}

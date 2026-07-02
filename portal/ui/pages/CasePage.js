@@ -8,6 +8,7 @@ import StatusBadge from "../components/StatusBadge.js";
 import FormDialog from "../components/FormDialog.js";
 import DetailPanel from "../components/DetailPanel.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 
 export default class CasePage {
 
@@ -124,6 +125,8 @@ export default class CasePage {
         if (intelligenceSnapshot) {
             primaryColumn.appendChild(intelligenceSnapshot);
         }
+
+        primaryColumn.appendChild(this.createWorkflowActions());
 
         layout.appendChild(toolbar);
         layout.appendChild(primaryColumn);
@@ -259,6 +262,101 @@ export default class CasePage {
                 value: this.formatDate(current.updatedAt)
             }
         ]);
+    }
+
+    static createWorkflowActions() {
+        const current = CaseManager.getCurrent();
+
+        const wrapper = document.createElement("section");
+        wrapper.className = "workflow-card case-workflow-actions";
+
+        const header = document.createElement("div");
+        header.className = "case-workflow-actions__header";
+
+        const eyebrow = document.createElement("span");
+        eyebrow.className = "eyebrow";
+        eyebrow.textContent = "Continue Workflow";
+
+        const title = document.createElement("strong");
+        title.textContent = current
+            ? "Move this case through the intelligence chain"
+            : "Select a case to continue the workflow";
+
+        const description = document.createElement("p");
+        description.textContent = current
+            ? "Create or review linked records from Evidence to final Report."
+            : "Open a case first, then continue with evidence, findings and decision output.";
+
+        header.appendChild(eyebrow);
+        header.appendChild(title);
+        header.appendChild(description);
+
+        const actions = document.createElement("div");
+        actions.className = "case-workflow-actions__grid";
+
+        [
+            {
+                label: "Evidence",
+                route: "evidence",
+                description: "Collect photos, documents and inspection inputs."
+            },
+            {
+                label: "Findings",
+                route: "findings",
+                description: "Turn evidence into technical observations."
+            },
+            {
+                label: "Assessments",
+                route: "assessments",
+                description: "Evaluate relevance, severity and lifecycle impact."
+            },
+            {
+                label: "Recommendations",
+                route: "recommendations",
+                description: "Define technical and commercial next steps."
+            },
+            {
+                label: "Decisions",
+                route: "decisions",
+                description: "Prepare decision-ready conclusions."
+            },
+            {
+                label: "Reports",
+                route: "reports",
+                description: "Generate structured output for review."
+            }
+        ].forEach((item, index) => {
+            const button = document.createElement("button");
+            button.className = "case-workflow-action";
+            button.type = "button";
+            button.disabled = !current;
+
+            const step = document.createElement("span");
+            step.className = "case-workflow-action__step";
+            step.textContent = String(index + 1).padStart(2, "0");
+
+            const label = document.createElement("strong");
+            label.textContent = item.label;
+
+            const copy = document.createElement("p");
+            copy.textContent = item.description;
+
+            button.appendChild(step);
+            button.appendChild(label);
+            button.appendChild(copy);
+
+            button.onclick = () => {
+                if (!current) return;
+                WorkspaceRouter.navigate(item.route);
+            };
+
+            actions.appendChild(button);
+        });
+
+        wrapper.appendChild(header);
+        wrapper.appendChild(actions);
+
+        return wrapper;
     }
 
     static createActionButtons(row) {
