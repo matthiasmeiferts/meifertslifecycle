@@ -356,6 +356,14 @@ export default class EvidencePage {
                 onClick: () => this.refresh()
             },
             {
+                id: "close-evidence",
+                label: "Close Evidence",
+                onClick: () => {
+                    EvidenceManager.clear();
+                    this.refresh();
+                }
+            },
+            {
                 id: "upload-evidence",
                 label: "Upload",
                 onClick: () => this.createSampleEvidence()
