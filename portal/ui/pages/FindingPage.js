@@ -39,9 +39,13 @@ export default class FindingPage {
         const activeFinding = FindingManager.get();
 
         fragment.appendChild(this.createHeader(activeFinding));
-        fragment.appendChild(this.createFlowIndicator(activeFinding));
-        fragment.appendChild(this.createNextActionPanel(activeFinding));
-        fragment.appendChild(this.createCompletionPanel(activeFinding));
+        const findingOverview = document.createElement("section");
+        findingOverview.className = "finding-polish-stack";
+        findingOverview.appendChild(this.createFlowIndicator(activeFinding));
+        findingOverview.appendChild(this.createNextActionPanel(activeFinding));
+        findingOverview.appendChild(this.createCompletionPanel(activeFinding));
+
+        fragment.appendChild(findingOverview);
         fragment.appendChild(this.createFindingIntelligenceSnapshot(activeFinding));
         fragment.appendChild(this.createMetrics());
         fragment.appendChild(this.createToolbar());

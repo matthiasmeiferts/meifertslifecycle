@@ -2652,3 +2652,24 @@ button.dashboard-readiness-card__action:focus-visible {
     max-width: 860px;
     width: 100%;
 }
+
+/* Foundation Framework 3.8-N: align finding overview cards */
+.finding-polish-stack {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.finding-polish-stack > .workflow-card {
+    margin: 0;
+    width: 100%;
+}
+
+.finding-polish-stack .workspace-flow,
+.finding-polish-stack .next-action,
+.finding-polish-stack .completion-panel {
+    max-width: 860px;
+    width: 100%;
+}
