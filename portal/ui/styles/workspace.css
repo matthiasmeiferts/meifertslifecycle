@@ -2871,3 +2871,41 @@ button.dashboard-readiness-card__action:focus-visible {
     font-size: 0.82rem;
     line-height: 1.35;
 }
+
+/* Foundation Framework 3.8-T
+   Workflow context banner across downstream workspaces */
+.workflow-context-banner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: 0 0 1.25rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid rgba(184, 153, 104, 0.35);
+    border-radius: 1.1rem;
+    background: rgba(184, 153, 104, 0.08);
+    color: var(--color-navy, #1B2B45);
+}
+
+.workflow-context-banner--empty {
+    border-color: rgba(27, 43, 69, 0.12);
+    background: rgba(255, 255, 255, 0.58);
+}
+
+.workflow-context-banner__eyebrow {
+    color: rgba(184, 153, 104, 0.95);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.workflow-context-banner strong {
+    font-size: 1rem;
+    line-height: 1.2;
+}
+
+.workflow-context-banner p {
+    margin: 0;
+    color: rgba(27, 43, 69, 0.66);
+    font-size: 0.88rem;
+}
