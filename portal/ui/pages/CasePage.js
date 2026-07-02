@@ -219,6 +219,10 @@ export default class CasePage {
                 value: current.status || "Draft"
             },
             {
+                label: "Client / Context",
+                value: current.clientName || current.client || "Not specified"
+            },
+            {
                 label: "Type",
                 value: current.type || "Technical Property Review"
             },
