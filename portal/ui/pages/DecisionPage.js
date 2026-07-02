@@ -1,5 +1,6 @@
 import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import DecisionManager from "../../core/DecisionManager.js";
+import RecommendationManager from "../../core/RecommendationManager.js";
 import ReportManager from "../../core/ReportManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
@@ -516,18 +517,21 @@ export default class DecisionPage {
     }
 
     static createSampleDecision() {
-        const decision = DecisionManager.create({
-            caseId: "demo-case",
-            buildingId: "demo-building",
-            inspectionId: "demo-inspection",
-            title: "Sample Decision",
-            description: "Initial decision record created from the workspace.",
-            decisionType: "Monitor",
-            rationale: "Review technical risk and recommendation chain before final approval.",
-            riskLevel: "Medium",
-            confidence: 70,
-            status: "Draft"
-        });
+        const activeRecommendation = RecommendationManager.get();
+        const decision = activeRecommendation
+            ? DecisionManager.createFromRecommendation(activeRecommendation)
+            : DecisionManager.create({
+                caseId: "demo-case",
+                buildingId: "demo-building",
+                inspectionId: "demo-inspection",
+                title: "Sample Decision",
+                description: "Initial decision record created from the workspace.",
+                decisionType: "Monitor",
+                rationale: "Review technical risk and recommendation chain before final approval.",
+                riskLevel: "Medium",
+                confidence: 70,
+                status: "Draft"
+            });
 
         DecisionManager.set(decision);
         Notification.success("Decision created.");

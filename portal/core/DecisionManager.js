@@ -46,7 +46,8 @@ export default class DecisionManager {
             evidenceIds: data.evidenceIds || [],
             findingIds: data.findingIds || [],
             assessmentIds: data.assessmentIds || [],
-            recommendationIds: data.recommendationIds || [],
+            recommendationId: data.recommendationId || null,
+              recommendationIds: data.recommendationIds || [],
 
             title: data.title || "Decision",
             description: data.description || "",
@@ -180,6 +181,7 @@ export default class DecisionManager {
             caseId: recommendation.caseId,
             buildingId: recommendation.buildingId,
             inspectionId: recommendation.inspectionId,
+            recommendationId: recommendation.id,
             recommendationIds: [recommendation.id],
             assessmentIds: recommendation.assessmentIds || [],
             findingIds: recommendation.findingIds || [],
