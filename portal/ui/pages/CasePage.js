@@ -76,8 +76,11 @@ export default class CasePage {
         wrapper.appendChild(
             SearchBar.create({
                 placeholder: "Search cases...",
+                value: this.getSearchQuery(),
+                buttonLabel: "Suchen",
                 onSearch: value => {
-                    this.searchQuery = value.toLowerCase();
+                    this.searchQuery = (value || "").trim().toLowerCase();
+                    window.sessionStorage.setItem("mbi:caseSearchQuery", this.searchQuery);
                     this.refresh();
                 }
             })
@@ -130,6 +133,21 @@ export default class CasePage {
 
     static createContent() {
         const cases = this.getFilteredCases();
+        const query = this.getSearchQuery();
+
+        if (!cases.length && query) {
+            return EmptyState.create({
+                eyebrow: "Case Search",
+                title: "No matching cases found",
+                description: 'No case matches "' + query + '". Clear the search or try another term.',
+                actionLabel: "Clear Search",
+                onAction: () => {
+                    this.searchQuery = "";
+                    window.sessionStorage.removeItem("mbi:caseSearchQuery");
+                    this.refresh();
+                }
+            });
+        }
 
         if (!cases.length) {
             return EmptyState.create({
@@ -455,34 +473,44 @@ export default class CasePage {
             });
     }
 
+    static getSearchQuery() {
+        return (this.searchQuery || window.sessionStorage.getItem("mbi:caseSearchQuery") || "").trim().toLowerCase();
+    }
+
     static getFilteredCases() {
-
         const cases = CaseManager.getAll();
+        const query = this.getSearchQuery();
 
-        if (!this.searchQuery) return cases;
+        if (!query) return cases;
 
         return cases.filter(item => {
+            const text = [
+                item.id,
+                item.title,
+                item.name,
+                item.client,
+                item.clientName,
+                item.type,
+                item.status,
+                item.buildingId,
+                item.inspectionId,
+                item.updatedAt
+            ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
 
-            const text = `
-                ${item.title || ""}
-                ${item.type || ""}
-                ${item.status || ""}
-            `.toLowerCase();
-
-            return text.includes(this.searchQuery);
-
+            return text.includes(query);
         });
-
     }
 
     static createCase() {
-
         const title = window.prompt("Case title:");
 
         if (!title) return;
 
         CaseManager.create({
-            id: `case-${Date.now()}`,
+            id: "case-" + Date.now(),
             title,
             type: "Technical Property Review",
             status: "Draft",
@@ -490,7 +518,6 @@ export default class CasePage {
         });
 
         this.refresh();
-
     }
 
     static openCase(caseData) {

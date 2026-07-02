@@ -2,22 +2,37 @@ export default class SearchBar {
 
     static create({
         placeholder = "Search…",
+        value = "",
+        buttonLabel = "",
         onSearch = null
     } = {}) {
         const wrapper = document.createElement("div");
         wrapper.className = "search-bar";
 
         wrapper.innerHTML = `
-            <input type="search" placeholder="${placeholder}">
+            <form class="search-bar__form">
+                <input type="search" placeholder="${placeholder}" value="${value}">
+                ${buttonLabel ? `<button type="submit">${buttonLabel}</button>` : ""}
+            </form>
         `;
 
+        const form = wrapper.querySelector("form");
         const input = wrapper.querySelector("input");
 
-        input.addEventListener("input", event => {
+        const runSearch = () => {
             if (typeof onSearch === "function") {
-                onSearch(event.target.value);
+                onSearch(input.value);
             }
-        });
+        };
+
+        if (buttonLabel) {
+            form.addEventListener("submit", event => {
+                event.preventDefault();
+                runSearch();
+            });
+        } else {
+            input.addEventListener("input", runSearch);
+        }
 
         return wrapper;
     }
