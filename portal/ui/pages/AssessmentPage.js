@@ -38,7 +38,7 @@ export default class AssessmentPage {
         const assessments = this.getAssessments();
         const activeAssessment = AssessmentManager.get();
 
-        fragment.appendChild(this.createHeader());
+        fragment.appendChild(this.createHeader(activeAssessment));
         fragment.appendChild(this.createFlowIndicator(activeAssessment));
         fragment.appendChild(this.createNextActionPanel(activeAssessment));
         fragment.appendChild(this.createAssessmentIntelligenceSnapshot(activeAssessment));
@@ -206,11 +206,13 @@ export default class AssessmentPage {
         return container;
     }
 
-    static createHeader() {
+    static createHeader(activeAssessment = null) {
         return SectionHeader.create({
             eyebrow: "Assessment Workspace",
             title: "Assessments",
-            description: "Evaluate findings, determine condition, estimate remaining useful life, assess technical risk, and prepare CAPEX planning.",
+            description: activeAssessment
+                ? `Active assessment: ${activeAssessment.title || activeAssessment.id}`
+                : "Evaluate findings, determine condition, estimate remaining useful life, assess technical risk, and prepare CAPEX planning.",
             actions: [
                 {
                     id: "new-assessment",
@@ -248,6 +250,14 @@ export default class AssessmentPage {
                 id: "refresh",
                 label: "Refresh",
                 onClick: () => this.refresh()
+            },
+            {
+                id: "close-assessment",
+                label: "Close Assessment",
+                onClick: () => {
+                    AssessmentManager.clear();
+                    this.refresh();
+                }
             },
             {
                 id: "risk-model",
