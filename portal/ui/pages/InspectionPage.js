@@ -191,7 +191,6 @@ export default class InspectionPage {
 
         fragment.appendChild(this.createHeader(activeInspection));
         fragment.appendChild(this.createMetrics(inspections));
-        fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout(inspections, activeInspection));
 
         return fragment;
@@ -271,14 +270,23 @@ export default class InspectionPage {
 
     static createMainLayout(inspections = [], activeInspection = null) {
         const layout = document.createElement("section");
-        layout.className = "case-workspace-layout";
+        layout.className = "case-workspace-layout inspection-workspace-layout";
+
+        const primaryColumn = document.createElement("div");
+        primaryColumn.className = "workspace-primary-column";
 
         const intelligenceSnapshot = this.createInspectionIntelligenceSnapshot(activeInspection);
         if (intelligenceSnapshot) {
-            layout.appendChild(intelligenceSnapshot);
+            primaryColumn.appendChild(intelligenceSnapshot);
         }
 
-        layout.appendChild(this.createContent(inspections));
+        primaryColumn.appendChild(this.createContent(inspections));
+
+        const toolbar = this.createToolbar();
+        toolbar.classList.add("workspace-full-width");
+
+        layout.appendChild(toolbar);
+        layout.appendChild(primaryColumn);
         layout.appendChild(this.createDetailPanel(activeInspection));
 
         return layout;

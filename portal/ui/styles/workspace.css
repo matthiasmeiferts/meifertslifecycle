@@ -2590,3 +2590,18 @@ button.dashboard-readiness-card__action:focus-visible {
 .building-workspace-layout .workspace-secondary-column > .detail-panel h2 {
     color: #1B2B45;
 }
+
+/* Foundation Framework 3.8-J: align inspection detail with inspection list */
+.inspection-workspace-layout > .detail-panel {
+    margin-top: 112px;
+}
+
+
+/* Foundation Framework 3.8-K: full-width inspection toolbar */
+.inspection-workspace-layout > .workspace-full-width {
+    grid-column: 1 / -1;
+}
+
+.inspection-workspace-layout > .detail-panel {
+    margin-top: 0;
+}
