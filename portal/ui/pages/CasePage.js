@@ -509,11 +509,20 @@ export default class CasePage {
 
         if (!title) return;
 
+        const clientName = window.prompt("Client / Property context:", "") || "";
+        const type = window.prompt("Case type:", "Technical Property Review") || "Technical Property Review";
+        const status = window.prompt("Status:", "Draft") || "Draft";
+        const buildingId = window.prompt("Building ID / reference:", "") || null;
+        const inspectionId = window.prompt("Inspection ID / reference:", "") || null;
+
         CaseManager.create({
             id: "case-" + Date.now(),
             title,
-            type: "Technical Property Review",
-            status: "Draft",
+            clientName,
+            type,
+            status,
+            buildingId,
+            inspectionId,
             progress: 0
         });
 
