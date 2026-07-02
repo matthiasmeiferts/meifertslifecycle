@@ -164,33 +164,29 @@ export default class CasePage {
             columns: [
                 {
                     key: "title",
-                    label: "Case"
+                    label: "Case",
+                    render: row => {
+                        const wrapper = document.createElement("div");
+                        wrapper.className = "case-title-cell";
+
+                        const title = document.createElement("strong");
+                        title.textContent = row.title || "Untitled case";
+
+                        const meta = document.createElement("div");
+                        meta.className = "case-title-meta";
+                        meta.appendChild(StatusBadge.create(row.status || "Draft", "warning"));
+
+                        wrapper.appendChild(title);
+                        wrapper.appendChild(meta);
+                        wrapper.appendChild(this.createActionButtons(row));
+
+                        return wrapper;
+                    }
                 },
                 {
                     key: "type",
                     label: "Type"
                 },
-                {
-                    key: "status",
-                    label: "Status",
-                    render: row =>
-                        StatusBadge.create(row.status || "Draft", "warning")
-                },
-                {
-                    key: "progress",
-                    label: "Prog.",
-                    render: row => `${row.progress || 0}%`
-                },
-                {
-                    key: "updatedAt",
-                    label: "Upd.",
-                    render: row => this.formatDate(row.updatedAt)
-                },
-                {
-                    key: "actions",
-                    label: "Actions",
-                    render: row => this.createActionButtons(row)
-                }
             ],
             rows: cases,
             onRowClick: row => this.openCase(row)
