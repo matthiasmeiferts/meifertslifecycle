@@ -257,11 +257,6 @@ export default class InspectionPage {
                 onClick: () => this.refresh()
             },
             {
-                id: "new-inspection",
-                label: "+ New Inspection",
-                onClick: () => this.createSampleInspection()
-            },
-            {
                 id: "close-inspection",
                 label: "Close Inspection",
                 onClick: () => {
