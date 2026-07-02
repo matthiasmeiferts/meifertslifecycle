@@ -118,11 +118,11 @@ export default class CasePage {
         toolbar.classList.add("workspace-full-width");
 
         const intelligenceSnapshot = this.createCaseIntelligenceSnapshot();
+        primaryColumn.appendChild(this.createContent());
+
         if (intelligenceSnapshot) {
             primaryColumn.appendChild(intelligenceSnapshot);
         }
-
-        primaryColumn.appendChild(this.createContent());
 
         layout.appendChild(toolbar);
         layout.appendChild(primaryColumn);
