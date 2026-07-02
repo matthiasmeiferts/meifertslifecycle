@@ -5,6 +5,7 @@ import ActionBar from "../components/ActionBar.js";
 import WorkspaceTable from "../components/WorkspaceTable.js";
 import EmptyState from "../components/EmptyState.js";
 import StatusBadge from "../components/StatusBadge.js";
+import FormDialog from "../components/FormDialog.js";
 import DetailPanel from "../components/DetailPanel.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 
@@ -538,22 +539,63 @@ export default class CasePage {
     }
 
     static editCase(caseData) {
+        FormDialog.open({
+            title: "Edit Case",
+            submitLabel: "Save Case",
+            values: {
+                title: caseData.title || "",
+                clientName: caseData.clientName || "",
+                type: caseData.type || "Technical Property Review",
+                status: caseData.status || "Draft",
+                buildingId: caseData.buildingId || "",
+                inspectionId: caseData.inspectionId || ""
+            },
+            fields: [
+                {
+                    id: "title",
+                    label: "Case title"
+                },
+                {
+                    id: "clientName",
+                    label: "Client / Property context"
+                },
+                {
+                    id: "type",
+                    label: "Case type"
+                },
+                {
+                    id: "status",
+                    label: "Status",
+                    type: "select",
+                    options: ["Draft", "In Progress", "Completed", "Archived"]
+                },
+                {
+                    id: "buildingId",
+                    label: "Building ID / reference"
+                },
+                {
+                    id: "inspectionId",
+                    label: "Inspection ID / reference"
+                }
+            ],
+            onSubmit: (values, dialog) => {
+                if (!values.title) return;
 
-        const title = window.prompt(
-            "Edit case title:",
-            caseData.title
-        );
+                CaseManager.open({
+                    ...caseData,
+                    title: values.title,
+                    clientName: values.clientName,
+                    type: values.type,
+                    status: values.status,
+                    buildingId: values.buildingId || null,
+                    inspectionId: values.inspectionId || null,
+                    updatedAt: new Date().toISOString()
+                });
 
-        if (!title) return;
-
-        CaseManager.open({
-            ...caseData,
-            title,
-            updatedAt: new Date().toISOString()
+                dialog.remove();
+                this.refresh();
+            }
         });
-
-        this.refresh();
-
     }
 
     static deleteCase(caseData) {
