@@ -418,13 +418,16 @@ export default class RecommendationPage {
     }
 
     static createRecommendationRow(recommendation) {
-        const row = document.createElement("button");
-        row.type = "button";
+        const row = document.createElement("article");
         row.className = "evidence-row";
         row.addEventListener("click", () => {
             RecommendationManager.set(recommendation);
             this.refresh();
         });
+
+        const content = document.createElement("button");
+        content.type = "button";
+        content.className = "evidence-row__content";
 
         const title = document.createElement("strong");
         title.textContent = recommendation.title || recommendation.id || "Recommendation Item";
@@ -435,9 +438,48 @@ export default class RecommendationPage {
         const statusContainer = document.createElement("span");
         statusContainer.innerHTML = this.renderRecommendationStatusBadge(recommendation);
 
-        row.appendChild(title);
-        row.appendChild(meta);
-        row.appendChild(statusContainer);
+        content.appendChild(title);
+        content.appendChild(meta);
+        content.appendChild(statusContainer);
+
+        const actions = document.createElement("div");
+        actions.className = "evidence-row__actions";
+
+        [
+            ["open", "Open"],
+            ["edit", "Edit"],
+            ["delete", "Delete"]
+        ].forEach(([action, label]) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "button";
+            button.textContent = label;
+
+            button.addEventListener("click", event => {
+                event.stopPropagation();
+
+                if (action === "open") {
+                    RecommendationManager.set(recommendation);
+                    this.refresh();
+                    return;
+                }
+
+                if (action === "edit") {
+                    RecommendationManager.set(recommendation);
+                    this.editSelectedRecommendation();
+                    return;
+                }
+
+                if (action === "delete") {
+                    this.deleteRecommendation(recommendation);
+                }
+            });
+
+            actions.appendChild(button);
+        });
+
+        row.appendChild(content);
+        row.appendChild(actions);
 
         return row;
     }
@@ -713,6 +755,107 @@ export default class RecommendationPage {
 
     }
 
+
+    static editSelectedRecommendation() {
+        const recommendation = RecommendationManager.get();
+
+        if (!recommendation) {
+            Notification.info("Select a recommendation before editing.");
+            return;
+        }
+
+        FormDialog.open({
+            title: "Edit Recommendation",
+            submitLabel: "Save Recommendation",
+            values: {
+                title: recommendation.title || "",
+                description: recommendation.description || "",
+                action: recommendation.action || "",
+                priority: recommendation.priority || "Medium",
+                timeframe: recommendation.timeframe || "Short Term",
+                estimatedCost: recommendation.estimatedCost || 0,
+                currency: recommendation.currency || "EUR",
+                responsible: recommendation.responsible || "Owner",
+                decisionImpact: recommendation.decisionImpact || "Medium",
+                status: recommendation.status || "Draft"
+            },
+            fields: [
+                { id: "title", label: "Recommendation title" },
+                { id: "description", label: "Description" },
+                { id: "action", label: "Recommended action" },
+                {
+                    id: "priority",
+                    label: "Priority",
+                    type: "select",
+                    options: ["Low", "Medium", "High", "Critical"]
+                },
+                {
+                    id: "timeframe",
+                    label: "Timeframe",
+                    type: "select",
+                    options: ["Immediate", "Short Term", "Medium Term", "Long Term"]
+                },
+                { id: "estimatedCost", label: "Estimated cost", type: "number" },
+                {
+                    id: "currency",
+                    label: "Currency",
+                    type: "select",
+                    options: ["EUR", "THB", "USD"]
+                },
+                { id: "responsible", label: "Responsible" },
+                {
+                    id: "decisionImpact",
+                    label: "Decision impact",
+                    type: "select",
+                    options: ["Low", "Medium", "High", "Critical"]
+                },
+                {
+                    id: "status",
+                    label: "Status",
+                    type: "select",
+                    options: ["Draft", "Recommended", "Decided", "Reviewed", "Blocked"]
+                }
+            ],
+            onSubmit: (values, dialog) => {
+                if (!values.title) return;
+
+                const updated = RecommendationManager.update({
+                    ...recommendation,
+                    title: values.title,
+                    description: values.description || "",
+                    action: values.action || "",
+                    priority: values.priority || "Medium",
+                    timeframe: values.timeframe || "Short Term",
+                    estimatedCost: Number(values.estimatedCost || 0),
+                    currency: values.currency || "EUR",
+                    responsible: values.responsible || "Owner",
+                    decisionImpact: values.decisionImpact || "Medium",
+                    status: values.status || "Draft",
+                    updatedAt: new Date().toISOString()
+                });
+
+                RecommendationManager.set(updated);
+                dialog.remove();
+                Notification.success("Recommendation updated.");
+                this.refresh();
+            }
+        });
+    }
+
+    static deleteRecommendation(item) {
+        if (!window.confirm(`Delete recommendation "${item.title || item.id}"?`)) {
+            return;
+        }
+
+        RecommendationManager.delete(item.id);
+
+        if (RecommendationManager.get()?.id === item.id) {
+            RecommendationManager.clear();
+        }
+
+        Notification.success("Recommendation deleted.");
+        this.refresh();
+    }
 
     static refresh() {
         const container = document.getElementById("workspace-page");
