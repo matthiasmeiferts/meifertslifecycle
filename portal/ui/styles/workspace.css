@@ -3381,3 +3381,31 @@ button.dashboard-readiness-card__action:focus-visible {
 .workspace-primary-column > .case-workflow-actions {
     margin-right: auto;
 }
+
+/* Foundation Framework 3.8-AG: case table scroll and height alignment */
+.case-workspace-layout--cases > .workspace-primary-column > .table-card {
+    min-height: 26rem;
+    overflow-x: hidden;
+}
+
+.case-workspace-layout--cases > .workspace-primary-column > .table-card > .workspace-table {
+    min-width: 0;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.case-workspace-layout--cases > .workspace-primary-column > .table-card > .workspace-table th:first-child,
+.case-workspace-layout--cases > .workspace-primary-column > .table-card > .workspace-table td:first-child {
+    width: 58%;
+}
+
+.case-workspace-layout--cases > .workspace-primary-column > .table-card > .workspace-table th:last-child,
+.case-workspace-layout--cases > .workspace-primary-column > .table-card > .workspace-table td:last-child {
+    width: 42%;
+}
+
+.case-workspace-layout--cases > .workspace-primary-column > .table-card > .workspace-table td,
+.case-workspace-layout--cases > .workspace-primary-column > .table-card > .workspace-table th {
+    overflow-wrap: anywhere;
+    vertical-align: top;
+}
