@@ -553,30 +553,68 @@ export default class ReportPage {
     }
 
     static createReportRow(report) {
-        const row = document.createElement("button");
-        row.type = "button";
+        const row = document.createElement("article");
         row.className = "evidence-row";
         row.addEventListener("click", () => {
             ReportManager.set(report);
             this.refresh();
         });
 
+        const content = document.createElement("button");
+        content.type = "button";
+        content.className = "evidence-row__content";
+
         const title = document.createElement("strong");
         title.textContent = report.title || report.id || "Report Item";
 
         const meta = document.createElement("span");
-        meta.textContent = [
-            report.reportType || "Technical Due Diligence",
-            report.version || "1.0.0",
-            this.statusLabels[this.getReportStatus(report)] || "Draft"
-        ].join(" · ");
+        meta.textContent = `${report.reportType || "Technical Due Diligence"} · ${report.status || "Draft"}`;
 
         const statusContainer = document.createElement("span");
         statusContainer.innerHTML = this.renderReportStatusBadge(report);
 
-        row.appendChild(title);
-        row.appendChild(meta);
-        row.appendChild(statusContainer);
+        content.appendChild(title);
+        content.appendChild(meta);
+        content.appendChild(statusContainer);
+
+        const actions = document.createElement("div");
+        actions.className = "evidence-row__actions";
+
+        [
+            ["open", "Open"],
+            ["edit", "Edit"],
+            ["delete", "Delete"]
+        ].forEach(([action, label]) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "button";
+            button.textContent = label;
+
+            button.addEventListener("click", event => {
+                event.stopPropagation();
+
+                if (action === "open") {
+                    ReportManager.set(report);
+                    this.refresh();
+                    return;
+                }
+
+                if (action === "edit") {
+                    ReportManager.set(report);
+                    this.editSelectedReport();
+                    return;
+                }
+
+                if (action === "delete") {
+                    this.deleteReport(report);
+                }
+            });
+
+            actions.appendChild(button);
+        });
+
+        row.appendChild(content);
+        row.appendChild(actions);
 
         return row;
     }
@@ -729,6 +767,83 @@ export default class ReportPage {
                 dialog.remove();
             }
         });
+    }
+
+    static editSelectedReport() {
+        const report = ReportManager.get();
+
+        if (!report) {
+            Notification.info("Select a report before editing.");
+            return;
+        }
+
+        FormDialog.open({
+            title: "Edit Report",
+            submitLabel: "Save Report",
+            values: {
+                title: report.title || "",
+                reportType: report.reportType || "Technical Due Diligence",
+                version: report.version || "1.0.0",
+                executiveSummary: report.executiveSummary || "",
+                scope: report.scope || "",
+                methodology: report.methodology || "",
+                status: report.status || "Draft"
+            },
+            fields: [
+                { id: "title", label: "Report title" },
+                {
+                    id: "reportType",
+                    label: "Report type",
+                    type: "select",
+                    options: ["Technical Due Diligence", "Building Intelligence Report", "Condition Assessment", "CAPEX Review"]
+                },
+                { id: "version", label: "Version" },
+                { id: "executiveSummary", label: "Executive summary" },
+                { id: "scope", label: "Scope" },
+                { id: "methodology", label: "Methodology" },
+                {
+                    id: "status",
+                    label: "Status",
+                    type: "select",
+                    options: ["Draft", "Prepared", "Reviewed", "Final", "Archived"]
+                }
+            ],
+            onSubmit: (values, dialog) => {
+                if (!values.title) return;
+
+                const updated = ReportManager.update({
+                    ...report,
+                    title: values.title,
+                    reportType: values.reportType || "Technical Due Diligence",
+                    version: values.version || "1.0.0",
+                    executiveSummary: values.executiveSummary || "",
+                    scope: values.scope || "",
+                    methodology: values.methodology || "",
+                    status: values.status || "Draft",
+                    updatedAt: new Date().toISOString()
+                });
+
+                ReportManager.set(updated);
+                dialog.remove();
+                Notification.success("Report updated.");
+                this.refresh();
+            }
+        });
+    }
+
+    static deleteReport(item) {
+        if (!window.confirm(`Delete report "${item.title || item.id}"?`)) {
+            return;
+        }
+
+        ReportManager.delete(item.id);
+
+        if (ReportManager.get()?.id === item.id) {
+            ReportManager.clear();
+        }
+
+        Notification.success("Report deleted.");
+        this.refresh();
     }
 
     static refresh() {
