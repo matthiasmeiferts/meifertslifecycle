@@ -704,32 +704,17 @@ export default class ReportPage {
                 status: "Draft"
             },
             fields: [
-                {
-                    id: "title",
-                    label: "Report title"
-                },
+                { id: "title", label: "Report title" },
                 {
                     id: "reportType",
                     label: "Report type",
                     type: "select",
                     options: ["Technical Due Diligence", "Building Intelligence Report", "Condition Assessment", "CAPEX Review"]
                 },
-                {
-                    id: "version",
-                    label: "Version"
-                },
-                {
-                    id: "executiveSummary",
-                    label: "Executive summary"
-                },
-                {
-                    id: "scope",
-                    label: "Scope"
-                },
-                {
-                    id: "methodology",
-                    label: "Methodology"
-                },
+                { id: "version", label: "Version" },
+                { id: "executiveSummary", label: "Executive summary" },
+                { id: "scope", label: "Scope" },
+                { id: "methodology", label: "Methodology" },
                 {
                     id: "status",
                     label: "Status",
