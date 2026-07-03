@@ -59,6 +59,11 @@ export default class ReportPage {
         }
 
         fragment.appendChild(this.createToolbar());
+
+        if (activeReport) {
+            fragment.appendChild(this.createReportPreview(activeReport));
+        }
+
         fragment.appendChild(this.createMainLayout(reports, activeReport));
 
         return fragment;
@@ -569,7 +574,7 @@ export default class ReportPage {
         title.textContent = report.title || report.id || "Report Item";
 
         const meta = document.createElement("span");
-        meta.textContent = `${report.reportType || "Technical Due Diligence"} · ${report.status || "Draft"}`;
+        meta.textContent = `${report.reportType || "Technical Due Diligence"} · ${this.formatReportStatus(report)}`;
 
         const statusContainer = document.createElement("span");
         statusContainer.innerHTML = this.renderReportStatusBadge(report);
@@ -620,6 +625,88 @@ export default class ReportPage {
         return row;
     }
 
+    static escapeHtml(value = "") {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    static formatReportStatus(report = {}) {
+        const status = this.getReportStatus(report);
+        return this.statusLabels[status] || report.status || "Draft";
+    }
+
+    static formatIdList(values = []) {
+        return values.length ? values.join(", ") : "Legacy / not linked";
+    }
+
+    static createReportPreview(report = {}) {
+        const section = document.createElement("section");
+        section.className = "workflow-card report-preview";
+
+        const rows = [
+            ["Case ID", report.caseId || "Not linked"],
+            ["Decision IDs", this.formatIdList(report.decisionIds || [])],
+            ["Recommendation IDs", this.formatIdList(report.recommendationIds || [])],
+            ["Assessment IDs", this.formatIdList(report.assessmentIds || [])],
+            ["Finding IDs", this.formatIdList(report.findingIds || [])],
+            ["Export Format", report.exportFormat || "PDF pending"],
+            ["Generated", report.generatedAt ? new Date(report.generatedAt).toLocaleString() : "Not generated"]
+        ];
+
+        section.innerHTML = `
+            <article class="report-preview__document">
+                <header class="report-preview__cover">
+                    <div>
+                        <span class="report-preview__eyebrow">MEIFERTS Building Intelligence</span>
+                        <h2>${this.escapeHtml(report.title || "Building Intelligence Report")}</h2>
+                        <p>${this.escapeHtml(report.reportType || "Technical Due Diligence")}</p>
+                    </div>
+                    <div class="report-preview__status">
+                        <span>Status</span>
+                        <strong>${this.escapeHtml(this.formatReportStatus(report))}</strong>
+                    </div>
+                </header>
+
+                <section class="report-preview__section report-preview__summary">
+                    <span class="report-preview__section-label">Executive Summary</span>
+                    <p>${this.escapeHtml(report.executiveSummary || "No executive summary available.")}</p>
+                </section>
+
+                <div class="report-preview__grid">
+                    <section class="report-preview__section">
+                        <span class="report-preview__section-label">Scope</span>
+                        <p>${this.escapeHtml(report.scope || "No scope defined.")}</p>
+                    </section>
+
+                    <section class="report-preview__section">
+                        <span class="report-preview__section-label">Methodology</span>
+                        <p>${this.escapeHtml(report.methodology || "Evidence-based workflow review.")}</p>
+                    </section>
+                </div>
+
+                <section class="report-preview__section">
+                    <span class="report-preview__section-label">Workflow Context</span>
+                    <table class="report-preview__table">
+                        <tbody>
+                            ${rows.map(([label, value]) => `
+                                <tr>
+                                    <th>${this.escapeHtml(label)}</th>
+                                    <td>${this.escapeHtml(value)}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                </section>
+            </article>
+        `;
+
+        return section;
+    }
+
     static createDetailPanel(activeReport = ReportManager.get(), reports = this.getReports()) {
         if (!activeReport) {
             return DetailPanel.create("Report Context", [
@@ -632,7 +719,7 @@ export default class ReportPage {
 
         return DetailPanel.create("Report Context", [
             { label: "Selected Report", value: activeReport.title || activeReport.id },
-            { label: "Report Status", value: activeReport.status || "Draft" },
+            { label: "Report Status", value: this.formatReportStatus(activeReport) },
             { label: "Case ID", value: activeReport.caseId || "Not linked" },
             { label: "Decision IDs", value: (activeReport.decisionIds || []).join(", ") || "None" },
             { label: "Recommendation IDs", value: (activeReport.recommendationIds || []).join(", ") || "None" },
@@ -672,7 +759,7 @@ export default class ReportPage {
         const report = ReportManager.get();
 
         if (!report) {
-            Notification.warning("Generate or select a report first.");
+            Notification.warning("Select a report first.");
             return;
         }
 
@@ -683,7 +770,7 @@ export default class ReportPage {
         });
 
         ReportManager.set(updated);
-        Notification.info("PDF export hook prepared. Premium PDF pipeline follows in the next report foundation step.");
+        Notification.info("PDF export marked. Use the report preview as the current printable output.");
         this.refresh();
     }
 
