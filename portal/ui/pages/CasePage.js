@@ -232,6 +232,10 @@ export default class CasePage {
 
         return DetailPanel.create(current.title, [
             {
+                label: "Case ID",
+                value: current.id || "Not available"
+            },
+            {
                 label: "Status",
                 value: current.status || "Draft"
             },
@@ -304,6 +308,20 @@ export default class CasePage {
             builderButton.textContent = "Create Workflow Chain";
             builderButton.addEventListener("click", () => this.createWorkflowChainBuilder());
             header.appendChild(builderButton);
+
+            const repairButton = document.createElement("button");
+            repairButton.type = "button";
+            repairButton.className = "button";
+            repairButton.textContent = "Repair Workflow Links";
+            repairButton.addEventListener("click", () => this.repairWorkflowLinks());
+            header.appendChild(repairButton);
+
+            const orphanButton = document.createElement("button");
+            orphanButton.type = "button";
+            orphanButton.className = "button";
+            orphanButton.textContent = "Clean Orphan Records";
+            orphanButton.addEventListener("click", () => this.cleanOrphanWorkflowRecords());
+            header.appendChild(orphanButton);
         }
 
         const actions = document.createElement("div");
@@ -630,6 +648,196 @@ export default class CasePage {
         });
     }
 
+
+    static cleanOrphanWorkflowRecords() {
+        const caseIds = new Set(CaseManager.getAll().map(item => item.id));
+        const groups = [
+            ["Evidence", EvidenceManager],
+            ["Finding", FindingManager],
+            ["Assessment", AssessmentManager],
+            ["Recommendation", RecommendationManager],
+            ["Decision", DecisionManager],
+            ["Report", ReportManager]
+        ];
+
+        const orphanRecords = groups.flatMap(([label, manager]) =>
+            manager.getAll()
+                .filter(item => item.caseId && !caseIds.has(item.caseId))
+                .map(item => ({ label, manager, item }))
+        );
+
+        if (!orphanRecords.length) {
+            window.alert("No orphan workflow records found.");
+            return;
+        }
+
+        const summary = orphanRecords
+            .map(record => `${record.label}: ${record.item.title || record.item.id} (${record.item.caseId})`)
+            .join("\n");
+
+        const confirmed = window.confirm(
+            `Delete ${orphanRecords.length} orphan workflow records?\n\n${summary}`
+        );
+
+        if (!confirmed) return;
+
+        orphanRecords.forEach(record => {
+            record.manager.delete(record.item.id);
+        });
+
+        window.alert(`${orphanRecords.length} orphan workflow records deleted.`);
+        this.refresh();
+    }
+
+    static repairWorkflowLinks() {
+        const current = CaseManager.getCurrent();
+
+        if (!current) {
+            window.alert("Open a case before repairing workflow links.");
+            return;
+        }
+
+        const unique = values => [...new Set((values || []).filter(Boolean))];
+
+        const evidenceItems = EvidenceManager.getByCase(current.id);
+        const findingItems = FindingManager.getByCase(current.id);
+        const assessmentItems = AssessmentManager.getByCase(current.id);
+        const recommendationItems = RecommendationManager.getByCase(current.id);
+        const decisionItems = DecisionManager.getByCase(current.id);
+        const reportItems = ReportManager.getByCase(current.id);
+
+        evidenceItems.forEach(evidence => {
+            const linkedFindings = findingItems
+                .filter(finding => (finding.evidenceIds || []).includes(evidence.id))
+                .map(finding => finding.id);
+
+            const linkedAssessments = assessmentItems
+                .filter(assessment => (assessment.evidenceIds || []).includes(evidence.id))
+                .map(assessment => assessment.id);
+
+            EvidenceManager.set(EvidenceManager.update({
+                ...evidence,
+                findingIds: unique([...(evidence.findingIds || []), ...linkedFindings]),
+                assessmentIds: unique([...(evidence.assessmentIds || []), ...linkedAssessments]),
+                updatedAt: new Date().toISOString()
+            }));
+        });
+
+        findingItems.forEach(finding => {
+            const linkedAssessments = assessmentItems
+                .filter(assessment => (assessment.findingIds || []).includes(finding.id))
+                .map(assessment => assessment.id);
+
+            const linkedRecommendations = recommendationItems
+                .filter(recommendation => (recommendation.findingIds || []).includes(finding.id))
+                .map(recommendation => recommendation.id);
+
+            FindingManager.set(FindingManager.update({
+                ...finding,
+                assessmentIds: unique([...(finding.assessmentIds || []), ...linkedAssessments]),
+                recommendationIds: unique([...(finding.recommendationIds || []), ...linkedRecommendations]),
+                updatedAt: new Date().toISOString()
+            }));
+        });
+
+        assessmentItems.forEach(assessment => {
+            const linkedEvidenceIds = findingItems
+                .filter(finding => (assessment.findingIds || []).includes(finding.id))
+                .flatMap(finding => finding.evidenceIds || []);
+
+            const linkedRecommendations = recommendationItems
+                .filter(recommendation => (recommendation.assessmentIds || []).includes(assessment.id))
+                .map(recommendation => recommendation.id);
+
+            AssessmentManager.set(AssessmentManager.update({
+                ...assessment,
+                evidenceIds: unique([...(assessment.evidenceIds || []), ...linkedEvidenceIds]),
+                recommendationIds: unique([...(assessment.recommendationIds || []), ...linkedRecommendations]),
+                updatedAt: new Date().toISOString()
+            }));
+        });
+
+        recommendationItems.forEach(recommendation => {
+            const linkedFindingIds = assessmentItems
+                .filter(assessment => (recommendation.assessmentIds || []).includes(assessment.id))
+                .flatMap(assessment => assessment.findingIds || []);
+
+            const linkedDecisions = decisionItems
+                .filter(decision => (decision.recommendationIds || []).includes(recommendation.id))
+                .map(decision => decision.id);
+
+            RecommendationManager.set(RecommendationManager.update({
+                ...recommendation,
+                findingIds: unique([...(recommendation.findingIds || []), ...linkedFindingIds]),
+                decisionIds: unique([...(recommendation.decisionIds || []), ...linkedDecisions]),
+                updatedAt: new Date().toISOString()
+            }));
+        });
+
+        decisionItems.forEach(decision => {
+            const linkedAssessmentIds = recommendationItems
+                .filter(recommendation => (decision.recommendationIds || []).includes(recommendation.id))
+                .flatMap(recommendation => recommendation.assessmentIds || []);
+
+            const linkedFindingIds = recommendationItems
+                .filter(recommendation => (decision.recommendationIds || []).includes(recommendation.id))
+                .flatMap(recommendation => recommendation.findingIds || []);
+
+            const linkedReports = reportItems
+                .filter(report => (report.decisionIds || []).includes(decision.id))
+                .map(report => report.id);
+
+            DecisionManager.set(DecisionManager.update({
+                ...decision,
+                assessmentIds: unique([...(decision.assessmentIds || []), ...linkedAssessmentIds]),
+                findingIds: unique([...(decision.findingIds || []), ...linkedFindingIds]),
+                reportIds: unique([...(decision.reportIds || []), ...linkedReports]),
+                updatedAt: new Date().toISOString()
+            }));
+        });
+
+        reportItems.forEach(report => {
+            const linkedRecommendationIds = decisionItems
+                .filter(decision => (report.decisionIds || []).includes(decision.id))
+                .flatMap(decision => decision.recommendationIds || []);
+
+            const linkedAssessmentIds = decisionItems
+                .filter(decision => (report.decisionIds || []).includes(decision.id))
+                .flatMap(decision => decision.assessmentIds || []);
+
+            const linkedFindingIds = [
+                ...decisionItems
+                    .filter(decision => (report.decisionIds || []).includes(decision.id))
+                    .flatMap(decision => decision.findingIds || []),
+                ...assessmentItems
+                    .filter(assessment => (report.assessmentIds || []).includes(assessment.id))
+                    .flatMap(assessment => assessment.findingIds || [])
+            ];
+
+            ReportManager.set(ReportManager.update({
+                ...report,
+                recommendationIds: unique([...(report.recommendationIds || []), ...linkedRecommendationIds]),
+                assessmentIds: unique([...(report.assessmentIds || []), ...linkedAssessmentIds]),
+                findingIds: unique([...(report.findingIds || []), ...linkedFindingIds]),
+                updatedAt: new Date().toISOString()
+            }));
+        });
+
+        CaseManager.setCurrent({
+            ...current,
+            evidenceIds: unique([...(current.evidenceIds || []), ...evidenceItems.map(item => item.id)]),
+            findingIds: unique([...(current.findingIds || []), ...findingItems.map(item => item.id)]),
+            assessmentIds: unique([...(current.assessmentIds || []), ...assessmentItems.map(item => item.id)]),
+            recommendationIds: unique([...(current.recommendationIds || []), ...recommendationItems.map(item => item.id)]),
+            decisionIds: unique([...(current.decisionIds || []), ...decisionItems.map(item => item.id)]),
+            reportIds: unique([...(current.reportIds || []), ...reportItems.map(item => item.id)]),
+            updatedAt: new Date().toISOString()
+        });
+        CaseManager.save();
+
+        window.alert("Workflow links repaired for active case.");
+        this.refresh();
+    }
 
     static createWorkflowChainBuilder() {
         const current = CaseManager.getCurrent();
