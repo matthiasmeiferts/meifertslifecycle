@@ -3250,3 +3250,49 @@ button.dashboard-readiness-card__action:focus-visible {
         padding: 0 !important;
     }
 }
+
+/* Foundation Framework 3.8-AE: case workflow action hierarchy */
+.case-workflow-actions__tools {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    max-width: 38rem;
+}
+
+.case-workflow-actions__primary {
+    justify-content: center;
+    width: 100%;
+}
+
+.case-workflow-actions__maintenance {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.case-workflow-actions__maintenance-label {
+    color: var(--muted-text);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    margin-right: 0.25rem;
+    text-transform: uppercase;
+}
+
+.case-workflow-actions__maintenance-button {
+    font-size: 0.86rem;
+    min-height: 2.25rem;
+    padding-inline: 0.85rem;
+}
+
+@media (max-width: 720px) {
+    .case-workflow-actions__maintenance {
+        align-items: stretch;
+        display: grid;
+    }
+
+    .case-workflow-actions__maintenance-label {
+        margin-right: 0;
+    }
+}

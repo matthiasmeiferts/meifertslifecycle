@@ -302,26 +302,40 @@ export default class CasePage {
         header.appendChild(description);
 
         if (current) {
+            const workflowTools = document.createElement("div");
+            workflowTools.className = "case-workflow-actions__tools";
+
             const builderButton = document.createElement("button");
             builderButton.type = "button";
-            builderButton.className = "button button--primary";
+            builderButton.className = "button button--primary case-workflow-actions__primary";
             builderButton.textContent = "Create Workflow Chain";
             builderButton.addEventListener("click", () => this.createWorkflowChainBuilder());
-            header.appendChild(builderButton);
+            workflowTools.appendChild(builderButton);
+
+            const maintenance = document.createElement("div");
+            maintenance.className = "case-workflow-actions__maintenance";
+
+            const maintenanceLabel = document.createElement("span");
+            maintenanceLabel.className = "case-workflow-actions__maintenance-label";
+            maintenanceLabel.textContent = "Maintenance";
+            maintenance.appendChild(maintenanceLabel);
 
             const repairButton = document.createElement("button");
             repairButton.type = "button";
-            repairButton.className = "button";
-            repairButton.textContent = "Repair Workflow Links";
+            repairButton.className = "button button--secondary case-workflow-actions__maintenance-button";
+            repairButton.textContent = "Repair Links";
             repairButton.addEventListener("click", () => this.repairWorkflowLinks());
-            header.appendChild(repairButton);
+            maintenance.appendChild(repairButton);
 
             const orphanButton = document.createElement("button");
             orphanButton.type = "button";
-            orphanButton.className = "button";
-            orphanButton.textContent = "Clean Orphan Records";
+            orphanButton.className = "button button--secondary case-workflow-actions__maintenance-button";
+            orphanButton.textContent = "Clean Orphans";
             orphanButton.addEventListener("click", () => this.cleanOrphanWorkflowRecords());
-            header.appendChild(orphanButton);
+            maintenance.appendChild(orphanButton);
+
+            workflowTools.appendChild(maintenance);
+            header.appendChild(workflowTools);
         }
 
         const actions = document.createElement("div");
