@@ -317,27 +317,68 @@ export default class AssessmentPage {
     }
 
     static createAssessmentRow(assessment) {
-        const row = document.createElement("button");
-        row.type = "button";
+        const row = document.createElement("article");
         row.className = "evidence-row";
         row.addEventListener("click", () => {
             AssessmentManager.set(assessment);
             this.refresh();
         });
 
+        const content = document.createElement("button");
+        content.type = "button";
+        content.className = "evidence-row__content";
+
         const title = document.createElement("strong");
         title.textContent = assessment.title || assessment.id || "Assessment Item";
 
         const meta = document.createElement("span");
-        meta.textContent = `${assessment.severity || "Unrated"} · Risk ${assessment.riskScore || 0}`;
+        meta.textContent = `${assessment.category || "General"} · Risk ${assessment.riskScore || 0}`;
 
-        const statusContainer = document.createElement("div");
+        const statusContainer = document.createElement("span");
         statusContainer.innerHTML = this.renderAssessmentStatusBadge(assessment);
-        const statusBadge = statusContainer.firstChild;
 
-        row.appendChild(title);
-        row.appendChild(meta);
-        row.appendChild(statusBadge);
+        content.appendChild(title);
+        content.appendChild(meta);
+        content.appendChild(statusContainer);
+
+        const actions = document.createElement("div");
+        actions.className = "evidence-row__actions";
+
+        [
+            ["open", "Open"],
+            ["edit", "Edit"],
+            ["delete", "Delete"]
+        ].forEach(([action, label]) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "button";
+            button.textContent = label;
+
+            button.addEventListener("click", event => {
+                event.stopPropagation();
+
+                if (action === "open") {
+                    AssessmentManager.set(assessment);
+                    this.refresh();
+                    return;
+                }
+
+                if (action === "edit") {
+                    AssessmentManager.set(assessment);
+                    this.editSelectedAssessment();
+                    return;
+                }
+
+                if (action === "delete") {
+                    this.deleteAssessment(assessment);
+                }
+            });
+
+            actions.appendChild(button);
+        });
+
+        row.appendChild(content);
+        row.appendChild(actions);
 
         return row;
     }
@@ -512,6 +553,111 @@ export default class AssessmentPage {
                 this.refresh();
             }
         });
+    }
+
+    static editSelectedAssessment() {
+        const assessment = AssessmentManager.get();
+
+        if (!assessment) {
+            Notification.info("Select an assessment before editing.");
+            return;
+        }
+
+        FormDialog.open({
+            title: "Edit Assessment",
+            submitLabel: "Save Assessment",
+            values: {
+                title: assessment.title || "",
+                description: assessment.description || "",
+                category: assessment.category || "General",
+                severity: assessment.severity || "Medium",
+                probability: assessment.probability || "Medium",
+                consequence: assessment.consequence || "Medium",
+                priority: assessment.priority || "Medium",
+                status: assessment.status || "Draft"
+            },
+            fields: [
+                { id: "title", label: "Assessment title" },
+                { id: "description", label: "Description" },
+                {
+                    id: "category",
+                    label: "Category",
+                    type: "select",
+                    options: ["General", "Envelope", "Roof", "Structure", "MEP", "Moisture", "Fire Safety", "Other"]
+                },
+                {
+                    id: "severity",
+                    label: "Severity",
+                    type: "select",
+                    options: ["Low", "Medium", "High", "Critical"]
+                },
+                {
+                    id: "probability",
+                    label: "Probability",
+                    type: "select",
+                    options: ["Low", "Medium", "High"]
+                },
+                {
+                    id: "consequence",
+                    label: "Consequence",
+                    type: "select",
+                    options: ["Low", "Medium", "High"]
+                },
+                {
+                    id: "priority",
+                    label: "Priority",
+                    type: "select",
+                    options: ["Low", "Medium", "High", "Critical"]
+                },
+                {
+                    id: "status",
+                    label: "Status",
+                    type: "select",
+                    options: ["Draft", "Assessed", "Recommended", "Reviewed", "Blocked"]
+                }
+            ],
+            onSubmit: (values, dialog) => {
+                if (!values.title) return;
+
+                const updated = AssessmentManager.update({
+                    ...assessment,
+                    title: values.title,
+                    description: values.description || "",
+                    category: values.category || "General",
+                    severity: values.severity || "Medium",
+                    probability: values.probability || "Medium",
+                    consequence: values.consequence || "Medium",
+                    riskScore: AssessmentManager.calculateRiskScore(
+                        values.severity || "Medium",
+                        values.probability || "Medium",
+                        values.consequence || "Medium"
+                    ),
+                    priority: values.priority || "Medium",
+                    status: values.status || "Draft",
+                    updatedAt: new Date().toISOString()
+                });
+
+                AssessmentManager.set(updated);
+                dialog.remove();
+                Notification.success("Assessment updated.");
+                this.refresh();
+            }
+        });
+    }
+
+    static deleteAssessment(item) {
+        if (!window.confirm(`Delete assessment "${item.title || item.id}"?`)) {
+            return;
+        }
+
+        AssessmentManager.delete(item.id);
+
+        if (AssessmentManager.get()?.id === item.id) {
+            AssessmentManager.clear();
+        }
+
+        Notification.success("Assessment deleted.");
+        this.refresh();
     }
 
     static refresh() {
