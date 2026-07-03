@@ -9,6 +9,7 @@ import ReportManager from "../../core/ReportManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
+import WorkflowProgressPanel from "../components/WorkflowProgressPanel.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
 import DetailPanel from "../components/DetailPanel.js";
@@ -46,7 +47,9 @@ export default class DecisionPage {
         const activeDecision = DecisionManager.get();
 
         fragment.appendChild(this.createHeader());
-        fragment.appendChild(WorkflowContextBanner.create(CaseManager.getCurrent()));
+        const currentCase = CaseManager.getCurrent();
+        fragment.appendChild(WorkflowContextBanner.create(currentCase));
+        fragment.appendChild(WorkflowProgressPanel.create(currentCase, "decisions"));
         fragment.appendChild(this.createMetrics(decisions));
         const decisionOverview = document.createElement("section");
         decisionOverview.className = "decision-polish-stack";

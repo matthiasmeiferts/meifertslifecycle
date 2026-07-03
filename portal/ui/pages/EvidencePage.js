@@ -8,6 +8,7 @@ import FindingManager from "../../core/FindingManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
+import WorkflowProgressPanel from "../components/WorkflowProgressPanel.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
 import DetailPanel from "../components/DetailPanel.js";
@@ -44,7 +45,9 @@ export default class EvidencePage {
         const activeEvidence = EvidenceManager.get();
 
         fragment.appendChild(this.createHeader(activeEvidence));
-        fragment.appendChild(WorkflowContextBanner.create(CaseManager.getCurrent()));
+        const currentCase = CaseManager.getCurrent();
+        fragment.appendChild(WorkflowContextBanner.create(currentCase));
+        fragment.appendChild(WorkflowProgressPanel.create(currentCase, "evidence"));
         const evidenceOverview = document.createElement("section");
         evidenceOverview.className = "evidence-polish-stack";
         evidenceOverview.appendChild(this.createFlowIndicator(activeEvidence));

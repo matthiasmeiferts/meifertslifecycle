@@ -3473,3 +3473,97 @@ button.dashboard-readiness-card__action:focus-visible {
         justify-content: flex-start;
     }
 }
+
+.workflow-progress-panel {
+    display: grid;
+    gap: 14px;
+    margin: 0 0 18px;
+    padding: 16px;
+    border: 1px solid rgba(27, 43, 69, 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.workflow-progress-panel__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.workflow-progress-panel__header strong {
+    color: #1b2b45;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+}
+
+.workflow-progress-panel__header span {
+    color: rgba(27, 43, 69, 0.58);
+    font-size: 12px;
+}
+
+.workflow-progress-panel__steps {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.workflow-progress-panel__step {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+    padding: 10px 11px;
+    border: 1px solid rgba(27, 43, 69, 0.1);
+    border-radius: 7px;
+    background: rgba(246, 242, 232, 0.64);
+}
+
+.workflow-progress-panel__step--current {
+    border-color: rgba(184, 153, 104, 0.72);
+    box-shadow: inset 0 0 0 1px rgba(184, 153, 104, 0.18);
+}
+
+.workflow-progress-panel__step--ready {
+    background: rgba(237, 246, 239, 0.82);
+}
+
+.workflow-progress-panel__step--empty,
+.workflow-progress-panel__step--inactive {
+    background: rgba(246, 242, 232, 0.54);
+}
+
+.workflow-progress-panel__label {
+    overflow: hidden;
+    color: #1b2b45;
+    font-size: 12px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.workflow-progress-panel__status {
+    color: rgba(27, 43, 69, 0.58);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.workflow-progress-panel__step--ready .workflow-progress-panel__status {
+    color: #2f6f43;
+}
+
+@media (max-width: 960px) {
+    .workflow-progress-panel__steps {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .workflow-progress-panel__header {
+        display: grid;
+        gap: 4px;
+    }
+
+    .workflow-progress-panel__steps {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

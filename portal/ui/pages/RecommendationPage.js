@@ -8,6 +8,7 @@ import DecisionManager from "../../core/DecisionManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
+import WorkflowProgressPanel from "../components/WorkflowProgressPanel.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
 import DetailPanel from "../components/DetailPanel.js";
@@ -32,7 +33,9 @@ export default class RecommendationPage {
         const activeRecommendation = RecommendationManager.get();
 
         fragment.appendChild(this.createHeader());
-        fragment.appendChild(WorkflowContextBanner.create(CaseManager.getCurrent()));
+        const currentCase = CaseManager.getCurrent();
+        fragment.appendChild(WorkflowContextBanner.create(currentCase));
+        fragment.appendChild(WorkflowProgressPanel.create(currentCase, "recommendations"));
         fragment.appendChild(this.createMetrics(recommendations));
         fragment.appendChild(this.createFlowIndicator(activeRecommendation));
         fragment.appendChild(this.createNextActionPanel(activeRecommendation));

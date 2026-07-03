@@ -7,6 +7,7 @@ import AssessmentManager from "../../core/AssessmentManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
+import WorkflowProgressPanel from "../components/WorkflowProgressPanel.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
 import DetailPanel from "../components/DetailPanel.js";
@@ -45,7 +46,9 @@ export default class ReportPage {
         const activeReport = ReportManager.get();
 
         fragment.appendChild(this.createHeader(activeReport));
-        fragment.appendChild(WorkflowContextBanner.create(CaseManager.getCurrent()));
+        const currentCase = CaseManager.getCurrent();
+        fragment.appendChild(WorkflowContextBanner.create(currentCase));
+        fragment.appendChild(WorkflowProgressPanel.create(currentCase, "reports"));
         fragment.appendChild(this.createMetrics(reports));
         const reportOverview = document.createElement("section");
         reportOverview.className = "report-polish-stack";
