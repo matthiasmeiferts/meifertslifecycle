@@ -541,13 +541,18 @@ export default class RecommendationPage {
             return;
         }
 
+        const resolvedFindingIds = (recommendation.findingIds || []).length
+            ? recommendation.findingIds
+            : (recommendation.assessmentIds || [])
+                .flatMap(id => AssessmentManager.load(id)?.findingIds || []);
+
         const decision = DecisionManager.create({
             caseId: recommendation.caseId,
             buildingId: recommendation.buildingId || currentCase?.buildingId || null,
             inspectionId: recommendation.inspectionId || currentCase?.inspectionId || null,
             recommendationIds: [recommendation.id],
             assessmentIds: recommendation.assessmentIds || [],
-            findingIds: recommendation.findingIds || [],
+            findingIds: [...new Set(resolvedFindingIds)],
             title: `Decision from ${recommendation.title || recommendation.id}`,
             description: recommendation.description || "Decision generated from selected recommendation.",
             decisionType: "Monitor",
@@ -558,6 +563,25 @@ export default class RecommendationPage {
         });
 
         DecisionManager.set(decision);
+
+        const activeCaseForSync = CaseManager.getCurrent();
+        if (activeCaseForSync) {
+            CaseManager.setCurrent({
+                ...activeCaseForSync,
+                decisionIds: [...new Set([...(activeCaseForSync.decisionIds || []), decision.id])],
+                updatedAt: new Date().toISOString()
+            });
+            CaseManager.save();
+        }
+
+        const updatedRecommendation = RecommendationManager.update({
+            ...recommendation,
+            decisionIds: [...new Set([...(recommendation.decisionIds || []), decision.id])],
+            updatedAt: new Date().toISOString()
+        });
+
+        RecommendationManager.set(updatedRecommendation);
+
         Notification.success("Decision created from selected recommendation.");
         WorkspaceRouter.navigate("decisions");
     }
@@ -724,7 +748,12 @@ export default class RecommendationPage {
 
                 if (!values.title) return;
 
-                const recommendation = RecommendationManager.create({
+                if (!activeAssessment) {
+            Notification.info("Select an assessment before creating a recommendation.");
+            return;
+        }
+
+        const recommendation = RecommendationManager.create({
 
                     caseId: activeAssessment?.caseId || currentCase.id,
 

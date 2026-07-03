@@ -580,6 +580,25 @@ export default class FindingPage {
         });
 
         AssessmentManager.set(assessment);
+
+        const activeCaseForSync = CaseManager.getCurrent();
+        if (activeCaseForSync) {
+            CaseManager.setCurrent({
+                ...activeCaseForSync,
+                assessmentIds: [...new Set([...(activeCaseForSync.assessmentIds || []), assessment.id])],
+                updatedAt: new Date().toISOString()
+            });
+            CaseManager.save();
+        }
+
+        const updatedFinding = FindingManager.update({
+            ...finding,
+            assessmentIds: [...new Set([...(finding.assessmentIds || []), assessment.id])],
+            updatedAt: new Date().toISOString()
+        });
+
+        FindingManager.set(updatedFinding);
+
         Notification.success("Assessment created from selected finding.");
         WorkspaceRouter.navigate("assessments");
     }
@@ -767,7 +786,12 @@ export default class FindingPage {
 
                 if (!values.title) return;
 
-                const finding = FindingManager.create({
+                if (!activeEvidence) {
+            Notification.info("Select evidence before creating a finding.");
+            return;
+        }
+
+        const finding = FindingManager.create({
 
                     caseId: activeEvidence?.caseId || currentCase.id,
 

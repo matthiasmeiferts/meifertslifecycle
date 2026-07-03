@@ -1,6 +1,7 @@
 import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import DecisionManager from "../../core/DecisionManager.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
+import AssessmentManager from "../../core/AssessmentManager.js";
 import CaseManager from "../../core/CaseManager.js";
 import BuildingManager from "../../core/BuildingManager.js";
 import InspectionManager from "../../core/InspectionManager.js";
@@ -553,6 +554,11 @@ export default class DecisionPage {
             return;
         }
 
+        const resolvedFindingIds = (decision.findingIds || []).length
+            ? decision.findingIds
+            : (decision.assessmentIds || [])
+                .flatMap(id => AssessmentManager.load(id)?.findingIds || []);
+
         const report = ReportManager.create({
             caseId: decision.caseId,
             buildingId: decision.buildingId || currentCase?.buildingId || null,
@@ -560,7 +566,7 @@ export default class DecisionPage {
             decisionIds: [decision.id],
             recommendationIds: decision.recommendationIds || [],
             assessmentIds: decision.assessmentIds || [],
-            findingIds: decision.findingIds || [],
+            findingIds: [...new Set(resolvedFindingIds)],
             title: `Report from ${decision.title || decision.id}`,
             reportType: "Technical Due Diligence",
             version: "1.0.0",
@@ -572,6 +578,25 @@ export default class DecisionPage {
         });
 
         ReportManager.set(report);
+
+        const activeCaseForSync = CaseManager.getCurrent();
+        if (activeCaseForSync) {
+            CaseManager.setCurrent({
+                ...activeCaseForSync,
+                reportIds: [...new Set([...(activeCaseForSync.reportIds || []), report.id])],
+                updatedAt: new Date().toISOString()
+            });
+            CaseManager.save();
+        }
+
+        const updatedDecision = DecisionManager.update({
+            ...decision,
+            reportIds: [...new Set([...(decision.reportIds || []), report.id])],
+            updatedAt: new Date().toISOString()
+        });
+
+        DecisionManager.set(updatedDecision);
+
         Notification.success("Report created from selected decision.");
         WorkspaceRouter.navigate("reports");
     }
@@ -643,7 +668,12 @@ export default class DecisionPage {
             onSubmit: (values, dialog) => {
                 if (!values.title) return;
 
-                const decision = DecisionManager.create({
+                if (!activeRecommendation) {
+            Notification.info("Select a recommendation before creating a decision.");
+            return;
+        }
+
+        const decision = DecisionManager.create({
                     caseId: activeRecommendation?.caseId || currentCase.id,
                     buildingId: activeRecommendation?.buildingId || currentBuilding?.id || null,
                     inspectionId: activeRecommendation?.inspectionId || currentInspection?.id || null,

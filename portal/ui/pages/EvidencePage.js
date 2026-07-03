@@ -584,6 +584,25 @@ export default class EvidencePage {
         });
 
         FindingManager.set(finding);
+
+        const activeCaseForSync = CaseManager.getCurrent();
+        if (activeCaseForSync) {
+            CaseManager.setCurrent({
+                ...activeCaseForSync,
+                findingIds: [...new Set([...(activeCaseForSync.findingIds || []), finding.id])],
+                updatedAt: new Date().toISOString()
+            });
+            CaseManager.save();
+        }
+
+        const updatedEvidence = EvidenceManager.update({
+            ...evidence,
+            findingIds: [...new Set([...(evidence.findingIds || []), finding.id])],
+            updatedAt: new Date().toISOString()
+        });
+
+        EvidenceManager.set(updatedEvidence);
+
         Notification.success("Finding created from selected evidence.");
         WorkspaceRouter.navigate("findings");
     }

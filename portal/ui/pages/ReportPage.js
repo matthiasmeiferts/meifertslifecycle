@@ -3,6 +3,7 @@ import CaseManager from "../../core/CaseManager.js";
 import BuildingManager from "../../core/BuildingManager.js";
 import InspectionManager from "../../core/InspectionManager.js";
 import DecisionManager from "../../core/DecisionManager.js";
+import AssessmentManager from "../../core/AssessmentManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
@@ -703,6 +704,16 @@ export default class ReportPage {
         }
 
         const createReport = (values = {}) => {
+            const resolvedFindingIds = activeDecision?.findingIds?.length
+                ? activeDecision.findingIds
+                : (activeDecision?.assessmentIds || [])
+                    .flatMap(id => AssessmentManager.load(id)?.findingIds || []);
+
+            if (!activeDecision) {
+                Notification.info("Select a decision before creating a report.");
+                return;
+            }
+
             const report = ReportManager.create({
                 caseId: activeDecision?.caseId || currentCase.id,
                 buildingId: activeDecision?.buildingId || currentCase.buildingId || currentBuilding?.id || null,
@@ -710,7 +721,7 @@ export default class ReportPage {
                 decisionIds: activeDecision ? [activeDecision.id] : [],
                 recommendationIds: activeDecision?.recommendationIds || [],
                 assessmentIds: activeDecision?.assessmentIds || [],
-                findingIds: activeDecision?.findingIds || [],
+                findingIds: [...new Set(resolvedFindingIds)],
                 title: values.title || "Building Intelligence Report",
                 reportType: values.reportType || "Technical Due Diligence",
                 version: values.version || "1.0.0",

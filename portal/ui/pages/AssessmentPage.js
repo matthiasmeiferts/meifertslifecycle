@@ -461,6 +461,25 @@ export default class AssessmentPage {
         });
 
         RecommendationManager.set(recommendation);
+
+        const activeCaseForSync = CaseManager.getCurrent();
+        if (activeCaseForSync) {
+            CaseManager.setCurrent({
+                ...activeCaseForSync,
+                recommendationIds: [...new Set([...(activeCaseForSync.recommendationIds || []), recommendation.id])],
+                updatedAt: new Date().toISOString()
+            });
+            CaseManager.save();
+        }
+
+        const updatedAssessment = AssessmentManager.update({
+            ...assessment,
+            recommendationIds: [...new Set([...(assessment.recommendationIds || []), recommendation.id])],
+            updatedAt: new Date().toISOString()
+        });
+
+        AssessmentManager.set(updatedAssessment);
+
         Notification.success("Recommendation created from selected assessment.");
         WorkspaceRouter.navigate("recommendations");
     }
@@ -542,7 +561,12 @@ export default class AssessmentPage {
             onSubmit: (values, dialog) => {
                 if (!values.title) return;
 
-                const assessment = AssessmentManager.create({
+                if (!activeFinding) {
+            Notification.info("Select a finding before creating an assessment.");
+            return;
+        }
+
+        const assessment = AssessmentManager.create({
                     caseId: activeFinding?.caseId || currentCase.id,
                     buildingId: activeFinding?.buildingId || currentBuilding?.id || null,
                     inspectionId: activeFinding?.inspectionId || currentInspection?.id || null,
