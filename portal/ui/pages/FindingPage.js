@@ -430,27 +430,68 @@ export default class FindingPage {
     }
 
     static createFindingRow(finding) {
-        const row = document.createElement("button");
-        row.type = "button";
+        const row = document.createElement("article");
         row.className = "evidence-row";
         row.addEventListener("click", () => {
             FindingManager.set(finding);
             this.refresh();
         });
 
+        const content = document.createElement("button");
+        content.type = "button";
+        content.className = "evidence-row__content";
+
         const title = document.createElement("strong");
-        title.textContent = finding.title || finding.name || finding.id || "Finding Item";
+        title.textContent = finding.title || finding.id || "Finding Item";
 
         const meta = document.createElement("span");
-        meta.textContent = `${finding.severity || "Normal"}`;
+        meta.textContent = `${finding.category || "General"} · ${finding.severity || "Medium"}`;
 
-        const statusContainer = document.createElement("div");
+        const statusContainer = document.createElement("span");
         statusContainer.innerHTML = this.renderFindingStatusBadge(finding);
-        const statusBadge = statusContainer.firstChild;
 
-        row.appendChild(title);
-        row.appendChild(meta);
-        row.appendChild(statusBadge);
+        content.appendChild(title);
+        content.appendChild(meta);
+        content.appendChild(statusContainer);
+
+        const actions = document.createElement("div");
+        actions.className = "evidence-row__actions";
+
+        [
+            ["open", "Open"],
+            ["edit", "Edit"],
+            ["delete", "Delete"]
+        ].forEach(([action, label]) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "button";
+            button.textContent = label;
+
+            button.addEventListener("click", event => {
+                event.stopPropagation();
+
+                if (action === "open") {
+                    FindingManager.set(finding);
+                    this.refresh();
+                    return;
+                }
+
+                if (action === "edit") {
+                    FindingManager.set(finding);
+                    this.editSelectedFinding();
+                    return;
+                }
+
+                if (action === "delete") {
+                    this.deleteFinding(finding);
+                }
+            });
+
+            actions.appendChild(button);
+        });
+
+        row.appendChild(content);
+        row.appendChild(actions);
 
         return row;
     }
@@ -527,6 +568,82 @@ export default class FindingPage {
         AssessmentManager.set(assessment);
         Notification.success("Assessment created from selected finding.");
         WorkspaceRouter.navigate("assessments");
+    }
+
+    static editSelectedFinding() {
+        const finding = FindingManager.get();
+
+        if (!finding) {
+            Notification.info("Select a finding before editing.");
+            return;
+        }
+
+        FormDialog.open({
+            title: "Edit Finding",
+            submitLabel: "Save Finding",
+            values: {
+                title: finding.title || "",
+                description: finding.description || "",
+                category: finding.category || "General",
+                severity: finding.severity || "Medium",
+                status: finding.status || "Open"
+            },
+            fields: [
+                { id: "title", label: "Finding title" },
+                { id: "description", label: "Description" },
+                {
+                    id: "category",
+                    label: "Category",
+                    type: "select",
+                    options: ["General", "Envelope", "Roof", "Structure", "MEP", "Moisture", "Fire Safety", "Other"]
+                },
+                {
+                    id: "severity",
+                    label: "Severity",
+                    type: "select",
+                    options: ["Low", "Medium", "High", "Critical"]
+                },
+                {
+                    id: "status",
+                    label: "Status",
+                    type: "select",
+                    options: ["Open", "Identified", "Assessed", "Reviewed", "Blocked"]
+                }
+            ],
+            onSubmit: (values, dialog) => {
+                if (!values.title) return;
+
+                const updated = FindingManager.update({
+                    ...finding,
+                    title: values.title,
+                    description: values.description || "",
+                    category: values.category || "General",
+                    severity: values.severity || "Medium",
+                    status: values.status || "Open",
+                    updatedAt: new Date().toISOString()
+                });
+
+                FindingManager.set(updated);
+                dialog.remove();
+                Notification.success("Finding updated.");
+                this.refresh();
+            }
+        });
+    }
+
+    static deleteFinding(item) {
+        if (!window.confirm(`Delete finding "${item.title || item.id}"?`)) {
+            return;
+        }
+
+        FindingManager.delete(item.id);
+
+        if (FindingManager.get()?.id === item.id) {
+            FindingManager.clear();
+        }
+
+        Notification.success("Finding deleted.");
+        this.refresh();
     }
 
     static refresh() {
