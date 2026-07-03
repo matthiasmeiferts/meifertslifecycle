@@ -517,6 +517,115 @@ export default class EvidencePage {
         WorkspaceRouter.navigate("findings");
     }
 
+    static editSelectedEvidence() {
+
+        const evidence = EvidenceManager.get();
+
+        if (!evidence) {
+
+            Notification.info("Select evidence before editing.");
+
+            return;
+
+        }
+
+        FormDialog.open({
+
+            title: "Edit Evidence",
+
+            submitLabel: "Save Evidence",
+
+            values: {
+
+                title: evidence.title || "",
+
+                description: evidence.description || "",
+
+                evidenceType: evidence.evidenceType || evidence.type || "Photo",
+
+                status: evidence.status || "Open"
+
+            },
+
+            fields: [
+
+                {
+
+                    id: "title",
+
+                    label: "Evidence title"
+
+                },
+
+                {
+
+                    id: "description",
+
+                    label: "Description"
+
+                },
+
+                {
+
+                    id: "evidenceType",
+
+                    label: "Evidence type",
+
+                    type: "select",
+
+                    options: ["Photo", "Document", "Note", "Inspection Reference", "Other"]
+
+                },
+
+                {
+
+                    id: "status",
+
+                    label: "Status",
+
+                    type: "select",
+
+                    options: ["Open", "Captured", "Linked", "Reviewed", "Blocked"]
+
+                }
+
+            ],
+
+            onSubmit: (values, dialog) => {
+
+                if (!values.title) return;
+
+                const updated = EvidenceManager.update({
+
+                    ...evidence,
+
+                    title: values.title,
+
+                    description: values.description || "",
+
+                    evidenceType: values.evidenceType || "Photo",
+
+                    status: values.status || "Open",
+
+                    updatedAt: new Date().toISOString()
+
+                });
+
+                EvidenceManager.set(updated);
+
+                dialog.remove();
+
+                Notification.success("Evidence updated.");
+
+                this.refresh();
+
+            }
+
+        });
+
+    }
+
+
     static refresh() {
         const container = document.getElementById("workspace-page");
 
