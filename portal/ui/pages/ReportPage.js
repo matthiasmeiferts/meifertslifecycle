@@ -12,6 +12,7 @@ import DetailPanel from "../components/DetailPanel.js";
 import MetricCard from "../components/MetricCard.js";
 import StatusBadge from "../components/StatusBadge.js";
 import Notification from "../components/Notification.js";
+import FormDialog from "../components/FormDialog.js";
 
 export default class ReportPage {
 
@@ -653,27 +654,96 @@ export default class ReportPage {
             return;
         }
 
-        const report = ReportManager.create({
-            caseId: activeDecision?.caseId || currentCase.id,
-            buildingId: activeDecision?.buildingId || currentBuilding?.id || null,
-            inspectionId: activeDecision?.inspectionId || currentInspection?.id || null,
-            decisionIds: activeDecision ? [activeDecision.id] : [],
-            title: "Sample Building Intelligence Report",
-            reportType: "Technical Due Diligence",
-            version: "1.0.0",
-            executiveSummary: "Initial report record created from the workspace.",
-            scope: "Demo technical due diligence scope.",
-            methodology: "Evidence-based workflow review.",
-            status: "Draft"
-        });
+        const createReport = (values = {}) => {
+            const report = ReportManager.create({
+                caseId: activeDecision?.caseId || currentCase.id,
+                buildingId: activeDecision?.buildingId || currentBuilding?.id || null,
+                inspectionId: activeDecision?.inspectionId || currentInspection?.id || null,
+                decisionIds: activeDecision ? [activeDecision.id] : [],
+                title: values.title || "Building Intelligence Report",
+                reportType: values.reportType || "Technical Due Diligence",
+                version: values.version || "1.0.0",
+                executiveSummary: values.executiveSummary || "",
+                scope: values.scope || "",
+                methodology: values.methodology || "Evidence-based workflow review.",
+                status: values.status || "Draft"
+            });
 
-        ReportManager.set(report);
-        if (!options.silent) {
-            Notification.success("Report created.");
+            ReportManager.set(report);
+
+            if (!options.silent) {
+                Notification.success("Report created.");
+            }
+
             this.refresh();
+        };
+
+        if (options.silent) {
+            createReport({
+                title: "Sample Building Intelligence Report",
+                reportType: "Technical Due Diligence",
+                version: "1.0.0",
+                executiveSummary: "Initial report record created from the workspace.",
+                scope: "Demo technical due diligence scope.",
+                methodology: "Evidence-based workflow review.",
+                status: "Draft"
+            });
+            return;
         }
 
-        return report;
+        FormDialog.open({
+            title: "New Report",
+            submitLabel: "Create Report",
+            values: {
+                title: activeDecision?.title ? `Report from ${activeDecision.title}` : "Building Intelligence Report",
+                reportType: "Technical Due Diligence",
+                version: "1.0.0",
+                executiveSummary: activeDecision?.description || "",
+                scope: "Decision-based technical due diligence report.",
+                methodology: "Evidence-based workflow review.",
+                status: "Draft"
+            },
+            fields: [
+                {
+                    id: "title",
+                    label: "Report title"
+                },
+                {
+                    id: "reportType",
+                    label: "Report type",
+                    type: "select",
+                    options: ["Technical Due Diligence", "Building Intelligence Report", "Condition Assessment", "CAPEX Review"]
+                },
+                {
+                    id: "version",
+                    label: "Version"
+                },
+                {
+                    id: "executiveSummary",
+                    label: "Executive summary"
+                },
+                {
+                    id: "scope",
+                    label: "Scope"
+                },
+                {
+                    id: "methodology",
+                    label: "Methodology"
+                },
+                {
+                    id: "status",
+                    label: "Status",
+                    type: "select",
+                    options: ["Draft", "Prepared", "Reviewed", "Final", "Archived"]
+                }
+            ],
+            onSubmit: (values, dialog) => {
+                if (!values.title) return;
+
+                createReport(values);
+                dialog.remove();
+            }
+        });
     }
 
     static refresh() {
