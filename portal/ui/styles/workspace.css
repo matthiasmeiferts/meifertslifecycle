@@ -3025,3 +3025,65 @@ button.dashboard-readiness-card__action:focus-visible {
 
 }
 
+
+/* Foundation Framework 3.8-W.2.UI
+   Evidence row action layout */
+.evidence-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+}
+
+.evidence-row {
+    align-items: center;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px;
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid rgba(27, 43, 69, 0.1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.evidence-row__content {
+    align-items: flex-start;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    padding: 0;
+    text-align: left;
+}
+
+.evidence-row__content strong,
+.evidence-row__content span {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.evidence-row__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.evidence-row__actions .button {
+    min-width: 72px;
+}
+
+@media (max-width: 760px) {
+    .evidence-row {
+        align-items: stretch;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .evidence-row__actions {
+        justify-content: flex-start;
+    }
+}

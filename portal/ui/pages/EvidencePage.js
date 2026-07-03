@@ -423,13 +423,16 @@ export default class EvidencePage {
     }
 
     static createEvidenceRow(item) {
-        const row = document.createElement("button");
-        row.type = "button";
+        const row = document.createElement("article");
         row.className = "evidence-row";
         row.addEventListener("click", () => {
             EvidenceManager.set(item);
             this.refresh();
         });
+
+        const content = document.createElement("button");
+        content.type = "button";
+        content.className = "evidence-row__content";
 
         const title = document.createElement("strong");
         title.textContent = item.title || item.name || item.id || "Evidence Item";
@@ -441,11 +444,65 @@ export default class EvidencePage {
         statusContainer.innerHTML = this.renderEvidenceStatusBadge(item);
         const statusBadge = statusContainer.firstChild;
 
-        row.appendChild(title);
-        row.appendChild(meta);
-        row.appendChild(statusBadge);
+        content.appendChild(title);
+        content.appendChild(meta);
+        content.appendChild(statusBadge);
+
+        const actions = document.createElement("div");
+        actions.className = "evidence-row__actions";
+
+        [
+            ["open", "Open"],
+            ["edit", "Edit"],
+            ["delete", "Delete"]
+        ].forEach(([action, label]) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "button";
+            button.textContent = label;
+
+            button.addEventListener("click", event => {
+                event.stopPropagation();
+
+                if (action === "open") {
+                    EvidenceManager.set(item);
+                    this.refresh();
+                    return;
+                }
+
+                if (action === "edit") {
+                    EvidenceManager.set(item);
+                    this.editSelectedEvidence();
+                    return;
+                }
+
+                if (action === "delete") {
+                    this.deleteEvidence(item);
+                }
+            });
+
+            actions.appendChild(button);
+        });
+
+        row.appendChild(content);
+        row.appendChild(actions);
 
         return row;
+    }
+
+    static deleteEvidence(item) {
+        if (!window.confirm(`Delete evidence "${item.title || item.id}"?`)) {
+            return;
+        }
+
+        EvidenceManager.delete(item.id);
+
+        if (EvidenceManager.get()?.id === item.id) {
+            EvidenceManager.clear();
+        }
+
+        Notification.success("Evidence deleted.");
+        this.refresh();
     }
 
     static createDetailPanel(activeEvidence = EvidenceManager.get(), evidenceItems = this.getEvidenceItems()) {
