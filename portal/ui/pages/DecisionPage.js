@@ -14,6 +14,7 @@ import DetailPanel from "../components/DetailPanel.js";
 import MetricCard from "../components/MetricCard.js";
 import StatusBadge from "../components/StatusBadge.js";
 import Notification from "../components/Notification.js";
+import FormDialog from "../components/FormDialog.js";
 
 export default class DecisionPage {
 
@@ -531,24 +532,82 @@ export default class DecisionPage {
             Notification.info("Open a case or recommendation before creating a decision.");
             return;
         }
-        const decision = activeRecommendation
-            ? DecisionManager.createFromRecommendation(activeRecommendation)
-            : DecisionManager.create({
-                caseId: currentCase.id,
-                buildingId: currentBuilding?.id || null,
-                inspectionId: currentInspection?.id || null,
-                title: "Sample Decision",
-                description: "Initial decision record created from the workspace.",
+
+        FormDialog.open({
+            title: "New Decision",
+            submitLabel: "Create Decision",
+            values: {
+                title: activeRecommendation?.title || "",
+                description: activeRecommendation?.description || "",
                 decisionType: "Monitor",
-                rationale: "Review technical risk and recommendation chain before final approval.",
-                riskLevel: "Medium",
+                rationale: activeRecommendation?.action || activeRecommendation?.description || "",
+                riskLevel: activeRecommendation?.decisionImpact || activeRecommendation?.priority || "Medium",
                 confidence: 70,
                 status: "Draft"
-            });
+            },
+            fields: [
+                {
+                    id: "title",
+                    label: "Decision title"
+                },
+                {
+                    id: "description",
+                    label: "Description"
+                },
+                {
+                    id: "decisionType",
+                    label: "Decision type",
+                    type: "select",
+                    options: ["Monitor"]
+                },
+                {
+                    id: "rationale",
+                    label: "Decision rationale"
+                },
+                {
+                    id: "riskLevel",
+                    label: "Risk level",
+                    type: "select",
+                    options: ["Low", "Medium", "High", "Critical"]
+                },
+                {
+                    id: "confidence",
+                    label: "Confidence",
+                    type: "number"
+                },
+                {
+                    id: "status",
+                    label: "Status",
+                    type: "select",
+                    options: ["Draft", "Approved", "Rejected", "Deferred", "Blocked"]
+                }
+            ],
+            onSubmit: (values, dialog) => {
+                if (!values.title) return;
 
-        DecisionManager.set(decision);
-        Notification.success("Decision created.");
-        this.refresh();
+                const decision = DecisionManager.create({
+                    caseId: activeRecommendation?.caseId || currentCase.id,
+                    buildingId: activeRecommendation?.buildingId || currentBuilding?.id || null,
+                    inspectionId: activeRecommendation?.inspectionId || currentInspection?.id || null,
+                    recommendationId: activeRecommendation?.id || null,
+                    recommendationIds: activeRecommendation ? [activeRecommendation.id] : [],
+                    assessmentIds: activeRecommendation?.assessmentIds || [],
+                    findingIds: activeRecommendation?.findingIds || [],
+                    title: values.title,
+                    description: values.description || "",
+                    decisionType: values.decisionType || "Monitor",
+                    rationale: values.rationale || "",
+                    riskLevel: values.riskLevel || "Medium",
+                    confidence: Number(values.confidence || 0),
+                    status: values.status || "Draft"
+                });
+
+                DecisionManager.set(decision);
+                dialog.remove();
+                Notification.success("Decision created.");
+                this.refresh();
+            }
+        });
     }
 
     static refresh() {
