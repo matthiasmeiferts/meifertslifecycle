@@ -15,6 +15,7 @@ import DetailPanel from "../components/DetailPanel.js";
 import MetricCard from "../components/MetricCard.js";
 import StatusBadge from "../components/StatusBadge.js";
 import Notification from "../components/Notification.js";
+import FormDialog from "../components/FormDialog.js";
 
 export default class FindingPage {
 
@@ -538,32 +539,139 @@ export default class FindingPage {
     }
 
     static createSampleFinding() {
+
         const currentCase = CaseManager.getCurrent();
+
         const currentBuilding = BuildingManager.get();
+
         const currentInspection = InspectionManager.get();
+
         const activeEvidence = EvidenceManager.get();
 
         if (!currentCase) {
+
             Notification.info("Open a case before creating a finding.");
+
             return;
+
         }
 
-        const finding = FindingManager.create({
-            caseId: activeEvidence?.caseId || currentCase.id,
-            buildingId: activeEvidence?.buildingId || currentBuilding?.id || null,
-            inspectionId: activeEvidence?.inspectionId || currentInspection?.id || null,
-            evidenceIds: activeEvidence ? [activeEvidence.id] : [],
-            title: "Sample Finding",
-            description: "Initial finding record created from the workspace.",
-            category: "General",
-            severity: "Medium",
-            status: "Open"
+        FormDialog.open({
+
+            title: "New Finding",
+
+            submitLabel: "Create Finding",
+
+            values: {
+
+                title: "",
+
+                description: "",
+
+                category: "General",
+
+                severity: "Medium",
+
+                status: "Open"
+
+            },
+
+            fields: [
+
+                {
+
+                    id: "title",
+
+                    label: "Finding title"
+
+                },
+
+                {
+
+                    id: "description",
+
+                    label: "Description"
+
+                },
+
+                {
+
+                    id: "category",
+
+                    label: "Category",
+
+                    type: "select",
+
+                    options: ["General", "Envelope", "Roof", "Structure", "MEP", "Moisture", "Fire Safety", "Other"]
+
+                },
+
+                {
+
+                    id: "severity",
+
+                    label: "Severity",
+
+                    type: "select",
+
+                    options: ["Low", "Medium", "High", "Critical"]
+
+                },
+
+                {
+
+                    id: "status",
+
+                    label: "Status",
+
+                    type: "select",
+
+                    options: ["Open", "Identified", "Assessed", "Reviewed", "Blocked"]
+
+                }
+
+            ],
+
+            onSubmit: (values, dialog) => {
+
+                if (!values.title) return;
+
+                const finding = FindingManager.create({
+
+                    caseId: activeEvidence?.caseId || currentCase.id,
+
+                    buildingId: activeEvidence?.buildingId || currentBuilding?.id || null,
+
+                    inspectionId: activeEvidence?.inspectionId || currentInspection?.id || null,
+
+                    evidenceIds: activeEvidence ? [activeEvidence.id] : [],
+
+                    title: values.title,
+
+                    description: values.description || "",
+
+                    category: values.category || "General",
+
+                    severity: values.severity || "Medium",
+
+                    status: values.status || "Open"
+
+                });
+
+                FindingManager.set(finding);
+
+                dialog.remove();
+
+                Notification.success("Finding created.");
+
+                this.refresh();
+
+            }
+
         });
 
-        FindingManager.set(finding);
-        Notification.success("Finding created.");
-        this.refresh();
     }
+
 
     static showPendingFeature(feature = "This feature") {
         Notification.info(`${feature} will be added in the next foundation step.`);
