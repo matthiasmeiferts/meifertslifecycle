@@ -500,8 +500,12 @@ export default class RecommendationPage {
         return DetailPanel.create("Recommendation Context", [
             { label: "Selected Recommendation", value: activeRecommendation.title || activeRecommendation.id },
             { label: "Workspace Status", value: statusLabel },
+            { label: "Case ID", value: activeRecommendation.caseId || "Not linked" },
+            { label: "Assessment IDs", value: (activeRecommendation.assessmentIds || []).join(", ") || "None" },
+            { label: "Finding IDs", value: (activeRecommendation.findingIds || []).join(", ") || "None" },
             { label: "Priority", value: activeRecommendation.priority || "Medium" },
             { label: "Timeframe", value: activeRecommendation.timeframe || "Short Term" },
+            { label: "Decision IDs", value: (activeRecommendation.decisionIds || []).join(", ") || "None" },
             { label: "Linked Decisions", value: String(this.countDecisionsLinkedToRecommendation(activeRecommendation.id)) }
         ]);
     }

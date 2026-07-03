@@ -399,8 +399,12 @@ export default class AssessmentPage {
         return DetailPanel.create("Assessment Context", [
             { label: "Selected Assessment", value: activeAssessment.title || activeAssessment.id },
             { label: "Workspace Status", value: statusLabel },
+            { label: "Case ID", value: activeAssessment.caseId || "Not linked" },
+            { label: "Finding IDs", value: (activeAssessment.findingIds || []).join(", ") || "None" },
+            { label: "Evidence IDs", value: (activeAssessment.evidenceIds || []).join(", ") || "None" },
             { label: "Severity", value: activeAssessment.severity || "Unrated" },
             { label: "Risk Score", value: String(activeAssessment.riskScore || 0) },
+            { label: "Recommendation IDs", value: (activeAssessment.recommendationIds || []).join(", ") || "None" },
             { label: "Linked Recommendations", value: String(this.countRecommendationsLinkedToAssessment(activeAssessment.id)) }
         ]);
     }

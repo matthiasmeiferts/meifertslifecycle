@@ -632,6 +632,11 @@ export default class ReportPage {
         return DetailPanel.create("Report Context", [
             { label: "Selected Report", value: activeReport.title || activeReport.id },
             { label: "Report Status", value: activeReport.status || "Draft" },
+            { label: "Case ID", value: activeReport.caseId || "Not linked" },
+            { label: "Decision IDs", value: (activeReport.decisionIds || []).join(", ") || "None" },
+            { label: "Recommendation IDs", value: (activeReport.recommendationIds || []).join(", ") || "None" },
+            { label: "Assessment IDs", value: (activeReport.assessmentIds || []).join(", ") || "None" },
+            { label: "Finding IDs", value: (activeReport.findingIds || []).join(", ") || "None" },
             { label: "Generated", value: activeReport.generatedAt ? new Date(activeReport.generatedAt).toLocaleString() : "Not generated" },
             { label: "Report Type", value: activeReport.reportType || "Technical Due Diligence" },
             { label: "Export Format", value: activeReport.exportFormat || "PDF pending" },

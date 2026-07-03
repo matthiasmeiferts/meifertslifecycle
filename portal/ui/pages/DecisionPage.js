@@ -511,8 +511,13 @@ export default class DecisionPage {
         return DetailPanel.create("Decision Context", [
             { label: "Selected Decision", value: activeDecision.title || activeDecision.id },
             { label: "Workspace Status", value: statusLabel },
+            { label: "Case ID", value: activeDecision.caseId || "Not linked" },
+            { label: "Recommendation IDs", value: (activeDecision.recommendationIds || []).join(", ") || "None" },
+            { label: "Assessment IDs", value: (activeDecision.assessmentIds || []).join(", ") || "None" },
+            { label: "Finding IDs", value: (activeDecision.findingIds || []).join(", ") || "None" },
             { label: "Decision Type", value: activeDecision.decisionType || "Monitor" },
             { label: "Risk Level", value: activeDecision.riskLevel || "Medium" },
+            { label: "Report IDs", value: (activeDecision.reportIds || []).join(", ") || "None" },
             { label: "Linked Reports", value: String(this.countReportsLinkedToDecision(activeDecision.id)) }
         ]);
     }

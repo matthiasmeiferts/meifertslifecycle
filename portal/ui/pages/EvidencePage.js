@@ -522,6 +522,9 @@ export default class EvidencePage {
             { label: "Selected Evidence", value: activeEvidence.title || activeEvidence.id },
             { label: "Workspace Status", value: statusLabel },
             { label: "Case ID", value: activeEvidence.caseId || "Not linked" },
+            { label: "Building ID", value: activeEvidence.buildingId || "Not linked" },
+            { label: "Inspection ID", value: activeEvidence.inspectionId || "Not linked" },
+            { label: "Finding IDs", value: (activeEvidence.findingIds || []).join(", ") || "None" },
             { label: "Linked Findings", value: String(this.countFindingsLinkedToEvidence(activeEvidence.id)) }
         ]);
     }
