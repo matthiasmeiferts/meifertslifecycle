@@ -1,4 +1,10 @@
 import CaseManager from "../../core/CaseManager.js";
+import EvidenceManager from "../../core/EvidenceManager.js";
+import FindingManager from "../../core/FindingManager.js";
+import AssessmentManager from "../../core/AssessmentManager.js";
+import RecommendationManager from "../../core/RecommendationManager.js";
+import DecisionManager from "../../core/DecisionManager.js";
+import ReportManager from "../../core/ReportManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import SearchBar from "../components/SearchBar.js";
 import ActionBar from "../components/ActionBar.js";
@@ -290,6 +296,15 @@ export default class CasePage {
         header.appendChild(eyebrow);
         header.appendChild(title);
         header.appendChild(description);
+
+        if (current) {
+            const builderButton = document.createElement("button");
+            builderButton.type = "button";
+            builderButton.className = "button button--primary";
+            builderButton.textContent = "Create Workflow Chain";
+            builderButton.addEventListener("click", () => this.createWorkflowChainBuilder());
+            header.appendChild(builderButton);
+        }
 
         const actions = document.createElement("div");
         actions.className = "case-workflow-actions__grid";
@@ -612,6 +627,205 @@ export default class CasePage {
                 .toLowerCase();
 
             return text.includes(query);
+        });
+    }
+
+
+    static createWorkflowChainBuilder() {
+        const current = CaseManager.getCurrent();
+
+        if (!current) {
+            window.alert("Open a case before creating a workflow chain.");
+            return;
+        }
+
+        FormDialog.open({
+            title: "Create Workflow Chain",
+            submitLabel: "Create Workflow Chain",
+            values: {
+                evidenceTitle: "Evidence input",
+                evidenceDescription: "Initial evidence record.",
+                evidenceType: "Photo / Document",
+                findingTitle: "Technical finding",
+                findingDescription: "Finding derived from evidence.",
+                findingSeverity: "Medium",
+                assessmentTitle: "Risk assessment",
+                assessmentDescription: "Assessment derived from finding.",
+                assessmentSeverity: "Medium",
+                recommendationTitle: "Recommended action",
+                recommendationDescription: "Recommendation derived from assessment.",
+                recommendationPriority: "Medium",
+                decisionTitle: "Decision record",
+                decisionDescription: "Decision derived from recommendation.",
+                decisionType: "Monitor",
+                reportTitle: "Technical Due Diligence Report",
+                reportDescription: "Report derived from decision.",
+                reportType: "Technical Due Diligence"
+            },
+            fields: [
+                { id: "evidenceTitle", label: "Evidence title" },
+                { id: "evidenceDescription", label: "Evidence description" },
+                { id: "evidenceType", label: "Evidence type" },
+                { id: "findingTitle", label: "Finding title" },
+                { id: "findingDescription", label: "Finding description" },
+                { id: "findingSeverity", label: "Finding severity" },
+                { id: "assessmentTitle", label: "Assessment title" },
+                { id: "assessmentDescription", label: "Assessment description" },
+                { id: "assessmentSeverity", label: "Assessment severity" },
+                { id: "recommendationTitle", label: "Recommendation title" },
+                { id: "recommendationDescription", label: "Recommendation description" },
+                { id: "recommendationPriority", label: "Recommendation priority" },
+                { id: "decisionTitle", label: "Decision title" },
+                { id: "decisionDescription", label: "Decision description" },
+                { id: "decisionType", label: "Decision type" },
+                { id: "reportTitle", label: "Report title" },
+                { id: "reportDescription", label: "Report description" },
+                { id: "reportType", label: "Report type" }
+            ],
+            onSubmit: (values, dialog) => {
+                const evidence = EvidenceManager.create({
+                    caseId: current.id,
+                    buildingId: current.buildingId || null,
+                    inspectionId: current.inspectionId || null,
+                    title: values.evidenceTitle || "Evidence input",
+                    description: values.evidenceDescription || "",
+                    evidenceType: values.evidenceType || "Photo / Document",
+                    status: "Draft"
+                });
+                EvidenceManager.set(evidence);
+
+                const finding = FindingManager.create({
+                    caseId: current.id,
+                    buildingId: current.buildingId || null,
+                    inspectionId: current.inspectionId || null,
+                    evidenceIds: [evidence.id],
+                    title: values.findingTitle || "Technical finding",
+                    description: values.findingDescription || "",
+                    category: "General",
+                    severity: values.findingSeverity || "Medium",
+                    status: "Open"
+                });
+                FindingManager.set(finding);
+
+                EvidenceManager.set(EvidenceManager.update({
+                    ...evidence,
+                    findingIds: [finding.id],
+                    updatedAt: new Date().toISOString()
+                }));
+
+                const severity = values.assessmentSeverity || "Medium";
+                const probability = "Medium";
+                const consequence = "Medium";
+
+                const assessment = AssessmentManager.create({
+                    caseId: current.id,
+                    buildingId: current.buildingId || null,
+                    inspectionId: current.inspectionId || null,
+                    findingIds: [finding.id],
+                    evidenceIds: [evidence.id],
+                    title: values.assessmentTitle || "Risk assessment",
+                    description: values.assessmentDescription || "",
+                    category: "General",
+                    severity,
+                    probability,
+                    consequence,
+                    riskScore: AssessmentManager.calculateRiskScore(severity, probability, consequence),
+                    status: "Draft"
+                });
+                AssessmentManager.set(assessment);
+
+                FindingManager.set(FindingManager.update({
+                    ...finding,
+                    assessmentIds: [assessment.id],
+                    updatedAt: new Date().toISOString()
+                }));
+
+                const recommendation = RecommendationManager.create({
+                    caseId: current.id,
+                    buildingId: current.buildingId || null,
+                    inspectionId: current.inspectionId || null,
+                    assessmentIds: [assessment.id],
+                    findingIds: [finding.id],
+                    title: values.recommendationTitle || "Recommended action",
+                    description: values.recommendationDescription || "",
+                    action: values.recommendationDescription || "",
+                    priority: values.recommendationPriority || "Medium",
+                    timeframe: "Planned",
+                    estimatedCost: 0,
+                    currency: "EUR",
+                    responsible: "Owner",
+                    status: "Draft"
+                });
+                RecommendationManager.set(recommendation);
+
+                AssessmentManager.set(AssessmentManager.update({
+                    ...assessment,
+                    recommendationIds: [recommendation.id],
+                    updatedAt: new Date().toISOString()
+                }));
+
+                const decision = DecisionManager.create({
+                    caseId: current.id,
+                    buildingId: current.buildingId || null,
+                    inspectionId: current.inspectionId || null,
+                    recommendationIds: [recommendation.id],
+                    assessmentIds: [assessment.id],
+                    findingIds: [finding.id],
+                    title: values.decisionTitle || "Decision record",
+                    description: values.decisionDescription || "",
+                    decisionType: values.decisionType || "Monitor",
+                    rationale: values.decisionDescription || "",
+                    riskLevel: recommendation.priority || "Medium",
+                    confidence: 70,
+                    status: "Draft"
+                });
+                DecisionManager.set(decision);
+
+                RecommendationManager.set(RecommendationManager.update({
+                    ...recommendation,
+                    decisionIds: [decision.id],
+                    updatedAt: new Date().toISOString()
+                }));
+
+                const report = ReportManager.create({
+                    caseId: current.id,
+                    buildingId: current.buildingId || null,
+                    inspectionId: current.inspectionId || null,
+                    decisionIds: [decision.id],
+                    recommendationIds: [recommendation.id],
+                    assessmentIds: [assessment.id],
+                    findingIds: [finding.id],
+                    title: values.reportTitle || "Technical Due Diligence Report",
+                    reportType: values.reportType || "Technical Due Diligence",
+                    version: "1.0.0",
+                    executiveSummary: values.reportDescription || "",
+                    scope: "Workflow chain report scope.",
+                    methodology: "Evidence-based workflow review.",
+                    status: "Draft"
+                });
+                ReportManager.set(report);
+
+                DecisionManager.set(DecisionManager.update({
+                    ...decision,
+                    reportIds: [report.id],
+                    updatedAt: new Date().toISOString()
+                }));
+
+                CaseManager.setCurrent({
+                    ...current,
+                    evidenceIds: [...new Set([...(current.evidenceIds || []), evidence.id])],
+                    findingIds: [...new Set([...(current.findingIds || []), finding.id])],
+                    assessmentIds: [...new Set([...(current.assessmentIds || []), assessment.id])],
+                    recommendationIds: [...new Set([...(current.recommendationIds || []), recommendation.id])],
+                    decisionIds: [...new Set([...(current.decisionIds || []), decision.id])],
+                    reportIds: [...new Set([...(current.reportIds || []), report.id])],
+                    updatedAt: new Date().toISOString()
+                });
+                CaseManager.save();
+
+                dialog.remove();
+                this.refresh();
+            }
         });
     }
 
