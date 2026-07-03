@@ -3220,3 +3220,33 @@ button.dashboard-readiness-card__action:focus-visible {
         text-align: left;
     }
 }
+
+/* Foundation Framework 3.8-AB: print only report preview */
+@media print {
+    body * {
+        visibility: hidden !important;
+    }
+
+    .report-preview,
+    .report-preview * {
+        visibility: visible !important;
+    }
+
+    .report-preview {
+        background: #ffffff !important;
+        box-shadow: none !important;
+        left: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        position: absolute !important;
+        top: 0 !important;
+        width: 100% !important;
+    }
+
+    .report-preview__document {
+        border: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+}

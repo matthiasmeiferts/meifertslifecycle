@@ -770,8 +770,12 @@ export default class ReportPage {
         });
 
         ReportManager.set(updated);
-        Notification.info("PDF export marked. Use the report preview as the current printable output.");
+        Notification.info("Print dialog opened. Use Save as PDF in Safari.");
         this.refresh();
+
+        setTimeout(() => {
+            window.print();
+        }, 150);
     }
 
     static createSampleReport(options = {}) {
