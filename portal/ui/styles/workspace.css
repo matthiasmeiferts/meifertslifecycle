@@ -3409,3 +3409,67 @@ button.dashboard-readiness-card__action:focus-visible {
     overflow-wrap: anywhere;
     vertical-align: top;
 }
+
+/* Foundation Framework 3.8-AH: refined case toolbar */
+.case-toolbar {
+    align-items: center;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.case-toolbar .search-bar {
+    min-width: 0;
+    width: 100%;
+}
+
+.case-toolbar .search-bar__form {
+    align-items: center;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.case-toolbar .search-bar__button.button {
+    align-items: center;
+    appearance: none;
+    -webkit-appearance: none;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(18, 38, 63, 0.16);
+    border-radius: 999px;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: #1B2B45;
+    display: inline-flex;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    height: 2.45rem;
+    justify-content: center;
+    line-height: 1;
+    min-height: 2.45rem;
+    min-width: 5.4rem;
+    padding: 0 1rem;
+    white-space: nowrap;
+    width: auto;
+}
+
+.case-toolbar .search-bar__button.button:hover {
+    background: #fffaf1;
+    border-color: rgba(184, 153, 104, 0.42);
+    box-shadow: 0 8px 18px rgba(27, 43, 69, 0.08);
+}
+
+.case-toolbar .action-bar {
+    justify-content: flex-end;
+}
+
+@media (max-width: 760px) {
+    .case-toolbar {
+        grid-template-columns: 1fr;
+    }
+
+    .case-toolbar .action-bar {
+        justify-content: flex-start;
+    }
+}

@@ -12,7 +12,7 @@ export default class SearchBar {
         wrapper.innerHTML = `
             <form class="search-bar__form">
                 <input type="search" placeholder="${placeholder}" value="${value}">
-                ${buttonLabel ? `<button type="submit">${buttonLabel}</button>` : ""}
+                ${buttonLabel ? `<button type="submit" class="button search-bar__button">${buttonLabel}</button>` : ""}
             </form>
         `;
 

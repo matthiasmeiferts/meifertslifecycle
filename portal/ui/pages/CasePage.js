@@ -79,7 +79,7 @@ export default class CasePage {
 
     static createToolbar() {
         const wrapper = document.createElement("section");
-        wrapper.className = "workflow-card";
+        wrapper.className = "workflow-card case-toolbar";
 
         wrapper.appendChild(
             SearchBar.create({
