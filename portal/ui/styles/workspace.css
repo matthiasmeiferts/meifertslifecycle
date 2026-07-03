@@ -3296,3 +3296,88 @@ button.dashboard-readiness-card__action:focus-visible {
         margin-right: 0;
     }
 }
+
+/* Foundation Framework 3.8-AF: refined case intelligence snapshot */
+.case-intelligence--refined {
+    gap: 1.1rem;
+}
+
+.case-intelligence__summary {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.case-intelligence__summary div {
+    background: rgba(255, 255, 255, 0.62);
+    border: 1px solid rgba(18, 38, 63, 0.08);
+    border-radius: 0.75rem;
+    padding: 0.85rem 1rem;
+}
+
+.case-intelligence__summary span {
+    color: var(--muted-text);
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.2rem;
+    text-transform: uppercase;
+}
+
+.case-intelligence__summary strong {
+    color: var(--ink);
+    display: block;
+    font-size: 1.45rem;
+    line-height: 1.1;
+}
+
+.case-intelligence--refined .intelligence-snapshot__grid {
+    gap: 0.8rem;
+}
+
+.case-intelligence--refined .intelligence-snapshot__card {
+    min-height: 0;
+    padding: 1rem;
+}
+
+.case-intelligence--refined .intelligence-snapshot__card p {
+    line-height: 1.45;
+    margin-top: 0.45rem;
+}
+
+@media (max-width: 720px) {
+    .case-intelligence__summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Foundation Framework 3.8-AF.1: compact case intelligence copy */
+.case-intelligence--refined .intelligence-snapshot__card strong {
+    font-size: 1rem;
+    line-height: 1.2;
+}
+
+.case-intelligence--refined .intelligence-snapshot__card p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.case-intelligence--refined .intelligence-snapshot__card span {
+    letter-spacing: 0.08em;
+}
+
+/* Foundation Framework 3.8-AF.2: ergonomic case workflow column width */
+.workspace-primary-column > .case-intelligence,
+.workspace-primary-column > .case-workflow-actions {
+    max-width: 46rem;
+    width: 100%;
+}
+
+.workspace-primary-column > .case-intelligence {
+    margin-right: auto;
+}
+
+.workspace-primary-column > .case-workflow-actions {
+    margin-right: auto;
+}

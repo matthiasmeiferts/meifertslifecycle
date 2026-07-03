@@ -546,23 +546,39 @@ export default class CasePage {
 
     static renderCaseIntelligenceSnapshot(caseItem = {}, data = {}) {
         const intelligence = this.getCaseIntelligence(caseItem, data);
+        const stageSummary = `${intelligence.completedStages}/${intelligence.totalStages}`;
 
         return `
-            <section class="case-intelligence intelligence-snapshot" aria-label="Case intelligence snapshot">
+            <section class="case-intelligence intelligence-snapshot case-intelligence--refined" aria-label="Case intelligence snapshot">
                 <div class="case-intelligence__header intelligence-snapshot__header">
                     <div>
                         <span class="case-intelligence__eyebrow intelligence-snapshot__eyebrow">Case Intelligence</span>
                         <strong>${intelligence.label}</strong>
-                        <p>${intelligence.completedStages}/${intelligence.totalStages} workflow stages represented</p>
+                        <p>Workflow coverage, risk signal and next action for the active case.</p>
                     </div>
                     <span class="case-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
-                <div class="case-intelligence__grid intelligence-snapshot__grid">
-                    <article class="case-intelligence__card intelligence-snapshot__card">
+                <div class="case-intelligence__summary">
+                    <div>
                         <span>Readiness</span>
                         <strong>${intelligence.readinessPercent}%</strong>
-                        <p>Workflow coverage across Evidence, Finding, Assessment, Recommendation, Decision and Report.</p>
+                    </div>
+                    <div>
+                        <span>Confidence</span>
+                        <strong>${intelligence.confidenceScore}%</strong>
+                    </div>
+                    <div>
+                        <span>Stages</span>
+                        <strong>${stageSummary}</strong>
+                    </div>
+                </div>
+
+                <div class="case-intelligence__grid intelligence-snapshot__grid">
+                    <article class="case-intelligence__card intelligence-snapshot__card">
+                        <span>Workflow Coverage</span>
+                        <strong>${intelligence.readinessPercent}% ready</strong>
+                        <p>${stageSummary} stages represented. Continue with the first missing workflow stage.</p>
                     </article>
 
                     <article class="case-intelligence__card intelligence-snapshot__card case-intelligence__card--${intelligence.riskSignal.tone} intelligence-snapshot__card--${intelligence.riskSignal.tone}">
@@ -572,9 +588,9 @@ export default class CasePage {
                     </article>
 
                     <article class="case-intelligence__card intelligence-snapshot__card case-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
-                        <span>Next Case Action</span>
+                        <span>Next Action</span>
                         <strong>${intelligence.nextAction.label}</strong>
-                        <p>${intelligence.nextAction.description}</p>
+                        <p>Complete the next missing stage before relying on final output.</p>
                     </article>
                 </div>
             </section>
