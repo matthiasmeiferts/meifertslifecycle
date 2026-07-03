@@ -538,9 +538,20 @@ export default class FindingPage {
 
     static createAssessmentFromSelectedFinding() {
         const finding = FindingManager.get();
+        const currentCase = CaseManager.getCurrent();
 
         if (!finding) {
             Notification.warning("Select a finding first.");
+            return;
+        }
+
+        if (!finding.caseId) {
+            Notification.warning("Selected finding is not linked to a case.");
+            return;
+        }
+
+        if (currentCase && currentCase.id !== finding.caseId) {
+            Notification.warning("Selected finding belongs to another case.");
             return;
         }
 

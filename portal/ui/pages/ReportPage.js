@@ -687,17 +687,25 @@ export default class ReportPage {
         const currentInspection = InspectionManager.get();
         const activeDecision = DecisionManager.get();
 
-        if (!currentCase && !activeDecision) {
-            Notification.info("Open a case or decision before creating a report.");
+        if (!currentCase) {
+            Notification.info("Open a case before creating a report.");
+            return;
+        }
+
+        if (activeDecision && activeDecision.caseId !== currentCase.id) {
+            Notification.warning("Active decision belongs to another case.");
             return;
         }
 
         const createReport = (values = {}) => {
             const report = ReportManager.create({
                 caseId: activeDecision?.caseId || currentCase.id,
-                buildingId: activeDecision?.buildingId || currentBuilding?.id || null,
-                inspectionId: activeDecision?.inspectionId || currentInspection?.id || null,
+                buildingId: activeDecision?.buildingId || currentCase.buildingId || currentBuilding?.id || null,
+                inspectionId: activeDecision?.inspectionId || currentCase.inspectionId || currentInspection?.id || null,
                 decisionIds: activeDecision ? [activeDecision.id] : [],
+                recommendationIds: activeDecision?.recommendationIds || [],
+                assessmentIds: activeDecision?.assessmentIds || [],
+                findingIds: activeDecision?.findingIds || [],
                 title: values.title || "Building Intelligence Report",
                 reportType: values.reportType || "Technical Due Diligence",
                 version: values.version || "1.0.0",

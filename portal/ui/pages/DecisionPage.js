@@ -531,16 +531,27 @@ export default class DecisionPage {
 
     static createReportFromSelectedDecision() {
         const decision = DecisionManager.get();
+        const currentCase = CaseManager.getCurrent();
 
         if (!decision) {
             Notification.warning("Select a decision first.");
             return;
         }
 
+        if (!decision.caseId) {
+            Notification.warning("Selected decision is not linked to a case.");
+            return;
+        }
+
+        if (currentCase && currentCase.id !== decision.caseId) {
+            Notification.warning("Selected decision belongs to another case.");
+            return;
+        }
+
         const report = ReportManager.create({
             caseId: decision.caseId,
-            buildingId: decision.buildingId,
-            inspectionId: decision.inspectionId,
+            buildingId: decision.buildingId || currentCase?.buildingId || null,
+            inspectionId: decision.inspectionId || currentCase?.inspectionId || null,
             decisionIds: [decision.id],
             recommendationIds: decision.recommendationIds || [],
             assessmentIds: decision.assessmentIds || [],

@@ -419,16 +419,27 @@ export default class AssessmentPage {
 
     static createRecommendationFromSelectedAssessment() {
         const assessment = AssessmentManager.get();
+        const currentCase = CaseManager.getCurrent();
 
         if (!assessment) {
             Notification.warning("Select an assessment first.");
             return;
         }
 
+        if (!assessment.caseId) {
+            Notification.warning("Selected assessment is not linked to a case.");
+            return;
+        }
+
+        if (currentCase && currentCase.id !== assessment.caseId) {
+            Notification.warning("Selected assessment belongs to another case.");
+            return;
+        }
+
         const recommendation = RecommendationManager.create({
             caseId: assessment.caseId,
-            buildingId: assessment.buildingId,
-            inspectionId: assessment.inspectionId,
+            buildingId: assessment.buildingId || currentCase?.buildingId || null,
+            inspectionId: assessment.inspectionId || currentCase?.inspectionId || null,
             assessmentIds: [assessment.id],
             findingIds: assessment.findingIds || [],
             title: `Recommendation from ${assessment.title || assessment.id}`,

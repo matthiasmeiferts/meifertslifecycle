@@ -520,16 +520,27 @@ export default class RecommendationPage {
 
     static createDecisionFromSelectedRecommendation() {
         const recommendation = RecommendationManager.get();
+        const currentCase = CaseManager.getCurrent();
 
         if (!recommendation) {
             Notification.warning("Select a recommendation first.");
             return;
         }
 
+        if (!recommendation.caseId) {
+            Notification.warning("Selected recommendation is not linked to a case.");
+            return;
+        }
+
+        if (currentCase && currentCase.id !== recommendation.caseId) {
+            Notification.warning("Selected recommendation belongs to another case.");
+            return;
+        }
+
         const decision = DecisionManager.create({
             caseId: recommendation.caseId,
-            buildingId: recommendation.buildingId,
-            inspectionId: recommendation.inspectionId,
+            buildingId: recommendation.buildingId || currentCase?.buildingId || null,
+            inspectionId: recommendation.inspectionId || currentCase?.inspectionId || null,
             recommendationIds: [recommendation.id],
             assessmentIds: recommendation.assessmentIds || [],
             findingIds: recommendation.findingIds || [],

@@ -551,16 +551,27 @@ export default class EvidencePage {
 
     static createFindingFromSelectedEvidence() {
         const evidence = EvidenceManager.get();
+        const currentCase = CaseManager.getCurrent();
 
         if (!evidence) {
             Notification.warning("Select evidence first.");
             return;
         }
 
+        if (!evidence.caseId) {
+            Notification.warning("Selected evidence is not linked to a case.");
+            return;
+        }
+
+        if (currentCase && currentCase.id !== evidence.caseId) {
+            Notification.warning("Selected evidence belongs to another case.");
+            return;
+        }
+
         const finding = FindingManager.create({
             caseId: evidence.caseId,
-            buildingId: evidence.buildingId,
-            inspectionId: evidence.inspectionId,
+            buildingId: evidence.buildingId || currentCase?.buildingId || null,
+            inspectionId: evidence.inspectionId || currentCase?.inspectionId || null,
             evidenceIds: [evidence.id],
             title: `Finding from ${evidence.title || evidence.id}`,
             description: evidence.description || "Finding generated from selected evidence.",
@@ -778,9 +789,9 @@ export default class EvidencePage {
 
                     caseId: currentCase.id,
 
-                    buildingId: currentBuilding?.id || null,
+                    buildingId: currentCase.buildingId || currentBuilding?.id || null,
 
-                    inspectionId: currentInspection?.id || null,
+                    inspectionId: currentCase.inspectionId || currentInspection?.id || null,
 
                     title: values.title,
 
