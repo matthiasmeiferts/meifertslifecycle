@@ -14,6 +14,7 @@ import DetailPanel from "../components/DetailPanel.js";
 import MetricCard from "../components/MetricCard.js";
 import StatusBadge from "../components/StatusBadge.js";
 import Notification from "../components/Notification.js";
+import FormDialog from "../components/FormDialog.js";
 
 export default class EvidencePage {
 
@@ -526,29 +527,119 @@ export default class EvidencePage {
     }
 
     static createSampleEvidence() {
+
         const currentCase = CaseManager.getCurrent();
+
         const currentBuilding = BuildingManager.get();
+
         const currentInspection = InspectionManager.get();
 
         if (!currentCase) {
+
             Notification.info("Open a case before creating evidence.");
+
             return;
+
         }
 
-        const evidence = EvidenceManager.create({
-            caseId: currentCase.id,
-            buildingId: currentBuilding?.id || null,
-            inspectionId: currentInspection?.id || null,
-            title: "Sample Evidence",
-            description: "Initial evidence record created from the workspace.",
-            evidenceType: "Photo",
-            status: "Open"
+        FormDialog.open({
+
+            title: "New Evidence",
+
+            submitLabel: "Create Evidence",
+
+            values: {
+
+                title: "",
+
+                description: "",
+
+                evidenceType: "Photo",
+
+                status: "Open"
+
+            },
+
+            fields: [
+
+                {
+
+                    id: "title",
+
+                    label: "Evidence title"
+
+                },
+
+                {
+
+                    id: "description",
+
+                    label: "Description"
+
+                },
+
+                {
+
+                    id: "evidenceType",
+
+                    label: "Evidence type",
+
+                    type: "select",
+
+                    options: ["Photo", "Document", "Note", "Inspection Reference", "Other"]
+
+                },
+
+                {
+
+                    id: "status",
+
+                    label: "Status",
+
+                    type: "select",
+
+                    options: ["Open", "Captured", "Linked", "Reviewed", "Blocked"]
+
+                }
+
+            ],
+
+            onSubmit: (values, dialog) => {
+
+                if (!values.title) return;
+
+                const evidence = EvidenceManager.create({
+
+                    caseId: currentCase.id,
+
+                    buildingId: currentBuilding?.id || null,
+
+                    inspectionId: currentInspection?.id || null,
+
+                    title: values.title,
+
+                    description: values.description || "",
+
+                    evidenceType: values.evidenceType || "Photo",
+
+                    status: values.status || "Open"
+
+                });
+
+                EvidenceManager.set(evidence);
+
+                dialog.remove();
+
+                Notification.success("Evidence created.");
+
+                this.refresh();
+
+            }
+
         });
 
-        EvidenceManager.set(evidence);
-        Notification.success("Evidence created.");
-        this.refresh();
     }
+
 
     static showPendingFeature(feature = "This feature") {
         Notification.info(`${feature} will be added in the next foundation step.`);
