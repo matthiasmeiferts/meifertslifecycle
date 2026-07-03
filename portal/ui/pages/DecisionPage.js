@@ -429,13 +429,16 @@ export default class DecisionPage {
     }
 
     static createDecisionRow(decision) {
-        const row = document.createElement("button");
-        row.type = "button";
+        const row = document.createElement("article");
         row.className = "evidence-row";
         row.addEventListener("click", () => {
             DecisionManager.set(decision);
             this.refresh();
         });
+
+        const content = document.createElement("button");
+        content.type = "button";
+        content.className = "evidence-row__content";
 
         const title = document.createElement("strong");
         title.textContent = decision.title || decision.id || "Decision Item";
@@ -446,9 +449,48 @@ export default class DecisionPage {
         const statusContainer = document.createElement("span");
         statusContainer.innerHTML = this.renderDecisionStatusBadge(decision);
 
-        row.appendChild(title);
-        row.appendChild(meta);
-        row.appendChild(statusContainer);
+        content.appendChild(title);
+        content.appendChild(meta);
+        content.appendChild(statusContainer);
+
+        const actions = document.createElement("div");
+        actions.className = "evidence-row__actions";
+
+        [
+            ["open", "Open"],
+            ["edit", "Edit"],
+            ["delete", "Delete"]
+        ].forEach(([action, label]) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "button";
+            button.textContent = label;
+
+            button.addEventListener("click", event => {
+                event.stopPropagation();
+
+                if (action === "open") {
+                    DecisionManager.set(decision);
+                    this.refresh();
+                    return;
+                }
+
+                if (action === "edit") {
+                    DecisionManager.set(decision);
+                    this.editSelectedDecision();
+                    return;
+                }
+
+                if (action === "delete") {
+                    this.deleteDecision(decision);
+                }
+            });
+
+            actions.appendChild(button);
+        });
+
+        row.appendChild(content);
+        row.appendChild(actions);
 
         return row;
     }
@@ -608,6 +650,88 @@ export default class DecisionPage {
                 this.refresh();
             }
         });
+    }
+
+    static editSelectedDecision() {
+        const decision = DecisionManager.get();
+
+        if (!decision) {
+            Notification.info("Select a decision before editing.");
+            return;
+        }
+
+        FormDialog.open({
+            title: "Edit Decision",
+            submitLabel: "Save Decision",
+            values: {
+                title: decision.title || "",
+                description: decision.description || "",
+                decisionType: decision.decisionType || "Monitor",
+                rationale: decision.rationale || "",
+                riskLevel: decision.riskLevel || "Medium",
+                confidence: decision.confidence || 0,
+                status: decision.status || "Draft"
+            },
+            fields: [
+                { id: "title", label: "Decision title" },
+                { id: "description", label: "Description" },
+                {
+                    id: "decisionType",
+                    label: "Decision type",
+                    type: "select",
+                    options: ["Monitor"]
+                },
+                { id: "rationale", label: "Decision rationale" },
+                {
+                    id: "riskLevel",
+                    label: "Risk level",
+                    type: "select",
+                    options: ["Low", "Medium", "High", "Critical"]
+                },
+                { id: "confidence", label: "Confidence", type: "number" },
+                {
+                    id: "status",
+                    label: "Status",
+                    type: "select",
+                    options: ["Draft", "Approved", "Rejected", "Deferred", "Blocked"]
+                }
+            ],
+            onSubmit: (values, dialog) => {
+                if (!values.title) return;
+
+                const updated = DecisionManager.update({
+                    ...decision,
+                    title: values.title,
+                    description: values.description || "",
+                    decisionType: values.decisionType || "Monitor",
+                    rationale: values.rationale || "",
+                    riskLevel: values.riskLevel || "Medium",
+                    confidence: Number(values.confidence || 0),
+                    status: values.status || "Draft",
+                    updatedAt: new Date().toISOString()
+                });
+
+                DecisionManager.set(updated);
+                dialog.remove();
+                Notification.success("Decision updated.");
+                this.refresh();
+            }
+        });
+    }
+
+    static deleteDecision(item) {
+        if (!window.confirm(`Delete decision "${item.title || item.id}"?`)) {
+            return;
+        }
+
+        DecisionManager.delete(item.id);
+
+        if (DecisionManager.get()?.id === item.id) {
+            DecisionManager.clear();
+        }
+
+        Notification.success("Decision deleted.");
+        this.refresh();
     }
 
     static refresh() {
