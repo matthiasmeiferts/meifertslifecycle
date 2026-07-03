@@ -14,6 +14,7 @@ import DetailPanel from "../components/DetailPanel.js";
 import MetricCard from "../components/MetricCard.js";
 import StatusBadge from "../components/StatusBadge.js";
 import Notification from "../components/Notification.js";
+import FormDialog from "../components/FormDialog.js";
 
 export default class RecommendationPage {
 
@@ -509,37 +510,209 @@ export default class RecommendationPage {
     }
 
     static createSampleRecommendation() {
+
         const currentCase = CaseManager.getCurrent();
+
         const currentBuilding = BuildingManager.get();
+
         const currentInspection = InspectionManager.get();
+
         const activeAssessment = AssessmentManager.get();
 
         if (!currentCase) {
+
             Notification.info("Open a case before creating a recommendation.");
+
             return;
+
         }
 
-        const recommendation = RecommendationManager.create({
-            caseId: activeAssessment?.caseId || currentCase.id,
-            buildingId: activeAssessment?.buildingId || currentBuilding?.id || null,
-            inspectionId: activeAssessment?.inspectionId || currentInspection?.id || null,
-            assessmentIds: activeAssessment ? [activeAssessment.id] : [],
-            title: "Sample Recommendation",
-            description: "Initial recommendation record created from the workspace.",
-            action: "Review and implement corrective action.",
-            priority: "Medium",
-            timeframe: "Short Term",
-            estimatedCost: 0,
-            currency: "EUR",
-            responsible: "Owner",
-            decisionImpact: "Medium",
-            status: "Draft"
+        FormDialog.open({
+
+            title: "New Recommendation",
+
+            submitLabel: "Create Recommendation",
+
+            values: {
+
+                title: "",
+
+                description: "",
+
+                action: "",
+
+                priority: activeAssessment?.priority || "Medium",
+
+                timeframe: "Short Term",
+
+                estimatedCost: 0,
+
+                currency: "EUR",
+
+                responsible: "Owner",
+
+                decisionImpact: activeAssessment?.riskScore >= 60 ? "High" : "Medium",
+
+                status: "Draft"
+
+            },
+
+            fields: [
+
+                {
+
+                    id: "title",
+
+                    label: "Recommendation title"
+
+                },
+
+                {
+
+                    id: "description",
+
+                    label: "Description"
+
+                },
+
+                {
+
+                    id: "action",
+
+                    label: "Recommended action"
+
+                },
+
+                {
+
+                    id: "priority",
+
+                    label: "Priority",
+
+                    type: "select",
+
+                    options: ["Low", "Medium", "High", "Critical"]
+
+                },
+
+                {
+
+                    id: "timeframe",
+
+                    label: "Timeframe",
+
+                    type: "select",
+
+                    options: ["Immediate", "Short Term", "Medium Term", "Long Term"]
+
+                },
+
+                {
+
+                    id: "estimatedCost",
+
+                    label: "Estimated cost",
+
+                    type: "number"
+
+                },
+
+                {
+
+                    id: "currency",
+
+                    label: "Currency",
+
+                    type: "select",
+
+                    options: ["EUR", "THB", "USD"]
+
+                },
+
+                {
+
+                    id: "responsible",
+
+                    label: "Responsible"
+
+                },
+
+                {
+
+                    id: "decisionImpact",
+
+                    label: "Decision impact",
+
+                    type: "select",
+
+                    options: ["Low", "Medium", "High", "Critical"]
+
+                },
+
+                {
+
+                    id: "status",
+
+                    label: "Status",
+
+                    type: "select",
+
+                    options: ["Draft", "Recommended", "Decided", "Reviewed", "Blocked"]
+
+                }
+
+            ],
+
+            onSubmit: (values, dialog) => {
+
+                if (!values.title) return;
+
+                const recommendation = RecommendationManager.create({
+
+                    caseId: activeAssessment?.caseId || currentCase.id,
+
+                    buildingId: activeAssessment?.buildingId || currentBuilding?.id || null,
+
+                    inspectionId: activeAssessment?.inspectionId || currentInspection?.id || null,
+
+                    assessmentIds: activeAssessment ? [activeAssessment.id] : [],
+
+                    title: values.title,
+
+                    description: values.description || "",
+
+                    action: values.action || "",
+
+                    priority: values.priority || "Medium",
+
+                    timeframe: values.timeframe || "Short Term",
+
+                    estimatedCost: Number(values.estimatedCost || 0),
+
+                    currency: values.currency || "EUR",
+
+                    responsible: values.responsible || "Owner",
+
+                    decisionImpact: values.decisionImpact || "Medium",
+
+                    status: values.status || "Draft"
+
+                });
+
+                RecommendationManager.set(recommendation);
+
+                dialog.remove();
+
+                Notification.success("Recommendation created.");
+
+                this.refresh();
+
+            }
+
         });
 
-        RecommendationManager.set(recommendation);
-        Notification.success("Recommendation created.");
-        this.refresh();
     }
+
 
     static refresh() {
         const container = document.getElementById("workspace-page");

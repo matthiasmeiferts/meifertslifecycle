@@ -2909,3 +2909,119 @@ button.dashboard-readiness-card__action:focus-visible {
     color: rgba(27, 43, 69, 0.66);
     font-size: 0.88rem;
 }
+
+/* Foundation Framework 3.8-V.UI
+
+   Keep long modal forms usable on small screens */
+
+.modal-dialog {
+
+    max-height: calc(100vh - 48px);
+
+    overflow: hidden;
+
+}
+
+.modal-body {
+
+    max-height: calc(100vh - 160px);
+
+    overflow-y: auto;
+
+    padding-right: 4px;
+
+}
+
+.modal-footer {
+
+    position: sticky;
+
+    bottom: 0;
+
+    margin-top: 1rem;
+
+    padding-top: 1rem;
+
+    background: inherit;
+
+}
+
+
+/* Foundation Framework 3.8-V.UI.2
+
+   Force modal forms to stay scrollable and usable */
+
+.modal-overlay {
+
+    align-items: center;
+
+    bottom: 0;
+
+    display: flex;
+
+    justify-content: center;
+
+    left: 0;
+
+    overflow-y: auto;
+
+    padding: 24px;
+
+    position: fixed;
+
+    right: 0;
+
+    top: 0;
+
+    z-index: 9999;
+
+}
+
+.modal-overlay > .modal-dialog {
+
+    display: flex;
+
+    flex-direction: column;
+
+    max-height: calc(100vh - 48px);
+
+    max-width: 760px;
+
+    overflow: hidden;
+
+    width: min(760px, calc(100vw - 48px));
+
+}
+
+.modal-overlay > .modal-dialog > .modal-header {
+
+    flex: 0 0 auto;
+
+}
+
+.modal-overlay > .modal-dialog > .modal-body {
+
+    display: flex;
+
+    flex: 1 1 auto;
+
+    flex-direction: column;
+
+    min-height: 0;
+
+    overflow-y: auto;
+
+}
+
+.modal-overlay > .modal-dialog > .modal-body > .modal-footer {
+
+    bottom: 0;
+
+    flex: 0 0 auto;
+
+    position: sticky;
+
+    z-index: 2;
+
+}
+

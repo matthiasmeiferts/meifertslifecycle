@@ -14,6 +14,7 @@ import DetailPanel from "../components/DetailPanel.js";
 import MetricCard from "../components/MetricCard.js";
 import StatusBadge from "../components/StatusBadge.js";
 import Notification from "../components/Notification.js";
+import FormDialog from "../components/FormDialog.js";
 
 export default class AssessmentPage {
 
@@ -423,29 +424,94 @@ export default class AssessmentPage {
             return;
         }
 
-        const severity = activeFinding?.severity || "Medium";
-        const probability = "Medium";
-        const consequence = "Medium";
+        FormDialog.open({
+            title: "New Assessment",
+            submitLabel: "Create Assessment",
+            values: {
+                title: "",
+                description: "",
+                category: activeFinding?.category || "General",
+                severity: activeFinding?.severity || "Medium",
+                probability: "Medium",
+                consequence: "Medium",
+                priority: "Medium",
+                status: "Draft"
+            },
+            fields: [
+                {
+                    id: "title",
+                    label: "Assessment title"
+                },
+                {
+                    id: "description",
+                    label: "Description"
+                },
+                {
+                    id: "category",
+                    label: "Category",
+                    type: "select",
+                    options: ["General", "Envelope", "Roof", "Structure", "MEP", "Moisture", "Fire Safety", "Other"]
+                },
+                {
+                    id: "severity",
+                    label: "Severity",
+                    type: "select",
+                    options: ["Low", "Medium", "High", "Critical"]
+                },
+                {
+                    id: "probability",
+                    label: "Probability",
+                    type: "select",
+                    options: ["Low", "Medium", "High"]
+                },
+                {
+                    id: "consequence",
+                    label: "Consequence",
+                    type: "select",
+                    options: ["Low", "Medium", "High"]
+                },
+                {
+                    id: "priority",
+                    label: "Priority",
+                    type: "select",
+                    options: ["Low", "Medium", "High", "Critical"]
+                },
+                {
+                    id: "status",
+                    label: "Status",
+                    type: "select",
+                    options: ["Draft", "Assessed", "Recommended", "Reviewed", "Blocked"]
+                }
+            ],
+            onSubmit: (values, dialog) => {
+                if (!values.title) return;
 
-        const assessment = AssessmentManager.create({
-            caseId: activeFinding?.caseId || currentCase.id,
-            buildingId: activeFinding?.buildingId || currentBuilding?.id || null,
-            inspectionId: activeFinding?.inspectionId || currentInspection?.id || null,
-            findingIds: activeFinding ? [activeFinding.id] : [],
-            title: "Sample Assessment",
-            description: "Initial assessment record created from the workspace.",
-            category: "General",
-            severity,
-            probability,
-            consequence,
-            riskScore: AssessmentManager.calculateRiskScore(severity, probability, consequence),
-            priority: "Medium",
-            status: "Draft"
+                const assessment = AssessmentManager.create({
+                    caseId: activeFinding?.caseId || currentCase.id,
+                    buildingId: activeFinding?.buildingId || currentBuilding?.id || null,
+                    inspectionId: activeFinding?.inspectionId || currentInspection?.id || null,
+                    findingIds: activeFinding ? [activeFinding.id] : [],
+                    title: values.title,
+                    description: values.description || "",
+                    category: values.category || "General",
+                    severity: values.severity || "Medium",
+                    probability: values.probability || "Medium",
+                    consequence: values.consequence || "Medium",
+                    riskScore: AssessmentManager.calculateRiskScore(
+                        values.severity || "Medium",
+                        values.probability || "Medium",
+                        values.consequence || "Medium"
+                    ),
+                    priority: values.priority || "Medium",
+                    status: values.status || "Draft"
+                });
+
+                AssessmentManager.set(assessment);
+                dialog.remove();
+                Notification.success("Assessment created.");
+                this.refresh();
+            }
         });
-
-        AssessmentManager.set(assessment);
-        Notification.success("Assessment created.");
-        this.refresh();
     }
 
     static refresh() {
