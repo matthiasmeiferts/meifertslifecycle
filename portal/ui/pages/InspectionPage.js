@@ -1,6 +1,10 @@
 import InspectionManager from "../../core/InspectionManager.js";
 import CaseManager from "../../core/CaseManager.js";
 import BuildingManager from "../../core/BuildingManager.js";
+import InspectionScopeManager from "../../core/InspectionScopeManager.js";
+import InspectionQuestionCatalog from "../../core/InspectionQuestionCatalog.js";
+import InspectionQuestionEngine from "../../core/InspectionQuestionEngine.js";
+import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
@@ -187,11 +191,15 @@ export default class InspectionPage {
     ];
 
     static render() {
+        window.setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }), 0);
+
         const fragment = document.createDocumentFragment();
         const inspections = InspectionManager.getAllInspections();
         const activeInspection = InspectionManager.getInspection();
 
         fragment.appendChild(this.createHeader(activeInspection));
+        fragment.appendChild(WorkflowContextBanner.create(CaseManager.getCurrent()));
+        fragment.appendChild(this.createInspectionScopeOverview(activeInspection));
         fragment.appendChild(this.createMetrics(inspections));
         fragment.appendChild(this.createMainLayout(inspections, activeInspection));
 
@@ -245,6 +253,244 @@ export default class InspectionPage {
         card.appendChild(labelElement);
 
         return card;
+    }
+
+
+    static getActiveScope(activeInspection = null) {
+        const currentCase = CaseManager.getCurrent();
+        const activeScope = InspectionScopeManager.get();
+
+        if (activeScope) {
+            if (activeInspection && activeScope.inspectionId === activeInspection.id) {
+                return activeScope;
+            }
+
+            if (!activeInspection && currentCase && activeScope.caseId === currentCase.id) {
+                return activeScope;
+            }
+        }
+
+        if (activeInspection) {
+            return InspectionScopeManager.getByInspection(activeInspection.id)[0] || null;
+        }
+
+        if (currentCase) {
+            return InspectionScopeManager.getByCase(currentCase.id)[0] || null;
+        }
+
+        return null;
+    }
+
+    static createInspectionScopeOverview(activeInspection = null) {
+        const activeScope = this.getActiveScope(activeInspection);
+        const modules = InspectionQuestionCatalog.getModules();
+        const questions = activeScope?.questions || InspectionQuestionCatalog.getStarterScopeQuestions();
+        const answers = activeScope?.answers || {};
+        const coverage = activeScope?.coverage || InspectionScopeManager.createCoverageSummary(questions, answers);
+        const firstQuestion = questions[0];
+        const firstEvaluation = firstQuestion
+            ? InspectionQuestionEngine.evaluate(firstQuestion, answers[firstQuestion.id])
+            : null;
+
+        const wrapper = document.createElement("section");
+        wrapper.className = activeScope
+            ? "inspection-scope-editorial inspection-scope-editorial--active"
+            : "inspection-scope-editorial";
+
+        const hero = document.createElement("div");
+        hero.className = "inspection-scope-editorial__hero";
+
+        const heroCopy = document.createElement("div");
+        heroCopy.className = "inspection-scope-editorial__copy";
+
+        const eyebrow = document.createElement("span");
+        eyebrow.className = "inspection-scope-editorial__eyebrow";
+        eyebrow.textContent = "Object Inspection Scope";
+
+        const title = document.createElement("strong");
+        title.textContent = activeScope ? "Adaptive Scope Active." : "Adaptive Object Capture.";
+
+        const description = document.createElement("p");
+        description.textContent = activeScope
+            ? "The inspection scope is connected to this case and inspection. Answers now drive evidence requirements, skipped questions, risk flags and report limitations."
+            : "Define what must be inspected before evidence is collected. The scope engine turns answers into required evidence, risk signals and limitations.";
+
+        const status = document.createElement("span");
+        status.className = activeScope
+            ? "inspection-scope-editorial__status inspection-scope-editorial__status--active"
+            : "inspection-scope-editorial__status";
+        status.textContent = activeScope ? "Scope Active" : "Not Started";
+
+        heroCopy.appendChild(eyebrow);
+        heroCopy.appendChild(title);
+        heroCopy.appendChild(description);
+        heroCopy.appendChild(status);
+
+        const actionPanel = document.createElement("aside");
+        actionPanel.className = "inspection-scope-editorial__action-panel";
+
+        const actionLabel = document.createElement("span");
+        actionLabel.textContent = "Operating Center";
+
+        const actionButton = document.createElement("button");
+        actionButton.type = "button";
+        actionButton.className = "button inspection-scope-editorial__action";
+        actionButton.textContent = activeScope ? "Scope Active" : "Start Scope";
+        actionButton.onclick = () => this.startAdaptiveScope(activeInspection);
+
+        const actionMeta = document.createElement("p");
+        actionMeta.textContent = activeScope
+            ? `${coverage.inspected}/${coverage.total} inspected · ${coverage.riskFlagged} risk flags`
+            : `${coverage.total} adaptive questions ready`;
+
+        actionPanel.appendChild(actionLabel);
+        actionPanel.appendChild(actionButton);
+        actionPanel.appendChild(actionMeta);
+
+        hero.appendChild(heroCopy);
+        hero.appendChild(actionPanel);
+
+        const body = document.createElement("div");
+        body.className = "inspection-scope-editorial__body";
+
+        const modulePanel = document.createElement("section");
+        modulePanel.className = "inspection-scope-editorial__modules";
+
+        const moduleHeader = document.createElement("div");
+        moduleHeader.className = "inspection-scope-editorial__section-header";
+        moduleHeader.innerHTML = "<span>Inspection Modules</span><strong>Building systems review</strong>";
+        modulePanel.appendChild(moduleHeader);
+
+        modules.forEach((module, index) => {
+            const moduleQuestions = InspectionQuestionCatalog.getByModule(module.id);
+            const item = document.createElement("article");
+            item.className = "inspection-scope-editorial__module";
+
+            const number = document.createElement("span");
+            number.textContent = String(index + 1).padStart(2, "0");
+
+            const content = document.createElement("div");
+            const label = document.createElement("strong");
+            label.textContent = module.label;
+
+            const meta = document.createElement("p");
+            meta.textContent = `${moduleQuestions.length} questions · ${module.riskCategory}`;
+
+            content.appendChild(label);
+            content.appendChild(meta);
+            item.appendChild(number);
+            item.appendChild(content);
+            modulePanel.appendChild(item);
+        });
+
+        const workPanel = document.createElement("section");
+        workPanel.className = "inspection-scope-editorial__work";
+
+        const workHeader = document.createElement("div");
+        workHeader.className = "inspection-scope-editorial__section-header";
+        workHeader.innerHTML = "<span>Current Question</span><strong>Inspection decision path</strong>";
+
+        const questionCard = document.createElement("article");
+        questionCard.className = "inspection-scope-editorial__question";
+
+        const questionText = document.createElement("strong");
+        questionText.textContent = firstQuestion?.question || "No inspection question available.";
+
+        const questionMeta = document.createElement("p");
+        questionMeta.textContent = firstQuestion
+            ? `${firstQuestion.module} · ${firstQuestion.category} · ${firstEvaluation.coverageStatus}`
+            : "Question catalog is empty.";
+
+        const questionHint = document.createElement("div");
+        questionHint.className = "inspection-scope-editorial__hint";
+        questionHint.textContent = activeScope
+            ? "Next step: add answer controls so Yes / No / Not accessible can update coverage and evidence requirements."
+            : "Start the adaptive scope to connect this question set to the active case and inspection.";
+
+        questionCard.appendChild(questionText);
+        questionCard.appendChild(questionMeta);
+        questionCard.appendChild(questionHint);
+
+        const coveragePanel = document.createElement("div");
+        coveragePanel.className = "inspection-scope-editorial__coverage";
+
+        [
+            ["Questions", coverage.total],
+            ["Open", coverage.open],
+            ["Inspected", coverage.inspected],
+            ["Evidence", coverage.evidenceRequired],
+            ["Risk", coverage.riskFlagged],
+            ["Limits", coverage.limitations]
+        ].forEach(([label, value]) => {
+            const item = document.createElement("div");
+            const number = document.createElement("strong");
+            number.textContent = String(value);
+            const text = document.createElement("span");
+            text.textContent = label;
+            item.appendChild(number);
+            item.appendChild(text);
+            coveragePanel.appendChild(item);
+        });
+
+        workPanel.appendChild(workHeader);
+        workPanel.appendChild(questionCard);
+        workPanel.appendChild(coveragePanel);
+
+        body.appendChild(modulePanel);
+        body.appendChild(workPanel);
+
+        wrapper.appendChild(hero);
+        wrapper.appendChild(body);
+
+        return wrapper;
+    }
+
+    static startAdaptiveScope(activeInspection = null) {
+        try {
+            const currentCase = CaseManager.getCurrent();
+            const currentBuilding = BuildingManager.get();
+            const inspection = activeInspection || InspectionManager.getInspection();
+
+            if (!currentCase) {
+                Notification.info("Open a case before starting an inspection scope.");
+                window.alert("Open a case before starting an inspection scope.");
+                return;
+            }
+
+            if (!inspection) {
+                Notification.info("Create or select an inspection before starting the adaptive scope.");
+                window.alert("Create or select an inspection before starting the adaptive scope.");
+                return;
+            }
+
+            const existing = this.getActiveScope(inspection);
+
+            if (existing) {
+                InspectionScopeManager.set(existing);
+                Notification.info("Adaptive inspection scope is already active.");
+                window.alert("Adaptive inspection scope is already active.");
+                this.refresh();
+                return;
+            }
+
+            const scope = InspectionScopeManager.create({
+                ...InspectionQuestionCatalog.createStarterScopeData(),
+                caseId: currentCase.id,
+                buildingId: inspection.buildingId || currentBuilding?.id || currentCase.buildingId || null,
+                inspectionId: inspection.id,
+                title: `Inspection Scope · ${inspection.title || inspection.id}`,
+                status: "Draft"
+            });
+
+            InspectionScopeManager.set(scope);
+            Notification.success("Adaptive inspection scope started.");
+            window.alert("Adaptive inspection scope started.");
+            this.refresh();
+        } catch (error) {
+            console.error("Inspection scope start failed:", error);
+            Notification.warning("Inspection scope could not be started.");
+            window.alert(`Inspection scope could not be started: ${error.message}`);
+        }
     }
 
     static createToolbar() {
@@ -378,13 +624,13 @@ export default class InspectionPage {
         const currentCase = CaseManager.getCurrent();
         const currentBuilding = BuildingManager.get();
 
-        if (!currentCase || !currentBuilding) {
-            Notification.info("Open a case and building before creating an inspection.");
+        if (!currentCase) {
+            Notification.info("Open a case before creating an inspection.");
             return;
         }
 
         const inspection = InspectionManager.create({
-            buildingId: currentBuilding.id,
+            buildingId: currentBuilding?.id || currentCase.buildingId || null,
             caseId: currentCase.id,
             title: "Technical Property Review",
             location: "Demo Property",
