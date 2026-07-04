@@ -1,4 +1,5 @@
 import InspectionManager from "../../core/InspectionManager.js";
+import EvidenceManager from "../../core/EvidenceManager.js";
 import CaseManager from "../../core/CaseManager.js";
 import BuildingManager from "../../core/BuildingManager.js";
 import InspectionScopeManager from "../../core/InspectionScopeManager.js";
@@ -11,6 +12,7 @@ import EmptyState from "../components/EmptyState.js";
 import DetailPanel from "../components/DetailPanel.js";
 import Notification from "../components/Notification.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 
 export default class InspectionPage {
 
@@ -626,7 +628,7 @@ export default class InspectionPage {
             action.className = "button inspection-scope-editorial__requirement-action";
             action.textContent = "Create Evidence";
             action.addEventListener("click", () => {
-                this.showPendingFeature("Evidence creation from inspection scope");
+                this.createEvidenceFromRequirement(activeScope, requirement);
             });
 
             item.appendChild(content);
@@ -635,6 +637,87 @@ export default class InspectionPage {
         });
 
         return wrapper;
+    }
+
+
+    static createEvidenceFromRequirement(activeScope = null, requirement = null) {
+        if (!activeScope || !requirement || !requirement.questionId) {
+            Notification.info("Select an evidence requirement first.");
+            return;
+        }
+
+        const question = InspectionQuestionCatalog.getById(requirement.questionId);
+
+        if (!question) {
+            Notification.warning("Inspection question could not be found.");
+            return;
+        }
+
+        const evidenceType = (requirement.requiredEvidence || ["note"])[0];
+        const answer = activeScope.answers?.[question.id] || null;
+
+        const evidence = EvidenceManager.create({
+            caseId: activeScope.caseId,
+            buildingId: activeScope.buildingId || null,
+            inspectionId: activeScope.inspectionId || null,
+            type: evidenceType,
+            category: question.category || "Inspection Scope",
+            title: `${this.formatEvidenceType(evidenceType)} required · ${question.question}`,
+            description: [
+                "Evidence requirement generated from adaptive inspection scope.",
+                `Question: ${question.id}`,
+                `Module: ${question.module}`,
+                `Category: ${question.category}`,
+                `Component: ${question.component || "Not specified"}`
+            ].join("\n"),
+            buildingSystem: question.module || "",
+            componentId: question.component || null,
+            status: "Open",
+            tags: [
+                "inspection-scope",
+                question.id,
+                ...(requirement.requiredEvidence || [])
+            ]
+        });
+
+        EvidenceManager.set(evidence);
+
+        const updatedAnswers = {
+            ...(activeScope.answers || {}),
+            [question.id]: {
+                ...(answer || {}),
+                questionId: question.id,
+                caseId: activeScope.caseId,
+                buildingId: activeScope.buildingId || null,
+                inspectionId: activeScope.inspectionId || null,
+                value: answer?.value || answer?.answer || "yes",
+                evidenceIds: [...new Set([...(answer?.evidenceIds || []), evidence.id])],
+                updatedAt: new Date().toISOString()
+            }
+        };
+
+        const updatedScope = {
+            ...activeScope,
+            answers: updatedAnswers,
+            evidenceRequirements: (activeScope.evidenceRequirements || [])
+                .filter(item => item.questionId !== question.id),
+            coverage: InspectionScopeManager.createCoverageSummary(
+                activeScope.questions || [],
+                updatedAnswers
+            ),
+            updatedAt: new Date().toISOString()
+        };
+
+        InspectionScopeManager.update(updatedScope);
+
+        Notification.success("Evidence created from inspection scope.");
+        WorkspaceRouter.navigate("evidence");
+    }
+
+    static formatEvidenceType(type = "note") {
+        return String(type)
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, character => character.toUpperCase());
     }
 
     static startAdaptiveScope(activeInspection = null) {
