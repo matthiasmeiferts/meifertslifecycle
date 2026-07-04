@@ -147,7 +147,7 @@ export default class ReportPage {
         const printButton = container.querySelector("[data-demo-report-print]");
         if (printButton) {
             printButton.addEventListener("click", () => {
-                window.print();
+                this.printOrSavePdf(activeReport);
             });
         }
 
@@ -915,27 +915,37 @@ export default class ReportPage {
         this.refresh();
     }
 
-    static exportPdf() {
-        const report = ReportManager.get();
+    static printOrSavePdf(report = null, options = {}) {
+        const activeReport = report || this.getActiveReport();
 
-        if (!report) {
+        if (!activeReport) {
             Notification.warning("Select a report first.");
             return;
         }
 
-        const updated = ReportManager.update({
-            ...report,
-            exportFormat: "PDF",
-            exportRequestedAt: new Date().toISOString()
-        });
+        let printableReport = activeReport;
 
-        ReportManager.set(updated);
+        if (options.markExportRequested !== false) {
+            printableReport = ReportManager.update({
+                ...activeReport,
+                exportFormat: "PDF",
+                exportRequestedAt: new Date().toISOString()
+            });
+            ReportManager.set(printableReport);
+        }
+
         Notification.info("Print dialog opened. Use Save as PDF in Safari.");
-        this.refresh();
 
         setTimeout(() => {
             window.print();
         }, 150);
+
+        return printableReport;
+    }
+
+    static exportPdf() {
+        const report = this.getActiveReport();
+        this.printOrSavePdf(report);
     }
 
     static createSampleReport(options = {}) {
