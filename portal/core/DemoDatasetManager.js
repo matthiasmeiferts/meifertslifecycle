@@ -37,6 +37,88 @@ export default class DemoDatasetManager {
         { collection: "reports", id: "DEMO-RPT-001", label: "Report" }
     ];
 
+    static demoLinks = [
+        {
+            fromCollection: "cases",
+            fromId: "DEMO-CASE-001",
+            field: "evidenceIds",
+            toId: "DEMO-EVD-001",
+            label: "Case links to Evidence"
+        },
+        {
+            fromCollection: "evidence",
+            fromId: "DEMO-EVD-001",
+            field: "caseId",
+            toId: "DEMO-CASE-001",
+            label: "Evidence links to Case"
+        },
+        {
+            fromCollection: "findings",
+            fromId: "DEMO-FND-001",
+            field: "evidenceIds",
+            toId: "DEMO-EVD-001",
+            label: "Finding links to Evidence"
+        },
+        {
+            fromCollection: "assessments",
+            fromId: "DEMO-ASM-001",
+            field: "findingIds",
+            toId: "DEMO-FND-001",
+            label: "Assessment links to Finding"
+        },
+        {
+            fromCollection: "recommendations",
+            fromId: "DEMO-REC-001",
+            field: "assessmentIds",
+            toId: "DEMO-ASM-001",
+            label: "Recommendation links to Assessment"
+        },
+        {
+            fromCollection: "decisions",
+            fromId: "DEMO-DEC-001",
+            field: "recommendationIds",
+            toId: "DEMO-REC-001",
+            label: "Decision links to Recommendation"
+        },
+        {
+            fromCollection: "reports",
+            fromId: "DEMO-RPT-001",
+            field: "decisionIds",
+            toId: "DEMO-DEC-001",
+            label: "Report links to Decision"
+        }
+    ];
+
+    static getIntegrityStatus() {
+        const checks = this.demoLinks.map(link => {
+            const source = StorageManager.load(link.fromCollection, link.fromId);
+            const value = source ? source[link.field] : null;
+            const valid = Array.isArray(value)
+                ? value.includes(link.toId)
+                : value === link.toId;
+
+            return {
+                ...link,
+                valid,
+                sourceExists: Boolean(source)
+            };
+        });
+
+        const validLinks = checks.filter(check => check.valid).length;
+        const totalLinks = checks.length;
+        const invalidLinks = checks.filter(check => !check.valid);
+
+        return {
+            validLinks,
+            totalLinks,
+            invalidLinks,
+            isValid: validLinks === totalLinks,
+            percent: totalLinks > 0
+                ? Math.round((validLinks / totalLinks) * 100)
+                : 0
+        };
+    }
+
     static create() {
         this.clearWorkflowData();
 
@@ -362,6 +444,7 @@ export default class DemoDatasetManager {
         const totalRecords = checks.length;
         const missingRecords = checks.filter(record => !record.exists);
         const metadata = StorageManager.load("demoDatasets", this.demoDatasetId);
+        const integrity = this.getIntegrityStatus();
 
         return {
             id: this.demoDatasetId,
@@ -374,6 +457,7 @@ export default class DemoDatasetManager {
                 ? Math.round((completeRecords / totalRecords) * 100)
                 : 0,
             missingRecords,
+            integrity,
             metadata
         };
     }

@@ -96,6 +96,9 @@ export default class DashboardPage {
 
         const tone = status.isComplete ? "ready" : "active";
         const label = status.isComplete ? "Complete" : "Incomplete";
+        const integrityLabel = status.integrity?.isValid
+            ? "Workflow links valid"
+            : "Workflow links incomplete";
 
         const banner = document.createElement("section");
         banner.className = `dashboard-demo-status dashboard-demo-status--${tone}`;
@@ -103,7 +106,7 @@ export default class DashboardPage {
             <div>
                 <span>Controlled Demo Dataset</span>
                 <strong>${label} · ${status.percent}%</strong>
-                <p>${status.completeRecords} of ${status.totalRecords} demo records are available for end-to-end workflow testing.</p>
+                <p>${status.completeRecords} of ${status.totalRecords} demo records are available. ${integrityLabel}.</p>
             </div>
             <button type="button" class="dashboard-demo-status__action" data-demo-review>
                 Review Demo Report

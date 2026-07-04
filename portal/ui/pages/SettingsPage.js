@@ -114,6 +114,13 @@ export default class SettingsPage {
             : status.isActive
                 ? "Incomplete"
                 : "Not Created";
+        const integrityLabel = status.integrity?.isValid
+            ? "Workflow links valid"
+            : "Workflow links incomplete";
+
+        const integrityCount = status.integrity
+            ? `${status.integrity.validLinks} of ${status.integrity.totalLinks} links valid`
+            : "Integrity not checked";
 
         panel.innerHTML = `
             <div class="settings-cleanup__header">
@@ -130,7 +137,7 @@ export default class SettingsPage {
                 <div>
                     <span>Demo Dataset Status</span>
                     <strong>${statusLabel}</strong>
-                    <p>${status.completeRecords} of ${status.totalRecords} controlled demo records available.</p>
+                    <p>${status.completeRecords} of ${status.totalRecords} controlled demo records available. ${integrityLabel} (${integrityCount}).</p>
                 </div>
                 <span class="settings-demo-status__score">${status.percent}%</span>
             </div>
