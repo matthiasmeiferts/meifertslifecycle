@@ -94,6 +94,12 @@ export default class ReportManager {
             reportType: data.reportType || "Technical Due Diligence",
             version:    data.version    || "1.0.0",
 
+            source:         data.source         || "Decision Review",
+            buildingSystem: data.buildingSystem || "",
+            riskScore:      data.riskScore      || 0,
+            decisionImpact: data.decisionImpact || "",
+            riskLevel:      data.riskLevel      || "",
+
             executiveSummary: data.executiveSummary || "",
             scope:            data.scope            || "",
             methodology:      data.methodology      || "",

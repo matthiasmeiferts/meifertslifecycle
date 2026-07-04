@@ -577,7 +577,11 @@ export default class ReportPage {
         title.textContent = report.title || report.id || "Report Item";
 
         const meta = document.createElement("span");
-        meta.textContent = `${report.reportType || "Technical Due Diligence"} · ${this.formatReportStatus(report)}`;
+        meta.textContent = [
+            report.reportType || "Technical Due Diligence",
+            this.formatReportStatus(report),
+            report.source || ""
+        ].filter(Boolean).join(" · ");
 
         const statusContainer = document.createElement("span");
         statusContainer.innerHTML = this.renderReportStatusBadge(report);
@@ -652,10 +656,18 @@ export default class ReportPage {
 
         const rows = [
             ["Case ID", report.caseId || "Not linked"],
+            ["Source", report.source || "Decision Review"],
+            ["Building ID", report.buildingId || "Not linked"],
+            ["Inspection ID", report.inspectionId || "Not linked"],
             ["Decision IDs", this.formatIdList(report.decisionIds || [])],
             ["Recommendation IDs", this.formatIdList(report.recommendationIds || [])],
             ["Assessment IDs", this.formatIdList(report.assessmentIds || [])],
             ["Finding IDs", this.formatIdList(report.findingIds || [])],
+            ["Evidence IDs", this.formatIdList(report.evidenceIds || [])],
+            ["Building System", report.buildingSystem || "Not linked"],
+            ["Risk Score", String(report.riskScore || 0)],
+            ["Decision Impact", report.decisionImpact || "Medium"],
+            ["Risk Level", report.riskLevel || "Medium"],
             ["Export Format", report.exportFormat || "PDF pending"],
             ["Generated", report.generatedAt ? new Date(report.generatedAt).toLocaleString() : "Not generated"]
         ];
@@ -723,13 +735,22 @@ export default class ReportPage {
         return DetailPanel.create("Report Context", [
             { label: "Selected Report", value: activeReport.title || activeReport.id },
             { label: "Report Status", value: this.formatReportStatus(activeReport) },
+            { label: "Source", value: activeReport.source || "Decision Review" },
             { label: "Case ID", value: activeReport.caseId || "Not linked" },
+            { label: "Building ID", value: activeReport.buildingId || "Not linked" },
+            { label: "Inspection ID", value: activeReport.inspectionId || "Not linked" },
             { label: "Decision IDs", value: (activeReport.decisionIds || []).join(", ") || "None" },
             { label: "Recommendation IDs", value: (activeReport.recommendationIds || []).join(", ") || "None" },
             { label: "Assessment IDs", value: (activeReport.assessmentIds || []).join(", ") || "None" },
             { label: "Finding IDs", value: (activeReport.findingIds || []).join(", ") || "None" },
+            { label: "Evidence IDs", value: (activeReport.evidenceIds || []).join(", ") || "None" },
+            { label: "Building System", value: activeReport.buildingSystem || "Not linked" },
+            { label: "Risk Score", value: String(activeReport.riskScore || 0) },
+            { label: "Decision Impact", value: activeReport.decisionImpact || "Medium" },
+            { label: "Risk Level", value: activeReport.riskLevel || "Medium" },
             { label: "Generated", value: activeReport.generatedAt ? new Date(activeReport.generatedAt).toLocaleString() : "Not generated" },
             { label: "Report Type", value: activeReport.reportType || "Technical Due Diligence" },
+            { label: "Executive Summary", value: activeReport.executiveSummary || "No executive summary" },
             { label: "Export Format", value: activeReport.exportFormat || "PDF pending" },
             { label: "Export Requested", value: activeReport.exportRequestedAt ? new Date(activeReport.exportRequestedAt).toLocaleString() : "Not requested" }
         ]);
