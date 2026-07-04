@@ -8,6 +8,7 @@ import AssessmentPage from "../ui/pages/AssessmentPage.js";
 import RecommendationPage from "../ui/pages/RecommendationPage.js";
 import DecisionPage from "../ui/pages/DecisionPage.js";
 import ReportPage from "../ui/pages/ReportPage.js";
+import SettingsPage from "../ui/pages/SettingsPage.js";
 
 export default class WorkspaceRouter {
 
@@ -21,7 +22,8 @@ export default class WorkspaceRouter {
         assessments: AssessmentPage,
         recommendations: RecommendationPage,
         decisions: DecisionPage,
-        reports: ReportPage
+        reports: ReportPage,
+        settings: SettingsPage
     };
 
     static fallbackRoute = "dashboard";

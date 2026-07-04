@@ -4605,4 +4605,77 @@ button.dashboard-readiness-card__action:focus-visible {
     font-weight: 700;
     line-height: 1.35;
     margin-top: 0.35rem;
+}\n
+/* Foundation Framework 3.9-T: workspace settings cleanup controls */
+.settings-cleanup {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.settings-cleanup__header {
+    align-items: flex-start;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: space-between;
+}
+
+.settings-cleanup__header h3 {
+    color: var(--ink);
+    font-size: 1.35rem;
+    margin: 0.2rem 0 0.4rem;
+}
+
+.settings-cleanup__header p:not(.eyebrow) {
+    color: var(--muted-text);
+    line-height: 1.5;
+    margin: 0;
+    max-width: 48rem;
+}
+
+.settings-cleanup__danger {
+    border-color: rgba(150, 48, 48, 0.35);
+    color: #963030;
+    white-space: nowrap;
+}
+
+.settings-cleanup__grid {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+.settings-cleanup__grid article {
+    background: rgba(255, 255, 255, 0.62);
+    border: 1px solid rgba(18, 38, 63, 0.08);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.settings-cleanup__grid span {
+    color: var(--muted-text);
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+
+.settings-cleanup__grid strong {
+    color: var(--ink);
+    display: block;
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.settings-cleanup--preserved .settings-cleanup__grid article {
+    background: rgba(231, 241, 233, 0.62);
+}
+
+@media (max-width: 760px) {
+    .settings-cleanup__header {
+        display: grid;
+    }
+
+    .settings-cleanup__danger {
+        width: 100%;
+    }
 }
