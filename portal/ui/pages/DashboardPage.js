@@ -2,6 +2,7 @@ import WorkspaceController from "../../controllers/WorkspaceController.js";
 import MetricCard from "../components/MetricCard.js";
 import WorkflowCard from "../components/WorkflowCard.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import DemoDatasetManager from "../../core/DemoDatasetManager.js";
 
 export default class DashboardPage {
 
@@ -42,6 +43,7 @@ export default class DashboardPage {
         const fragment = document.createDocumentFragment();
 
         const hero = this.createHero();
+        const demoDatasetStatus = this.createDemoDatasetStatus();
         const metrics = this.createMetrics();
         const readinessOverview = this.createWorkflowReadinessOverview();
         const readinessCards = this.createWorkspaceReadinessCards();
@@ -53,6 +55,7 @@ export default class DashboardPage {
         );
 
         fragment.appendChild(hero);
+    fragment.appendChild(demoDatasetStatus);
         fragment.appendChild(metrics);
         fragment.appendChild(readinessOverview);
         fragment.appendChild(readinessCards);
@@ -82,6 +85,29 @@ export default class DashboardPage {
         `;
 
         return hero;
+    }
+
+    static createDemoDatasetStatus() {
+        const status = DemoDatasetManager.getStatus();
+
+        if (!status.isActive) {
+            return document.createDocumentFragment();
+        }
+
+        const tone = status.isComplete ? "ready" : "active";
+        const label = status.isComplete ? "Complete" : "Incomplete";
+
+        const banner = document.createElement("section");
+        banner.className = `dashboard-demo-status dashboard-demo-status--${tone}`;
+        banner.innerHTML = `
+            <div>
+                <span>Controlled Demo Dataset</span>
+                <strong>${label} · ${status.percent}%</strong>
+                <p>${status.completeRecords} of ${status.totalRecords} demo records are available for end-to-end workflow testing.</p>
+            </div>
+        `;
+
+        return banner;
     }
 
     static createMetrics() {

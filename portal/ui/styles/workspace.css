@@ -131,6 +131,43 @@ h2 {
   color: var(--muted);
 }
 
+/* Foundation Framework 3.10-C: dashboard demo dataset awareness */
+.dashboard-demo-status {
+    border: 1px solid rgba(27, 43, 69, 0.1);
+    border-radius: 8px;
+    margin-top: -0.35rem;
+    padding: 0.9rem 1rem;
+}
+
+.dashboard-demo-status span {
+    color: var(--muted);
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.dashboard-demo-status strong {
+    color: var(--ink);
+    display: block;
+    font-size: 0.98rem;
+    margin-top: 0.16rem;
+}
+
+.dashboard-demo-status p {
+    color: var(--muted);
+    margin: 0.25rem 0 0;
+}
+
+.dashboard-demo-status--ready {
+    background: rgba(231, 241, 233, 0.62);
+}
+
+.dashboard-demo-status--active {
+    background: rgba(248, 232, 188, 0.45);
+}
+
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(140px, 1fr));
