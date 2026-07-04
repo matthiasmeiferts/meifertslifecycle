@@ -4597,4 +4597,12 @@ button.dashboard-readiness-card__action:focus-visible {
         overflow-wrap: anywhere !important;
         word-break: break-word !important;
     }
+}\n
+/* Foundation Framework 3.9-S: normalized report title source context */
+.report-preview__source-title {
+    color: #6d7688;
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-top: 0.35rem;
 }

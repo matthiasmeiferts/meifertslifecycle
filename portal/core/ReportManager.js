@@ -91,6 +91,7 @@ export default class ReportManager {
             decisionIds:       data.decisionIds        || [],
 
             title:      data.title      || "Professional Building Intelligence Report",
+            sourceTitle: data.sourceTitle || "",
             reportType: data.reportType || "Technical Due Diligence",
             version:    data.version    || "1.0.0",
 

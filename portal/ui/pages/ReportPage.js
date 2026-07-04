@@ -77,7 +77,7 @@ export default class ReportPage {
             eyebrow: "Report Workspace",
             title: "Reports",
             description: activeReport
-                ? `Active report: ${activeReport.title || activeReport.id}`
+                ? `Active report: ${this.getDisplayTitle(activeReport)}`
                 : "Generate professional Technical Due Diligence reports, executive summaries, and Building Intelligence documents.",
             actions: [
                 {
@@ -574,7 +574,7 @@ export default class ReportPage {
         content.className = "evidence-row__content";
 
         const title = document.createElement("strong");
-        title.textContent = report.title || report.id || "Report Item";
+        title.textContent = this.getDisplayTitle(report);
 
         const meta = document.createElement("span");
         meta.textContent = [
@@ -693,6 +693,30 @@ export default class ReportPage {
         ];
     }
 
+    static getDisplayTitle(report = {}) {
+        const title = report?.title || "";
+
+        if (!title || title.startsWith("Report from ")) {
+            return "Technical Due Diligence Report";
+        }
+
+        return title;
+    }
+
+    static getSourceTitle(report = {}) {
+        const title = report?.title || "";
+
+        if (report?.sourceTitle) {
+            return report.sourceTitle;
+        }
+
+        if (title.startsWith("Report from ")) {
+            return title.replace(/^Report from\s*/, "");
+        }
+
+        return "";
+    }
+
     static createReportPreview(report = {}) {
         const section = document.createElement("section");
         section.className = "workflow-card report-preview";
@@ -700,14 +724,17 @@ export default class ReportPage {
         const traceRows = this.getReportTraceRows(report);
         const statusRows = this.getReportStatusRows(report);
         const executiveSummary = this.getCleanExecutiveSummary(report);
+        const displayTitle = this.getDisplayTitle(report);
+        const sourceTitle = this.getSourceTitle(report);
 
         section.innerHTML = `
             <article class="report-preview__document">
                 <header class="report-preview__cover">
                     <div>
                         <span class="report-preview__eyebrow">MEIFERTS Building Intelligence</span>
-                        <h2>${this.escapeHtml(report.title || "Building Intelligence Report")}</h2>
+                        <h2>${this.escapeHtml(displayTitle)}</h2>
                         <p>${this.escapeHtml(report.reportType || "Technical Due Diligence")}</p>
+                        ${sourceTitle ? `<p class="report-preview__source-title">Decision basis: ${this.escapeHtml(sourceTitle)}</p>` : ""}
                     </div>
                     <div class="report-preview__status">
                         <span>Status</span>
@@ -776,7 +803,8 @@ export default class ReportPage {
         }
 
         return DetailPanel.create("Report Context", [
-            { label: "Selected Report", value: activeReport.title || activeReport.id },
+            { label: "Selected Report", value: this.getDisplayTitle(activeReport) },
+            { label: "Source Title", value: this.getSourceTitle(activeReport) || "Not linked" },
             { label: "Report Status", value: this.formatReportStatus(activeReport) },
             { label: "Source", value: activeReport.source || "Decision Review" },
             { label: "Case ID", value: activeReport.caseId || "Not linked" },
@@ -881,6 +909,7 @@ export default class ReportPage {
                 assessmentIds: activeDecision?.assessmentIds || [],
                 findingIds: [...new Set(resolvedFindingIds)],
                 title: values.title || "Building Intelligence Report",
+                sourceTitle: activeDecision?.title || "",
                 reportType: values.reportType || "Technical Due Diligence",
                 version: values.version || "1.0.0",
                 executiveSummary: values.executiveSummary || "",
@@ -915,7 +944,7 @@ export default class ReportPage {
             title: "New Report",
             submitLabel: "Create Report",
             values: {
-                title: activeDecision?.title ? `Report from ${activeDecision.title}` : "Building Intelligence Report",
+                title: "Technical Due Diligence Report",
                 reportType: "Technical Due Diligence",
                 version: "1.0.0",
                 executiveSummary: activeDecision?.description || "",
