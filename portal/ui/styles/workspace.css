@@ -2580,6 +2580,52 @@ button.dashboard-readiness-card__action:focus-visible {
     width: 100%;
 }
 
+/* Foundation Framework 3.10-F: controlled demo report guided review */
+.report-demo-review {
+    align-items: center;
+    background: rgba(231, 241, 233, 0.62);
+    border-color: rgba(46, 108, 84, 0.2);
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+}
+
+.report-demo-review__eyebrow {
+    color: var(--muted);
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.report-demo-review strong {
+    color: var(--ink);
+    display: block;
+    font-size: 1rem;
+    margin-top: 0.18rem;
+}
+
+.report-demo-review p {
+    color: var(--muted);
+    margin: 0.25rem 0 0;
+}
+
+.report-demo-review__status {
+    color: var(--ink);
+    flex: 0 0 auto;
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    line-height: 1;
+}
+
+@media (max-width: 760px) {
+    .report-demo-review {
+        align-items: flex-start;
+        display: grid;
+    }
+}
+
 /* Foundation Framework 3.8-B: workflow height balance */
 .workflow-card:has(.workspace-flow),
 .workflow-card:has(.next-action),

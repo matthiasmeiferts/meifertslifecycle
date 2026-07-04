@@ -4,6 +4,7 @@ import BuildingManager from "../../core/BuildingManager.js";
 import InspectionManager from "../../core/InspectionManager.js";
 import DecisionManager from "../../core/DecisionManager.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
+import DemoDatasetManager from "../../core/DemoDatasetManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
@@ -50,6 +51,7 @@ export default class ReportPage {
         fragment.appendChild(WorkflowContextBanner.create(currentCase));
         fragment.appendChild(WorkflowProgressPanel.create(currentCase, "reports"));
         fragment.appendChild(this.createMetrics(reports));
+        fragment.appendChild(this.createDemoReviewState(activeReport));
         const reportOverview = document.createElement("section");
         reportOverview.className = "report-polish-stack";
         reportOverview.appendChild(this.createFinalOutputState(activeReport));
@@ -103,6 +105,31 @@ export default class ReportPage {
         grid.appendChild(MetricCard.create("Archived", archivedCount));
 
         return grid;
+    }
+
+    static createDemoReviewState(activeReport = null) {
+        const status = DemoDatasetManager.getStatus();
+
+        if (!activeReport || activeReport.id !== "DEMO-RPT-001" || !status.isActive) {
+            return document.createDocumentFragment();
+        }
+
+        const integrityLabel = status.integrity?.isValid
+            ? "Workflow links valid"
+            : "Workflow links incomplete";
+
+        const container = document.createElement("section");
+        container.className = "workflow-card report-demo-review";
+        container.innerHTML = `
+            <div>
+                <span class="report-demo-review__eyebrow">Controlled Demo Report</span>
+                <strong>Ready for professional review</strong>
+                <p>${status.completeRecords} of ${status.totalRecords} demo records available. ${integrityLabel}.</p>
+            </div>
+            <span class="report-demo-review__status">${status.percent}%</span>
+        `;
+
+        return container;
     }
 
     static getOutputState(report = {}) {
