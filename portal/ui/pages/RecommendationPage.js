@@ -614,6 +614,12 @@ export default class RecommendationPage {
     }
 
     static getRecommendations() {
+        const currentCase = CaseManager.getCurrent();
+
+        if (currentCase) {
+            return RecommendationManager.getByCase(currentCase.id);
+        }
+
         return RecommendationManager.getAll();
     }
 

@@ -639,6 +639,12 @@ export default class DecisionPage {
     }
 
     static getDecisions() {
+        const currentCase = CaseManager.getCurrent();
+
+        if (currentCase) {
+            return DecisionManager.getByCase(currentCase.id);
+        }
+
         return DecisionManager.getAll();
     }
 

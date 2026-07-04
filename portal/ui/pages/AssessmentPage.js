@@ -513,6 +513,12 @@ export default class AssessmentPage {
     }
 
     static getAssessments() {
+        const currentCase = CaseManager.getCurrent();
+
+        if (currentCase) {
+            return AssessmentManager.getByCase(currentCase.id);
+        }
+
         return AssessmentManager.getAll();
     }
 

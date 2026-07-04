@@ -893,6 +893,12 @@ export default class ReportPage {
     }
 
     static getReports() {
+        const currentCase = CaseManager.getCurrent();
+
+        if (currentCase) {
+            return ReportManager.getByCase(currentCase.id);
+        }
+
         return ReportManager.getAll();
     }
 

@@ -559,8 +559,12 @@ export default class EvidencePage {
     }
 
     static getEvidenceItems() {
+        const currentCase = CaseManager.getCurrent();
+
         return WorkspaceController.safeValue(
-            () => EvidenceManager.getAll(),
+            () => currentCase
+                ? EvidenceManager.getByCase(currentCase.id)
+                : EvidenceManager.getAll(),
             []
         );
     }
@@ -572,7 +576,12 @@ export default class EvidencePage {
             return 0;
         }
 
-        return FindingManager.getAll()
+        const currentCase = CaseManager.getCurrent();
+        const findings = currentCase
+            ? FindingManager.getByCase(currentCase.id)
+            : FindingManager.getAll();
+
+        return findings
             .filter(finding => (finding.evidenceIds || []).includes(targetEvidenceId))
             .length;
     }

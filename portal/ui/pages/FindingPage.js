@@ -534,8 +534,12 @@ export default class FindingPage {
     }
 
     static getFindings() {
+        const currentCase = CaseManager.getCurrent();
+
         return WorkspaceController.safeValue(
-            () => FindingManager.getAll(),
+            () => currentCase
+                ? FindingManager.getByCase(currentCase.id)
+                : FindingManager.getAll(),
             []
         );
     }
@@ -547,7 +551,12 @@ export default class FindingPage {
             return 0;
         }
 
-        return AssessmentManager.getAll()
+        const currentCase = CaseManager.getCurrent();
+        const assessments = currentCase
+            ? AssessmentManager.getByCase(currentCase.id)
+            : AssessmentManager.getAll();
+
+        return assessments
             .filter(assessment => (assessment.findingIds || []).includes(targetFindingId))
             .length;
     }
