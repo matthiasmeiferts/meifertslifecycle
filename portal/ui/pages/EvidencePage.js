@@ -600,16 +600,38 @@ export default class EvidencePage {
             return;
         }
 
+        const findingTitle = evidence.sourceQuestion
+            ? `Finding: ${evidence.sourceQuestion}`
+            : `Finding from ${evidence.title || evidence.id}`;
+
+        const descriptionParts = [
+            evidence.description || "Finding generated from selected evidence."
+        ];
+
+        if (evidence.sourceQuestionId || evidence.sourceQuestion) {
+            descriptionParts.push("");
+            descriptionParts.push("Inspection scope trace:");
+            descriptionParts.push(`Question ID: ${evidence.sourceQuestionId || "Not linked"}`);
+            descriptionParts.push(`Question: ${evidence.sourceQuestion || "Not linked"}`);
+            descriptionParts.push(`Required evidence: ${(evidence.sourceRequiredEvidence || []).join(", ") || "None"}`);
+            descriptionParts.push(`Scope ID: ${evidence.scopeId || "Not linked"}`);
+        }
+
         const finding = FindingManager.create({
             caseId: evidence.caseId,
             buildingId: evidence.buildingId || currentCase?.buildingId || null,
             inspectionId: evidence.inspectionId || currentCase?.inspectionId || null,
             evidenceIds: [evidence.id],
-            title: `Finding from ${evidence.title || evidence.id}`,
-            description: evidence.description || "Finding generated from selected evidence.",
-            category: evidence.evidenceType || evidence.type || "General",
+            title: findingTitle,
+            description: descriptionParts.join("\n"),
+            category: evidence.sourceCategory || evidence.evidenceType || evidence.type || "General",
+            buildingSystem: evidence.sourceModule || evidence.buildingSystem || "",
+            location: evidence.location || "",
             severity: "Medium",
-            status: "Open"
+            status: "Draft",
+            source: evidence.sourceType === "inspection-scope"
+                ? "Inspection Scope Evidence"
+                : "Evidence Review"
         });
 
         FindingManager.set(finding);
