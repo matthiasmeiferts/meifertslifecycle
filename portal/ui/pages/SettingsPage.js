@@ -6,6 +6,7 @@ import AssessmentManager from "../../core/AssessmentManager.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
 import DecisionManager from "../../core/DecisionManager.js";
 import ReportManager from "../../core/ReportManager.js";
+import DemoDatasetManager from "../../core/DemoDatasetManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import MetricCard from "../components/MetricCard.js";
 import Notification from "../components/Notification.js";
@@ -39,6 +40,7 @@ export default class SettingsPage {
 
         fragment.appendChild(this.createMetrics());
         fragment.appendChild(this.createCleanupPanel());
+        fragment.appendChild(this.createDemoDatasetPanel());
         fragment.appendChild(this.createPreservedPanel());
 
         return fragment;
@@ -98,6 +100,29 @@ export default class SettingsPage {
         return panel;
     }
 
+    static createDemoDatasetPanel() {
+        const panel = document.createElement("section");
+        panel.className = "workflow-card settings-cleanup settings-cleanup--demo";
+
+        panel.innerHTML = `
+            <div class="settings-cleanup__header">
+                <div>
+                    <p class="eyebrow">Controlled Demo Dataset</p>
+                    <h3>Create a clean end-to-end demo case</h3>
+                    <p>This creates one controlled demo chain from inspection scope to report. Existing workflow test data will be replaced, while cases, buildings, and inspections remain available.</p>
+                </div>
+                <button type="button" class="button" data-action="create-demo-dataset">
+                    Create Controlled Demo Dataset
+                </button>
+            </div>
+        `;
+
+        panel.querySelector("[data-action='create-demo-dataset']")
+            .addEventListener("click", () => this.createControlledDemoDataset());
+
+        return panel;
+    }
+
     static createPreservedPanel() {
         const panel = document.createElement("section");
         panel.className = "workflow-card settings-cleanup settings-cleanup--preserved";
@@ -126,6 +151,26 @@ export default class SettingsPage {
         `;
 
         return panel;
+    }
+
+    static createControlledDemoDataset() {
+        const confirmed = window.confirm(
+            "Create a controlled demo dataset? Existing workflow test data will be replaced. Cases, buildings, and inspections will be preserved."
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        const dataset = DemoDatasetManager.create();
+
+        Notification.success("Controlled demo dataset created.");
+        window.setTimeout(() => {
+            window.location.hash = "reports";
+            window.location.reload();
+        }, 250);
+
+        return dataset;
     }
 
     static clearWorkflowTestData() {

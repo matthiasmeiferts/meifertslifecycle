@@ -4678,4 +4678,14 @@ button.dashboard-readiness-card__action:focus-visible {
     .settings-cleanup__danger {
         width: 100%;
     }
+}\n
+/* Foundation Framework 3.10-A: controlled demo dataset settings action */
+.settings-cleanup--demo {
+    border-color: rgba(46, 108, 84, 0.2);
+}
+
+.settings-cleanup--demo .button {
+    border-color: rgba(46, 108, 84, 0.35);
+    color: #2e6c54;
+    white-space: nowrap;
 }
