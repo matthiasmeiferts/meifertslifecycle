@@ -395,7 +395,8 @@ export default class DemoDatasetManager {
             riskScore: assessment.riskScore,
             decisionImpact: recommendation.decisionImpact,
             riskLevel: decision.riskLevel,
-            status: "Draft"
+            status: "Prepared",
+            prepared: true,
         });
 
         ReportManager.set(report);

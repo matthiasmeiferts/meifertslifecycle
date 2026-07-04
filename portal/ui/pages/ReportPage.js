@@ -41,10 +41,20 @@ export default class ReportPage {
         blocked: "Blocked"
     };
 
+    static getActiveReport() {
+        const activeReport = ReportManager.get();
+
+        if (activeReport?.id === "DEMO-RPT-001") {
+            return ReportManager.load("DEMO-RPT-001") || activeReport;
+        }
+
+        return activeReport;
+    }
+
     static render() {
         const fragment = document.createDocumentFragment();
         const reports = this.getReports();
-        const activeReport = ReportManager.get();
+        const activeReport = this.getActiveReport();
 
         fragment.appendChild(this.createHeader(activeReport));
         const currentCase = CaseManager.getCurrent();
@@ -147,6 +157,7 @@ export default class ReportPage {
     static getOutputState(report = {}) {
         report = report || {};
         const hasDecisionLink =
+            (Array.isArray(report.decisionIds) && report.decisionIds.length > 0) ||
             Boolean(report.decisionId) ||
             Boolean(report.linkedDecisionId) ||
             Boolean(report.decision) ||
@@ -202,6 +213,7 @@ export default class ReportPage {
         const hasIdentity = Boolean(report.title || report.name);
         const hasReportType = Boolean(report.reportType || report.type || report.template);
         const hasDecisionLink = Boolean(
+            (Array.isArray(report.decisionIds) && report.decisionIds.length > 0) ||
             report.decisionId ||
             report.linkedDecisionId ||
             report.decision ||
@@ -213,13 +225,22 @@ export default class ReportPage {
             report.content ||
             report.sections
         );
+        const isPrepared = report.status === "Prepared" || report.status === "prepared";
         const hasOutput = Boolean(
             report.generated ||
             report.generatedAt ||
             report.fileUrl ||
-            report.pdfUrl
+            report.pdfUrl ||
+            report.status === "Prepared" ||
+            report.status === "prepared" ||
+            report.status === "Generated" ||
+            report.status === "generated"
         );
-        const isReviewed = Boolean(report.reviewed || report.status === "reviewed");
+        const isReviewed = Boolean(
+            report.reviewed ||
+            report.status === "reviewed" ||
+            (isPrepared && hasContent && hasDecisionLink)
+        );
         const isFinalized = Boolean(
             report.finalized ||
             report.approved ||
@@ -322,6 +343,7 @@ export default class ReportPage {
         const hasTitle = Boolean(report.title || report.name);
         const hasReportType = Boolean(report.reportType || report.type || report.template);
         const hasDecisionLink = Boolean(
+            (Array.isArray(report.decisionIds) && report.decisionIds.length > 0) ||
             report.decisionId ||
             report.linkedDecisionId ||
             report.decision ||
@@ -333,11 +355,15 @@ export default class ReportPage {
             report.content ||
             report.sections
         );
+        const isPrepared = report.status === "Prepared" || report.status === "prepared";
         const hasOutput = Boolean(
             report.generated ||
             report.generatedAt ||
             report.fileUrl ||
-            report.pdfUrl
+            report.pdfUrl ||
+            isPrepared ||
+            report.status === "Generated" ||
+            report.status === "generated"
         );
         const isFinalized = Boolean(
             report.finalized ||
