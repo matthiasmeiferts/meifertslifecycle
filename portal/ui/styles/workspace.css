@@ -4392,3 +4392,96 @@ button.dashboard-readiness-card__action:focus-visible {
         grid-template-columns: 1fr;
     }
 }
+
+/* Foundation Framework 3.9-G: evidence requirement actions */
+.inspection-scope-editorial__requirements {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 8px;
+    margin-top: 4px;
+    padding: 12px;
+    border: 1px solid rgba(184, 153, 104, 0.22);
+    background: rgba(246, 242, 232, 0.46);
+}
+
+.inspection-scope-editorial__requirements-header {
+    display: grid;
+    gap: 4px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(27, 43, 69, 0.08);
+}
+
+.inspection-scope-editorial__requirements-header span {
+    color: #b89968;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.inspection-scope-editorial__requirements-header strong {
+    color: #1b2b45;
+    font-size: 13px;
+}
+
+.inspection-scope-editorial__requirement {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(27, 43, 69, 0.07);
+}
+
+.inspection-scope-editorial__requirement:last-child {
+    border-bottom: 0;
+}
+
+.inspection-scope-editorial__requirement strong {
+    display: block;
+    color: #1b2b45;
+    font-size: 12px;
+    line-height: 1.3;
+}
+
+.inspection-scope-editorial__requirement p {
+    margin: 4px 0 0;
+    color: rgba(27, 43, 69, 0.56);
+    font-size: 10px;
+    line-height: 1.35;
+}
+
+.inspection-scope-editorial__requirement-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 7px;
+}
+
+.inspection-scope-editorial__requirement-tags span {
+    padding: 4px 7px;
+    border: 1px solid rgba(27, 43, 69, 0.08);
+    border-radius: 999px;
+    color: rgba(27, 43, 69, 0.68);
+    background: rgba(255, 255, 255, 0.68);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.inspection-scope-editorial__requirement-action {
+    min-height: 32px;
+    padding: 0 12px;
+    white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+    .inspection-scope-editorial__requirement {
+        grid-template-columns: 1fr;
+    }
+
+    .inspection-scope-editorial__requirement-action {
+        width: max-content;
+    }
+}

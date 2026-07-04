@@ -532,7 +532,7 @@ export default class InspectionPage {
                 label: "Evidence Required",
                 value: evidenceRequirements.length,
                 detail: evidenceRequirements.length
-                    ? evidenceRequirements.map(item => item.requiredEvidence.join(", ")).join(" · ")
+                    ? `${evidenceRequirements.length} inspection question(s) require evidence.`
                     : "No evidence requirements triggered yet."
             },
             {
@@ -567,7 +567,74 @@ export default class InspectionPage {
             panel.appendChild(item);
         });
 
+        if (evidenceRequirements.length) {
+            panel.appendChild(this.createEvidenceRequirementList(activeScope, evidenceRequirements));
+        }
+
         return panel;
+    }
+
+    static createEvidenceRequirementList(activeScope = null, evidenceRequirements = []) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "inspection-scope-editorial__requirements";
+
+        const header = document.createElement("div");
+        header.className = "inspection-scope-editorial__requirements-header";
+
+        const eyebrow = document.createElement("span");
+        eyebrow.textContent = "Evidence Actions";
+
+        const title = document.createElement("strong");
+        title.textContent = "Required evidence by inspection answer";
+
+        header.appendChild(eyebrow);
+        header.appendChild(title);
+        wrapper.appendChild(header);
+
+        evidenceRequirements.forEach(requirement => {
+            const question = InspectionQuestionCatalog.getById(requirement.questionId);
+            const item = document.createElement("article");
+            item.className = "inspection-scope-editorial__requirement";
+
+            const content = document.createElement("div");
+
+            const questionTitle = document.createElement("strong");
+            questionTitle.textContent = question?.question || requirement.questionId;
+
+            const meta = document.createElement("p");
+            meta.textContent = [
+                `Question: ${requirement.questionId}`,
+                `Case: ${activeScope?.caseId || "not linked"}`,
+                `Inspection: ${activeScope?.inspectionId || "not linked"}`
+            ].join(" · ");
+
+            const tags = document.createElement("div");
+            tags.className = "inspection-scope-editorial__requirement-tags";
+
+            (requirement.requiredEvidence || []).forEach(type => {
+                const tag = document.createElement("span");
+                tag.textContent = type;
+                tags.appendChild(tag);
+            });
+
+            content.appendChild(questionTitle);
+            content.appendChild(meta);
+            content.appendChild(tags);
+
+            const action = document.createElement("button");
+            action.type = "button";
+            action.className = "button inspection-scope-editorial__requirement-action";
+            action.textContent = "Create Evidence";
+            action.addEventListener("click", () => {
+                this.showPendingFeature("Evidence creation from inspection scope");
+            });
+
+            item.appendChild(content);
+            item.appendChild(action);
+            wrapper.appendChild(item);
+        });
+
+        return wrapper;
     }
 
     static startAdaptiveScope(activeInspection = null) {
