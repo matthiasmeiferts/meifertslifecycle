@@ -89,10 +89,15 @@ export default class RecommendationManager {
 
             assessmentIds: data.assessmentIds || [],
             findingIds:    data.findingIds    || [],
+            evidenceIds:   data.evidenceIds   || [],
 
             title:       data.title       || "Recommendation",
             description: data.description || "",
             action:      data.action      || "",
+
+            source:         data.source         || "Assessment Review",
+            buildingSystem: data.buildingSystem || "",
+            riskScore:      data.riskScore      || 0,
 
             priority:       data.priority       || "Medium",
             timeframe:      data.timeframe      || "Short Term",

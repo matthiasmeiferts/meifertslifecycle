@@ -503,11 +503,19 @@ export default class RecommendationPage {
         return DetailPanel.create("Recommendation Context", [
             { label: "Selected Recommendation", value: activeRecommendation.title || activeRecommendation.id },
             { label: "Workspace Status", value: statusLabel },
+            { label: "Source", value: activeRecommendation.source || "Assessment Review" },
             { label: "Case ID", value: activeRecommendation.caseId || "Not linked" },
+            { label: "Building ID", value: activeRecommendation.buildingId || "Not linked" },
+            { label: "Inspection ID", value: activeRecommendation.inspectionId || "Not linked" },
             { label: "Assessment IDs", value: (activeRecommendation.assessmentIds || []).join(", ") || "None" },
             { label: "Finding IDs", value: (activeRecommendation.findingIds || []).join(", ") || "None" },
+            { label: "Evidence IDs", value: (activeRecommendation.evidenceIds || []).join(", ") || "None" },
+            { label: "Building System", value: activeRecommendation.buildingSystem || "Not linked" },
+            { label: "Risk Score", value: String(activeRecommendation.riskScore || 0) },
             { label: "Priority", value: activeRecommendation.priority || "Medium" },
             { label: "Timeframe", value: activeRecommendation.timeframe || "Short Term" },
+            { label: "Decision Impact", value: activeRecommendation.decisionImpact || "Medium" },
+            { label: "Description", value: activeRecommendation.description || "No description" },
             { label: "Decision IDs", value: (activeRecommendation.decisionIds || []).join(", ") || "None" },
             { label: "Linked Decisions", value: String(this.countDecisionsLinkedToRecommendation(activeRecommendation.id)) }
         ]);

@@ -461,9 +461,22 @@ export default class AssessmentPage {
             inspectionId: assessment.inspectionId || currentCase?.inspectionId || null,
             assessmentIds: [assessment.id],
             findingIds: assessment.findingIds || [],
+            evidenceIds: assessment.evidenceIds || [],
             title: `Recommendation from ${assessment.title || assessment.id}`,
-            description: assessment.description || "Recommendation generated from selected assessment.",
+            description: [
+                assessment.description || "Recommendation generated from selected assessment.",
+                "",
+                "Assessment trace:",
+                `Assessment ID: ${assessment.id}`,
+                `Assessment source: ${assessment.source || "Assessment Review"}`,
+                `Finding IDs: ${(assessment.findingIds || []).join(", ") || "None"}`,
+                `Evidence IDs: ${(assessment.evidenceIds || []).join(", ") || "None"}`,
+                `Risk score: ${assessment.riskScore || 0}`
+            ].join("\n"),
             action: "Review and implement corrective action.",
+            source: assessment.source || "Assessment Review",
+            buildingSystem: assessment.buildingSystem || "",
+            riskScore: assessment.riskScore || 0,
             priority: assessment.priority || "Medium",
             timeframe: (assessment.riskScore || 0) >= 60 ? "Immediate"
                 : (assessment.riskScore || 0) >= 30 ? "Short Term"
