@@ -650,12 +650,27 @@ export default class ReportPage {
         return values.length ? values.join(", ") : "Legacy / not linked";
     }
 
-    static createReportPreview(report = {}) {
-        const section = document.createElement("section");
-        section.className = "workflow-card report-preview";
+    static getCleanExecutiveSummary(report = {}) {
+        const rawSummary = String(report.executiveSummary || "").trim();
+        const traceMarkers = [
+            "Decision trace:",
+            "Recommendation trace:",
+            "Assessment trace:",
+            "Finding trace:"
+        ];
 
-        const rows = [
-            ["Case ID", report.caseId || "Not linked"],
+        if (traceMarkers.some(marker => rawSummary.includes(marker))) {
+            return [
+                "This report summarizes the technical due diligence decision path for the selected case.",
+                "It consolidates linked evidence, findings, assessments, recommendations and the final decision context for professional review."
+            ].join(" ");
+        }
+
+        return rawSummary || "This report summarizes the selected Building Intelligence workflow and its current decision context.";
+    }
+
+    static getReportTraceRows(report = {}) {
+        return [
             ["Source", report.source || "Decision Review"],
             ["Building ID", report.buildingId || "Not linked"],
             ["Inspection ID", report.inspectionId || "Not linked"],
@@ -667,10 +682,24 @@ export default class ReportPage {
             ["Building System", report.buildingSystem || "Not linked"],
             ["Risk Score", String(report.riskScore || 0)],
             ["Decision Impact", report.decisionImpact || "Medium"],
-            ["Risk Level", report.riskLevel || "Medium"],
+            ["Risk Level", report.riskLevel || "Medium"]
+        ];
+    }
+
+    static getReportStatusRows(report = {}) {
+        return [
             ["Export Format", report.exportFormat || "PDF pending"],
             ["Generated", report.generatedAt ? new Date(report.generatedAt).toLocaleString() : "Not generated"]
         ];
+    }
+
+    static createReportPreview(report = {}) {
+        const section = document.createElement("section");
+        section.className = "workflow-card report-preview";
+
+        const traceRows = this.getReportTraceRows(report);
+        const statusRows = this.getReportStatusRows(report);
+        const executiveSummary = this.getCleanExecutiveSummary(report);
 
         section.innerHTML = `
             <article class="report-preview__document">
@@ -688,7 +717,7 @@ export default class ReportPage {
 
                 <section class="report-preview__section report-preview__summary">
                     <span class="report-preview__section-label">Executive Summary</span>
-                    <p>${this.escapeHtml(report.executiveSummary || "No executive summary available.")}</p>
+                    <p>${this.escapeHtml(executiveSummary)}</p>
                 </section>
 
                 <div class="report-preview__grid">
@@ -703,11 +732,25 @@ export default class ReportPage {
                     </section>
                 </div>
 
-                <section class="report-preview__section">
-                    <span class="report-preview__section-label">Workflow Context</span>
+                <section class="report-preview__section report-preview__trace">
+                    <span class="report-preview__section-label">Workflow Traceability</span>
                     <table class="report-preview__table">
                         <tbody>
-                            ${rows.map(([label, value]) => `
+                            ${traceRows.map(([label, value]) => `
+                                <tr>
+                                    <th>${this.escapeHtml(label)}</th>
+                                    <td>${this.escapeHtml(value)}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="report-preview__section report-preview__status-table">
+                    <span class="report-preview__section-label">Output Status</span>
+                    <table class="report-preview__table">
+                        <tbody>
+                            ${statusRows.map(([label, value]) => `
                                 <tr>
                                     <th>${this.escapeHtml(label)}</th>
                                     <td>${this.escapeHtml(value)}</td>

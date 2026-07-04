@@ -4484,4 +4484,25 @@ button.dashboard-readiness-card__action:focus-visible {
     .inspection-scope-editorial__requirement-action {
         width: max-content;
     }
+}\n\n
+/* Foundation Framework 3.9-P: polished report preview trace output */
+.report-preview__trace,
+.report-preview__status-table {
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(20, 35, 61, 0.08);
+    border-radius: 8px;
+    padding: 18px 20px;
+}
+
+.report-preview__trace .report-preview__table th,
+.report-preview__status-table .report-preview__table th {
+    width: 24%;
+}
+
+.report-preview__summary p {
+    max-width: 56rem;
+}
+
+.report-preview__table td {
+    line-height: 1.45;
 }
