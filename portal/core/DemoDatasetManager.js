@@ -119,6 +119,10 @@ export default class DemoDatasetManager {
         };
     }
 
+    static rebuild() {
+        return this.create();
+    }
+
     static create() {
         this.clearWorkflowData();
 
@@ -460,6 +464,11 @@ export default class DemoDatasetManager {
             integrity,
             metadata
         };
+    }
+
+    static reset() {
+        this.clearWorkflowData();
+        return this.getStatus();
     }
 
     static clearWorkflowData() {

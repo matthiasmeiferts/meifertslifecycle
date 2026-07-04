@@ -129,9 +129,14 @@ export default class SettingsPage {
                     <h3>Create a clean end-to-end demo case</h3>
                     <p>This creates one controlled demo chain from inspection scope to report. Existing workflow test data will be replaced, while cases, buildings, and inspections remain available.</p>
                 </div>
-                <button type="button" class="button" data-action="create-demo-dataset">
-                    Create Controlled Demo Dataset
-                </button>
+                <div class="settings-demo-actions">
+                    <button type="button" class="button" data-action="create-demo-dataset">
+                        Rebuild Controlled Demo Dataset
+                    </button>
+                    <button type="button" class="button settings-cleanup__danger" data-action="reset-demo-dataset">
+                        Reset Demo Workflow Data
+                    </button>
+                </div>
             </div>
             <div class="settings-demo-status settings-demo-status--${statusTone}">
                 <div>
@@ -144,7 +149,9 @@ export default class SettingsPage {
         `;
 
         panel.querySelector("[data-action='create-demo-dataset']")
-            .addEventListener("click", () => this.createControlledDemoDataset());
+            .addEventListener("click", () => this.rebuildControlledDemoDataset());
+        panel.querySelector("[data-action='reset-demo-dataset']")
+            .addEventListener("click", () => this.resetControlledDemoDataset());
 
         return panel;
     }
@@ -179,24 +186,50 @@ export default class SettingsPage {
         return panel;
     }
 
-    static createControlledDemoDataset() {
+    static rebuildControlledDemoDataset() {
         const confirmed = window.confirm(
-            "Create a controlled demo dataset? Existing workflow test data will be replaced. Cases, buildings, and inspections will be preserved."
+            "Rebuild the controlled demo dataset? Existing workflow demo data will be replaced. Preserved cases, buildings, and inspections will remain available."
         );
 
         if (!confirmed) {
             return;
         }
 
-        const dataset = DemoDatasetManager.create();
+        const dataset = DemoDatasetManager.rebuild();
 
-        Notification.success("Controlled demo dataset created.");
+        Notification.success("Controlled demo dataset rebuilt.");
         window.setTimeout(() => {
             window.location.hash = "reports";
             window.location.reload();
         }, 250);
 
         return dataset;
+    }
+
+    static createControlledDemoDataset() {
+        return this.rebuildControlledDemoDataset();
+    }
+
+    static resetControlledDemoDataset() {
+        const status = DemoDatasetManager.getStatus();
+
+        if (!status.isActive) {
+            Notification.info("No controlled demo dataset to reset.");
+            return;
+        }
+
+        const confirmed = window.confirm(
+            "Reset controlled demo workflow data? Cases, buildings, and inspections will be preserved."
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        DemoDatasetManager.reset();
+
+        Notification.success("Controlled demo workflow data reset.");
+        window.setTimeout(() => window.location.reload(), 250);
     }
 
     static clearWorkflowTestData() {

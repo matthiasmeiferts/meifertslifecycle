@@ -4811,6 +4811,30 @@ button.dashboard-readiness-card__action:focus-visible {
     white-space: nowrap;
 }
 
+.settings-demo-actions {
+    align-items: flex-end;
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    justify-content: flex-end;
+}
+
+.settings-demo-actions .button {
+    margin: 0;
+}
+
+@media (max-width: 760px) {
+    .settings-demo-actions {
+        display: grid;
+        width: 100%;
+    }
+
+    .settings-demo-actions .button {
+        width: 100%;
+    }
+}
+
 /* Foundation Framework 3.10-B: controlled demo dataset status */
 .settings-demo-status {
     align-items: center;
