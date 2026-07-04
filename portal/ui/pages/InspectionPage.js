@@ -191,8 +191,6 @@ export default class InspectionPage {
     ];
 
     static render() {
-        window.setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }), 0);
-
         const fragment = document.createDocumentFragment();
         const inspections = InspectionManager.getAllInspections();
         const activeInspection = InspectionManager.getInspection();
@@ -286,10 +284,12 @@ export default class InspectionPage {
         const modules = InspectionQuestionCatalog.getModules();
         const questions = activeScope?.questions || InspectionQuestionCatalog.getStarterScopeQuestions();
         const answers = activeScope?.answers || {};
-        const coverage = activeScope?.coverage || InspectionScopeManager.createCoverageSummary(questions, answers);
-        const firstQuestion = questions[0];
-        const firstEvaluation = firstQuestion
-            ? InspectionQuestionEngine.evaluate(firstQuestion, answers[firstQuestion.id])
+        const coverage = activeScope
+            ? InspectionScopeManager.createCoverageSummary(questions, answers)
+            : InspectionScopeManager.createCoverageSummary(questions, answers);
+        const currentQuestion = this.getCurrentScopeQuestion(activeScope, questions, answers);
+        const currentEvaluation = currentQuestion
+            ? InspectionQuestionEngine.evaluate(currentQuestion, answers[currentQuestion.id])
             : null;
 
         const wrapper = document.createElement("section");
@@ -394,22 +394,23 @@ export default class InspectionPage {
         questionCard.className = "inspection-scope-editorial__question";
 
         const questionText = document.createElement("strong");
-        questionText.textContent = firstQuestion?.question || "No inspection question available.";
+        questionText.textContent = currentQuestion?.question || "No inspection question available.";
 
         const questionMeta = document.createElement("p");
-        questionMeta.textContent = firstQuestion
-            ? `${firstQuestion.module} · ${firstQuestion.category} · ${firstEvaluation.coverageStatus}`
+        questionMeta.textContent = currentQuestion
+            ? `${currentQuestion.module} · ${currentQuestion.category} · ${currentEvaluation.coverageStatus}`
             : "Question catalog is empty.";
 
         const questionHint = document.createElement("div");
         questionHint.className = "inspection-scope-editorial__hint";
         questionHint.textContent = activeScope
-            ? "Next step: add answer controls so Yes / No / Not accessible can update coverage and evidence requirements."
+            ? "Choose an answer. The scope engine will update coverage, evidence requirements, risk flags and limitations."
             : "Start the adaptive scope to connect this question set to the active case and inspection.";
 
         questionCard.appendChild(questionText);
         questionCard.appendChild(questionMeta);
         questionCard.appendChild(questionHint);
+        questionCard.appendChild(this.createAnswerControls(activeInspection, activeScope, currentQuestion));
 
         const coveragePanel = document.createElement("div");
         coveragePanel.className = "inspection-scope-editorial__coverage";
@@ -434,6 +435,7 @@ export default class InspectionPage {
 
         workPanel.appendChild(workHeader);
         workPanel.appendChild(questionCard);
+        workPanel.appendChild(this.createScopeSignalPanel(activeScope));
         workPanel.appendChild(coveragePanel);
 
         body.appendChild(modulePanel);
@@ -445,6 +447,129 @@ export default class InspectionPage {
         return wrapper;
     }
 
+
+    static getCurrentScopeQuestion(activeScope = null, questions = [], answers = {}) {
+        const visibleQuestions = questions.filter(question =>
+            InspectionQuestionEngine.shouldAsk(question, answers)
+        );
+
+        const unanswered = visibleQuestions.find(question => !answers[question.id]);
+
+        return unanswered || visibleQuestions[0] || questions[0] || null;
+    }
+
+    static getAnswerOptions(question = {}) {
+        const type = question.answerType || "yes_no_unknown";
+
+        if (type.includes("not_accessible")) {
+            return [
+                { value: "yes", label: "Yes" },
+                { value: "no", label: "No" },
+                { value: "not_accessible", label: "Not Accessible" }
+            ];
+        }
+
+        return [
+            { value: "yes", label: "Yes" },
+            { value: "no", label: "No" },
+            { value: "unknown", label: "Unknown" }
+        ];
+    }
+
+    static createAnswerControls(activeInspection = null, activeScope = null, question = null) {
+        const controls = document.createElement("div");
+        controls.className = "inspection-scope-editorial__answers";
+
+        if (!question) {
+            return controls;
+        }
+
+        if (!activeScope) {
+            const note = document.createElement("span");
+            note.textContent = "Start the scope to answer this question.";
+            controls.appendChild(note);
+            return controls;
+        }
+
+        this.getAnswerOptions(question).forEach(option => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = `inspection-scope-editorial__answer inspection-scope-editorial__answer--${option.value}`;
+            button.textContent = option.label;
+            button.addEventListener("click", () => {
+                this.answerScopeQuestion(activeInspection, question, option.value);
+            });
+
+            controls.appendChild(button);
+        });
+
+        return controls;
+    }
+
+    static answerScopeQuestion(activeInspection = null, question = null, value = "") {
+        const activeScope = this.getActiveScope(activeInspection);
+
+        if (!activeScope || !question || !value) {
+            Notification.info("Start the adaptive scope before answering questions.");
+            return;
+        }
+
+        InspectionScopeManager.answerQuestion(activeScope.id, question, value);
+        Notification.success("Inspection answer saved.");
+        this.refresh();
+    }
+
+    static createScopeSignalPanel(activeScope = null) {
+        const panel = document.createElement("section");
+        panel.className = "inspection-scope-editorial__signals";
+
+        const evidenceRequirements = activeScope?.evidenceRequirements || [];
+        const riskFlags = activeScope?.riskFlags || [];
+        const limitations = activeScope?.limitations || [];
+
+        [
+            {
+                label: "Evidence Required",
+                value: evidenceRequirements.length,
+                detail: evidenceRequirements.length
+                    ? evidenceRequirements.map(item => item.requiredEvidence.join(", ")).join(" · ")
+                    : "No evidence requirements triggered yet."
+            },
+            {
+                label: "Risk Flags",
+                value: riskFlags.length,
+                detail: riskFlags.length
+                    ? riskFlags.map(item => item.reason).slice(0, 2).join(" · ")
+                    : "No risk flags triggered yet."
+            },
+            {
+                label: "Limitations",
+                value: limitations.length,
+                detail: limitations.length
+                    ? limitations.map(item => item.reason).slice(0, 2).join(" · ")
+                    : "No limitations recorded yet."
+            }
+        ].forEach(signal => {
+            const item = document.createElement("article");
+
+            const value = document.createElement("strong");
+            value.textContent = String(signal.value);
+
+            const label = document.createElement("span");
+            label.textContent = signal.label;
+
+            const detail = document.createElement("p");
+            detail.textContent = signal.detail;
+
+            item.appendChild(value);
+            item.appendChild(label);
+            item.appendChild(detail);
+            panel.appendChild(item);
+        });
+
+        return panel;
+    }
+
     static startAdaptiveScope(activeInspection = null) {
         try {
             const currentCase = CaseManager.getCurrent();
@@ -453,13 +578,11 @@ export default class InspectionPage {
 
             if (!currentCase) {
                 Notification.info("Open a case before starting an inspection scope.");
-                window.alert("Open a case before starting an inspection scope.");
                 return;
             }
 
             if (!inspection) {
                 Notification.info("Create or select an inspection before starting the adaptive scope.");
-                window.alert("Create or select an inspection before starting the adaptive scope.");
                 return;
             }
 
@@ -468,7 +591,6 @@ export default class InspectionPage {
             if (existing) {
                 InspectionScopeManager.set(existing);
                 Notification.info("Adaptive inspection scope is already active.");
-                window.alert("Adaptive inspection scope is already active.");
                 this.refresh();
                 return;
             }
@@ -484,12 +606,10 @@ export default class InspectionPage {
 
             InspectionScopeManager.set(scope);
             Notification.success("Adaptive inspection scope started.");
-            window.alert("Adaptive inspection scope started.");
             this.refresh();
         } catch (error) {
             console.error("Inspection scope start failed:", error);
             Notification.warning("Inspection scope could not be started.");
-            window.alert(`Inspection scope could not be started: ${error.message}`);
         }
     }
 
