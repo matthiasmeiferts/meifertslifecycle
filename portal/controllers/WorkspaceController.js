@@ -23,7 +23,7 @@ export default class WorkspaceController {
     static getMetrics() {
         return [
             { title: "Cases", value: this.safeValue(() => CaseManager.getAll().length) },
-            { title: "Buildings", value: this.safeValue(() => BuildingManager.hasBuilding() ? 1 : 0) },
+            { title: "Buildings", value: this.safeValue(() => BuildingManager.count()) },
             { title: "Inspections", value: this.safeValue(() => InspectionManager.getAllInspections().length) },
             { title: "Evidence", value: this.safeValue(() => EvidenceManager.count()) },
             { title: "Findings", value: this.safeValue(() => FindingManager.count()) },
@@ -36,11 +36,28 @@ export default class WorkspaceController {
 
     static getActiveCaseSummary() {
         const currentCase = this.safeValue(() => CaseManager.getCurrent(), null);
-        const building = this.safeValue(() => BuildingManager.get(), null);
+        const activeBuilding = this.safeValue(() => BuildingManager.get(), null);
+        const building = activeBuilding || (currentCase?.buildingId
+            ? this.safeValue(() => BuildingManager.load(currentCase.buildingId), null)
+            : null);
+        const activeInspection = this.safeValue(() => InspectionManager.get(), null);
+        const inspection = activeInspection || (currentCase?.inspectionId
+            ? this.safeValue(() => InspectionManager.load(currentCase.inspectionId), null)
+            : null);
+
+        let subtitle = "Create or open a case to begin the decision workflow.";
+
+        if (building && inspection) {
+            subtitle = `${building.name || building.address} · ${inspection.title || inspection.inspectionType || inspection.id}`;
+        } else if (building) {
+            subtitle = `${building.name || building.address}`;
+        } else if (inspection) {
+            subtitle = `${inspection.title || inspection.inspectionType || inspection.id}`;
+        }
 
         return {
             title: currentCase?.name || currentCase?.title || "No active case",
-            subtitle: building?.name || building?.address || "Create or open a case to begin the decision workflow."
+            subtitle
         };
     }
 

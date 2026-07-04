@@ -3,6 +3,13 @@ import MetricCard from "../components/MetricCard.js";
 import WorkflowCard from "../components/WorkflowCard.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import DemoDatasetManager from "../../core/DemoDatasetManager.js";
+import InspectionManager from "../../core/InspectionManager.js";
+import EvidenceManager from "../../core/EvidenceManager.js";
+import FindingManager from "../../core/FindingManager.js";
+import AssessmentManager from "../../core/AssessmentManager.js";
+import RecommendationManager from "../../core/RecommendationManager.js";
+import DecisionManager from "../../core/DecisionManager.js";
+import ReportManager from "../../core/ReportManager.js";
 
 export default class DashboardPage {
 
@@ -136,8 +143,21 @@ export default class DashboardPage {
         return grid;
     }
 
+    static getLiveWorkflowData() {
+        return {
+            inspections: InspectionManager.getAllInspections(),
+            evidence: EvidenceManager.getAll(),
+            findings: FindingManager.getAll(),
+            assessments: AssessmentManager.getAll(),
+            recommendations: RecommendationManager.getAll(),
+            decisions: DecisionManager.getAll(),
+            reports: ReportManager.getAll()
+        };
+    }
+
     static getWorkflowReadiness(data = {}) {
-        const counts = IntelligenceEngine.getWorkflowCounts(data);
+        const workflowData = Object.keys(data).length ? data : this.getLiveWorkflowData();
+        const counts = IntelligenceEngine.getWorkflowCounts(workflowData);
         const stageKeys = this.workflowStages.map((stage) => stage.key);
         const readiness = IntelligenceEngine.getStageReadiness(counts, stageKeys);
 

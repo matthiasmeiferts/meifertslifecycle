@@ -1,4 +1,5 @@
 import StorageManager from "./storage/StorageManager.js";
+import BuildingManager from "./BuildingManager.js";
 import CaseManager from "./CaseManager.js";
 import InspectionManager from "./InspectionManager.js";
 import InspectionScopeManager from "./InspectionScopeManager.js";
@@ -145,6 +146,7 @@ export default class DemoDatasetManager {
         };
 
         StorageManager.upsert("buildings", building);
+        BuildingManager.set(building);
 
         const inspection = {
             id: inspectionId,
