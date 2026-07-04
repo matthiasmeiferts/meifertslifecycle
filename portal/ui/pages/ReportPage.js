@@ -126,8 +126,20 @@ export default class ReportPage {
                 <strong>Ready for professional review</strong>
                 <p>${status.completeRecords} of ${status.totalRecords} demo records available. ${integrityLabel}.</p>
             </div>
-            <span class="report-demo-review__status">${status.percent}%</span>
+            <div class="report-demo-review__actions">
+                <span class="report-demo-review__status">${status.percent}%</span>
+                <button type="button" class="report-demo-review__print" data-demo-report-print>
+                    Print / Save PDF
+                </button>
+            </div>
         `;
+
+        const printButton = container.querySelector("[data-demo-report-print]");
+        if (printButton) {
+            printButton.addEventListener("click", () => {
+                window.print();
+            });
+        }
 
         return container;
     }

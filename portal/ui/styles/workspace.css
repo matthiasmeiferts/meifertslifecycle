@@ -2619,10 +2619,42 @@ button.dashboard-readiness-card__action:focus-visible {
     line-height: 1;
 }
 
+.report-demo-review__actions {
+    align-items: center;
+    display: flex;
+    flex: 0 0 auto;
+    gap: 0.8rem;
+}
+
+.report-demo-review__print {
+    background: transparent;
+    border: 1px solid rgba(46, 108, 84, 0.35);
+    border-radius: 999px;
+    color: #2e6c54;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    padding: 0.58rem 0.9rem;
+    white-space: nowrap;
+}
+
+.report-demo-review__print:hover {
+    background: rgba(46, 108, 84, 0.08);
+}
+
 @media (max-width: 760px) {
     .report-demo-review {
         align-items: flex-start;
         display: grid;
+    }
+
+    .report-demo-review__actions {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .report-demo-review__print {
+        width: auto;
     }
 }
 
@@ -4645,6 +4677,12 @@ button.dashboard-readiness-card__action:focus-visible {
     }
 
     #workspace-page > *:not(.report-preview) {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    .report-demo-review,
+    .report-demo-review * {
         display: none !important;
         visibility: hidden !important;
     }
