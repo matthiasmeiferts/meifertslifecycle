@@ -105,7 +105,17 @@ export default class DashboardPage {
                 <strong>${label} · ${status.percent}%</strong>
                 <p>${status.completeRecords} of ${status.totalRecords} demo records are available for end-to-end workflow testing.</p>
             </div>
+            <button type="button" class="dashboard-demo-status__action" data-demo-review>
+                Review Demo Report
+            </button>
         `;
+
+        const reviewButton = banner.querySelector("[data-demo-review]");
+        if (reviewButton) {
+            reviewButton.addEventListener("click", () => {
+                window.location.hash = "reports";
+            });
+        }
 
         return banner;
     }

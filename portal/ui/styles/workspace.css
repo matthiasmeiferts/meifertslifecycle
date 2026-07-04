@@ -133,8 +133,12 @@ h2 {
 
 /* Foundation Framework 3.10-C: dashboard demo dataset awareness */
 .dashboard-demo-status {
+    align-items: center;
     border: 1px solid rgba(27, 43, 69, 0.1);
     border-radius: 8px;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
     margin-top: -0.35rem;
     padding: 0.9rem 1rem;
 }
@@ -158,6 +162,34 @@ h2 {
 .dashboard-demo-status p {
     color: var(--muted);
     margin: 0.25rem 0 0;
+}
+
+.dashboard-demo-status__action {
+    background: transparent;
+    border: 1px solid rgba(46, 108, 84, 0.35);
+    border-radius: 999px;
+    color: #2e6c54;
+    cursor: pointer;
+    flex: 0 0 auto;
+    font: inherit;
+    font-weight: 700;
+    padding: 0.58rem 0.9rem;
+    white-space: nowrap;
+}
+
+.dashboard-demo-status__action:hover {
+    background: rgba(46, 108, 84, 0.08);
+}
+
+@media (max-width: 760px) {
+    .dashboard-demo-status {
+        align-items: flex-start;
+        display: grid;
+    }
+
+    .dashboard-demo-status__action {
+        width: 100%;
+    }
 }
 
 .dashboard-demo-status--ready {
