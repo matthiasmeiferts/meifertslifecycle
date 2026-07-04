@@ -582,8 +582,17 @@ export default class FindingPage {
             findingIds: [finding.id],
             evidenceIds: finding.evidenceIds || [],
             title: `Assessment from ${finding.title || finding.id}`,
-            description: finding.description || "Assessment generated from selected finding.",
+            description: [
+                finding.description || "Assessment generated from selected finding.",
+                "",
+                "Finding trace:",
+                `Finding ID: ${finding.id}`,
+                `Finding source: ${finding.source || "Expert Review"}`,
+                `Evidence IDs: ${(finding.evidenceIds || []).join(", ") || "None"}`
+            ].join("\n"),
             category: finding.category || "General",
+            source: finding.source || "Finding Review",
+            buildingSystem: finding.buildingSystem || "",
             severity,
             probability,
             consequence,

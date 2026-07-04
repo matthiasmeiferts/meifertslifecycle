@@ -335,7 +335,11 @@ export default class AssessmentPage {
         title.textContent = assessment.title || assessment.id || "Assessment Item";
 
         const meta = document.createElement("span");
-        meta.textContent = `${assessment.category || "General"} · Risk ${assessment.riskScore || 0}`;
+        meta.textContent = [
+            assessment.category || "General",
+            `Risk ${assessment.riskScore || 0}`,
+            assessment.source || ""
+        ].filter(Boolean).join(" · ");
 
         const statusContainer = document.createElement("span");
         statusContainer.innerHTML = this.renderAssessmentStatusBadge(assessment);
@@ -402,11 +406,19 @@ export default class AssessmentPage {
         return DetailPanel.create("Assessment Context", [
             { label: "Selected Assessment", value: activeAssessment.title || activeAssessment.id },
             { label: "Workspace Status", value: statusLabel },
+            { label: "Source", value: activeAssessment.source || "Assessment Review" },
             { label: "Case ID", value: activeAssessment.caseId || "Not linked" },
+            { label: "Building ID", value: activeAssessment.buildingId || "Not linked" },
+            { label: "Inspection ID", value: activeAssessment.inspectionId || "Not linked" },
             { label: "Finding IDs", value: (activeAssessment.findingIds || []).join(", ") || "None" },
             { label: "Evidence IDs", value: (activeAssessment.evidenceIds || []).join(", ") || "None" },
+            { label: "Category", value: activeAssessment.category || "General" },
+            { label: "Building System", value: activeAssessment.buildingSystem || "Not linked" },
             { label: "Severity", value: activeAssessment.severity || "Unrated" },
+            { label: "Probability", value: activeAssessment.probability || "Unrated" },
+            { label: "Consequence", value: activeAssessment.consequence || "Unrated" },
             { label: "Risk Score", value: String(activeAssessment.riskScore || 0) },
+            { label: "Description", value: activeAssessment.description || "No description" },
             { label: "Recommendation IDs", value: (activeAssessment.recommendationIds || []).join(", ") || "None" },
             { label: "Linked Recommendations", value: String(this.countRecommendationsLinkedToAssessment(activeAssessment.id)) }
         ]);
