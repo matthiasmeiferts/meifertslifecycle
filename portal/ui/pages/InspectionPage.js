@@ -672,6 +672,14 @@ export default class InspectionPage {
             ].join("\n"),
             buildingSystem: question.module || "",
             componentId: question.component || null,
+            source: "Inspection Scope",
+            sourceType: "inspection-scope",
+            sourceQuestionId: question.id,
+            sourceQuestion: question.question,
+            sourceModule: question.module || "",
+            sourceCategory: question.category || "",
+            sourceRequiredEvidence: requirement.requiredEvidence || [],
+            scopeId: activeScope.id,
             status: "Open",
             tags: [
                 "inspection-scope",
@@ -711,6 +719,7 @@ export default class InspectionPage {
         InspectionScopeManager.update(updatedScope);
 
         Notification.success("Evidence created from inspection scope.");
+        sessionStorage.setItem("workspaceScrollTarget", "evidence-list");
         WorkspaceRouter.navigate("evidence");
     }
 

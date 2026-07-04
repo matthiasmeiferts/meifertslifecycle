@@ -128,6 +128,16 @@ export default class EvidenceManager {
             // NEW: Tagging and metadata
             tags: data.tags || [],
             componentId: data.componentId || null,
+
+            source: data.source || "",
+            sourceType: data.sourceType || "",
+            sourceQuestionId: data.sourceQuestionId || "",
+            sourceQuestion: data.sourceQuestion || "",
+            sourceModule: data.sourceModule || "",
+            sourceCategory: data.sourceCategory || "",
+            sourceRequiredEvidence: data.sourceRequiredEvidence || [],
+            scopeId: data.scopeId || null,
+
             confidence: data.confidence || null,
             
             createdBy: data.createdBy || this.defaultCreator,

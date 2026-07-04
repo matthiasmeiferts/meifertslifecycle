@@ -60,6 +60,8 @@ export default class EvidencePage {
         fragment.appendChild(this.createToolbar());
         fragment.appendChild(this.createMainLayout());
 
+        this.scrollToRequestedTarget();
+
         return fragment;
     }
 
@@ -416,6 +418,7 @@ export default class EvidencePage {
         }
 
         const list = document.createElement("section");
+        list.id = "evidence-list";
         list.className = "workflow-card evidence-list";
 
         evidenceItems.forEach(item => {
@@ -441,7 +444,10 @@ export default class EvidencePage {
         title.textContent = item.title || item.name || item.id || "Evidence Item";
 
         const meta = document.createElement("span");
-        meta.textContent = `${item.evidenceType || item.type || "Evidence"}`;
+        meta.textContent = [
+            item.evidenceType || item.type || "Evidence",
+            item.source || item.sourceType || ""
+        ].filter(Boolean).join(" · ");
 
         const statusContainer = document.createElement("div");
         statusContainer.innerHTML = this.renderEvidenceStatusBadge(item);
@@ -527,9 +533,29 @@ export default class EvidencePage {
             { label: "Case ID", value: activeEvidence.caseId || "Not linked" },
             { label: "Building ID", value: activeEvidence.buildingId || "Not linked" },
             { label: "Inspection ID", value: activeEvidence.inspectionId || "Not linked" },
+            { label: "Source", value: activeEvidence.source || activeEvidence.sourceType || "Manual Evidence" },
+            { label: "Question ID", value: activeEvidence.sourceQuestionId || "Not linked" },
+            { label: "Question", value: activeEvidence.sourceQuestion || "Not linked" },
+            { label: "Required Evidence", value: (activeEvidence.sourceRequiredEvidence || []).join(", ") || "None" },
+            { label: "Scope ID", value: activeEvidence.scopeId || "Not linked" },
             { label: "Finding IDs", value: (activeEvidence.findingIds || []).join(", ") || "None" },
             { label: "Linked Findings", value: String(this.countFindingsLinkedToEvidence(activeEvidence.id)) }
         ]);
+    }
+
+    static scrollToRequestedTarget() {
+        if (sessionStorage.getItem("workspaceScrollTarget") !== "evidence-list") {
+            return;
+        }
+
+        sessionStorage.removeItem("workspaceScrollTarget");
+
+        window.setTimeout(() => {
+            document.getElementById("evidence-list")?.scrollIntoView({
+                block: "start",
+                behavior: "smooth"
+            });
+        }, 80);
     }
 
     static getEvidenceItems() {
