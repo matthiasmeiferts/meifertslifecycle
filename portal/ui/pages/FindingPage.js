@@ -448,7 +448,11 @@ export default class FindingPage {
         title.textContent = finding.title || finding.id || "Finding Item";
 
         const meta = document.createElement("span");
-        meta.textContent = `${finding.category || "General"} · ${finding.severity || "Medium"}`;
+        meta.textContent = [
+            finding.category || "General",
+            finding.severity || "Medium",
+            finding.source || ""
+        ].filter(Boolean).join(" · ");
 
         const statusContainer = document.createElement("span");
         statusContainer.innerHTML = this.renderFindingStatusBadge(finding);
@@ -515,9 +519,15 @@ export default class FindingPage {
         return DetailPanel.create("Finding Context", [
             { label: "Selected Finding", value: activeFinding.title || activeFinding.id },
             { label: "Workspace Status", value: statusLabel },
+            { label: "Source", value: activeFinding.source || "Expert Review" },
             { label: "Case ID", value: activeFinding.caseId || "Not linked" },
+            { label: "Building ID", value: activeFinding.buildingId || "Not linked" },
+            { label: "Inspection ID", value: activeFinding.inspectionId || "Not linked" },
             { label: "Evidence IDs", value: (activeFinding.evidenceIds || []).join(", ") || "None" },
+            { label: "Category", value: activeFinding.category || "General" },
+            { label: "Building System", value: activeFinding.buildingSystem || "Not linked" },
             { label: "Severity", value: activeFinding.severity || "Normal" },
+            { label: "Description", value: activeFinding.description || "No description" },
             { label: "Assessment IDs", value: (activeFinding.assessmentIds || []).join(", ") || "None" },
             { label: "Linked Assessments", value: String(this.countAssessmentsLinkedToFinding(activeFinding.id)) }
         ]);
