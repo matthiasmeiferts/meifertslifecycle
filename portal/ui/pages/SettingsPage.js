@@ -103,6 +103,17 @@ export default class SettingsPage {
     static createDemoDatasetPanel() {
         const panel = document.createElement("section");
         panel.className = "workflow-card settings-cleanup settings-cleanup--demo";
+        const status = DemoDatasetManager.getStatus();
+        const statusTone = status.isComplete
+            ? "ready"
+            : status.isActive
+                ? "active"
+                : "draft";
+        const statusLabel = status.isComplete
+            ? "Complete"
+            : status.isActive
+                ? "Incomplete"
+                : "Not Created";
 
         panel.innerHTML = `
             <div class="settings-cleanup__header">
@@ -114,6 +125,14 @@ export default class SettingsPage {
                 <button type="button" class="button" data-action="create-demo-dataset">
                     Create Controlled Demo Dataset
                 </button>
+            </div>
+            <div class="settings-demo-status settings-demo-status--${statusTone}">
+                <div>
+                    <span>Demo Dataset Status</span>
+                    <strong>${statusLabel}</strong>
+                    <p>${status.completeRecords} of ${status.totalRecords} controlled demo records available.</p>
+                </div>
+                <span class="settings-demo-status__score">${status.percent}%</span>
             </div>
         `;
 
@@ -190,17 +209,7 @@ export default class SettingsPage {
             return;
         }
 
-        this.workflowCollections.forEach(item => {
-            StorageManager.clear(item.key);
-        });
-
-        InspectionScopeManager.clear();
-        EvidenceManager.clear();
-        FindingManager.clear();
-        AssessmentManager.clear();
-        RecommendationManager.clear();
-        DecisionManager.clear();
-        ReportManager.clear();
+        DemoDatasetManager.clearWorkflowData();
 
         Notification.success("Workflow test data cleared.");
         window.setTimeout(() => window.location.reload(), 250);

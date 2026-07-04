@@ -12,6 +12,8 @@ import ReportManager from "./ReportManager.js";
 
 export default class DemoDatasetManager {
 
+    static demoDatasetId = "controlled-demo-dataset";
+
     static workflowCollections = [
         "inspectionScopes",
         "evidence",
@@ -20,6 +22,19 @@ export default class DemoDatasetManager {
         "recommendations",
         "decisions",
         "reports"
+    ];
+
+    static demoRecords = [
+        { collection: "buildings", id: "DEMO-BLD-001", label: "Building" },
+        { collection: "inspections", id: "DEMO-INSP-001", label: "Inspection" },
+        { collection: "cases", id: "DEMO-CASE-001", label: "Case" },
+        { collection: "inspectionScopes", id: "DEMO-SCOPE-001", label: "Inspection Scope" },
+        { collection: "evidence", id: "DEMO-EVD-001", label: "Evidence" },
+        { collection: "findings", id: "DEMO-FND-001", label: "Finding" },
+        { collection: "assessments", id: "DEMO-ASM-001", label: "Assessment" },
+        { collection: "recommendations", id: "DEMO-REC-001", label: "Recommendation" },
+        { collection: "decisions", id: "DEMO-DEC-001", label: "Decision" },
+        { collection: "reports", id: "DEMO-RPT-001", label: "Report" }
     ];
 
     static create() {
@@ -297,6 +312,18 @@ export default class DemoDatasetManager {
 
         ReportManager.set(report);
 
+        StorageManager.upsert("demoDatasets", {
+            id: this.demoDatasetId,
+            label: "Controlled Demo Dataset",
+            caseId,
+            buildingId,
+            inspectionId,
+            status: "active",
+            workflowRecords: this.workflowCollections.length,
+            createdAt: now,
+            updatedAt: now
+        });
+
         CaseManager.setCurrent({
             ...currentCase,
             evidenceIds: [evidence.id],
@@ -325,10 +352,38 @@ export default class DemoDatasetManager {
         };
     }
 
+    static getStatus() {
+        const checks = this.demoRecords.map(record => ({
+            ...record,
+            exists: StorageManager.exists(record.collection, record.id)
+        }));
+
+        const completeRecords = checks.filter(record => record.exists).length;
+        const totalRecords = checks.length;
+        const missingRecords = checks.filter(record => !record.exists);
+        const metadata = StorageManager.load("demoDatasets", this.demoDatasetId);
+
+        return {
+            id: this.demoDatasetId,
+            label: "Controlled Demo Dataset",
+            isActive: Boolean(metadata) || completeRecords > 0,
+            isComplete: completeRecords === totalRecords,
+            completeRecords,
+            totalRecords,
+            percent: totalRecords > 0
+                ? Math.round((completeRecords / totalRecords) * 100)
+                : 0,
+            missingRecords,
+            metadata
+        };
+    }
+
     static clearWorkflowData() {
         this.workflowCollections.forEach(collection => {
             StorageManager.clear(collection);
         });
+
+        StorageManager.clear("demoDatasets");
 
         InspectionScopeManager.clear();
         EvidenceManager.clear();

@@ -4454,7 +4454,9 @@ button.dashboard-readiness-card__action:focus-visible {
     .inspection-scope-editorial__requirement-action {
         width: max-content;
     }
-}\n\n
+}
+
+
 /* Foundation Framework 3.9-P: polished report preview trace output */
 .report-preview__trace,
 .report-preview__status-table {
@@ -4475,7 +4477,9 @@ button.dashboard-readiness-card__action:focus-visible {
 
 .report-preview__table td {
     line-height: 1.45;
-}\n\n
+}
+
+
 
 
 /* Foundation Framework 3.9-Q: clean report-only print output */
@@ -4597,7 +4601,8 @@ button.dashboard-readiness-card__action:focus-visible {
         overflow-wrap: anywhere !important;
         word-break: break-word !important;
     }
-}\n
+}
+
 /* Foundation Framework 3.9-S: normalized report title source context */
 .report-preview__source-title {
     color: #6d7688;
@@ -4605,7 +4610,8 @@ button.dashboard-readiness-card__action:focus-visible {
     font-weight: 700;
     line-height: 1.35;
     margin-top: 0.35rem;
-}\n
+}
+
 /* Foundation Framework 3.9-T: workspace settings cleanup controls */
 .settings-cleanup {
     display: grid;
@@ -4678,7 +4684,7 @@ button.dashboard-readiness-card__action:focus-visible {
     .settings-cleanup__danger {
         width: 100%;
     }
-}\n
+}
 /* Foundation Framework 3.10-A: controlled demo dataset settings action */
 .settings-cleanup--demo {
     border-color: rgba(46, 108, 84, 0.2);
@@ -4688,4 +4694,55 @@ button.dashboard-readiness-card__action:focus-visible {
     border-color: rgba(46, 108, 84, 0.35);
     color: #2e6c54;
     white-space: nowrap;
+}
+
+/* Foundation Framework 3.10-B: controlled demo dataset status */
+.settings-demo-status {
+    align-items: center;
+    border: 1px solid rgba(27, 43, 69, 0.1);
+    border-radius: 8px;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding: 1rem;
+}
+
+.settings-demo-status span {
+    color: var(--muted);
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.settings-demo-status strong {
+    color: var(--ink);
+    display: block;
+    font-size: 1rem;
+    margin-top: 0.18rem;
+}
+
+.settings-demo-status p {
+    color: var(--muted);
+    margin: 0.25rem 0 0;
+}
+
+.settings-demo-status__score {
+    color: var(--ink) !important;
+    font-size: 1.6rem !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+}
+
+.settings-demo-status--ready {
+    background: rgba(231, 241, 233, 0.62);
+}
+
+.settings-demo-status--active {
+    background: rgba(248, 232, 188, 0.45);
+}
+
+.settings-demo-status--draft {
+    background: rgba(244, 241, 235, 0.72);
 }
