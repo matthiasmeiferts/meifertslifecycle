@@ -54,6 +54,11 @@ export default class DecisionManager {
             decisionType: data.decisionType || "Monitor",
             rationale: data.rationale || "",
 
+            source: data.source || "Recommendation Review",
+            buildingSystem: data.buildingSystem || "",
+            riskScore: data.riskScore || 0,
+            decisionImpact: data.decisionImpact || "",
+
             riskLevel: data.riskLevel || "Medium",
             confidence: data.confidence || null,
             status: data.status || "Draft",

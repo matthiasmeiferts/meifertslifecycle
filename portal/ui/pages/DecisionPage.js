@@ -448,7 +448,11 @@ export default class DecisionPage {
         title.textContent = decision.title || decision.id || "Decision Item";
 
         const meta = document.createElement("span");
-        meta.textContent = `${decision.decisionType || "Monitor"} · ${decision.riskLevel || "Medium"}`;
+        meta.textContent = [
+            decision.decisionType || "Monitor",
+            decision.riskLevel || "Medium",
+            decision.source || ""
+        ].filter(Boolean).join(" · ");
 
         const statusContainer = document.createElement("span");
         statusContainer.innerHTML = this.renderDecisionStatusBadge(decision);
@@ -515,12 +519,22 @@ export default class DecisionPage {
         return DetailPanel.create("Decision Context", [
             { label: "Selected Decision", value: activeDecision.title || activeDecision.id },
             { label: "Workspace Status", value: statusLabel },
+            { label: "Source", value: activeDecision.source || "Recommendation Review" },
             { label: "Case ID", value: activeDecision.caseId || "Not linked" },
+            { label: "Building ID", value: activeDecision.buildingId || "Not linked" },
+            { label: "Inspection ID", value: activeDecision.inspectionId || "Not linked" },
             { label: "Recommendation IDs", value: (activeDecision.recommendationIds || []).join(", ") || "None" },
             { label: "Assessment IDs", value: (activeDecision.assessmentIds || []).join(", ") || "None" },
             { label: "Finding IDs", value: (activeDecision.findingIds || []).join(", ") || "None" },
+            { label: "Evidence IDs", value: (activeDecision.evidenceIds || []).join(", ") || "None" },
+            { label: "Building System", value: activeDecision.buildingSystem || "Not linked" },
+            { label: "Risk Score", value: String(activeDecision.riskScore || 0) },
+            { label: "Decision Impact", value: activeDecision.decisionImpact || "Medium" },
             { label: "Decision Type", value: activeDecision.decisionType || "Monitor" },
             { label: "Risk Level", value: activeDecision.riskLevel || "Medium" },
+            { label: "Confidence", value: activeDecision.confidence !== null && activeDecision.confidence !== undefined ? `${activeDecision.confidence}%` : "Not set" },
+            { label: "Rationale", value: activeDecision.rationale || "No rationale" },
+            { label: "Description", value: activeDecision.description || "No description" },
             { label: "Report IDs", value: (activeDecision.reportIds || []).join(", ") || "None" },
             { label: "Linked Reports", value: String(this.countReportsLinkedToDecision(activeDecision.id)) }
         ]);
