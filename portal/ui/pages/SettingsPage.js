@@ -7,6 +7,7 @@ import RecommendationManager from "../../core/RecommendationManager.js";
 import DecisionManager from "../../core/DecisionManager.js";
 import ReportManager from "../../core/ReportManager.js";
 import DemoDatasetManager from "../../core/DemoDatasetManager.js";
+import LanguageManager from "../../core/LanguageManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import MetricCard from "../components/MetricCard.js";
 import Notification from "../components/Notification.js";
@@ -39,6 +40,7 @@ export default class SettingsPage {
         }));
 
         fragment.appendChild(this.createMetrics());
+        fragment.appendChild(this.createLanguageReadinessPanel());
         fragment.appendChild(this.createCleanupPanel());
         fragment.appendChild(this.createDemoDatasetPanel());
         fragment.appendChild(this.createPreservedPanel());
@@ -62,6 +64,62 @@ export default class SettingsPage {
         grid.appendChild(MetricCard.create("Storage Mode", "Local"));
 
         return grid;
+    }
+
+    static createLanguageReadinessPanel() {
+        const panel = document.createElement("section");
+        panel.className = "workflow-card settings-cleanup settings-cleanup--language";
+
+        const currentLanguage = LanguageManager.getLanguage();
+        const currentLanguageLabel = LanguageManager.getLanguageLabel(currentLanguage);
+        const supportedLanguages = LanguageManager.getSupportedLanguages()
+            .map(item => item.label)
+            .join(" · ");
+        const terminology = ["Evidence", "Finding", "Assessment", "Recommendation", "Decision", "Report"]
+            .map(key => LanguageManager.getTerm(key, "en"))
+            .join(", ");
+
+        panel.innerHTML = `
+            <div class="settings-cleanup__header">
+                <div>
+                    <p class="eyebrow">Interface Language</p>
+                    <h3>Language readiness</h3>
+                    <p>The workspace is currently operated in English. German interface support is prepared for a later controlled rollout.</p>
+                </div>
+            </div>
+            <div class="settings-cleanup__grid">
+                <article>
+                    <span>Current language</span>
+                    <strong>${currentLanguageLabel}</strong>
+                </article>
+                <article>
+                    <span>Supported languages</span>
+                    <p>${supportedLanguages}</p>
+                </article>
+                <article>
+                    <span>Product terminology</span>
+                    <p>${terminology}</p>
+                </article>
+            </div>
+            <div class="settings-cleanup__header">
+                <div>
+                    <p>Core product terms remain controlled to protect workflow consistency.</p>
+                </div>
+                <select class="button" data-action="set-language" aria-label="Interface language">
+                    <option value="en" ${currentLanguage === "en" ? "selected" : ""}>English</option>
+                    <option value="de" ${currentLanguage === "de" ? "selected" : ""}>Deutsch</option>
+                </select>
+            </div>
+        `;
+
+        panel.querySelector("[data-action='set-language']")
+            .addEventListener("change", event => {
+                LanguageManager.setLanguage(event.target.value);
+                Notification.success("Interface language preference saved.");
+                this.refresh();
+            });
+
+        return panel;
     }
 
     static createCleanupPanel() {
@@ -184,6 +242,15 @@ export default class SettingsPage {
         `;
 
         return panel;
+    }
+
+    static refresh() {
+        const container = document.getElementById("workspace-page");
+
+        if (!container) return;
+
+        container.innerHTML = "";
+        container.appendChild(this.render());
     }
 
     static rebuildControlledDemoDataset() {
