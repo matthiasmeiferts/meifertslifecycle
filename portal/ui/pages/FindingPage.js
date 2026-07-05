@@ -592,7 +592,7 @@ export default class FindingPage {
             evidenceIds: finding.evidenceIds || [],
             title: `Assessment from ${finding.title || finding.id}`,
             description: [
-                finding.description || "Assessment generated from selected finding.",
+                finding.description || "Assessment prepared from selected finding.",
                 "",
                 "Finding trace:",
                 `Finding ID: ${finding.id}`,

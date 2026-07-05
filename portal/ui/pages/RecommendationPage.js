@@ -567,7 +567,7 @@ export default class RecommendationPage {
             evidenceIds: recommendation.evidenceIds || [],
             title: `Decision from ${recommendation.title || recommendation.id}`,
             description: [
-                recommendation.description || "Decision generated from selected recommendation.",
+                recommendation.description || "Decision prepared from selected recommendation.",
                 "",
                 "Recommendation trace:",
                 `Recommendation ID: ${recommendation.id}`,

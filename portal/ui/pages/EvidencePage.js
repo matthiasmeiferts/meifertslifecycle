@@ -614,7 +614,7 @@ export default class EvidencePage {
             : `Finding from ${evidence.title || evidence.id}`;
 
         const descriptionParts = [
-            evidence.description || "Finding generated from selected evidence."
+            evidence.description || "Finding prepared from selected evidence."
         ];
 
         if (evidence.sourceQuestionId || evidence.sourceQuestion) {

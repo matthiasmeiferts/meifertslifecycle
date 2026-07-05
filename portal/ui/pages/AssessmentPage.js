@@ -464,7 +464,7 @@ export default class AssessmentPage {
             evidenceIds: assessment.evidenceIds || [],
             title: `Recommendation from ${assessment.title || assessment.id}`,
             description: [
-                assessment.description || "Recommendation generated from selected assessment.",
+                assessment.description || "Recommendation prepared from selected assessment.",
                 "",
                 "Assessment trace:",
                 `Assessment ID: ${assessment.id}`,

@@ -595,7 +595,7 @@ export default class DecisionPage {
             decisionImpact: decision.decisionImpact || "",
             riskLevel: decision.riskLevel || "",
             executiveSummary: [
-                decision.description || "Report generated from selected decision.",
+                decision.description || "Report prepared from selected decision.",
                 "",
                 "Decision trace:",
                 `Decision ID: ${decision.id}`,
