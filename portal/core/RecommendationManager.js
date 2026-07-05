@@ -22,6 +22,7 @@
  */
 
 import StorageManager from "./storage/StorageManager.js";
+import CaseManager from "./CaseManager.js";
 import EventBus from "./events/EventBus.js";
 
 export default class RecommendationManager {
@@ -236,6 +237,13 @@ export default class RecommendationManager {
             return null;
         }
 
+        const currentCase = CaseManager.getCurrent();
+
+        if (currentCase && recommendation.caseId && recommendation.caseId !== currentCase.id) {
+            localStorage.removeItem(this.activeKey);
+            return null;
+        }
+
         localStorage.setItem(this.activeKey, recommendation.id);
         EventBus.emit("recommendation:selected", recommendation);
 
@@ -248,12 +256,26 @@ export default class RecommendationManager {
      */
     static get() {
         const id = localStorage.getItem(this.activeKey);
+        const active = id ? this.load(id) : null;
+        const currentCase = CaseManager.getCurrent();
 
-        if (!id) {
-            return null;
+        if (!currentCase) {
+            return active;
         }
 
-        return this.load(id);
+        if (active && active.caseId === currentCase.id) {
+            return active;
+        }
+
+        const fallback = this.getByCase(currentCase.id)[0] || null;
+
+        if (fallback) {
+            localStorage.setItem(this.activeKey, fallback.id);
+            return fallback;
+        }
+
+        localStorage.removeItem(this.activeKey);
+        return null;
     }
 
     /**
