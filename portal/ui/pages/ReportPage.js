@@ -35,7 +35,7 @@ export default class ReportPage {
     static statusLabels = {
         draft: "Draft",
         prepared: "Prepared",
-        generated: "Generated",
+        preparedOutput: "Prepared",
         reviewed: "Reviewed",
         finalized: "Finalized",
         blocked: "Blocked"
@@ -227,14 +227,13 @@ export default class ReportPage {
         );
         const isPrepared = report.status === "Prepared" || report.status === "prepared";
         const hasOutput = Boolean(
-            report.generated ||
-            report.generatedAt ||
+            report.prepared ||
+            report.preparedAt ||
             report.fileUrl ||
             report.pdfUrl ||
             report.status === "Prepared" ||
             report.status === "prepared" ||
-            report.status === "Generated" ||
-            report.status === "generated"
+             report.status === "prepared"
         );
         const isReviewed = Boolean(
             report.reviewed ||
@@ -288,7 +287,7 @@ export default class ReportPage {
         if (hasContent && hasDecisionLink && hasOutput && isFinalized) {
             outputQualitySignal = {
                 label: "Strong output quality",
-                description: "Report contains decision context, prepared content, generated output and final approval.",
+                description: "Report contains decision context, prepared content, prepared output and final approval.",
                 tone: "ready"
             };
         } else if (hasContent && hasDecisionLink) {
@@ -357,13 +356,12 @@ export default class ReportPage {
         );
         const isPrepared = report.status === "Prepared" || report.status === "prepared";
         const hasOutput = Boolean(
-            report.generated ||
-            report.generatedAt ||
+            report.prepared ||
+            report.preparedAt ||
             report.fileUrl ||
             report.pdfUrl ||
             isPrepared ||
-            report.status === "Generated" ||
-            report.status === "generated"
+             report.status === "prepared"
         );
         const isFinalized = Boolean(
             report.finalized ||
@@ -396,7 +394,7 @@ export default class ReportPage {
             },
             {
                 key: "output",
-                label: "Output generated",
+                label: "Output prepared",
                 complete: hasOutput
             },
             {
@@ -527,13 +525,13 @@ export default class ReportPage {
         }
 
         if (
-            report.generated ||
-            report.generatedAt ||
+            report.prepared ||
+            report.preparedAt ||
             report.fileUrl ||
             report.pdfUrl ||
-            report.status === "generated"
+            report.status === "prepared"
         ) {
-            return "generated";
+            return "prepared";
         }
 
         if (
@@ -754,7 +752,7 @@ export default class ReportPage {
     static getReportStatusRows(report = {}) {
         return [
             ["Export Format", report.exportFormat || ((report.prepared || report.status === "Prepared") ? "Print / Save PDF" : "Pending")],
-            ["Prepared", report.generatedAt ? new Date(report.generatedAt).toLocaleString() : ((report.prepared || report.status === "Prepared") ? "Prepared for review" : "Preparation pending")]
+            ["Prepared", report.preparedAt ? new Date(report.preparedAt).toLocaleString() : ((report.prepared || report.status === "Prepared") ? "Prepared for review" : "Preparation pending")]
         ];
     }
 
@@ -884,7 +882,7 @@ export default class ReportPage {
             { label: "Risk Score", value: String(activeReport.riskScore || 0) },
             { label: "Decision Impact", value: activeReport.decisionImpact || "Medium" },
             { label: "Risk Level", value: activeReport.riskLevel || "Medium" },
-            { label: "Prepared", value: activeReport.generatedAt ? new Date(activeReport.generatedAt).toLocaleString() : ((activeReport.prepared || activeReport.status === "Prepared") ? "Prepared for review" : "Preparation pending") },
+            { label: "Prepared", value: activeReport.preparedAt ? new Date(activeReport.preparedAt).toLocaleString() : ((activeReport.prepared || activeReport.status === "Prepared") ? "Prepared for review" : "Preparation pending") },
             { label: "Report Type", value: activeReport.reportType || "Technical Due Diligence" },
             { label: "Executive Summary", value: activeReport.executiveSummary || "No executive summary" },
             { label: "Export Format", value: activeReport.exportFormat || ((activeReport.prepared || activeReport.status === "Prepared") ? "Print / Save PDF" : "Pending") },
@@ -908,16 +906,16 @@ export default class ReportPage {
 
         const report = ReportManager.update({
             ...sourceReport,
-            status: "generated",
-            generated: true,
-            generatedAt: new Date().toISOString(),
+            status: "Prepared",
+            prepared: true,
+            preparedAt: new Date().toISOString(),
             executiveSummary: sourceReport.executiveSummary || "Building Intelligence report output prepared from workflow data.",
             scope: sourceReport.scope || "Technical due diligence report scope.",
             methodology: sourceReport.methodology || "Evidence-first Building Intelligence workflow review."
         });
 
         ReportManager.set(report);
-        Notification.success("Report generated.");
+        Notification.success("Report prepared for review.");
         this.refresh();
     }
 
