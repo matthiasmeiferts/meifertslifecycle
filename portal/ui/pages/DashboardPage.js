@@ -573,10 +573,10 @@ export default class DashboardPage {
         const intelligence = this.getPlatformIntelligence(data);
 
         return `
-            <section class="platform-intelligence" aria-label="Platform intelligence">
+            <section class="platform-intelligence" aria-label="Workspace intelligence">
                 <div class="platform-intelligence__header">
                     <div>
-                        <span class="platform-intelligence__eyebrow">Platform Intelligence</span>
+                        <span class="platform-intelligence__eyebrow">Workspace Intelligence</span>
                         <strong>${intelligence.executiveSummary.label}</strong>
                         <p>${intelligence.executiveSummary.description}</p>
                     </div>

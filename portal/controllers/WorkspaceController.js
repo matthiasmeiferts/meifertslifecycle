@@ -143,8 +143,8 @@ export default class WorkspaceController {
         const workflowCounts = this.getScopedWorkflowCounts();
 
         return {
-            riskScore: workflowCounts.findings > 0 ? "Pending review" : "Pending",
-            confidenceScore: workflowCounts.evidence > 0 ? "Basic" : "Pending",
+            riskScore: workflowCounts.reports > 0 ? "Ready for review" : (workflowCounts.findings > 0 ? "In review" : "Pending"),
+            confidenceScore: workflowCounts.reports > 0 ? "High" : (workflowCounts.evidence > 0 ? "Developing" : "Pending"),
             coverageScore: `${workflow.progress}%`
         };
     }
