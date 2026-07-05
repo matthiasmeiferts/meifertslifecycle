@@ -604,7 +604,14 @@ export default class CasePage {
             return null;
         }
 
-        const caseData = data || {};
+        const caseData = data || {
+            evidence: EvidenceManager.getByCase(currentCase.id),
+            findings: FindingManager.getByCase(currentCase.id),
+            assessments: AssessmentManager.getByCase(currentCase.id),
+            recommendations: RecommendationManager.getByCase(currentCase.id),
+            decisions: DecisionManager.getByCase(currentCase.id),
+            reports: ReportManager.getByCase(currentCase.id)
+        };
         const container = document.createElement("section");
         container.innerHTML = this.renderCaseIntelligenceSnapshot(currentCase, caseData);
         return container;
