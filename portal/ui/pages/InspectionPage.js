@@ -732,7 +732,9 @@ export default class InspectionPage {
     static startAdaptiveScope(activeInspection = null) {
         try {
             const currentCase = CaseManager.getCurrent();
-            const currentBuilding = BuildingManager.get();
+            const currentBuilding = currentCase?.buildingId
+                ? BuildingManager.load(currentCase.buildingId)
+                : BuildingManager.get();
             const inspection = activeInspection || InspectionManager.getInspection();
 
             if (!currentCase) {
@@ -901,7 +903,9 @@ export default class InspectionPage {
 
     static createSampleInspection() {
         const currentCase = CaseManager.getCurrent();
-        const currentBuilding = BuildingManager.get();
+        const currentBuilding = currentCase?.buildingId
+            ? BuildingManager.load(currentCase.buildingId)
+            : BuildingManager.get();
 
         if (!currentCase) {
             Notification.info("Open a case before creating an inspection.");
