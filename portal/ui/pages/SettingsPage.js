@@ -72,11 +72,12 @@ export default class SettingsPage {
 
         const currentLanguage = LanguageManager.getLanguage();
         const currentLanguageLabel = LanguageManager.getLanguageLabel(currentLanguage);
+        const translationBoundary = LanguageManager.getTranslationBoundary();
         const supportedLanguages = LanguageManager.getSupportedLanguages()
             .map(item => item.label)
             .join(" · ");
-        const terminology = ["Evidence", "Finding", "Assessment", "Recommendation", "Decision", "Report"]
-            .map(key => LanguageManager.getTerm(key, "en"))
+        const terminology = translationBoundary.productTerms
+            .slice(0, 6)
             .join(", ");
 
         panel.innerHTML = `
@@ -104,6 +105,7 @@ export default class SettingsPage {
             <div class="settings-cleanup__header">
                 <div>
                     <p>Core product terms remain controlled to protect workflow consistency.</p>
+                    <p>Translation boundary: core product terms are controlled; interface copy may be localized.</p>
                 </div>
                 <select class="button" data-action="set-language" aria-label="Interface language">
                     <option value="en" ${currentLanguage === "en" ? "selected" : ""}>English</option>

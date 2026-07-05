@@ -29,6 +29,44 @@ export default class LanguageManager {
         return this.supportedLanguages;
     }
 
+    static getProductTerms() {
+        return [
+            "Evidence",
+            "Finding",
+            "Assessment",
+            "Recommendation",
+            "Decision",
+            "Report",
+            "Building Intelligence",
+            "Technical Due Diligence",
+            "Technical Property Review",
+            "Building Risk Score™",
+            "Knowledge Coverage™",
+            "CAPEX"
+        ];
+    }
+
+    static getTranslatableGroups() {
+        return [
+            "Navigation labels",
+            "Buttons and actions",
+            "Empty states",
+            "Notifications",
+            "Form labels",
+            "Detail panel labels",
+            "Settings copy",
+            "Report output copy"
+        ];
+    }
+
+    static getTranslationBoundary() {
+        return {
+            productTerms: this.getProductTerms(),
+            translatableGroups: this.getTranslatableGroups(),
+            rule: "Core product terms remain controlled; general interface copy may be localized."
+        };
+    }
+
     static getLanguageLabel(language = this.getLanguage()) {
         const selected = this.supportedLanguages.find(item => item.code === language);
 
