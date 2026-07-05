@@ -911,7 +911,7 @@ export default class ReportPage {
             status: "generated",
             generated: true,
             generatedAt: new Date().toISOString(),
-            executiveSummary: sourceReport.executiveSummary || "Generated Building Intelligence report output.",
+            executiveSummary: sourceReport.executiveSummary || "Building Intelligence report output prepared from workflow data.",
             scope: sourceReport.scope || "Technical due diligence report scope.",
             methodology: sourceReport.methodology || "Evidence-first Building Intelligence workflow review."
         });
@@ -1017,8 +1017,8 @@ export default class ReportPage {
                 title: "Building Intelligence Report",
                 reportType: "Technical Due Diligence",
                 version: "1.0.0",
-                executiveSummary: "Initial report record created from the workspace.",
-                scope: "Demo technical due diligence scope.",
+                executiveSummary: "Initial report output prepared from the workspace.",
+                scope: "Technical due diligence report scope.",
                 methodology: "Evidence-based workflow review.",
                 status: "Draft"
             });
