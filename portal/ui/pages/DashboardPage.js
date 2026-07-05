@@ -3,6 +3,7 @@ import MetricCard from "../components/MetricCard.js";
 import WorkflowCard from "../components/WorkflowCard.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import DemoDatasetManager from "../../core/DemoDatasetManager.js";
+import ReportManager from "../../core/ReportManager.js";
 import CaseManager from "../../core/CaseManager.js";
 import InspectionManager from "../../core/InspectionManager.js";
 import EvidenceManager from "../../core/EvidenceManager.js";
@@ -10,7 +11,6 @@ import FindingManager from "../../core/FindingManager.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
 import DecisionManager from "../../core/DecisionManager.js";
-import ReportManager from "../../core/ReportManager.js";
 
 export default class DashboardPage {
 
@@ -99,7 +99,30 @@ export default class DashboardPage {
         const status = DemoDatasetManager.getStatus();
 
         if (!status.isActive) {
-            return document.createDocumentFragment();
+            const banner = document.createElement("section");
+            banner.className = "dashboard-demo-status dashboard-demo-status--active";
+            banner.innerHTML = `
+                <div>
+                    <span>Controlled Demo Dataset</span>
+                    <strong>Not loaded</strong>
+                    <p>Load the controlled demo dataset to review the complete evidence-to-report workflow.</p>
+                </div>
+                <button type="button" class="dashboard-demo-status__action" data-demo-load>
+                    Load Controlled Demo Dataset
+                </button>
+            `;
+
+            const loadButton = banner.querySelector("[data-demo-load]");
+            if (loadButton) {
+                loadButton.addEventListener("click", () => {
+                    DemoDatasetManager.rebuild();
+                    ReportManager.set(ReportManager.load("DEMO-RPT-001"));
+                    window.location.hash = "dashboard";
+                    window.location.reload();
+                });
+            }
+
+            return banner;
         }
 
         const tone = status.isComplete ? "ready" : "active";
@@ -116,14 +139,30 @@ export default class DashboardPage {
                 <strong>${label} · ${status.percent}%</strong>
                 <p>${status.completeRecords} of ${status.totalRecords} demo records are available. ${integrityLabel}.</p>
             </div>
-            <button type="button" class="dashboard-demo-status__action" data-demo-review>
-                Review Demo Report
-            </button>
+            <div class="dashboard-demo-status__actions">
+                <button type="button" class="dashboard-demo-status__action" data-demo-load>
+                    Reload Controlled Demo Dataset
+                </button>
+                <button type="button" class="dashboard-demo-status__action" data-demo-review>
+                    Review Demo Report
+                </button>
+            </div>
         `;
+
+        const loadButton = banner.querySelector("[data-demo-load]");
+        if (loadButton) {
+            loadButton.addEventListener("click", () => {
+                DemoDatasetManager.rebuild();
+                ReportManager.set(ReportManager.load("DEMO-RPT-001"));
+                window.location.hash = "dashboard";
+                window.location.reload();
+            });
+        }
 
         const reviewButton = banner.querySelector("[data-demo-review]");
         if (reviewButton) {
             reviewButton.addEventListener("click", () => {
+                ReportManager.set(ReportManager.load("DEMO-RPT-001"));
                 window.location.hash = "reports";
             });
         }

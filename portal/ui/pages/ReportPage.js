@@ -90,7 +90,7 @@ export default class ReportPage {
             title: "Reports",
             description: activeReport
                 ? `Active report: ${this.getDisplayTitle(activeReport)}`
-                : "Generate professional Technical Due Diligence reports, executive summaries, and Building Intelligence documents.",
+                : "Prepare professional Technical Due Diligence report output for review.",
             actions: [
                 {
                     id: "new-report",
@@ -580,13 +580,13 @@ export default class ReportPage {
             },
             {
                 id: "generate-report",
-                label: "Generate Report",
+                label: "Prepare Report",
                 onClick: () => this.generateReportOutput()
             },
             {
                 id: "export-pdf",
-                label: "Export PDF",
-                onClick: () => this.exportPdf()
+                label: "Print / Save PDF",
+                onClick: () => this.printOrSavePdf()
             }
         ]));
 
@@ -892,9 +892,17 @@ export default class ReportPage {
 
     static getReports() {
         const currentCase = CaseManager.getCurrent();
+        const reports = currentCase ? ReportManager.getByCase(currentCase.id) : ReportManager.getAll();
 
-        if (currentCase) {
-            return ReportManager.getByCase(currentCase.id);
+        if (reports.length) {
+            return reports;
+        }
+
+        const demoStatus = DemoDatasetManager.getStatus();
+        const demoReport = ReportManager.load("DEMO-RPT-001");
+
+        if (demoStatus.isActive && demoReport) {
+            return [demoReport];
         }
 
         return ReportManager.getAll();
