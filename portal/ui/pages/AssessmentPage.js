@@ -747,7 +747,7 @@ export default class AssessmentPage {
     }
 
     static showPendingFeature(feature = "This feature") {
-        Notification.info(`${feature} will be added in the next foundation step.`);
+        Notification.info(`${feature} is reserved for a later workspace release.`);
     }
 
     static getAssessmentIntelligence(assessment = {}) {
