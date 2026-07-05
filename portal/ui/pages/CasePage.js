@@ -182,8 +182,7 @@ export default class CasePage {
                         wrapper.className = isActive
                             ? "case-title-cell is-active-case"
                             : "case-title-cell";
-
-                        const title = document.createElement("strong");
+        const title = document.createElement("strong");
                         title.textContent = row.title || "Untitled case";
 
                         const meta = document.createElement("div");
@@ -287,14 +286,30 @@ export default class CasePage {
         eyebrow.className = "eyebrow";
         eyebrow.textContent = "Continue Workflow";
 
+        const workflowData = current ? {
+            evidence: EvidenceManager.getByCase(current.id),
+            findings: FindingManager.getByCase(current.id),
+            assessments: AssessmentManager.getByCase(current.id),
+            recommendations: RecommendationManager.getByCase(current.id),
+            decisions: DecisionManager.getByCase(current.id),
+            reports: ReportManager.getByCase(current.id)
+        } : null;
+        const workflowComplete = current
+            ? this.getCaseIntelligence(current, workflowData).readinessPercent >= 100
+            : false;
+
         const title = document.createElement("strong");
         title.textContent = current
-            ? "Move this case through the intelligence chain"
+            ? workflowComplete
+                ? "Review complete intelligence chain"
+                : "Move this case through the intelligence chain"
             : "Select a case to continue the workflow";
 
         const description = document.createElement("p");
         description.textContent = current
-            ? "Create or review linked records from Evidence to final Report."
+            ? workflowComplete
+                ? "All workflow stages are represented. Review links or rebuild the chain when required."
+                : "Create or review linked records from Evidence to final Report."
             : "Open a case first, then continue with evidence, findings and decision output.";
 
         header.appendChild(eyebrow);
@@ -308,7 +323,7 @@ export default class CasePage {
             const builderButton = document.createElement("button");
             builderButton.type = "button";
             builderButton.className = "button button--primary case-workflow-actions__primary";
-            builderButton.textContent = "Create Workflow Chain";
+            builderButton.textContent = workflowComplete ? "Review Workflow Chain" : "Create Workflow Chain";
             builderButton.addEventListener("click", () => this.createWorkflowChainBuilder());
             workflowTools.appendChild(builderButton);
 
@@ -578,7 +593,7 @@ export default class CasePage {
                     <article class="case-intelligence__card intelligence-snapshot__card">
                         <span>Workflow Coverage</span>
                         <strong>${intelligence.readinessPercent}% ready</strong>
-                        <p>${stageSummary} stages represented. Continue with the first missing workflow stage.</p>
+                        <p>${stageSummary} stages represented. ${intelligence.readinessPercent >= 100 ? "All workflow stages are represented for this case." : "Continue with the first missing workflow stage."}</p>
                     </article>
 
                     <article class="case-intelligence__card intelligence-snapshot__card case-intelligence__card--${intelligence.riskSignal.tone} intelligence-snapshot__card--${intelligence.riskSignal.tone}">
@@ -590,7 +605,7 @@ export default class CasePage {
                     <article class="case-intelligence__card intelligence-snapshot__card case-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
                         <span>Next Action</span>
                         <strong>${intelligence.nextAction.label}</strong>
-                        <p>Complete the next missing stage before relying on final output.</p>
+                        <p>${intelligence.nextAction.description}</p>
                     </article>
                 </div>
             </section>
