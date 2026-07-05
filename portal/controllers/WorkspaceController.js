@@ -20,8 +20,24 @@ export default class WorkspaceController {
         }
     }
 
+    static getActiveCase() {
+        return this.safeValue(() => CaseManager.getCurrent(), null);
+    }
+
+    static getActiveCaseBuilding() {
+        const currentCase = this.getActiveCase();
+        if (!currentCase?.buildingId) return null;
+        return this.safeValue(() => BuildingManager.load(currentCase.buildingId), null);
+    }
+
+    static getActiveCaseInspection() {
+        const currentCase = this.getActiveCase();
+        if (!currentCase?.inspectionId) return null;
+        return this.safeValue(() => InspectionManager.load(currentCase.inspectionId), null);
+    }
+
     static getActiveCaseId() {
-        return this.safeValue(() => CaseManager.getCurrent()?.id, null);
+        return this.getActiveCase()?.id || null;
     }
 
     static getScopedWorkflowCounts() {
@@ -49,12 +65,15 @@ export default class WorkspaceController {
     }
 
     static getMetrics() {
+        const currentCase = this.getActiveCase();
+        const activeCaseBuilding = this.getActiveCaseBuilding();
+        const activeCaseInspection = this.getActiveCaseInspection();
         const workflowCounts = this.getScopedWorkflowCounts();
 
         return [
             { title: "Cases", value: this.safeValue(() => CaseManager.getAll().length) },
-            { title: "Buildings", value: this.safeValue(() => BuildingManager.count()) },
-            { title: "Inspections", value: this.safeValue(() => InspectionManager.getAllInspections().length) },
+            { title: "Buildings", value: currentCase ? (activeCaseBuilding ? 1 : 0) : this.safeValue(() => BuildingManager.count()) },
+            { title: "Inspections", value: currentCase ? (activeCaseInspection ? 1 : 0) : this.safeValue(() => InspectionManager.getAllInspections().length) },
             { title: "Evidence", value: workflowCounts.evidence },
             { title: "Findings", value: workflowCounts.findings },
             { title: "Assessments", value: workflowCounts.assessments },
@@ -65,15 +84,9 @@ export default class WorkspaceController {
     }
 
     static getActiveCaseSummary() {
-        const currentCase = this.safeValue(() => CaseManager.getCurrent(), null);
-        const activeBuilding = this.safeValue(() => BuildingManager.get(), null);
-        const building = activeBuilding || (currentCase?.buildingId
-            ? this.safeValue(() => BuildingManager.load(currentCase.buildingId), null)
-            : null);
-        const activeInspection = this.safeValue(() => InspectionManager.get(), null);
-        const inspection = activeInspection || (currentCase?.inspectionId
-            ? this.safeValue(() => InspectionManager.load(currentCase.inspectionId), null)
-            : null);
+        const currentCase = this.getActiveCase();
+        const building = this.getActiveCaseBuilding();
+        const inspection = this.getActiveCaseInspection();
 
         let subtitle = "Create or open a case to begin the decision workflow.";
 
@@ -92,6 +105,9 @@ export default class WorkspaceController {
     }
 
     static getWorkflowState() {
+        const currentCase = this.getActiveCase();
+        const activeCaseBuilding = this.getActiveCaseBuilding();
+        const activeCaseInspection = this.getActiveCaseInspection();
         const workflowCounts = this.getScopedWorkflowCounts();
         const evidence = workflowCounts.evidence;
         const findings = workflowCounts.findings;
@@ -101,8 +117,8 @@ export default class WorkspaceController {
         const reports = workflowCounts.reports;
 
         const steps = [
-            { title: "Building", complete: this.safeValue(() => BuildingManager.hasBuilding() ? 1 : 0) > 0 },
-            { title: "Inspection", complete: this.safeValue(() => InspectionManager.getAllInspections().length) > 0 },
+            { title: "Building", complete: currentCase ? activeCaseBuilding !== null : this.safeValue(() => BuildingManager.hasBuilding() ? 1 : 0) > 0 },
+            { title: "Inspection", complete: currentCase ? activeCaseInspection !== null : this.safeValue(() => InspectionManager.getAllInspections().length) > 0 },
             { title: "Evidence", complete: evidence > 0 },
             { title: "Finding", complete: findings > 0 },
             { title: "Assessment", complete: assessments > 0 },
@@ -124,12 +140,11 @@ export default class WorkspaceController {
 
     static getSignals() {
         const workflow = this.getWorkflowState();
-        const findings = this.safeValue(() => FindingManager.count());
-        const evidence = this.safeValue(() => EvidenceManager.count());
+        const workflowCounts = this.getScopedWorkflowCounts();
 
         return {
-            riskScore: findings > 0 ? "Pending model" : "Pending",
-            confidenceScore: evidence > 0 ? "Basic" : "Pending",
+            riskScore: workflowCounts.findings > 0 ? "Pending model" : "Pending",
+            confidenceScore: workflowCounts.evidence > 0 ? "Basic" : "Pending",
             coverageScore: `${workflow.progress}%`
         };
     }
