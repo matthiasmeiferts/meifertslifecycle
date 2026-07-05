@@ -310,7 +310,7 @@ export default class InspectionPage {
         eyebrow.textContent = "Object Inspection Scope";
 
         const title = document.createElement("strong");
-        title.textContent = activeScope ? "Adaptive Scope Active." : "Adaptive Object Capture.";
+        title.textContent = activeScope ? "Adaptive Scope Active." : "Adaptive Scope Review.";
 
         const description = document.createElement("p");
         description.textContent = activeScope
@@ -332,7 +332,7 @@ export default class InspectionPage {
         actionPanel.className = "inspection-scope-editorial__action-panel";
 
         const actionLabel = document.createElement("span");
-        actionLabel.textContent = "Operating Center";
+        actionLabel.textContent = "Scope Control";
 
         const actionButton = document.createElement("button");
         actionButton.type = "button";

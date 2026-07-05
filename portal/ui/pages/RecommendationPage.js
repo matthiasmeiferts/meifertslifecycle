@@ -156,7 +156,7 @@ export default class RecommendationPage {
             },
             {
                 id: "prioritize",
-                label: "Prioritize",
+                label: "Create Recommendation",
                 onClick: () => this.createSampleRecommendation()
             },
             {

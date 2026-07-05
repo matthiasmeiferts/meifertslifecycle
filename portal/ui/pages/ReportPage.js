@@ -1014,7 +1014,7 @@ export default class ReportPage {
 
         if (options.silent) {
             createReport({
-                title: "Sample Building Intelligence Report",
+                title: "Building Intelligence Report",
                 reportType: "Technical Due Diligence",
                 version: "1.0.0",
                 executiveSummary: "Initial report record created from the workspace.",

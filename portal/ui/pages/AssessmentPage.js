@@ -275,7 +275,7 @@ export default class AssessmentPage {
             },
             {
                 id: "risk-model",
-                label: "Risk Model",
+                label: "Create Assessment",
                 onClick: () => this.createSampleAssessment()
             },
             {
