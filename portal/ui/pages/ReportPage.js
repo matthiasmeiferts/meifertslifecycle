@@ -753,8 +753,8 @@ export default class ReportPage {
 
     static getReportStatusRows(report = {}) {
         return [
-            ["Export Format", report.exportFormat || "PDF pending"],
-            ["Generated", report.generatedAt ? new Date(report.generatedAt).toLocaleString() : "Not generated"]
+            ["Export Format", report.exportFormat || ((report.prepared || report.status === "Prepared") ? "Print / Save PDF" : "Pending")],
+            ["Prepared", report.generatedAt ? new Date(report.generatedAt).toLocaleString() : ((report.prepared || report.status === "Prepared") ? "Prepared for review" : "Not prepared")]
         ];
     }
 
@@ -884,10 +884,10 @@ export default class ReportPage {
             { label: "Risk Score", value: String(activeReport.riskScore || 0) },
             { label: "Decision Impact", value: activeReport.decisionImpact || "Medium" },
             { label: "Risk Level", value: activeReport.riskLevel || "Medium" },
-            { label: "Generated", value: activeReport.generatedAt ? new Date(activeReport.generatedAt).toLocaleString() : "Not generated" },
+            { label: "Prepared", value: activeReport.generatedAt ? new Date(activeReport.generatedAt).toLocaleString() : ((activeReport.prepared || activeReport.status === "Prepared") ? "Prepared for review" : "Not prepared") },
             { label: "Report Type", value: activeReport.reportType || "Technical Due Diligence" },
             { label: "Executive Summary", value: activeReport.executiveSummary || "No executive summary" },
-            { label: "Export Format", value: activeReport.exportFormat || "PDF pending" },
+            { label: "Export Format", value: activeReport.exportFormat || ((activeReport.prepared || activeReport.status === "Prepared") ? "Print / Save PDF" : "Pending") },
             { label: "Export Requested", value: activeReport.exportRequestedAt ? new Date(activeReport.exportRequestedAt).toLocaleString() : "Not requested" }
         ]);
     }
