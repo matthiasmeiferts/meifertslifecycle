@@ -3,6 +3,7 @@ import MetricCard from "../components/MetricCard.js";
 import WorkflowCard from "../components/WorkflowCard.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import DemoDatasetManager from "../../core/DemoDatasetManager.js";
+import CaseManager from "../../core/CaseManager.js";
 import InspectionManager from "../../core/InspectionManager.js";
 import EvidenceManager from "../../core/EvidenceManager.js";
 import FindingManager from "../../core/FindingManager.js";
@@ -144,6 +145,20 @@ export default class DashboardPage {
     }
 
     static getLiveWorkflowData() {
+        const currentCase = CaseManager.getCurrent();
+
+        if (currentCase) {
+            return {
+                inspections: currentCase.inspectionId ? [InspectionManager.load(currentCase.inspectionId)].filter(Boolean) : [],
+                evidence: EvidenceManager.getByCase(currentCase.id),
+                findings: FindingManager.getByCase(currentCase.id),
+                assessments: AssessmentManager.getByCase(currentCase.id),
+                recommendations: RecommendationManager.getByCase(currentCase.id),
+                decisions: DecisionManager.getByCase(currentCase.id),
+                reports: ReportManager.getByCase(currentCase.id)
+            };
+        }
+
         return {
             inspections: InspectionManager.getAllInspections(),
             evidence: EvidenceManager.getAll(),

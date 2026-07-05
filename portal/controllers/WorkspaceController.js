@@ -20,17 +20,47 @@ export default class WorkspaceController {
         }
     }
 
+    static getActiveCaseId() {
+        return this.safeValue(() => CaseManager.getCurrent()?.id, null);
+    }
+
+    static getScopedWorkflowCounts() {
+        const caseId = this.getActiveCaseId();
+
+        if (!caseId) {
+            return {
+                evidence: this.safeValue(() => EvidenceManager.count()),
+                findings: this.safeValue(() => FindingManager.count()),
+                assessments: this.safeValue(() => AssessmentManager.count()),
+                recommendations: this.safeValue(() => RecommendationManager.count()),
+                decisions: this.safeValue(() => DecisionManager.count()),
+                reports: this.safeValue(() => ReportManager.count())
+            };
+        }
+
+        return {
+            evidence: this.safeValue(() => EvidenceManager.countByCase(caseId)),
+            findings: this.safeValue(() => FindingManager.countByCase(caseId)),
+            assessments: this.safeValue(() => AssessmentManager.countByCase(caseId)),
+            recommendations: this.safeValue(() => RecommendationManager.countByCase(caseId)),
+            decisions: this.safeValue(() => DecisionManager.countByCase(caseId)),
+            reports: this.safeValue(() => ReportManager.getByCase(caseId).length)
+        };
+    }
+
     static getMetrics() {
+        const workflowCounts = this.getScopedWorkflowCounts();
+
         return [
             { title: "Cases", value: this.safeValue(() => CaseManager.getAll().length) },
             { title: "Buildings", value: this.safeValue(() => BuildingManager.count()) },
             { title: "Inspections", value: this.safeValue(() => InspectionManager.getAllInspections().length) },
-            { title: "Evidence", value: this.safeValue(() => EvidenceManager.count()) },
-            { title: "Findings", value: this.safeValue(() => FindingManager.count()) },
-            { title: "Assessments", value: this.safeValue(() => AssessmentManager.count()) },
-            { title: "Recommendations", value: this.safeValue(() => RecommendationManager.count()) },
-            { title: "Decisions", value: this.safeValue(() => DecisionManager.count()) },
-            { title: "Reports", value: this.safeValue(() => ReportManager.count()) }
+            { title: "Evidence", value: workflowCounts.evidence },
+            { title: "Findings", value: workflowCounts.findings },
+            { title: "Assessments", value: workflowCounts.assessments },
+            { title: "Recommendations", value: workflowCounts.recommendations },
+            { title: "Decisions", value: workflowCounts.decisions },
+            { title: "Reports", value: workflowCounts.reports }
         ];
     }
 
@@ -62,12 +92,13 @@ export default class WorkspaceController {
     }
 
     static getWorkflowState() {
-        const evidence = this.safeValue(() => EvidenceManager.count());
-        const findings = this.safeValue(() => FindingManager.count());
-        const assessments = this.safeValue(() => AssessmentManager.count());
-        const recommendations = this.safeValue(() => RecommendationManager.count());
-        const decisions = this.safeValue(() => DecisionManager.count());
-        const reports = this.safeValue(() => ReportManager.count());
+        const workflowCounts = this.getScopedWorkflowCounts();
+        const evidence = workflowCounts.evidence;
+        const findings = workflowCounts.findings;
+        const assessments = workflowCounts.assessments;
+        const recommendations = workflowCounts.recommendations;
+        const decisions = workflowCounts.decisions;
+        const reports = workflowCounts.reports;
 
         const steps = [
             { title: "Building", complete: this.safeValue(() => BuildingManager.hasBuilding() ? 1 : 0) > 0 },
