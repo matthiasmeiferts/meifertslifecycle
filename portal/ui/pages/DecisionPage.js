@@ -651,8 +651,12 @@ export default class DecisionPage {
     static createSampleDecision() {
         const activeRecommendation = RecommendationManager.get();
         const currentCase = CaseManager.getCurrent();
-        const currentBuilding = BuildingManager.get();
-        const currentInspection = InspectionManager.get();
+        const currentBuilding = currentCase?.buildingId
+            ? BuildingManager.load(currentCase.buildingId)
+            : BuildingManager.get();
+        const currentInspection = currentCase?.inspectionId
+            ? InspectionManager.load(currentCase.inspectionId)
+            : InspectionManager.get();
 
         if (!activeRecommendation && !currentCase) {
             Notification.info("Open a case or recommendation before creating a decision.");

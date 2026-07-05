@@ -789,9 +789,13 @@ export default class EvidencePage {
 
         const currentCase = CaseManager.getCurrent();
 
-        const currentBuilding = BuildingManager.get();
+        const currentBuilding = currentCase?.buildingId
+            ? BuildingManager.load(currentCase.buildingId)
+            : BuildingManager.get();
 
-        const currentInspection = InspectionManager.get();
+        const currentInspection = currentCase?.inspectionId
+            ? InspectionManager.load(currentCase.inspectionId)
+            : InspectionManager.get();
 
         if (!currentCase) {
 

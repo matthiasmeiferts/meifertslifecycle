@@ -524,8 +524,12 @@ export default class AssessmentPage {
 
     static createSampleAssessment() {
         const currentCase = CaseManager.getCurrent();
-        const currentBuilding = BuildingManager.get();
-        const currentInspection = InspectionManager.get();
+        const currentBuilding = currentCase?.buildingId
+            ? BuildingManager.load(currentCase.buildingId)
+            : BuildingManager.get();
+        const currentInspection = currentCase?.inspectionId
+            ? InspectionManager.load(currentCase.inspectionId)
+            : InspectionManager.get();
         const activeFinding = FindingManager.get();
 
         if (!currentCase) {
