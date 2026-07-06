@@ -186,7 +186,7 @@ export default class ReportPage {
         return `
             <section class="workspace-flow" aria-label="Final output state">
                 <div class="workspace-flow__header">
-                    <span class="workspace-flow__eyebrow">Final Output</span>
+                    <span class="workspace-flow__eyebrow">${LanguageManager.t("ReportFinalOutputLabel")}</span>
                     <strong>Decision → Report</strong>
                 </div>
 
@@ -315,8 +315,8 @@ export default class ReportPage {
                 }
                 : hasContent && hasDecisionLink
                     ? {
-                        label: "Prepare draft report output",
-                        description: "Report content and decision context are available. Prepare the draft output for expert review.",
+                        label: LanguageManager.t("ReportPrepareDraftReportOutput"),
+                        description: LanguageManager.t("ReportPrepareDraftReportOutputDescription"),
                         tone: "active"
                     }
                     : {
@@ -335,7 +335,7 @@ export default class ReportPage {
             label: readinessPercent >= 100
                 ? "Report intelligence complete"
                 : readinessPercent >= 50
-                    ? "Report intelligence developing"
+                    ? LanguageManager.t("ReportIntelligenceDeveloping")
                     : "Report intelligence early"
         };
     }
@@ -377,32 +377,32 @@ export default class ReportPage {
         const checks = [
             {
                 key: "identity",
-                label: "Report identified",
+                label: LanguageManager.t("ReportIdentified"),
                 complete: hasTitle
             },
             {
                 key: "type",
-                label: "Report type defined",
+                label: LanguageManager.t("ReportTypeDefined"),
                 complete: hasReportType
             },
             {
                 key: "decision",
-                label: "Decision linked",
+                label: LanguageManager.t("ReportDecisionLinked"),
                 complete: hasDecisionLink
             },
             {
                 key: "content",
-                label: "Content prepared",
+                label: LanguageManager.t("ReportContentPrepared"),
                 complete: hasContent
             },
             {
                 key: "output",
-                label: "Draft output prepared",
+                label: LanguageManager.t("ReportDraftOutputPrepared"),
                 complete: hasOutput
             },
             {
                 key: "final",
-                label: "Finalization pending",
+                label: LanguageManager.t("ReportFinalizationPending"),
                 complete: isFinalized
             }
         ];
@@ -425,16 +425,16 @@ export default class ReportPage {
         const completion = this.getCompletionState(report);
         const percent = Math.round(completion.ratio * 100);
         const readinessLabel = completion.isComplete
-            ? "Final Report Complete"
+            ? LanguageManager.t("ReportFinalReportComplete")
             : completion.isReadyForFinalReview
-                ? "Ready for Expert Review"
-                : "Needs more report data";
+                ? LanguageManager.t("ReportReadyForExpertReview")
+                : LanguageManager.t("ReportNeedsMoreData");
 
         return `
             <section class="completion-panel" aria-label="Report completion">
                 <div class="completion-panel__header">
                     <div>
-                        <span class="completion-panel__eyebrow">Completion</span>
+                        <span class="completion-panel__eyebrow">${LanguageManager.t("ReportCompletionLabel")}</span>
                         <strong>${readinessLabel}</strong>
                     </div>
                     <span class="completion-panel__score">${percent}%</span>
@@ -471,28 +471,28 @@ export default class ReportPage {
             <section class="report-intelligence intelligence-snapshot" aria-label="Report intelligence snapshot">
                 <div class="report-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="report-intelligence__eyebrow intelligence-snapshot__eyebrow">Report Intelligence</span>
+                        <span class="report-intelligence__eyebrow intelligence-snapshot__eyebrow">${LanguageManager.t("ReportIntelligenceLabel")}</span>
                         <strong>${intelligence.label}</strong>
-                        <p>${intelligence.completed}/${intelligence.total} report intelligence checks completed</p>
+                        <p>${intelligence.completed}/${intelligence.total} ${LanguageManager.t("ReportIntelligenceChecksCompleted")}</p>
                     </div>
                     <span class="report-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
                 <div class="report-intelligence__grid intelligence-snapshot__grid">
                     <article class="report-intelligence__card intelligence-snapshot__card">
-                        <span>Final Review Readiness</span>
+                        <span>${LanguageManager.t("ReportFinalReviewReadinessLabel")}</span>
                         <strong>${intelligence.readinessPercent}%</strong>
-                        <p>Readiness based on identity, report type, decision link, content, draft output, expert review and finalization.</p>
+                        <p>${LanguageManager.t("ReportFinalReviewReadinessDescription")}</p>
                     </article>
 
                     <article class="report-intelligence__card intelligence-snapshot__card report-intelligence__card--${intelligence.outputQualitySignal.tone} intelligence-snapshot__card--${intelligence.outputQualitySignal.tone}">
-                        <span>Output Quality Signal</span>
+                        <span>${LanguageManager.t("ReportOutputQualitySignalLabel")}</span>
                         <strong>${intelligence.outputQualitySignal.label}</strong>
                         <p>${intelligence.outputQualitySignal.description}</p>
                     </article>
 
                     <article class="report-intelligence__card intelligence-snapshot__card report-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
-                        <span>Next Report Action</span>
+                        <span>${LanguageManager.t("ReportNextReportActionLabel")}</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>
                     </article>
@@ -570,12 +570,12 @@ export default class ReportPage {
         wrapper.appendChild(ActionBar.create([
             {
                 id: "refresh",
-                label: "Refresh",
+                label: LanguageManager.t("ReportRefreshAction"),
                 onClick: () => this.refresh()
             },
             {
                 id: "close-report",
-                label: "Close Report",
+                label: LanguageManager.t("ReportCloseAction"),
                 onClick: () => {
                     ReportManager.clear();
                     this.refresh();
@@ -583,12 +583,12 @@ export default class ReportPage {
             },
             {
                 id: "generate-report",
-                label: "Prepare Report",
+                label: LanguageManager.t("ReportPrepareAction"),
                 onClick: () => this.generateReportOutput()
             },
             {
                 id: "export-pdf",
-                label: "Print / Save PDF",
+                label: LanguageManager.t("ReportPrintSavePdfAction"),
                 onClick: () => this.printOrSavePdf()
             }
         ]));
@@ -660,9 +660,9 @@ export default class ReportPage {
         actions.className = "evidence-row__actions";
 
         [
-            ["open", "Open"],
-            ["edit", "Edit"],
-            ["delete", "Delete"]
+            ["open", LanguageManager.t("ReportOpenAction")],
+            ["edit", LanguageManager.t("ReportEditAction")],
+            ["delete", LanguageManager.t("ReportDeleteAction")]
         ].forEach(([action, label]) => {
             const button = document.createElement("button");
             button.type = "button";

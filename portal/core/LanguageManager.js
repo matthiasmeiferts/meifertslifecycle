@@ -383,6 +383,114 @@ export default class LanguageManager {
                 en: "No executive summary",
                 de: "Keine Zusammenfassung"
             },
+            ReportFinalOutputLabel: {
+                en: "Final Output",
+                de: "Finale Ausgabe"
+            },
+            ReportCompletionLabel: {
+                en: "Completion",
+                de: "Fertigstellung"
+            },
+            ReportFinalReportComplete: {
+                en: "Final Report Complete",
+                de: "Finaler Bericht vollständig"
+            },
+            ReportReadyForExpertReview: {
+                en: "Ready for Expert Review",
+                de: "Bereit zur fachlichen Prüfung"
+            },
+            ReportNeedsMoreData: {
+                en: "Needs more report data",
+                de: "Weitere Berichtsdaten erforderlich"
+            },
+            ReportIdentified: {
+                en: "Report identified",
+                de: "Bericht identifiziert"
+            },
+            ReportTypeDefined: {
+                en: "Report type defined",
+                de: "Berichtstyp definiert"
+            },
+            ReportDecisionLinked: {
+                en: "Decision linked",
+                de: "Decision verknüpft"
+            },
+            ReportContentPrepared: {
+                en: "Content prepared",
+                de: "Inhalt vorbereitet"
+            },
+            ReportDraftOutputPrepared: {
+                en: "Draft output prepared",
+                de: "Entwurfsausgabe vorbereitet"
+            },
+            ReportFinalizationPending: {
+                en: "Finalization pending",
+                de: "Finalisierung offen"
+            },
+            ReportRefreshAction: {
+                en: "Refresh",
+                de: "Aktualisieren"
+            },
+            ReportCloseAction: {
+                en: "Close Report",
+                de: "Bericht schließen"
+            },
+            ReportPrepareAction: {
+                en: "Prepare Report",
+                de: "Bericht vorbereiten"
+            },
+            ReportPrintSavePdfAction: {
+                en: "Print / Save PDF",
+                de: "PDF drucken / speichern"
+            },
+            ReportOpenAction: {
+                en: "Open",
+                de: "Öffnen"
+            },
+            ReportEditAction: {
+                en: "Edit",
+                de: "Bearbeiten"
+            },
+            ReportDeleteAction: {
+                en: "Delete",
+                de: "Löschen"
+            },
+            ReportIntelligenceLabel: {
+                en: "Report Intelligence",
+                de: "Berichtsintelligenz"
+            },
+            ReportIntelligenceDeveloping: {
+                en: "Report intelligence developing",
+                de: "Berichtsintelligenz in Entwicklung"
+            },
+            ReportIntelligenceChecksCompleted: {
+                en: "report intelligence checks completed",
+                de: "Berichtsintelligenz-Prüfungen abgeschlossen"
+            },
+            ReportFinalReviewReadinessLabel: {
+                en: "Final Review Readiness",
+                de: "Bereitschaft zur finalen Prüfung"
+            },
+            ReportFinalReviewReadinessDescription: {
+                en: "Readiness based on identity, report type, decision link, content, draft output, expert review and finalization.",
+                de: "Bereitschaft auf Basis von Identität, Berichtstyp, Decision-Verknüpfung, Inhalt, Entwurfsausgabe, fachlicher Prüfung und Finalisierung."
+            },
+            ReportOutputQualitySignalLabel: {
+                en: "Output Quality Signal",
+                de: "Qualitätssignal der Ausgabe"
+            },
+            ReportNextReportActionLabel: {
+                en: "Next Report Action",
+                de: "Nächste Berichtsaktion"
+            },
+            ReportPrepareDraftReportOutput: {
+                en: "Prepare draft report output",
+                de: "Berichtsentwurf vorbereiten"
+            },
+            ReportPrepareDraftReportOutputDescription: {
+                en: "Report content and decision context are available. Prepare the draft output for expert review.",
+                de: "Berichtsinhalte und Entscheidungskontext sind verfügbar. Bereiten Sie die Entwurfsausgabe zur fachlichen Prüfung vor."
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."
