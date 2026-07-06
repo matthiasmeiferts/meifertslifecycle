@@ -1,3 +1,5 @@
+import pattayaCoreQuestionCatalog from "../data/inspection/pattaya-core-question-catalog.js";
+
 /**
  * MEIFERTS Building Intelligence
  * Inspection Question Catalog
@@ -553,28 +555,76 @@ export default class InspectionQuestionCatalog {
         return this.modules;
     }
 
-    static getAll() {
+    static getAll(options = {}) {
+        return this.getQuestionsForProfile(options);
+    }
+
+    static getQuestionsForProfile(options = {}) {
+        const country = String(options.country || "").toUpperCase();
+        const region = String(options.region || "").toLowerCase();
+        const profile = String(options.profile || "").toLowerCase();
+
+        if (country === "TH" || region.includes("pattaya") || profile === "pattaya") {
+            return this.normalizeExternalQuestions(pattayaCoreQuestionCatalog);
+        }
+
         return this.questions;
     }
 
-    static getByModule(moduleId) {
-        return this.questions.filter(question => question.module === moduleId);
+    static getByModule(moduleId, options = {}) {
+        return this.getQuestionsForProfile(options).filter(question => question.module === moduleId);
     }
 
-    static getByRiskCategory(riskCategory) {
+    static getByRiskCategory(riskCategory, options = {}) {
         const moduleIds = this.modules
             .filter(module => module.riskCategory === riskCategory)
             .map(module => module.id);
 
-        return this.questions.filter(question => moduleIds.includes(question.module));
+        return this.getQuestionsForProfile(options).filter(question => moduleIds.includes(question.module));
     }
 
-    static getById(id) {
-        return this.questions.find(question => question.id === id) || null;
+    static getById(id, options = {}) {
+        return this.getQuestionsForProfile(options).find(question => question.id === id) || null;
     }
 
-    static getStarterScopeQuestions() {
-        return this.questions;
+    static getStarterScopeQuestions(options = {}) {
+        return this.getQuestionsForProfile(options);
+    }
+
+    static normalizeExternalQuestions(questions = []) {
+        return questions.map(question => ({
+            ...question,
+            question: question.question?.de || question.question || "",
+            helpText: question.helpText?.de || question.helpText || "",
+            answerOptions: question.answerOptions?.de || question.answerOptions || [],
+            evidenceRequired: [
+                ...(question.requires?.photo ? ["photo"] : []),
+                ...(question.requires?.measurement ? ["measurement"] : []),
+                ...(question.requires?.document ? ["document_availability_check"] : [])
+            ],
+            rules: this.createRulesFromMetadata(question)
+        }));
+    }
+
+    static createRulesFromMetadata(question = {}) {
+        const rules = [];
+
+        Object.entries(question.followUpIf || {}).forEach(([answer, followUps]) => {
+            rules.push({
+                when: { answer },
+                askNext: followUps,
+                requireEvidence: [
+                    ...((question.requires?.photoIf || []).includes(answer) ? ["photo"] : []),
+                    ...((question.requires?.measurementIf || []).includes(answer) ? ["measurement"] : []),
+                    ...((question.requires?.documentIf || []).includes(answer) ? ["document_availability_check"] : [])
+                ],
+                createRiskFlag: answer === "Auffällig" || answer === "Ja",
+                severity: question.severityHint || "Medium",
+                riskReason: `${question.module || "Inspection"} requires professional review.`
+            });
+        });
+
+        return rules;
     }
 
     static createStarterScopeData(data = {}) {
