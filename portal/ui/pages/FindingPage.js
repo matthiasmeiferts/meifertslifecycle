@@ -6,6 +6,7 @@ import BuildingManager from "../../core/BuildingManager.js";
 import InspectionManager from "../../core/InspectionManager.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import LanguageManager from "../../core/LanguageManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
 import WorkflowProgressPanel from "../components/WorkflowProgressPanel.js";
@@ -27,17 +28,18 @@ export default class FindingPage {
         },
         {
             key: "assessment",
-            label: "Assessment",
+            label: LanguageManager.t("WorkflowStepAssessment"),
             description: "Risk assessment derived"
         }
     ];
 
     static statusLabels = {
-        draft: "Draft",
-        identified: "Identified",
-        assessed: "Assessed",
-        reviewed: "Reviewed",
-        blocked: "Blocked"
+        draft: LanguageManager.t("FindingStatusDraft"),
+        open: LanguageManager.t("FindingStatusOpen"),
+        identified: LanguageManager.t("FindingStatusIdentified"),
+        assessed: LanguageManager.t("FindingStatusAssessed"),
+        reviewed: LanguageManager.t("FindingStatusReviewed"),
+        blocked: LanguageManager.t("FindingStatusBlocked")
     };
 
     static render() {
@@ -86,7 +88,7 @@ export default class FindingPage {
             <section class="workspace-flow" aria-label="Active workflow state">
                 <div class="workspace-flow__header">
                     <span class="workspace-flow__eyebrow">Active Flow</span>
-                    <strong>Finding → Assessment</strong>
+                    <strong>${LanguageManager.t("FindingToAssessmentLabel")}</strong>
                 </div>
 
                 <div class="workspace-flow__steps">
@@ -178,7 +180,7 @@ export default class FindingPage {
 
         if (status === "assessed") {
             return {
-                label: "Review linked assessment",
+                label: LanguageManager.t("FindingReviewLinkedAssessment"),
                 description: "This finding is already connected to an assessment. Check risk logic and completeness.",
                 tone: "linked"
             };
@@ -254,7 +256,7 @@ export default class FindingPage {
             },
             {
                 key: "severity",
-                label: "Severity defined",
+                label: LanguageManager.t("FindingSeverityDefined"),
                 complete: hasSeverity
             },
             {
@@ -264,12 +266,12 @@ export default class FindingPage {
             },
             {
                 key: "evidence",
-                label: "Evidence linked",
+                label: LanguageManager.t("FindingEvidenceLinked"),
                 complete: hasEvidenceLink
             },
             {
                 key: "assessment",
-                label: "Assessment connection",
+                label: LanguageManager.t("FindingAssessmentConnection"),
                 complete: hasAssessmentLink
             }
         ];
@@ -292,7 +294,7 @@ export default class FindingPage {
         const completion = this.getCompletionState(finding);
         const percent = Math.round(completion.ratio * 100);
         const readinessLabel = completion.isReadyForAssessment
-            ? "Ready for Assessment"
+            ? LanguageManager.t("FindingReadyForAssessment")
             : "Needs more finding data";
 
         return `
@@ -332,15 +334,15 @@ export default class FindingPage {
         const summary = WorkspaceController.getActiveCaseSummary();
 
         return SectionHeader.create({
-            eyebrow: "Finding Workspace",
-            title: "Technical Findings",
+            eyebrow: LanguageManager.t("FindingWorkspaceTitle"),
+            title: LanguageManager.t("FindingTechnicalFindingsTitle"),
             description: activeFinding
-                ? `Active finding: ${activeFinding.title || activeFinding.id}`
+                ? `${LanguageManager.t("FindingActivePrefix")}: ${activeFinding.title || activeFinding.id}`
                 : `${summary.title} · Convert verified evidence into structured findings.`,
             actions: [
                 {
                     id: "new-finding",
-                    label: "+ New Finding",
+                    label: LanguageManager.t("FindingNewAction"),
                     onClick: () => this.createSampleFinding()
                 }
             ]
@@ -356,10 +358,10 @@ export default class FindingPage {
         const grid = document.createElement("section");
         grid.className = "metrics-grid";
 
-        grid.appendChild(MetricCard.create("Findings", findingCount));
+        grid.appendChild(MetricCard.create(LanguageManager.t("FindingTotalMetric"), findingCount));
         grid.appendChild(MetricCard.create("Critical", criticalCount));
-        grid.appendChild(MetricCard.create("Open", findingCount - reviewedCount));
-        grid.appendChild(MetricCard.create("Linked Assessments", this.countAssessmentsLinkedToFinding()));
+        grid.appendChild(MetricCard.create(LanguageManager.t("FindingOpenMetric"), findingCount - reviewedCount));
+        grid.appendChild(MetricCard.create(LanguageManager.t("FindingLinkedAssessmentsMetric"), this.countAssessmentsLinkedToFinding()));
 
         return grid;
     }
@@ -371,12 +373,12 @@ export default class FindingPage {
         wrapper.appendChild(ActionBar.create([
             {
                 id: "refresh",
-                label: "Refresh",
+                label: LanguageManager.t("FindingRefreshAction"),
                 onClick: () => this.refresh()
             },
             {
                 id: "close-finding",
-                label: "Close Finding",
+                label: LanguageManager.t("FindingCloseAction"),
                 onClick: () => {
                     FindingManager.clear();
                     this.refresh();
@@ -384,12 +386,12 @@ export default class FindingPage {
             },
             {
                 id: "link-evidence",
-                label: "Link Evidence",
+                label: LanguageManager.t("FindingLinkEvidenceAction"),
                 onClick: () => this.createSampleFinding()
             },
             {
                 id: "create-assessment",
-                label: "Create Assessment",
+                label: LanguageManager.t("FindingCreateAssessmentAction"),
                 onClick: () => this.createAssessmentFromSelectedFinding()
             }
         ]));
@@ -413,10 +415,10 @@ export default class FindingPage {
     static createContent(findings = this.getFindings()) {
         if (!findings.length) {
             return EmptyState.create({
-                eyebrow: "Finding Workspace",
-                title: "No findings available",
+                eyebrow: LanguageManager.t("FindingWorkspaceTitle"),
+                title: LanguageManager.t("FindingEmptyTitle"),
                 description: "Select verified evidence and document the technical observation to begin the finding chain.",
-                actionLabel: "+ New Finding",
+                actionLabel: LanguageManager.t("FindingNewAction"),
                 onAction: () => this.createSampleFinding()
             });
         }
@@ -464,9 +466,9 @@ export default class FindingPage {
         actions.className = "evidence-row__actions";
 
         [
-            ["open", "Open"],
-            ["edit", "Edit"],
-            ["delete", "Delete"]
+            ["open", LanguageManager.t("ReportOpenAction")],
+            ["edit", LanguageManager.t("ReportEditAction")],
+            ["delete", LanguageManager.t("ReportDeleteAction")]
         ].forEach(([action, label]) => {
             const button = document.createElement("button");
             button.type = "button";
@@ -504,32 +506,32 @@ export default class FindingPage {
 
     static createDetailPanel(activeFinding = FindingManager.get(), findings = this.getFindings()) {
         if (!activeFinding) {
-            return DetailPanel.create("Finding Context", [
-                { label: "Findings", value: String(findings.length) },
-                { label: "Selected Finding", value: "Not selected" },
-                { label: "Finding Status", value: findings.length ? "In Review" : "Not started" },
-                { label: "Workspace Status", value: "—" },
-                { label: "Next Step", value: "Create or select a finding" }
+            return DetailPanel.create(LanguageManager.t("FindingContextTitle"), [
+                { label: LanguageManager.t("FindingTotalMetric"), value: String(findings.length) },
+                { label: LanguageManager.t("FindingSelectedLabel"), value: LanguageManager.t("FindingNotSelected") },
+                { label: LanguageManager.t("FindingStatusLabel"), value: findings.length ? LanguageManager.t("FindingInReview") : LanguageManager.t("FindingNotStarted") },
+                { label: LanguageManager.t("FindingWorkspaceStatusLabel"), value: "—" },
+                { label: LanguageManager.t("FindingNextStepLabel"), value: LanguageManager.t("FindingCreateOrSelect") }
             ]);
         }
 
         const statusLabel = this.statusLabels[this.getFindingStatus(activeFinding)] || "Draft";
 
-        return DetailPanel.create("Finding Context", [
-            { label: "Selected Finding", value: activeFinding.title || activeFinding.id },
-            { label: "Workspace Status", value: statusLabel },
-            { label: "Safety Boundaries", value: DetailPanel.createBoundaryBadges(activeFinding) },
-            { label: "Source", value: activeFinding.source || "Expert Review" },
-            { label: "Case ID", value: activeFinding.caseId || "Not linked" },
-            { label: "Building ID", value: activeFinding.buildingId || "Not linked" },
-            { label: "Inspection ID", value: activeFinding.inspectionId || "Not linked" },
-            { label: "Evidence IDs", value: (activeFinding.evidenceIds || []).join(", ") || "None" },
-            { label: "Category", value: activeFinding.category || "General" },
-            { label: "Building System", value: activeFinding.buildingSystem || "Not linked" },
-            { label: "Severity", value: activeFinding.severity || "Normal" },
-            { label: "Description", value: activeFinding.description || "No description" },
-            { label: "Assessment IDs", value: (activeFinding.assessmentIds || []).join(", ") || "None" },
-            { label: "Linked Assessments", value: String(this.countAssessmentsLinkedToFinding(activeFinding.id)) }
+        return DetailPanel.create(LanguageManager.t("FindingContextTitle"), [
+            { label: LanguageManager.t("FindingSelectedLabel"), value: activeFinding.title || activeFinding.id },
+            { label: LanguageManager.t("FindingWorkspaceStatusLabel"), value: statusLabel },
+            { label: LanguageManager.t("FindingSafetyBoundariesLabel"), value: DetailPanel.createBoundaryBadges(activeFinding) },
+            { label: LanguageManager.t("FindingSourceLabel"), value: activeFinding.source || LanguageManager.t("FindingExpertReview") },
+            { label: LanguageManager.t("FindingCaseIdLabel"), value: activeFinding.caseId || LanguageManager.t("FindingNotLinked") },
+            { label: LanguageManager.t("FindingBuildingIdLabel"), value: activeFinding.buildingId || LanguageManager.t("FindingNotLinked") },
+            { label: LanguageManager.t("FindingInspectionIdLabel"), value: activeFinding.inspectionId || LanguageManager.t("FindingNotLinked") },
+            { label: LanguageManager.t("FindingEvidenceIdsLabel"), value: (activeFinding.evidenceIds || []).join(", ") || LanguageManager.t("FindingNone") },
+            { label: LanguageManager.t("FindingCategoryLabel"), value: activeFinding.category || LanguageManager.t("FindingGeneral") },
+            { label: LanguageManager.t("FindingBuildingSystemLabel"), value: activeFinding.buildingSystem || LanguageManager.t("FindingNotLinked") },
+            { label: LanguageManager.t("FindingSeverityLabel"), value: activeFinding.severity || LanguageManager.t("FindingNormal") },
+            { label: LanguageManager.t("FindingDescriptionLabel"), value: activeFinding.description || LanguageManager.t("FindingNoDescription") },
+            { label: LanguageManager.t("FindingAssessmentIdsLabel"), value: (activeFinding.assessmentIds || []).join(", ") || LanguageManager.t("FindingNone") },
+            { label: LanguageManager.t("FindingLinkedAssessmentsMetric"), value: String(this.countAssessmentsLinkedToFinding(activeFinding.id)) }
         ]);
     }
 
@@ -566,17 +568,17 @@ export default class FindingPage {
         const currentCase = CaseManager.getCurrent();
 
         if (!finding) {
-            Notification.warning("Select a finding first.");
+            Notification.warning(LanguageManager.t("FindingSelectFirstWarning"));
             return;
         }
 
         if (!finding.caseId) {
-            Notification.warning("Selected finding is not linked to a case.");
+            Notification.warning(LanguageManager.t("FindingNotLinkedCaseWarning"));
             return;
         }
 
         if (currentCase && currentCase.id !== finding.caseId) {
-            Notification.warning("Selected finding belongs to another case.");
+            Notification.warning(LanguageManager.t("FindingBelongsOtherCaseWarning"));
             return;
         }
 
@@ -700,7 +702,7 @@ export default class FindingPage {
 
         FindingManager.set(updatedFinding);
 
-        Notification.success("Assessment draft created. Expert review required.");
+        Notification.success(LanguageManager.t("FindingAssessmentDraftCreated"));
         window.location.hash = "assessments";
     }
 
@@ -708,13 +710,13 @@ export default class FindingPage {
         const finding = FindingManager.get();
 
         if (!finding) {
-            Notification.info("Select a finding before editing.");
+            Notification.info(LanguageManager.t("FindingSelectBeforeEditing"));
             return;
         }
 
         FormDialog.open({
-            title: "Edit Finding",
-            submitLabel: "Save Finding",
+            title: LanguageManager.t("FindingEditTitle"),
+            submitLabel: LanguageManager.t("FindingSaveAction"),
             values: {
                 title: finding.title || "",
                 description: finding.description || "",
@@ -723,23 +725,23 @@ export default class FindingPage {
                 status: finding.status || "Open"
             },
             fields: [
-                { id: "title", label: "Finding title" },
-                { id: "description", label: "Description" },
+                { id: "title", label: LanguageManager.t("FindingTitleField") },
+                { id: "description", label: LanguageManager.t("FindingDescriptionLabel") },
                 {
                     id: "category",
-                    label: "Category",
+                    label: LanguageManager.t("FindingCategoryLabel"),
                     type: "select",
                     options: ["General", "Envelope", "Roof", "Structure", "MEP", "Moisture", "Fire Safety", "Other"]
                 },
                 {
                     id: "severity",
-                    label: "Severity",
+                    label: LanguageManager.t("FindingSeverityLabel"),
                     type: "select",
                     options: ["Low", "Medium", "High", "Critical"]
                 },
                 {
                     id: "status",
-                    label: "Status",
+                    label: LanguageManager.t("CaseStatusLabel"),
                     type: "select",
                     options: ["Open", "Identified", "Assessed", "Reviewed", "Blocked"]
                 }
@@ -759,14 +761,14 @@ export default class FindingPage {
 
                 FindingManager.set(updated);
                 dialog.remove();
-                Notification.success("Finding updated.");
+                Notification.success(LanguageManager.t("FindingUpdatedNotification"));
                 this.refresh();
             }
         });
     }
 
     static deleteFinding(item) {
-        if (!window.confirm(`Delete finding "${item.title || item.id}"?`)) {
+        if (!window.confirm(`${LanguageManager.t("FindingDeleteConfirmPrefix")} "${item.title || item.id}"?`)) {
             return;
         }
 
@@ -776,7 +778,7 @@ export default class FindingPage {
             FindingManager.clear();
         }
 
-        Notification.success("Finding deleted.");
+        Notification.success(LanguageManager.t("FindingDeletedNotification"));
         this.refresh();
     }
 
@@ -805,7 +807,7 @@ export default class FindingPage {
 
         if (!currentCase) {
 
-            Notification.info("Open a case before creating a finding.");
+            Notification.info(LanguageManager.t("FindingOpenCaseFirst"));
 
             return;
 
@@ -813,9 +815,9 @@ export default class FindingPage {
 
         FormDialog.open({
 
-            title: "New Finding",
+            title: LanguageManager.t("FindingNewTitle"),
 
-            submitLabel: "Create Finding",
+            submitLabel: LanguageManager.t("FindingCreateAction"),
 
             values: {
 
@@ -837,7 +839,7 @@ export default class FindingPage {
 
                     id: "title",
 
-                    label: "Finding title"
+                    label: LanguageManager.t("FindingTitleField")
 
                 },
 
@@ -853,7 +855,7 @@ export default class FindingPage {
 
                     id: "category",
 
-                    label: "Category",
+                    label: LanguageManager.t("FindingCategoryLabel"),
 
                     type: "select",
 
@@ -865,7 +867,7 @@ export default class FindingPage {
 
                     id: "severity",
 
-                    label: "Severity",
+                    label: LanguageManager.t("FindingSeverityLabel"),
 
                     type: "select",
 
@@ -877,7 +879,7 @@ export default class FindingPage {
 
                     id: "status",
 
-                    label: "Status",
+                    label: LanguageManager.t("CaseStatusLabel"),
 
                     type: "select",
 
@@ -892,7 +894,7 @@ export default class FindingPage {
                 if (!values.title) return;
 
                 if (!activeEvidence) {
-            Notification.info("Select evidence before creating a finding.");
+            Notification.info(LanguageManager.t("FindingSelectEvidenceBeforeCreating"));
             return;
         }
 
@@ -922,7 +924,7 @@ export default class FindingPage {
 
                 dialog.remove();
 
-                Notification.success("Finding created.");
+                Notification.success(LanguageManager.t("FindingCreatedNotification"));
 
                 this.refresh();
 
@@ -934,7 +936,7 @@ export default class FindingPage {
 
 
     static showPendingFeature(feature = "This feature") {
-        Notification.info(`${feature} is reserved for a later workspace release.`);
+        Notification.info(`${feature} ${LanguageManager.t("FindingPendingFeatureSuffix")}`);
     }
 
     static getFindingIntelligence(finding = {}) {
@@ -989,40 +991,40 @@ export default class FindingPage {
         });
 
         let severitySignal = {
-            label: "Low severity signal",
-            description: "Finding severity is still unclear. Define severity, probability or risk level before assessment.",
+            label: LanguageManager.t("FindingLowSeveritySignal"),
+            description: LanguageManager.t("FindingLowSeveritySignalDescription"),
             tone: "draft"
         };
 
         if (hasSeverity && hasEvidenceLink && hasAssessmentLink) {
             severitySignal = {
-                label: "Strong severity signal",
-                description: "Finding has severity context, evidence support and downstream assessment connection.",
+                label: LanguageManager.t("FindingStrongSeveritySignal"),
+                description: LanguageManager.t("FindingStrongSeveritySignalDescription"),
                 tone: "ready"
             };
         } else if (hasSeverity && hasDescription) {
             severitySignal = {
-                label: "Developing severity signal",
-                description: "Finding has useful severity context but may still need evidence or assessment linkage.",
+                label: LanguageManager.t("FindingDevelopingSeveritySignal"),
+                description: LanguageManager.t("FindingDevelopingSeveritySignalDescription"),
                 tone: "active"
             };
         }
 
         const nextAction = hasAssessmentLink
             ? {
-                label: "Review linked assessment",
-                description: "Finding is connected to an assessment. Review whether risk logic reflects the finding accurately.",
+                label: LanguageManager.t("FindingReviewLinkedAssessment"),
+                description: LanguageManager.t("FindingReviewLinkedAssessmentDescription"),
                 tone: "ready"
             }
             : hasSeverity && hasDescription
                 ? {
-                    label: "Create or link assessment",
-                    description: "Finding is sufficiently described. Connect it to a technical assessment.",
+                    label: LanguageManager.t("FindingCreateOrLinkAssessment"),
+                    description: LanguageManager.t("FindingCreateOrLinkAssessmentDescription"),
                     tone: "active"
                 }
                 : {
-                    label: "Define finding severity",
-                    description: "Add severity, description and evidence context before moving toward assessment.",
+                    label: LanguageManager.t("FindingDefineSeverity"),
+                    description: LanguageManager.t("FindingDefineSeverityDescription"),
                     tone: "draft"
                 };
 
@@ -1034,10 +1036,10 @@ export default class FindingPage {
             severitySignal,
             nextAction,
             label: readinessPercent >= 100
-                ? "Finding intelligence complete"
+                ? LanguageManager.t("FindingIntelligenceComplete")
                 : readinessPercent >= 50
-                    ? "Finding intelligence developing"
-                    : "Finding intelligence early"
+                    ? LanguageManager.t("FindingIntelligenceDeveloping")
+                    : LanguageManager.t("FindingIntelligenceEarly")
         };
     }
 
@@ -1046,31 +1048,31 @@ export default class FindingPage {
         const intelligence = this.getFindingIntelligence(finding);
 
         return `
-            <section class="finding-intelligence intelligence-snapshot" aria-label="Finding intelligence snapshot">
+            <section class="finding-intelligence intelligence-snapshot" aria-label="${LanguageManager.t("FindingIntelligenceLabel")}">
                 <div class="finding-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="finding-intelligence__eyebrow intelligence-snapshot__eyebrow">Finding Intelligence</span>
+                        <span class="finding-intelligence__eyebrow intelligence-snapshot__eyebrow">${LanguageManager.t("FindingIntelligenceLabel")}</span>
                         <strong>${intelligence.label}</strong>
-                        <p>${intelligence.completed}/${intelligence.total} finding intelligence checks completed</p>
+                        <p>${intelligence.completed}/${intelligence.total} ${LanguageManager.t("FindingChecksCompleted")}</p>
                     </div>
                     <span class="finding-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
                 <div class="finding-intelligence__grid intelligence-snapshot__grid">
                     <article class="finding-intelligence__card intelligence-snapshot__card">
-                        <span>Assessment Readiness</span>
+                        <span>${LanguageManager.t("FindingAssessmentReadiness")}</span>
                         <strong>${intelligence.readinessPercent}%</strong>
-                        <p>Readiness based on identity, classification, severity, description, evidence link, assessment link and review state.</p>
+                        <p>${LanguageManager.t("FindingAssessmentReadinessDescription")}</p>
                     </article>
 
                     <article class="finding-intelligence__card intelligence-snapshot__card finding-intelligence__card--${intelligence.severitySignal.tone} intelligence-snapshot__card--${intelligence.severitySignal.tone}">
-                        <span>Severity Signal</span>
+                        <span>${LanguageManager.t("FindingSeveritySignalLabel")}</span>
                         <strong>${intelligence.severitySignal.label}</strong>
                         <p>${intelligence.severitySignal.description}</p>
                     </article>
 
                     <article class="finding-intelligence__card intelligence-snapshot__card finding-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
-                        <span>Next Finding Action</span>
+                        <span>${LanguageManager.t("FindingNextActionLabel")}</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>
                     </article>

@@ -1815,6 +1815,362 @@ export default class LanguageManager {
                 en: "Blocked",
                 de: "Blockiert"
             },
+            FindingWorkspaceTitle: {
+                en: "Finding Workspace",
+                de: "Finding Workspace"
+            },
+            FindingTechnicalFindingsTitle: {
+                en: "Technical Findings",
+                de: "Technische Findings"
+            },
+            FindingActivePrefix: {
+                en: "Active finding",
+                de: "Aktives Finding"
+            },
+            FindingNewAction: {
+                en: "+ New Finding",
+                de: "+ Neues Finding"
+            },
+            FindingEmptyTitle: {
+                en: "No findings available",
+                de: "Keine Findings verfügbar"
+            },
+            FindingEmptyDescription: {
+                en: "Create technical findings from evidence to begin the assessment chain.",
+                de: "Technische Findings aus Evidence erstellen, um die Assessment-Kette zu starten."
+            },
+            FindingToAssessmentLabel: {
+                en: "Finding → Assessment",
+                de: "Finding → Assessment"
+            },
+            FindingSeverityDefined: {
+                en: "Severity defined",
+                de: "Schweregrad definiert"
+            },
+            FindingEvidenceLinked: {
+                en: "Evidence linked",
+                de: "Evidence verknüpft"
+            },
+            FindingAssessmentConnection: {
+                en: "Assessment connection",
+                de: "Assessment-Verbindung"
+            },
+            FindingReadyForAssessment: {
+                en: "Ready for Assessment",
+                de: "Bereit für Assessment"
+            },
+            FindingTotalMetric: {
+                en: "Findings",
+                de: "Findings"
+            },
+            FindingReviewedMetric: {
+                en: "Reviewed",
+                de: "Geprüft"
+            },
+            FindingOpenMetric: {
+                en: "Open",
+                de: "Offen"
+            },
+            FindingLinkedAssessmentsMetric: {
+                en: "Linked Assessments",
+                de: "Verknüpfte Assessments"
+            },
+            FindingRefreshAction: {
+                en: "Refresh",
+                de: "Aktualisieren"
+            },
+            FindingCloseAction: {
+                en: "Close Finding",
+                de: "Finding schließen"
+            },
+            FindingLinkEvidenceAction: {
+                en: "Link Evidence",
+                de: "Evidence verknüpfen"
+            },
+            FindingCreateAssessmentAction: {
+                en: "Create Assessment",
+                de: "Assessment erstellen"
+            },
+            FindingContextTitle: {
+                en: "Finding Context",
+                de: "Finding-Kontext"
+            },
+            FindingSelectedLabel: {
+                en: "Selected Finding",
+                de: "Ausgewähltes Finding"
+            },
+            FindingNotSelected: {
+                en: "Not selected",
+                de: "Nicht ausgewählt"
+            },
+            FindingStatusLabel: {
+                en: "Finding Status",
+                de: "Finding-Status"
+            },
+            FindingInReview: {
+                en: "In Review",
+                de: "In Prüfung"
+            },
+            FindingNotStarted: {
+                en: "Not started",
+                de: "Nicht gestartet"
+            },
+            FindingWorkspaceStatusLabel: {
+                en: "Workspace Status",
+                de: "Workspace-Status"
+            },
+            FindingNextStepLabel: {
+                en: "Next Step",
+                de: "Nächster Schritt"
+            },
+            FindingCreateOrSelect: {
+                en: "Create or select a finding",
+                de: "Finding erstellen oder auswählen"
+            },
+            FindingSafetyBoundariesLabel: {
+                en: "Safety Boundaries",
+                de: "Safety Boundaries"
+            },
+            FindingSourceLabel: {
+                en: "Source",
+                de: "Quelle"
+            },
+            FindingExpertReview: {
+                en: "Expert Review",
+                de: "Fachliche Prüfung"
+            },
+            FindingCaseIdLabel: {
+                en: "Case ID",
+                de: "Case-ID"
+            },
+            FindingBuildingIdLabel: {
+                en: "Building ID",
+                de: "Gebäude-ID"
+            },
+            FindingInspectionIdLabel: {
+                en: "Inspection ID",
+                de: "Inspection-ID"
+            },
+            FindingEvidenceIdsLabel: {
+                en: "Evidence IDs",
+                de: "Evidence-IDs"
+            },
+            FindingCategoryLabel: {
+                en: "Category",
+                de: "Kategorie"
+            },
+            FindingGeneral: {
+                en: "General",
+                de: "Allgemein"
+            },
+            FindingBuildingSystemLabel: {
+                en: "Building System",
+                de: "Gebäudesystem"
+            },
+            FindingSeverityLabel: {
+                en: "Severity",
+                de: "Schweregrad"
+            },
+            FindingNormal: {
+                en: "Normal",
+                de: "Normal"
+            },
+            FindingDescriptionLabel: {
+                en: "Description",
+                de: "Beschreibung"
+            },
+            FindingNoDescription: {
+                en: "No description",
+                de: "Keine Beschreibung"
+            },
+            FindingAssessmentIdsLabel: {
+                en: "Assessment IDs",
+                de: "Assessment-IDs"
+            },
+            FindingNone: {
+                en: "None",
+                de: "Keine"
+            },
+            FindingNotLinked: {
+                en: "Not linked",
+                de: "Nicht verknüpft"
+            },
+            FindingSelectFirstWarning: {
+                en: "Select a finding first.",
+                de: "Zuerst ein Finding auswählen."
+            },
+            FindingNotLinkedCaseWarning: {
+                en: "Selected finding is not linked to a case.",
+                de: "Ausgewähltes Finding ist nicht mit einem Case verknüpft."
+            },
+            FindingBelongsOtherCaseWarning: {
+                en: "Selected finding belongs to another case.",
+                de: "Ausgewähltes Finding gehört zu einem anderen Case."
+            },
+            FindingAssessmentDraftCreated: {
+                en: "Assessment draft created. Expert review required.",
+                de: "Assessment Draft erstellt. Fachliche Prüfung erforderlich."
+            },
+            FindingSelectBeforeEditing: {
+                en: "Select a finding before editing.",
+                de: "Finding vor dem Bearbeiten auswählen."
+            },
+            FindingEditTitle: {
+                en: "Edit Finding",
+                de: "Finding bearbeiten"
+            },
+            FindingSaveAction: {
+                en: "Save Finding",
+                de: "Finding speichern"
+            },
+            FindingTitleField: {
+                en: "Finding title",
+                de: "Finding-Titel"
+            },
+            FindingUpdatedNotification: {
+                en: "Finding updated.",
+                de: "Finding aktualisiert."
+            },
+            FindingDeleteConfirmPrefix: {
+                en: "Delete finding",
+                de: "Finding löschen"
+            },
+            FindingDeletedNotification: {
+                en: "Finding deleted.",
+                de: "Finding gelöscht."
+            },
+            FindingOpenCaseFirst: {
+                en: "Open a case before creating a finding.",
+                de: "Öffnen Sie zuerst einen Case, bevor ein Finding erstellt wird."
+            },
+            FindingNewTitle: {
+                en: "New Finding",
+                de: "Neues Finding"
+            },
+            FindingCreateAction: {
+                en: "Create Finding",
+                de: "Finding erstellen"
+            },
+            FindingSelectEvidenceBeforeCreating: {
+                en: "Select evidence before creating a finding.",
+                de: "Evidence auswählen, bevor ein Finding erstellt wird."
+            },
+            FindingCreatedNotification: {
+                en: "Finding created.",
+                de: "Finding erstellt."
+            },
+            FindingPendingFeatureSuffix: {
+                en: "is reserved for a later workspace release.",
+                de: "ist für ein späteres Workspace-Release reserviert."
+            },
+            FindingLowSeveritySignal: {
+                en: "Low severity signal",
+                de: "Geringes Schweregrad-Signal"
+            },
+            FindingLowSeveritySignalDescription: {
+                en: "Finding severity is still unclear. Define severity, probability or risk level before assessment.",
+                de: "Der Finding-Schweregrad ist noch unklar. Schweregrad, Wahrscheinlichkeit oder Risikoniveau vor dem Assessment definieren."
+            },
+            FindingStrongSeveritySignal: {
+                en: "Strong severity signal",
+                de: "Starkes Schweregrad-Signal"
+            },
+            FindingStrongSeveritySignalDescription: {
+                en: "Finding has severity context, evidence support and downstream assessment connection.",
+                de: "Das Finding hat Schweregrad-Kontext, Evidence-Unterstützung und eine nachgelagerte Assessment-Verbindung."
+            },
+            FindingDevelopingSeveritySignal: {
+                en: "Developing severity signal",
+                de: "Schweregrad-Signal in Entwicklung"
+            },
+            FindingDevelopingSeveritySignalDescription: {
+                en: "Finding has useful severity context but may still need evidence or assessment linkage.",
+                de: "Das Finding hat nutzbaren Schweregrad-Kontext, benötigt aber möglicherweise noch Evidence- oder Assessment-Verknüpfung."
+            },
+            FindingReviewLinkedAssessment: {
+                en: "Review linked assessment",
+                de: "Verknüpftes Assessment prüfen"
+            },
+            FindingReviewLinkedAssessmentDescription: {
+                en: "Finding is connected to an assessment. Review whether risk logic reflects the finding accurately.",
+                de: "Das Finding ist mit einem Assessment verknüpft. Prüfen, ob die Risikologik das Finding korrekt widerspiegelt."
+            },
+            FindingCreateOrLinkAssessment: {
+                en: "Create or link assessment",
+                de: "Assessment erstellen oder verknüpfen"
+            },
+            FindingCreateOrLinkAssessmentDescription: {
+                en: "Finding is sufficiently described. Connect it to a technical assessment.",
+                de: "Das Finding ist ausreichend beschrieben. Mit einem technischen Assessment verknüpfen."
+            },
+            FindingDefineSeverity: {
+                en: "Define finding severity",
+                de: "Finding-Schweregrad definieren"
+            },
+            FindingDefineSeverityDescription: {
+                en: "Add severity, description and evidence context before moving toward assessment.",
+                de: "Schweregrad, Beschreibung und Evidence-Kontext ergänzen, bevor ein Assessment erstellt wird."
+            },
+            FindingIntelligenceComplete: {
+                en: "Finding intelligence complete",
+                de: "Finding Intelligence vollständig"
+            },
+            FindingIntelligenceDeveloping: {
+                en: "Finding intelligence developing",
+                de: "Finding Intelligence in Entwicklung"
+            },
+            FindingIntelligenceEarly: {
+                en: "Finding intelligence early",
+                de: "Finding Intelligence frühe Phase"
+            },
+            FindingIntelligenceLabel: {
+                en: "Finding Intelligence",
+                de: "Finding Intelligence"
+            },
+            FindingChecksCompleted: {
+                en: "finding intelligence checks completed",
+                de: "Finding-Intelligence-Prüfungen abgeschlossen"
+            },
+            FindingAssessmentReadiness: {
+                en: "Assessment Readiness",
+                de: "Assessment-Bereitschaft"
+            },
+            FindingAssessmentReadinessDescription: {
+                en: "Readiness based on identity, classification, severity, description, evidence link, assessment link and review state.",
+                de: "Bereitschaft basierend auf Identität, Klassifizierung, Schweregrad, Beschreibung, Evidence-Link, Assessment-Link und Review-Status."
+            },
+            FindingSeveritySignalLabel: {
+                en: "Severity Signal",
+                de: "Schweregrad-Signal"
+            },
+            FindingNextActionLabel: {
+                en: "Next Finding Action",
+                de: "Nächste Finding-Aktion"
+            },
+            FindingStatusDraft: {
+                en: "Draft",
+                de: "Entwurf"
+            },
+            FindingStatusOpen: {
+                en: "Open",
+                de: "Offen"
+            },
+            FindingStatusIdentified: {
+                en: "Identified",
+                de: "Identifiziert"
+            },
+            FindingStatusAssessed: {
+                en: "Assessed",
+                de: "Bewertet"
+            },
+            FindingStatusReviewed: {
+                en: "Reviewed",
+                de: "Geprüft"
+            },
+            FindingStatusBlocked: {
+                en: "Blocked",
+                de: "Blockiert"
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."
