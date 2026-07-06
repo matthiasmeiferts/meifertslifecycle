@@ -16,6 +16,99 @@ import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 
 export default class InspectionPage {
 
+    static profileStorageKey = "mbi:inspectionProfile";
+
+    static getInspectionProfile() {
+        return localStorage.getItem(this.profileStorageKey) || "default";
+    }
+
+    static setInspectionProfile(profile = "default") {
+        const normalized = profile === "pattaya" ? "pattaya" : "default";
+        localStorage.setItem(this.profileStorageKey, normalized);
+        return normalized;
+    }
+
+    static getCatalogOptions() {
+        const profile = this.getInspectionProfile();
+
+        if (profile === "pattaya") {
+            return {
+                profile: "pattaya",
+                country: "TH",
+                region: "Pattaya / Chonburi"
+            };
+        }
+
+        return {};
+    }
+
+    static createInspectionProfileControl(activeScope = null) {
+        const currentProfile = this.getInspectionProfile();
+
+        const panel = document.createElement("div");
+        panel.className = "inspection-scope-editorial__profile";
+        panel.style.cssText = [
+            "display:block",
+            "margin-top:16px",
+            "padding:16px",
+            "border:1px solid rgba(184,153,104,0.55)",
+            "border-radius:14px",
+            "background:#f3eee2",
+            "color:#1b2b45",
+            "max-width:420px",
+            "box-shadow:0 10px 28px rgba(27,43,69,0.12)"
+        ].join(";");
+        panel.innerHTML = `
+            <span>Inspection Profile</span>
+            <select aria-label="Inspection profile" style="display:block;width:100%;margin-top:8px;padding:10px;border-radius:10px;border:1px solid rgba(27,43,69,0.25);background:white;color:#1b2b45;">
+                <option value="default"${currentProfile === "default" ? " selected" : ""}>Default / Germany</option>
+                <option value="pattaya"${currentProfile === "pattaya" ? " selected" : ""}>Thailand / Pattaya</option>
+            </select>
+            <p>${currentProfile === "pattaya"
+                ? "Thailand profile active. Documents are handled as availability checks only."
+                : "Default starter catalog active."}</p>
+        `;
+
+        const select = panel.querySelector("select");
+
+        select.addEventListener("change", event => {
+            const selectedProfile = this.setInspectionProfile(event.target.value);
+            const catalogOptions = this.getCatalogOptions();
+
+            if (activeScope) {
+                const scopeData = InspectionQuestionCatalog.createStarterScopeData(catalogOptions);
+                const updatedScope = InspectionScopeManager.update({
+                    ...activeScope,
+                    ...scopeData,
+                    profile: selectedProfile,
+                    country: catalogOptions.country || null,
+                    region: catalogOptions.region || null,
+                    answers: {},
+                    status: "Draft"
+                });
+
+                InspectionScopeManager.set(updatedScope || {
+                    ...activeScope,
+                    ...scopeData,
+                    profile: selectedProfile,
+                    country: catalogOptions.country || null,
+                    region: catalogOptions.region || null,
+                    answers: {},
+                    status: "Draft"
+                });
+
+                Notification.info("Inspection profile changed. Active scope was reset for the selected catalog.");
+                this.refresh();
+                return;
+            }
+
+            Notification.info("Inspection profile updated.");
+            this.refresh();
+        });
+
+        return panel;
+    }
+
     static getInspectionIntelligence(inspection = {}, data = {}) {
         const inspectionId = inspection.id || inspection.inspectionId;
         const buildingId = inspection.buildingId || inspection.linkedBuildingId;
@@ -283,8 +376,9 @@ export default class InspectionPage {
 
     static createInspectionScopeOverview(activeInspection = null) {
         const activeScope = this.getActiveScope(activeInspection);
+        const catalogOptions = this.getCatalogOptions();
         const modules = InspectionQuestionCatalog.getModules();
-        const questions = activeScope?.questions || InspectionQuestionCatalog.getStarterScopeQuestions();
+        const questions = activeScope?.questions || InspectionQuestionCatalog.getStarterScopeQuestions(catalogOptions);
         const answers = activeScope?.answers || {};
         const coverage = activeScope
             ? InspectionScopeManager.createCoverageSummary(questions, answers)
@@ -327,6 +421,7 @@ export default class InspectionPage {
         heroCopy.appendChild(title);
         heroCopy.appendChild(description);
         heroCopy.appendChild(status);
+        heroCopy.appendChild(this.createInspectionProfileControl(activeScope));
 
         const actionPanel = document.createElement("aside");
         actionPanel.className = "inspection-scope-editorial__action-panel";
@@ -364,7 +459,7 @@ export default class InspectionPage {
         modulePanel.appendChild(moduleHeader);
 
         modules.forEach((module, index) => {
-            const moduleQuestions = InspectionQuestionCatalog.getByModule(module.id);
+            const moduleQuestions = InspectionQuestionCatalog.getByModule(module.id, catalogOptions);
             const item = document.createElement("article");
             item.className = "inspection-scope-editorial__module";
 
@@ -756,11 +851,15 @@ export default class InspectionPage {
                 return;
             }
 
+            const catalogOptions = this.getCatalogOptions();
             const scope = InspectionScopeManager.create({
-                ...InspectionQuestionCatalog.createStarterScopeData(),
+                ...InspectionQuestionCatalog.createStarterScopeData(catalogOptions),
                 caseId: currentCase.id,
                 buildingId: inspection.buildingId || currentBuilding?.id || currentCase.buildingId || null,
                 inspectionId: inspection.id,
+                profile: this.getInspectionProfile(),
+                country: catalogOptions.country || null,
+                region: catalogOptions.region || null,
                 title: `Inspection Scope · ${inspection.title || inspection.id}`,
                 status: "Draft"
             });
