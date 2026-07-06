@@ -1,3 +1,5 @@
+import LanguageManager from "../../core/LanguageManager.js";
+
 export default class DetailPanel {
 
     static create(title = "No Case Selected", fields = []) {
@@ -7,7 +9,7 @@ export default class DetailPanel {
 
         const eyebrow = document.createElement("p");
         eyebrow.className = "eyebrow";
-        eyebrow.textContent = "Context Details";
+        eyebrow.textContent = LanguageManager.t("DetailContextDetails");
 
         const headline = document.createElement("h2");
         headline.textContent = title;
@@ -42,35 +44,35 @@ export default class DetailPanel {
         const badges = [];
 
         if (record.expertReviewRequired !== false) {
-            badges.push({ label: "Expert Review Required", tone: "warning" });
+            badges.push({ label: LanguageManager.t("DetailExpertReviewRequired"), tone: "warning" });
         }
 
         if (record.noAutomaticDecision) {
-            badges.push({ label: "No Automatic Decision", tone: "critical" });
+            badges.push({ label: LanguageManager.t("DetailNoAutomaticDecision"), tone: "critical" });
         }
 
         if (record.decisionSupportOnly) {
-            badges.push({ label: "Decision Support Only", tone: "info" });
+            badges.push({ label: LanguageManager.t("DetailDecisionSupportOnly"), tone: "info" });
         }
 
         if (record.reportPreparationOnly) {
-            badges.push({ label: "Report Preparation Only", tone: "info" });
+            badges.push({ label: LanguageManager.t("DetailReportPreparationOnly"), tone: "info" });
         }
 
         if (record.noAutomaticFinalReport) {
-            badges.push({ label: "No Final Report", tone: "critical" });
+            badges.push({ label: LanguageManager.t("DetailNoFinalReport"), tone: "critical" });
         }
 
         if (record.noAutomaticOpinion) {
-            badges.push({ label: "No Automatic Opinion", tone: "critical" });
+            badges.push({ label: LanguageManager.t("DetailNoAutomaticOpinion"), tone: "critical" });
         }
 
         if (record.sourcePolicy === "availability_check_only") {
-            badges.push({ label: "Document Availability Only", tone: "boundary" });
+            badges.push({ label: LanguageManager.t("DetailDocumentAvailabilityOnly"), tone: "boundary" });
         }
 
         if (!badges.length) {
-            badges.push({ label: "Standard Review", tone: "neutral" });
+            badges.push({ label: LanguageManager.t("DetailStandardReview"), tone: "neutral" });
         }
 
         const container = document.createElement("div");
@@ -125,7 +127,7 @@ export default class DetailPanel {
             classes.push("detail-row--long");
         }
 
-        if (value === "—" || value === "None" || value === "Not linked") {
+        if (value === "—" || value === "None" || value === "Not linked" || value === "Keine" || value === "Nicht verknüpft") {
             classes.push("detail-row--empty");
         }
 

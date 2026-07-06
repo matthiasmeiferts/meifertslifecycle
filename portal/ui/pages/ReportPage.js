@@ -1010,37 +1010,37 @@ export default class ReportPage {
 
     static createDetailPanel(activeReport = ReportManager.get(), reports = this.getReports()) {
         if (!activeReport) {
-            return DetailPanel.create("Report Context", [
-                { label: "Reports", value: String(reports.length) },
-                { label: "Selected Report", value: "Not selected" },
-                { label: "Executive Summary", value: reports.length ? "Available in draft" : "Pending" },
-                { label: "Next Step", value: "Create or select a report" }
+            return DetailPanel.create(LanguageManager.t("ReportContextTitle"), [
+                { label: LanguageManager.t("ReportReportsLabel"), value: String(reports.length) },
+                { label: LanguageManager.t("ReportSelectedReportLabel"), value: LanguageManager.t("ReportNotSelected") },
+                { label: LanguageManager.t("ReportExecutiveSummaryLabel"), value: reports.length ? LanguageManager.t("ReportAvailableInDraft") : LanguageManager.t("ReportPending") },
+                { label: LanguageManager.t("ReportNextStepLabel"), value: LanguageManager.t("ReportCreateOrSelectReport") }
             ]);
         }
 
-        return DetailPanel.create("Report Context", [
-            { label: "Selected Report", value: this.getDisplayTitle(activeReport) },
-            { label: "Source Title", value: this.getSourceTitle(activeReport) || "Not linked" },
-            { label: "Report Status", value: this.formatReportStatus(activeReport) },
-            { label: "Safety Boundaries", value: DetailPanel.createBoundaryBadges(activeReport) },
-            { label: "Source", value: activeReport.source || "Decision Review" },
-            { label: "Case ID", value: activeReport.caseId || "Not linked" },
-            { label: "Building ID", value: activeReport.buildingId || "Not linked" },
-            { label: "Inspection ID", value: activeReport.inspectionId || "Not linked" },
-            { label: "Decision IDs", value: (activeReport.decisionIds || []).join(", ") || "None" },
-            { label: "Recommendation IDs", value: (activeReport.recommendationIds || []).join(", ") || "None" },
-            { label: "Assessment IDs", value: (activeReport.assessmentIds || []).join(", ") || "None" },
-            { label: "Finding IDs", value: (activeReport.findingIds || []).join(", ") || "None" },
-            { label: "Evidence IDs", value: (activeReport.evidenceIds || []).join(", ") || "None" },
-            { label: "Building System", value: activeReport.buildingSystem || "Not linked" },
-            { label: "Risk Score", value: String(activeReport.riskScore || 0) },
-            { label: "Decision Impact", value: activeReport.decisionImpact || "Medium" },
-            { label: "Risk Level", value: activeReport.riskLevel || "Medium" },
-            { label: "Draft Prepared", value: this.formatDraftPreparedValue(activeReport) },
-            { label: "Report Type", value: activeReport.reportType || "Technical Due Diligence" },
-            { label: "Executive Summary", value: activeReport.executiveSummary || "No executive summary" },
-            { label: "Export Format", value: this.formatDraftExportFormat(activeReport) },
-            { label: "Export Requested", value: activeReport.exportRequestedAt ? new Date(activeReport.exportRequestedAt).toLocaleString() : "Not requested" }
+        return DetailPanel.create(LanguageManager.t("ReportContextTitle"), [
+            { label: LanguageManager.t("ReportSelectedReportLabel"), value: this.getDisplayTitle(activeReport) },
+            { label: LanguageManager.t("ReportSourceTitleLabel"), value: this.getSourceTitle(activeReport) || LanguageManager.t("ReportNotLinked") },
+            { label: LanguageManager.t("ReportReportStatusLabel"), value: this.formatReportStatus(activeReport) },
+            { label: LanguageManager.t("ReportSafetyBoundariesLabel"), value: DetailPanel.createBoundaryBadges(activeReport) },
+            { label: LanguageManager.t("ReportSourceLabel"), value: activeReport.source || LanguageManager.t("ReportDecisionReview") },
+            { label: LanguageManager.t("ReportCaseIdLabel"), value: activeReport.caseId || LanguageManager.t("ReportNotLinked") },
+            { label: LanguageManager.t("ReportBuildingIdLabel"), value: activeReport.buildingId || LanguageManager.t("ReportNotLinked") },
+            { label: LanguageManager.t("ReportInspectionIdLabel"), value: activeReport.inspectionId || LanguageManager.t("ReportNotLinked") },
+            { label: LanguageManager.t("ReportDecisionIdsLabel"), value: (activeReport.decisionIds || []).join(", ") || LanguageManager.t("ReportNone") },
+            { label: LanguageManager.t("ReportRecommendationIdsLabel"), value: (activeReport.recommendationIds || []).join(", ") || LanguageManager.t("ReportNone") },
+            { label: LanguageManager.t("ReportAssessmentIdsLabel"), value: (activeReport.assessmentIds || []).join(", ") || LanguageManager.t("ReportNone") },
+            { label: LanguageManager.t("ReportFindingIdsLabel"), value: (activeReport.findingIds || []).join(", ") || LanguageManager.t("ReportNone") },
+            { label: LanguageManager.t("ReportEvidenceIdsLabel"), value: (activeReport.evidenceIds || []).join(", ") || LanguageManager.t("ReportNone") },
+            { label: LanguageManager.t("ReportBuildingSystemLabel"), value: activeReport.buildingSystem || LanguageManager.t("ReportNotLinked") },
+            { label: LanguageManager.t("ReportRiskScoreLabel"), value: String(activeReport.riskScore || 0) },
+            { label: LanguageManager.t("ReportDecisionImpactLabel"), value: activeReport.decisionImpact || "Medium" },
+            { label: LanguageManager.t("ReportRiskLevelLabel"), value: activeReport.riskLevel || "Medium" },
+            { label: LanguageManager.t("ReportDraftPrepared"), value: this.formatDraftPreparedValue(activeReport) },
+            { label: LanguageManager.t("ReportReportTypeLabel"), value: activeReport.reportType || "Technical Due Diligence" },
+            { label: LanguageManager.t("ReportExecutiveSummaryLabel"), value: activeReport.executiveSummary || LanguageManager.t("ReportNoExecutiveSummary") },
+            { label: LanguageManager.t("ReportExportFormatLabel"), value: this.formatDraftExportFormat(activeReport) },
+            { label: LanguageManager.t("ReportExportRequestedLabel"), value: activeReport.exportRequestedAt ? new Date(activeReport.exportRequestedAt).toLocaleString() : LanguageManager.t("ReportNotRequested") }
         ]);
     }
 

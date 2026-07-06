@@ -283,6 +283,106 @@ export default class LanguageManager {
                 en: "Legacy / not linked",
                 de: "Altdaten / nicht verknüpft"
             },
+            DetailContextDetails: {
+                en: "Context Details",
+                de: "Kontextdetails"
+            },
+            DetailExpertReviewRequired: {
+                en: "Expert Review Required",
+                de: "Fachprüfung erforderlich"
+            },
+            DetailNoAutomaticDecision: {
+                en: "No Automatic Decision",
+                de: "Keine automatische Entscheidung"
+            },
+            DetailDecisionSupportOnly: {
+                en: "Decision Support Only",
+                de: "Nur Entscheidungsunterstützung"
+            },
+            DetailReportPreparationOnly: {
+                en: "Report Preparation Only",
+                de: "Nur Berichtsentwurf"
+            },
+            DetailNoFinalReport: {
+                en: "No Final Report",
+                de: "Kein finaler Bericht"
+            },
+            DetailNoAutomaticOpinion: {
+                en: "No Automatic Opinion",
+                de: "Keine Auto-Stellungnahme"
+            },
+            DetailDocumentAvailabilityOnly: {
+                en: "Document Availability Only",
+                de: "Nur Dokumentenverfügbarkeit"
+            },
+            DetailStandardReview: {
+                en: "Standard Review",
+                de: "Standardprüfung"
+            },
+            ReportContextTitle: {
+                en: "Report Context",
+                de: "Berichtskontext"
+            },
+            ReportReportsLabel: {
+                en: "Reports",
+                de: "Berichte"
+            },
+            ReportSelectedReportLabel: {
+                en: "Selected Report",
+                de: "Ausgewählter Bericht"
+            },
+            ReportNotSelected: {
+                en: "Not selected",
+                de: "Nicht ausgewählt"
+            },
+            ReportAvailableInDraft: {
+                en: "Available in draft",
+                de: "Im Entwurf verfügbar"
+            },
+            ReportNextStepLabel: {
+                en: "Next Step",
+                de: "Nächster Schritt"
+            },
+            ReportCreateOrSelectReport: {
+                en: "Create or select a report",
+                de: "Bericht erstellen oder auswählen"
+            },
+            ReportSourceTitleLabel: {
+                en: "Source Title",
+                de: "Quelltitel"
+            },
+            ReportReportStatusLabel: {
+                en: "Report Status",
+                de: "Berichtsstatus"
+            },
+            ReportSafetyBoundariesLabel: {
+                en: "Safety Boundaries",
+                de: "Prüfgrenzen"
+            },
+            ReportCaseIdLabel: {
+                en: "Case ID",
+                de: "Case-ID"
+            },
+            ReportReportTypeLabel: {
+                en: "Report Type",
+                de: "Berichtstyp"
+            },
+            ReportExportRequestedLabel: {
+                en: "Export Requested",
+                de: "Export angefordert"
+            },
+            ReportNotRequested: {
+                en: "Not requested",
+                de: "Nicht angefordert"
+            },
+            ReportNone: {
+                en: "None",
+                de: "Keine"
+            },
+            ReportNoExecutiveSummary: {
+                en: "No executive summary",
+                de: "Keine Zusammenfassung"
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."
