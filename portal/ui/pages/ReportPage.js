@@ -756,25 +756,67 @@ export default class ReportPage {
         ];
     }
 
+    static isWorkflowDraftTitle(value = "") {
+        const title = String(value || "").trim();
+
+        return [
+            "Report Draft:",
+            "Decision Draft:",
+            "Recommendation Draft:",
+            "Assessment Draft:",
+            "Finding Draft:"
+        ].some(prefix => title.startsWith(prefix) || title.includes(` ${prefix}`));
+    }
+
+    static isDocumentAvailabilityReview(report = {}) {
+        const values = [
+            report.sourcePolicy,
+            report.source,
+            report.buildingSystem,
+            report.title,
+            report.sourceTitle
+        ].map(value => String(value || "").toLowerCase());
+
+        return values.some(value =>
+            value.includes("availability_check_only") ||
+            value.includes("document availability") ||
+            value.includes("dokumenten-verfügbarkeit") ||
+            value.includes("inspection scope evidence")
+        );
+    }
+
     static getDisplayTitle(report = {}) {
-        const title = report?.title || "";
+        const title = String(report?.title || "").trim();
 
         if (!title || title.startsWith("Report from ")) {
             return "Technical Due Diligence Report";
+        }
+
+        if (this.isWorkflowDraftTitle(title)) {
+            return "Technical Due Diligence Draft";
         }
 
         return title;
     }
 
     static getSourceTitle(report = {}) {
-        const title = report?.title || "";
+        const title = String(report?.title || "").trim();
+        const sourceTitle = String(report?.sourceTitle || "").trim();
 
-        if (report?.sourceTitle) {
-            return report.sourceTitle;
+        if (this.isDocumentAvailabilityReview(report)) {
+            return "Document Availability Review";
+        }
+
+        if (sourceTitle && !this.isWorkflowDraftTitle(sourceTitle)) {
+            return sourceTitle;
         }
 
         if (title.startsWith("Report from ")) {
             return title.replace(/^Report from\s*/, "");
+        }
+
+        if (this.isWorkflowDraftTitle(title) || this.isWorkflowDraftTitle(sourceTitle)) {
+            return "Technical Due Diligence Decision Path";
         }
 
         return "";
