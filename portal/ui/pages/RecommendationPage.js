@@ -551,41 +551,121 @@ export default class RecommendationPage {
             return;
         }
 
+        const isPattayaRecommendation =
+            recommendation.profile === "pattaya" ||
+            String(recommendation.sourceQuestionId || "").startsWith("TH-PATTAYA-");
+
+        const isAvailabilityCheckOnly = recommendation.sourcePolicy === "availability_check_only";
+
         const resolvedFindingIds = (recommendation.findingIds || []).length
             ? recommendation.findingIds
             : (recommendation.assessmentIds || [])
                 .flatMap(id => AssessmentManager.load(id)?.findingIds || []);
 
+        const riskScore = recommendation.riskScore || 0;
+
+        const decisionTitle = recommendation.title
+            ? `Decision Draft: ${recommendation.title}`
+            : `Decision Draft from ${recommendation.id}`;
+
+        const decisionType = "Monitor";
+        const riskLevel = isAvailabilityCheckOnly
+            ? "Low"
+            : (recommendation.decisionImpact || recommendation.priority || "Medium");
+
+        const rationale = [
+            recommendation.action || recommendation.description || "",
+            "",
+            "Decision boundary:",
+            "Decision support draft only.",
+            "No automatic Go/No-Go decision.",
+            "No automatic purchase recommendation.",
+            "Expert review required before any formal decision."
+        ].filter(Boolean).join("\n");
+
+        const descriptionParts = [
+            recommendation.description || "Decision draft prepared from selected recommendation.",
+            "",
+            "Decision status:",
+            "Draft decision support record created from selected recommendation.",
+            "Expert review required before approval, closure or report use.",
+            "No automatic decision, purchase recommendation or Go/No-Go result is created by this action."
+        ];
+
+        if (isAvailabilityCheckOnly) {
+            descriptionParts.push("");
+            descriptionParts.push("Review boundary:");
+            descriptionParts.push("Document availability only. No legal, financial, technical or governance document review has been performed.");
+            descriptionParts.push("This decision draft may only preserve document availability context. It must not be used as validation of document content.");
+        }
+
+        if (isPattayaRecommendation) {
+            descriptionParts.push("");
+            descriptionParts.push("Thailand / Pattaya context:");
+            descriptionParts.push("Field review context retained for decision support and reporting.");
+        }
+
+        descriptionParts.push("");
+        descriptionParts.push("Recommendation trace:");
+        descriptionParts.push(`Recommendation ID: ${recommendation.id}`);
+        descriptionParts.push(`Recommendation source: ${recommendation.source || "Assessment Review"}`);
+        descriptionParts.push(`Assessment IDs: ${(recommendation.assessmentIds || []).join(", ") || "None"}`);
+        descriptionParts.push(`Finding IDs: ${([...new Set(resolvedFindingIds)]).join(", ") || "None"}`);
+        descriptionParts.push(`Evidence IDs: ${(recommendation.evidenceIds || []).join(", ") || "None"}`);
+        descriptionParts.push(`Source Assessment IDs: ${(recommendation.sourceAssessmentIds || []).join(", ") || "None"}`);
+        descriptionParts.push(`Source Finding IDs: ${(recommendation.sourceFindingIds || []).join(", ") || "None"}`);
+        descriptionParts.push(`Source Evidence IDs: ${(recommendation.sourceEvidenceIds || []).join(", ") || "None"}`);
+        descriptionParts.push(`Source policy: ${recommendation.sourcePolicy || "None"}`);
+        descriptionParts.push(`Risk score: ${riskScore}`);
+        descriptionParts.push(`Decision impact: ${recommendation.decisionImpact || "Medium"}`);
+        descriptionParts.push(`No automatic decision: ${recommendation.noAutomaticDecision === false ? "No" : "Yes"}`);
+        descriptionParts.push(`Expert review required: ${recommendation.expertReviewRequired === false ? "No" : "Yes"}`);
+
         const decision = DecisionManager.create({
             caseId: recommendation.caseId,
             buildingId: recommendation.buildingId || currentCase?.buildingId || null,
             inspectionId: recommendation.inspectionId || currentCase?.inspectionId || null,
+
+            recommendationId: recommendation.id,
             recommendationIds: [recommendation.id],
             assessmentIds: recommendation.assessmentIds || [],
             findingIds: [...new Set(resolvedFindingIds)],
             evidenceIds: recommendation.evidenceIds || [],
-            title: `Decision from ${recommendation.title || recommendation.id}`,
-            description: [
-                recommendation.description || "Decision prepared from selected recommendation.",
-                "",
-                "Recommendation trace:",
-                `Recommendation ID: ${recommendation.id}`,
-                `Recommendation source: ${recommendation.source || "Assessment Review"}`,
-                `Assessment IDs: ${(recommendation.assessmentIds || []).join(", ") || "None"}`,
-                `Finding IDs: ${([...new Set(resolvedFindingIds)]).join(", ") || "None"}`,
-                `Evidence IDs: ${(recommendation.evidenceIds || []).join(", ") || "None"}`,
-                `Risk score: ${recommendation.riskScore || 0}`,
-                `Decision impact: ${recommendation.decisionImpact || "Medium"}`
-            ].join("\n"),
-            decisionType: "Monitor",
-            rationale: recommendation.action || recommendation.description || "",
+
+            sourceRecommendationIds: [recommendation.id],
+            sourceAssessmentIds: recommendation.sourceAssessmentIds || recommendation.assessmentIds || [],
+            sourceFindingIds: recommendation.sourceFindingIds || [...new Set(resolvedFindingIds)],
+            sourceEvidenceIds: recommendation.sourceEvidenceIds || recommendation.evidenceIds || [],
+
+            title: decisionTitle,
+            description: descriptionParts.join("\n"),
+            decisionType,
+            rationale,
             source: recommendation.source || "Recommendation Review",
             buildingSystem: recommendation.buildingSystem || "",
-            riskScore: recommendation.riskScore || 0,
+            riskScore,
             decisionImpact: recommendation.decisionImpact || "Medium",
-            riskLevel: recommendation.decisionImpact || recommendation.priority || "Medium",
-            confidence: 70,
-            status: "Draft"
+            riskLevel,
+            confidence: isAvailabilityCheckOnly ? 50 : 60,
+            status: "Draft",
+            reviewStatus: "Draft",
+            expertReviewRequired: true,
+            noAutomaticDecision: true,
+            decisionSupportOnly: true,
+
+            sourceQuestionId: recommendation.sourceQuestionId || "",
+            sourceQuestion: recommendation.sourceQuestion || "",
+            sourceModule: recommendation.sourceModule || "",
+            sourceCategory: recommendation.sourceCategory || "",
+            sourcePolicy: recommendation.sourcePolicy || "",
+            sourceRequiredEvidenceRaw: recommendation.sourceRequiredEvidenceRaw || "",
+
+            profile: isPattayaRecommendation ? "pattaya" : "",
+            country: isPattayaRecommendation ? "TH" : "",
+            region: isPattayaRecommendation ? "Pattaya / Chonburi" : "",
+
+            createdBy: "System",
+            updatedBy: "System"
         });
 
         DecisionManager.set(decision);
@@ -603,12 +683,14 @@ export default class RecommendationPage {
         const updatedRecommendation = RecommendationManager.update({
             ...recommendation,
             decisionIds: [...new Set([...(recommendation.decisionIds || []), decision.id])],
+            linkedDecisionId: decision.id,
+            hasDecision: true,
             updatedAt: new Date().toISOString()
         });
 
         RecommendationManager.set(updatedRecommendation);
 
-        Notification.success("Decision created from selected recommendation.");
+        Notification.success("Decision draft created. Expert review required. No automatic decision created.");
         window.location.hash = "decisions";
     }
 

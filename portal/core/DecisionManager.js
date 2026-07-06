@@ -48,7 +48,12 @@ export default class DecisionManager {
             findingIds: data.findingIds || [],
             assessmentIds: data.assessmentIds || [],
             recommendationId: data.recommendationId || null,
-              recommendationIds: data.recommendationIds || [],
+            recommendationIds: data.recommendationIds || [],
+
+            sourceRecommendationIds: data.sourceRecommendationIds || data.recommendationIds || [],
+            sourceAssessmentIds: data.sourceAssessmentIds || data.assessmentIds || [],
+            sourceFindingIds: data.sourceFindingIds || data.findingIds || [],
+            sourceEvidenceIds: data.sourceEvidenceIds || data.evidenceIds || [],
 
             title: data.title || "Decision",
             description: data.description || "",
@@ -60,14 +65,36 @@ export default class DecisionManager {
             riskScore: data.riskScore || 0,
             decisionImpact: data.decisionImpact || "",
 
+            sourceQuestionId: data.sourceQuestionId || "",
+            sourceQuestion: data.sourceQuestion || "",
+            sourceModule: data.sourceModule || "",
+            sourceCategory: data.sourceCategory || "",
+            sourcePolicy: data.sourcePolicy || "",
+            sourceRequiredEvidenceRaw: data.sourceRequiredEvidenceRaw || "",
+
+            profile: data.profile || "",
+            country: data.country || "",
+            region: data.region || "",
+
             riskLevel: data.riskLevel || "Medium",
             confidence: data.confidence || null,
             status: data.status || "Draft",
+            reviewStatus: data.reviewStatus || "Draft",
+            expertReviewRequired: data.expertReviewRequired !== undefined
+                ? data.expertReviewRequired
+                : true,
+            noAutomaticDecision: data.noAutomaticDecision !== undefined
+                ? data.noAutomaticDecision
+                : true,
+            decisionSupportOnly: data.decisionSupportOnly !== undefined
+                ? data.decisionSupportOnly
+                : true,
 
             approvedBy: data.approvedBy || "",
             approvedAt: data.approvedAt || null,
 
             createdBy: data.createdBy || this.defaultCreator,
+            updatedBy: data.updatedBy || data.createdBy || this.defaultCreator,
             createdAt: data.createdAt || new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
