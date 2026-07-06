@@ -92,6 +92,10 @@ export default class RecommendationManager {
             findingIds:    data.findingIds    || [],
             evidenceIds:   data.evidenceIds   || [],
 
+            sourceAssessmentIds: data.sourceAssessmentIds || data.assessmentIds || [],
+            sourceFindingIds: data.sourceFindingIds || data.findingIds || [],
+            sourceEvidenceIds: data.sourceEvidenceIds || data.evidenceIds || [],
+
             title:       data.title       || "Recommendation",
             description: data.description || "",
             action:      data.action      || "",
@@ -100,15 +104,34 @@ export default class RecommendationManager {
             buildingSystem: data.buildingSystem || "",
             riskScore:      data.riskScore      || 0,
 
+            sourceQuestionId: data.sourceQuestionId || "",
+            sourceQuestion: data.sourceQuestion || "",
+            sourceModule: data.sourceModule || "",
+            sourceCategory: data.sourceCategory || "",
+            sourcePolicy: data.sourcePolicy || "",
+            sourceRequiredEvidenceRaw: data.sourceRequiredEvidenceRaw || "",
+
+            profile: data.profile || "",
+            country: data.country || "",
+            region: data.region || "",
+
             priority:       data.priority       || "Medium",
             timeframe:      data.timeframe      || "Short Term",
             estimatedCost:  data.estimatedCost  || 0,
             currency:       data.currency       || "EUR",
             responsible:    data.responsible    || "",
             status:         data.status         || "Draft",
+            reviewStatus: data.reviewStatus || "Draft",
+            expertReviewRequired: data.expertReviewRequired !== undefined
+                ? data.expertReviewRequired
+                : true,
+            noAutomaticDecision: data.noAutomaticDecision !== undefined
+                ? data.noAutomaticDecision
+                : true,
             decisionImpact: data.decisionImpact || "Medium",
 
             createdBy: data.createdBy || this.defaultCreator,
+            updatedBy: data.updatedBy || data.createdBy || this.defaultCreator,
             createdAt: data.createdAt || new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };

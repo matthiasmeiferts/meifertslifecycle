@@ -454,37 +454,110 @@ export default class AssessmentPage {
             return;
         }
 
+        const isPattayaAssessment =
+            assessment.profile === "pattaya" ||
+            String(assessment.sourceQuestionId || "").startsWith("TH-PATTAYA-");
+
+        const isAvailabilityCheckOnly = assessment.sourcePolicy === "availability_check_only";
+        const riskScore = assessment.riskScore || 0;
+
+        const recommendationTitle = assessment.title
+            ? `Recommendation Draft: ${assessment.title}`
+            : `Recommendation Draft from ${assessment.id}`;
+
+        const actionText = isAvailabilityCheckOnly
+            ? "Record document availability status and request expert review before using this information for assessment, recommendation, decision or report purposes."
+            : "Review assessment context and define expert-approved next action.";
+
+        const timeframe = isAvailabilityCheckOnly
+            ? "Planned"
+            : riskScore >= 60 ? "Immediate"
+            : riskScore >= 30 ? "Short Term"
+            : "Planned";
+
+        const decisionImpact = isAvailabilityCheckOnly
+            ? "Low"
+            : riskScore >= 60 ? "High"
+            : "Medium";
+
+        const descriptionParts = [
+            assessment.description || "Recommendation prepared from selected assessment.",
+            "",
+            "Recommendation status:",
+            "Draft recommendation created from selected assessment.",
+            "Expert review required before decision or report use.",
+            "No automatic decision or purchase recommendation is created by this action."
+        ];
+
+        if (isAvailabilityCheckOnly) {
+            descriptionParts.push("");
+            descriptionParts.push("Review boundary:");
+            descriptionParts.push("Document availability only. No legal, financial, technical or governance document review has been performed.");
+            descriptionParts.push("This recommendation draft may only request, record or clarify document availability. It must not validate document content.");
+        }
+
+        if (isPattayaAssessment) {
+            descriptionParts.push("");
+            descriptionParts.push("Thailand / Pattaya context:");
+            descriptionParts.push("Field review context retained for downstream decision and reporting.");
+        }
+
+        descriptionParts.push("");
+        descriptionParts.push("Assessment trace:");
+        descriptionParts.push(`Assessment ID: ${assessment.id}`);
+        descriptionParts.push(`Assessment source: ${assessment.source || "Assessment Review"}`);
+        descriptionParts.push(`Finding IDs: ${(assessment.findingIds || []).join(", ") || "None"}`);
+        descriptionParts.push(`Evidence IDs: ${(assessment.evidenceIds || []).join(", ") || "None"}`);
+        descriptionParts.push(`Source Finding IDs: ${(assessment.sourceFindingIds || []).join(", ") || "None"}`);
+        descriptionParts.push(`Source Evidence IDs: ${(assessment.sourceEvidenceIds || []).join(", ") || "None"}`);
+        descriptionParts.push(`Source policy: ${assessment.sourcePolicy || "None"}`);
+        descriptionParts.push(`Risk score: ${riskScore}`);
+        descriptionParts.push(`Expert review required: ${assessment.expertReviewRequired === false ? "No" : "Yes"}`);
+
         const recommendation = RecommendationManager.create({
             caseId: assessment.caseId,
             buildingId: assessment.buildingId || currentCase?.buildingId || null,
             inspectionId: assessment.inspectionId || currentCase?.inspectionId || null,
+
             assessmentIds: [assessment.id],
             findingIds: assessment.findingIds || [],
             evidenceIds: assessment.evidenceIds || [],
-            title: `Recommendation from ${assessment.title || assessment.id}`,
-            description: [
-                assessment.description || "Recommendation prepared from selected assessment.",
-                "",
-                "Assessment trace:",
-                `Assessment ID: ${assessment.id}`,
-                `Assessment source: ${assessment.source || "Assessment Review"}`,
-                `Finding IDs: ${(assessment.findingIds || []).join(", ") || "None"}`,
-                `Evidence IDs: ${(assessment.evidenceIds || []).join(", ") || "None"}`,
-                `Risk score: ${assessment.riskScore || 0}`
-            ].join("\n"),
-            action: "Review and implement corrective action.",
+
+            sourceAssessmentIds: [assessment.id],
+            sourceFindingIds: assessment.sourceFindingIds || assessment.findingIds || [],
+            sourceEvidenceIds: assessment.sourceEvidenceIds || assessment.evidenceIds || [],
+
+            title: recommendationTitle,
+            description: descriptionParts.join("\n"),
+            action: actionText,
             source: assessment.source || "Assessment Review",
             buildingSystem: assessment.buildingSystem || "",
-            riskScore: assessment.riskScore || 0,
-            priority: assessment.priority || "Medium",
-            timeframe: (assessment.riskScore || 0) >= 60 ? "Immediate"
-                : (assessment.riskScore || 0) >= 30 ? "Short Term"
-                : "Planned",
+            riskScore,
+
+            priority: isAvailabilityCheckOnly ? "Medium" : (assessment.priority || "High"),
+            timeframe,
             estimatedCost: 0,
             currency: "EUR",
             responsible: "Owner",
-            decisionImpact: (assessment.riskScore || 0) >= 60 ? "High" : "Medium",
-            status: "Draft"
+            decisionImpact,
+            status: "Draft",
+            reviewStatus: "Draft",
+            expertReviewRequired: true,
+            noAutomaticDecision: true,
+
+            sourceQuestionId: assessment.sourceQuestionId || "",
+            sourceQuestion: assessment.sourceQuestion || "",
+            sourceModule: assessment.sourceModule || "",
+            sourceCategory: assessment.sourceCategory || "",
+            sourcePolicy: assessment.sourcePolicy || "",
+            sourceRequiredEvidenceRaw: assessment.sourceRequiredEvidenceRaw || "",
+
+            profile: isPattayaAssessment ? "pattaya" : "",
+            country: isPattayaAssessment ? "TH" : "",
+            region: isPattayaAssessment ? "Pattaya / Chonburi" : "",
+
+            createdBy: "System",
+            updatedBy: "System"
         });
 
         RecommendationManager.set(recommendation);
@@ -502,12 +575,14 @@ export default class AssessmentPage {
         const updatedAssessment = AssessmentManager.update({
             ...assessment,
             recommendationIds: [...new Set([...(assessment.recommendationIds || []), recommendation.id])],
+            linkedRecommendationId: recommendation.id,
+            hasRecommendation: true,
             updatedAt: new Date().toISOString()
         });
 
         AssessmentManager.set(updatedAssessment);
 
-        Notification.success("Recommendation created from selected assessment.");
+        Notification.success("Recommendation draft created. Expert review required. No automatic decision created.");
         window.location.hash = "recommendations";
     }
 
