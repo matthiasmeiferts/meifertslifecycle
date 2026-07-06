@@ -33,14 +33,16 @@ export default class ReportPage {
         }
     ];
 
-    static statusLabels = {
-        draft: "Draft",
-        prepared: LanguageManager.t("ReportDraftPrepared"),
-        preparedOutput: LanguageManager.t("ReportDraftPrepared"),
-        reviewed: "Reviewed",
-        finalized: "Finalized",
-        blocked: "Blocked"
-    };
+    static getStatusLabels() {
+        return {
+            draft: "Draft",
+            prepared: LanguageManager.t("ReportDraftPrepared"),
+            preparedOutput: LanguageManager.t("ReportDraftPrepared"),
+            reviewed: "Reviewed",
+            finalized: "Finalized",
+            blocked: "Blocked"
+        };
+    }
 
     static getActiveReport() {
         const activeReport = ReportManager.get();
@@ -552,7 +554,7 @@ export default class ReportPage {
     static renderReportStatusBadge(report = {}) {
         report = report || {};
         const status = this.getReportStatus(report);
-        const label = this.statusLabels[status] || "Draft";
+        const label = this.getStatusLabels()[status] || "Draft";
 
         return `
             <span class="evidence-status evidence-status--${status}">
@@ -707,11 +709,11 @@ export default class ReportPage {
 
     static formatReportStatus(report = {}) {
         const status = this.getReportStatus(report);
-        return this.statusLabels[status] || report.status || "Draft";
+        return this.getStatusLabels()[status] || report.status || "Draft";
     }
 
     static formatIdList(values = []) {
-        return values.length ? values.join(", ") : "Legacy / not linked";
+        return values.length ? values.join(", ") : LanguageManager.t("ReportLegacyNotLinked");
     }
 
     static getCleanExecutiveSummary(report = {}) {
@@ -725,28 +727,60 @@ export default class ReportPage {
 
         if (traceMarkers.some(marker => rawSummary.includes(marker))) {
             return [
-                "This report summarizes the technical due diligence decision path for the selected case.",
-                "It consolidates linked evidence, findings, assessments, recommendations and the final decision context for professional review."
+                LanguageManager.t("ReportSummaryTraceSentenceOne"),
+                LanguageManager.t("ReportSummaryTraceSentenceTwo")
             ].join(" ");
         }
 
-        return rawSummary || "This report summarizes the selected Building Intelligence workflow and its current decision context.";
+        return rawSummary || LanguageManager.t("ReportDefaultExecutiveSummary");
+    }
+
+    static getLocalizedScope(report = {}) {
+        const scope = String(report.scope || "").trim();
+
+        if (!scope) {
+            return LanguageManager.t("ReportScopeFallback");
+        }
+
+        if (scope === "Report preparation based on document availability context only.") {
+            return LanguageManager.t("ReportScopeDocumentAvailability");
+        }
+
+        return scope;
+    }
+
+    static getLocalizedMethodology(report = {}) {
+        const methodology = String(report.methodology || "").trim();
+
+        if (!methodology) {
+            return LanguageManager.t("ReportMethodologyFallback");
+        }
+
+        if (methodology === "Evidence-first workflow chain review. Expert review required before final report use.") {
+            return LanguageManager.t("ReportMethodologyExpertReview");
+        }
+
+        if (methodology === "Evidence-based workflow review.") {
+            return LanguageManager.t("ReportMethodologyFallback");
+        }
+
+        return methodology;
     }
 
     static getReportTraceRows(report = {}) {
         return [
-            ["Source", report.source || "Decision Review"],
-            ["Building ID", report.buildingId || "Not linked"],
-            ["Inspection ID", report.inspectionId || "Not linked"],
-            ["Decision IDs", this.formatIdList(report.decisionIds || [])],
-            ["Recommendation IDs", this.formatIdList(report.recommendationIds || [])],
-            ["Assessment IDs", this.formatIdList(report.assessmentIds || [])],
-            ["Finding IDs", this.formatIdList(report.findingIds || [])],
-            ["Evidence IDs", this.formatIdList(report.evidenceIds || [])],
-            ["Building System", report.buildingSystem || "Not linked"],
-            ["Risk Score", String(report.riskScore || 0)],
-            ["Decision Impact", report.decisionImpact || "Medium"],
-            ["Risk Level", report.riskLevel || "Medium"]
+            [LanguageManager.t("ReportSourceLabel"), report.source || LanguageManager.t("ReportDecisionReview")],
+            [LanguageManager.t("ReportBuildingIdLabel"), report.buildingId || LanguageManager.t("ReportNotLinked")],
+            [LanguageManager.t("ReportInspectionIdLabel"), report.inspectionId || LanguageManager.t("ReportNotLinked")],
+            [LanguageManager.t("ReportDecisionIdsLabel"), this.formatIdList(report.decisionIds || [])],
+            [LanguageManager.t("ReportRecommendationIdsLabel"), this.formatIdList(report.recommendationIds || [])],
+            [LanguageManager.t("ReportAssessmentIdsLabel"), this.formatIdList(report.assessmentIds || [])],
+            [LanguageManager.t("ReportFindingIdsLabel"), this.formatIdList(report.findingIds || [])],
+            [LanguageManager.t("ReportEvidenceIdsLabel"), this.formatIdList(report.evidenceIds || [])],
+            [LanguageManager.t("ReportBuildingSystemLabel"), report.buildingSystem || LanguageManager.t("ReportNotLinked")],
+            [LanguageManager.t("ReportRiskScoreLabel"), String(report.riskScore || 0)],
+            [LanguageManager.t("ReportDecisionImpactLabel"), report.decisionImpact || "Medium"],
+            [LanguageManager.t("ReportRiskLevelLabel"), report.riskLevel || "Medium"]
         ];
     }
 
@@ -762,10 +796,10 @@ export default class ReportPage {
 
     static formatDraftExportFormat(report = {}) {
         if (report.exportFormat === "PDF") {
-            return "Print / Save PDF draft";
+            return LanguageManager.t("ReportPrintSavePdfDraft");
         }
 
-        return report.exportFormat || (this.isDraftPreparedForReview(report) ? "Print / Save PDF draft" : "Pending");
+        return report.exportFormat || (this.isDraftPreparedForReview(report) ? LanguageManager.t("ReportPrintSavePdfDraft") : LanguageManager.t("ReportPending"));
     }
 
     static formatDraftPreparedValue(report = {}) {
@@ -774,14 +808,14 @@ export default class ReportPage {
         }
 
         return this.isDraftPreparedForReview(report)
-            ? "Draft prepared for expert review"
-            : "Draft preparation pending";
+            ? LanguageManager.t("ReportDraftPreparedForExpertReview")
+            : LanguageManager.t("ReportPending");
     }
 
     static getReportStatusRows(report = {}) {
         return [
-            ["Export Format", this.formatDraftExportFormat(report)],
-            ["Draft Prepared", this.formatDraftPreparedValue(report)]
+            [LanguageManager.t("ReportExportFormatLabel"), this.formatDraftExportFormat(report)],
+            [LanguageManager.t("ReportDraftPrepared"), this.formatDraftPreparedValue(report)]
         ];
     }
 
@@ -914,7 +948,7 @@ export default class ReportPage {
                         <span class="report-preview__eyebrow">MEIFERTS Building Intelligence</span>
                         <h2>${this.escapeHtml(displayTitle)}</h2>
                         <p>${this.escapeHtml(report.reportType || "Technical Due Diligence")}</p>
-                        ${sourceTitle ? `<p class="report-preview__source-title">Decision basis: ${this.escapeHtml(sourceTitle)}</p>` : ""}
+                        ${sourceTitle ? `<p class="report-preview__source-title">${LanguageManager.t("ReportDecisionBasisLabel")}: ${this.escapeHtml(sourceTitle)}</p>` : ""}
                     </div>
                     <div class="report-preview__status">
                         <span>Status</span>
@@ -925,24 +959,24 @@ export default class ReportPage {
                   ${this.renderReportSafetyNotice(report)}
 
                 <section class="report-preview__section report-preview__summary">
-                    <span class="report-preview__section-label">Executive Summary</span>
+                    <span class="report-preview__section-label">${LanguageManager.t("ReportExecutiveSummaryLabel")}</span>
                     <p>${this.escapeHtml(executiveSummary)}</p>
                 </section>
 
                 <div class="report-preview__grid">
                     <section class="report-preview__section">
-                        <span class="report-preview__section-label">Scope</span>
-                        <p>${this.escapeHtml(report.scope || "No scope defined.")}</p>
+                        <span class="report-preview__section-label">${LanguageManager.t("ReportScopeLabel")}</span>
+                        <p>${this.escapeHtml(this.getLocalizedScope(report))}</p>
                     </section>
 
                     <section class="report-preview__section">
-                        <span class="report-preview__section-label">Methodology</span>
-                        <p>${this.escapeHtml(report.methodology || "Evidence-based workflow review.")}</p>
+                        <span class="report-preview__section-label">${LanguageManager.t("ReportMethodologyLabel")}</span>
+                        <p>${this.escapeHtml(this.getLocalizedMethodology(report))}</p>
                     </section>
                 </div>
 
                 <section class="report-preview__section report-preview__trace">
-                    <span class="report-preview__section-label">Workflow Traceability</span>
+                    <span class="report-preview__section-label">${LanguageManager.t("ReportWorkflowTraceabilityLabel")}</span>
                     <table class="report-preview__table">
                         <tbody>
                             ${traceRows.map(([label, value]) => `
@@ -956,7 +990,7 @@ export default class ReportPage {
                 </section>
 
                 <section class="report-preview__section report-preview__status-table">
-                    <span class="report-preview__section-label">Output Status</span>
+                    <span class="report-preview__section-label">${LanguageManager.t("ReportOutputStatusLabel")}</span>
                     <table class="report-preview__table">
                         <tbody>
                             ${statusRows.map(([label, value]) => `

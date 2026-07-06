@@ -119,6 +119,14 @@ export default class LanguageManager {
                 en: "Draft Prepared",
                 de: "Entwurf vorbereitet"
             },
+            ReportPrintSavePdfDraft: {
+                en: "Print / Save PDF draft",
+                de: "PDF-Entwurf drucken / speichern"
+            },
+            ReportDraftPreparedForExpertReview: {
+                en: "Draft prepared for expert review",
+                de: "Entwurf zur fachlichen Prüfung vorbereitet"
+            },
             ReportExpertReviewNotice: {
                 en: "Expert Review Notice",
                 de: "Prüfhinweis"
@@ -150,6 +158,130 @@ export default class LanguageManager {
             ReportReviewBeforeExternalUse: {
                 en: "Review report content before external use.",
                 de: "Berichtsinhalte vor externer Verwendung fachlich prüfen."
+            },
+            ReportExecutiveSummaryLabel: {
+                en: "Executive Summary",
+                de: "Zusammenfassung"
+            },
+            ReportScopeLabel: {
+                en: "Scope",
+                de: "Prüfumfang"
+            },
+            ReportMethodologyLabel: {
+                en: "Methodology",
+                de: "Methodik"
+            },
+            ReportWorkflowTraceabilityLabel: {
+                en: "Workflow Traceability",
+                de: "Workflow-Nachvollziehbarkeit"
+            },
+            ReportOutputStatusLabel: {
+                en: "Output Status",
+                de: "Ausgabestatus"
+            },
+            ReportDecisionBasisLabel: {
+                en: "Decision basis",
+                de: "Entscheidungsgrundlage"
+            },
+            ReportStatusLabel: {
+                en: "Status",
+                de: "Status"
+            },
+            ReportSummaryTraceSentenceOne: {
+                en: "This report summarizes the technical due diligence decision path for the selected case.",
+                de: "Dieser Bericht fasst den technischen Due-Diligence-Entscheidungsweg für den ausgewählten Fall zusammen."
+            },
+            ReportSummaryTraceSentenceTwo: {
+                en: "It consolidates linked evidence, findings, assessments, recommendations and the final decision context for professional review.",
+                de: "Er konsolidiert verknüpfte Nachweise, Findings, Assessments, Recommendations und den Entscheidungskontext zur fachlichen Prüfung."
+            },
+            ReportDefaultExecutiveSummary: {
+                en: "This report summarizes the selected Building Intelligence workflow and its current decision context.",
+                de: "Dieser Bericht fasst den ausgewählten Building-Intelligence-Workflow und den aktuellen Entscheidungskontext zusammen."
+            },
+            ReportScopeFallback: {
+                en: "No scope defined.",
+                de: "Kein Prüfumfang definiert."
+            },
+            ReportMethodologyFallback: {
+                en: "Evidence-based workflow review.",
+                de: "Evidenzbasierte Workflow-Prüfung."
+            },
+            ReportScopeDocumentAvailability: {
+                en: "Report preparation based on document availability context only.",
+                de: "Berichtsvorbereitung ausschließlich auf Grundlage der Dokumentenverfügbarkeit."
+            },
+            ReportMethodologyExpertReview: {
+                en: "Evidence-first workflow chain review. Expert review required before final report use.",
+                de: "Evidenzbasierte Prüfung der Workflow-Kette. Fachliche Prüfung vor finaler Berichtsnutzung erforderlich."
+            },
+            ReportSourceLabel: {
+                en: "Source",
+                de: "Quelle"
+            },
+            ReportBuildingIdLabel: {
+                en: "Building ID",
+                de: "Gebäude-ID"
+            },
+            ReportInspectionIdLabel: {
+                en: "Inspection ID",
+                de: "Inspection-ID"
+            },
+            ReportDecisionIdsLabel: {
+                en: "Decision IDs",
+                de: "Decision-IDs"
+            },
+            ReportRecommendationIdsLabel: {
+                en: "Recommendation IDs",
+                de: "Recommendation-IDs"
+            },
+            ReportAssessmentIdsLabel: {
+                en: "Assessment IDs",
+                de: "Assessment-IDs"
+            },
+            ReportFindingIdsLabel: {
+                en: "Finding IDs",
+                de: "Finding-IDs"
+            },
+            ReportEvidenceIdsLabel: {
+                en: "Evidence IDs",
+                de: "Evidence-IDs"
+            },
+            ReportBuildingSystemLabel: {
+                en: "Building System",
+                de: "Gebäudesystem"
+            },
+            ReportRiskScoreLabel: {
+                en: "Risk Score",
+                de: "Risikoscore"
+            },
+            ReportDecisionImpactLabel: {
+                en: "Decision Impact",
+                de: "Entscheidungswirkung"
+            },
+            ReportRiskLevelLabel: {
+                en: "Risk Level",
+                de: "Risikostufe"
+            },
+            ReportExportFormatLabel: {
+                en: "Export Format",
+                de: "Exportformat"
+            },
+            ReportNotLinked: {
+                en: "Not linked",
+                de: "Nicht verknüpft"
+            },
+            ReportDecisionReview: {
+                en: "Decision Review",
+                de: "Entscheidungsprüfung"
+            },
+            ReportPending: {
+                en: "Pending",
+                de: "Offen"
+            },
+            ReportLegacyNotLinked: {
+                en: "Legacy / not linked",
+                de: "Altdaten / nicht verknüpft"
             },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
