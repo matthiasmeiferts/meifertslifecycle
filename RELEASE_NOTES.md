@@ -90,3 +90,63 @@ Human expert review remains required before any external professional use.
 ### Intended use
 
 This checkpoint is intended for internal field testing, demonstration, and controlled professional review preparation in the Pattaya / Thailand real estate due diligence context.
+
+---
+
+## Report Workspace Bilingual Release Checkpoint
+**Date:** 2026-07-06  
+**Branch:** `foundation-release-1.0`  
+**Status:** Completed and validated
+
+### Validation scope
+
+The Report Workspace bilingual release checkpoint validates the controlled German-English language foundation for the professional report output workflow.
+
+Validated areas:
+
+    Report Preview
+    -> Report Body
+    -> Report Detail Panel
+    -> Boundary Badges
+    -> Report Actions
+    -> Report Intelligence Panels
+    -> Report Forms
+    -> Report Notifications
+
+### Validation result
+
+    REPORT LANGUAGE OK
+    REPORT BODY DE OK
+    REPORT BODY FIX OK
+    REPORT DETAIL DE OK
+    REPORT ACTIONS DE OK
+    REPORT FORMS DE OK
+
+### Confirmed capabilities
+
+- German and English are active controlled workspace languages.
+- Report Preview is connected to the LanguageManager.
+- Report body labels, fallback text and output status are bilingual.
+- Report Detail Panel labels and boundary badges are bilingual.
+- Report actions, report list buttons and intelligence panels are bilingual.
+- Report forms and report notifications are bilingual.
+- Print / Save PDF workflow uses localized user-facing copy.
+- Delete confirmation, create/edit report dialogs and report notifications are localized.
+- Remaining Report Form Text Audit returned no unresolved hard-coded report form strings.
+
+### Professional boundaries
+
+The bilingual report workspace does not change the professional decision boundary.
+
+The system remains limited to:
+
+    Draft preparation
+    Expert review support
+    Report preparation workflow
+    Human professional validation
+
+It does not create an automatic final report, expert opinion or purchase recommendation.
+
+### Intended use
+
+This checkpoint is intended as the bilingual release baseline for the MEIFERTS Building Intelligence Report Workspace within the Foundation Release branch.
