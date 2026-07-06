@@ -579,34 +579,102 @@ export default class FindingPage {
             return;
         }
 
-        const severity = finding.severity || "Medium";
-        const probability = finding.probability || "Medium";
-        const consequence = "Medium";
+        const isPattayaFinding =
+            finding.profile === "pattaya" ||
+            String(finding.sourceQuestionId || "").startsWith("TH-PATTAYA-");
+
+        const isAvailabilityCheckOnly = finding.sourcePolicy === "availability_check_only";
+
+        const severity = isAvailabilityCheckOnly
+            ? "Unrated"
+            : (finding.severity || "Medium");
+
+        const probability = isAvailabilityCheckOnly
+            ? "Unrated"
+            : (finding.probability || "Medium");
+
+        const consequence = isAvailabilityCheckOnly
+            ? "Unrated"
+            : "Medium";
+
+        const assessmentTitle = finding.title
+            ? `Assessment Draft: ${finding.title}`
+            : `Assessment Draft from ${finding.id}`;
+
+        const descriptionParts = [
+            finding.description || "Assessment prepared from selected finding.",
+            "",
+            "Assessment status:",
+            "Draft assessment created from selected finding.",
+            "Expert review required before recommendation, decision or report use."
+        ];
+
+        if (isAvailabilityCheckOnly) {
+            descriptionParts.push("");
+            descriptionParts.push("Review boundary:");
+            descriptionParts.push("Document availability only. No legal, financial, technical or governance document review has been performed.");
+            descriptionParts.push("This assessment draft records availability context only and must not be treated as document validation.");
+        }
+
+        if (isPattayaFinding) {
+            descriptionParts.push("");
+            descriptionParts.push("Thailand / Pattaya context:");
+            descriptionParts.push("Field review context retained for downstream recommendation and reporting.");
+        }
+
+        descriptionParts.push("");
+        descriptionParts.push("Finding trace:");
+        descriptionParts.push(`Finding ID: ${finding.id}`);
+        descriptionParts.push(`Finding source: ${finding.source || "Expert Review"}`);
+        descriptionParts.push(`Evidence IDs: ${(finding.evidenceIds || []).join(", ") || "None"}`);
+        descriptionParts.push(`Source Evidence IDs: ${(finding.sourceEvidenceIds || []).join(", ") || "None"}`);
+        descriptionParts.push(`Source policy: ${finding.sourcePolicy || "None"}`);
+        descriptionParts.push(`Expert review required: ${finding.expertReviewRequired === false ? "No" : "Yes"}`);
+
+        const riskScore = isAvailabilityCheckOnly
+            ? 0
+            : AssessmentManager.calculateRiskScore(severity, probability, consequence);
 
         const assessment = AssessmentManager.create({
             caseId: finding.caseId,
             buildingId: finding.buildingId,
             inspectionId: finding.inspectionId,
+
             findingIds: [finding.id],
             evidenceIds: finding.evidenceIds || [],
-            title: `Assessment from ${finding.title || finding.id}`,
-            description: [
-                finding.description || "Assessment prepared from selected finding.",
-                "",
-                "Finding trace:",
-                `Finding ID: ${finding.id}`,
-                `Finding source: ${finding.source || "Expert Review"}`,
-                `Evidence IDs: ${(finding.evidenceIds || []).join(", ") || "None"}`
-            ].join("\n"),
+            sourceFindingIds: [finding.id],
+            sourceEvidenceIds: finding.sourceEvidenceIds || finding.evidenceIds || [],
+
+            title: assessmentTitle,
+            description: descriptionParts.join("\n"),
             category: finding.category || "General",
-            source: finding.source || "Finding Review",
             buildingSystem: finding.buildingSystem || "",
+            source: finding.source || "Finding Review",
+
             severity,
             probability,
             consequence,
-            riskScore: AssessmentManager.calculateRiskScore(severity, probability, consequence),
-            priority: finding.priority || "Medium",
-            status: "Draft"
+            riskScore,
+            priority: isAvailabilityCheckOnly ? "Medium" : (finding.priority || "High"),
+            confidence: isAvailabilityCheckOnly ? 50 : (finding.confidence || 60),
+
+            status: "Draft",
+            reviewStatus: "Draft",
+            expertReviewRequired: true,
+
+            sourceQuestionId: finding.sourceQuestionId || "",
+            sourceQuestion: finding.sourceQuestion || "",
+            sourceModule: finding.sourceModule || "",
+            sourceCategory: finding.sourceCategory || "",
+            sourcePolicy: finding.sourcePolicy || "",
+            sourceRequiredEvidenceRaw: finding.sourceRequiredEvidenceRaw || "",
+
+            profile: isPattayaFinding ? "pattaya" : "",
+            country: isPattayaFinding ? "TH" : "",
+            region: isPattayaFinding ? "Pattaya / Chonburi" : "",
+
+            createdBy: "System",
+            updatedBy: "System"
         });
 
         AssessmentManager.set(assessment);
@@ -624,12 +692,14 @@ export default class FindingPage {
         const updatedFinding = FindingManager.update({
             ...finding,
             assessmentIds: [...new Set([...(finding.assessmentIds || []), assessment.id])],
+            linkedAssessmentId: assessment.id,
+            hasAssessment: true,
             updatedAt: new Date().toISOString()
         });
 
         FindingManager.set(updatedFinding);
 
-        Notification.success("Assessment created from selected finding.");
+        Notification.success("Assessment draft created. Expert review required.");
         window.location.hash = "assessments";
     }
 

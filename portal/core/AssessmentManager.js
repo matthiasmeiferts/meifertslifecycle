@@ -104,12 +104,27 @@ export default class AssessmentManager {
 
             findingIds:  data.findingIds  || [],
             evidenceIds: data.evidenceIds || [],
+            sourceFindingIds: data.sourceFindingIds || data.findingIds || [],
+            sourceEvidenceIds: data.sourceEvidenceIds || data.evidenceIds || [],
 
             title: data.title || "Assessment",
 
             description: data.description || "",
 
             category: data.category || "General",
+            buildingSystem: data.buildingSystem || "",
+            source: data.source || "Finding Review",
+
+            sourceQuestionId: data.sourceQuestionId || "",
+            sourceQuestion: data.sourceQuestion || "",
+            sourceModule: data.sourceModule || "",
+            sourceCategory: data.sourceCategory || "",
+            sourcePolicy: data.sourcePolicy || "",
+            sourceRequiredEvidenceRaw: data.sourceRequiredEvidenceRaw || "",
+
+            profile: data.profile || "",
+            country: data.country || "",
+            region: data.region || "",
 
             severity:    data.severity    || "Unrated",
             probability: data.probability || "Unrated",
@@ -120,10 +135,15 @@ export default class AssessmentManager {
 
             priority: data.priority || "Medium",
             status:   data.status   || "Draft",
+            reviewStatus: data.reviewStatus || "Draft",
+            expertReviewRequired: data.expertReviewRequired !== undefined
+                ? data.expertReviewRequired
+                : true,
 
             recommendationIds: data.recommendationIds || [],
 
             createdBy: data.createdBy || this.defaultCreator,
+            updatedBy: data.updatedBy || data.createdBy || this.defaultCreator,
 
             createdAt: data.createdAt || new Date().toISOString(),
             updatedAt: new Date().toISOString()
