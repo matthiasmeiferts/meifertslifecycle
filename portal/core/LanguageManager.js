@@ -107,6 +107,50 @@ export default class LanguageManager {
                 en: "Translation boundary: core product terms are controlled; interface copy may be localized.",
                 de: "Übersetzungsgrenze: zentrale Produktbegriffe bleiben kontrolliert; allgemeine Bedienoberfläche kann lokalisiert werden."
             },
+            ReportTechnicalDueDiligenceDraft: {
+                en: "Technical Due Diligence Draft",
+                de: "Technical Due Diligence – Entwurf"
+            },
+            ReportDocumentAvailabilityReview: {
+                en: "Document Availability Review",
+                de: "Dokumentenverfügbarkeit – Prüfung"
+            },
+            ReportDraftPrepared: {
+                en: "Draft Prepared",
+                de: "Entwurf vorbereitet"
+            },
+            ReportExpertReviewNotice: {
+                en: "Expert Review Notice",
+                de: "Prüfhinweis"
+            },
+            ReportDraftBoundary: {
+                en: "Draft boundary",
+                de: "Entwurfsgrenze"
+            },
+            ReportExpertReviewRequiredBeforeFinalUse: {
+                en: "Expert review required before final report use.",
+                de: "Fachliche Prüfung vor endgültiger Verwendung erforderlich."
+            },
+            ReportDraftPreparationOnly: {
+                en: "Draft report preparation only.",
+                de: "Nur Vorbereitung eines Berichtsentwurfs."
+            },
+            ReportNoFinalReportCreated: {
+                en: "No final report has been created by this action.",
+                de: "Durch diesen Schritt wurde kein finaler Bericht erstellt."
+            },
+            ReportNoAutomaticExpertOpinion: {
+                en: "No automatic expert opinion or purchase recommendation.",
+                de: "Keine automatische gutachterliche Stellungnahme oder Kaufempfehlung."
+            },
+            ReportDocumentAvailabilityOnly: {
+                en: "Document availability only. Document content has not been validated.",
+                de: "Nur Dokumentenverfügbarkeit. Der Dokumenteninhalt wurde nicht geprüft."
+            },
+            ReportReviewBeforeExternalUse: {
+                en: "Review report content before external use.",
+                de: "Berichtsinhalte vor externer Verwendung fachlich prüfen."
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."

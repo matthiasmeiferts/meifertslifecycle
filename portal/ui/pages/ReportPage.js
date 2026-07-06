@@ -6,6 +6,7 @@ import DecisionManager from "../../core/DecisionManager.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
 import DemoDatasetManager from "../../core/DemoDatasetManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import LanguageManager from "../../core/LanguageManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
 import WorkflowProgressPanel from "../components/WorkflowProgressPanel.js";
@@ -34,8 +35,8 @@ export default class ReportPage {
 
     static statusLabels = {
         draft: "Draft",
-        prepared: "Draft Prepared",
-        preparedOutput: "Draft Prepared",
+        prepared: LanguageManager.t("ReportDraftPrepared"),
+        preparedOutput: LanguageManager.t("ReportDraftPrepared"),
         reviewed: "Reviewed",
         finalized: "Finalized",
         blocked: "Blocked"
@@ -821,7 +822,7 @@ export default class ReportPage {
         }
 
         if (this.isWorkflowDraftTitle(title)) {
-            return "Technical Due Diligence Draft";
+            return LanguageManager.t("ReportTechnicalDueDiligenceDraft");
         }
 
         return title;
@@ -832,7 +833,7 @@ export default class ReportPage {
         const sourceTitle = String(report?.sourceTitle || "").trim();
 
         if (this.isDocumentAvailabilityReview(report)) {
-            return "Document Availability Review";
+            return LanguageManager.t("ReportDocumentAvailabilityReview");
         }
 
         if (sourceTitle && !this.isWorkflowDraftTitle(sourceTitle)) {
@@ -854,27 +855,27 @@ export default class ReportPage {
         const items = [];
 
         if (report.expertReviewRequired !== false) {
-            items.push("Expert review required before final report use.");
+            items.push(LanguageManager.t("ReportExpertReviewRequiredBeforeFinalUse"));
         }
 
         if (report.reportPreparationOnly) {
-            items.push("Draft report preparation only.");
+            items.push(LanguageManager.t("ReportDraftPreparationOnly"));
         }
 
         if (report.noAutomaticFinalReport) {
-            items.push("No final report has been created by this action.");
+            items.push(LanguageManager.t("ReportNoFinalReportCreated"));
         }
 
         if (report.noAutomaticOpinion) {
-            items.push("No automatic expert opinion or purchase recommendation.");
+            items.push(LanguageManager.t("ReportNoAutomaticExpertOpinion"));
         }
 
         if (report.sourcePolicy === "availability_check_only") {
-            items.push("Document availability only. Document content has not been validated.");
+            items.push(LanguageManager.t("ReportDocumentAvailabilityOnly"));
         }
 
         if (!items.length) {
-            items.push("Review report content before external use.");
+            items.push(LanguageManager.t("ReportReviewBeforeExternalUse"));
         }
 
         return items;
@@ -886,8 +887,8 @@ export default class ReportPage {
         return `
             <section class="report-preview__section report-preview__safety-notice" aria-label="Report safety notice">
                 <div>
-                    <span class="report-preview__section-label">Safety Notice</span>
-                    <strong>Draft boundary</strong>
+                    <span class="report-preview__section-label">${LanguageManager.t("ReportExpertReviewNotice")}</span>
+                    <strong>${LanguageManager.t("ReportDraftBoundary")}</strong>
                 </div>
                 <ul>
                     ${items.map(item => `<li>${this.escapeHtml(item)}</li>`).join("")}
