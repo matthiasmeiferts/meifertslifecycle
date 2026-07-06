@@ -1,0 +1,89 @@
+{
+  "schema": "meiferts.inspection.question.metadata",
+  "version": "0.1.0",
+  "primaryLanguage": "de",
+  "description": "Metadata schema for adaptive inspection questions. German is primary; English fields are prepared for later translation.",
+  "requiredFields": [
+    "id",
+    "module",
+    "category",
+    "question",
+    "answerType",
+    "answerOptions",
+    "appliesTo",
+    "requires",
+    "riskTags",
+    "capexRelevance",
+    "reportSection",
+    "reviewStatus"
+  ],
+  "questionShape": {
+    "id": "string",
+    "module": "string",
+    "category": "string",
+    "question": {
+      "de": "string",
+      "en": "string|null"
+    },
+    "helpText": {
+      "de": "string|null",
+      "en": "string|null"
+    },
+    "answerType": "status|boolean|number|text|select|multi_select|measurement",
+    "answerOptions": {
+      "de": ["i.O.", "Auffällig", "Nicht prüfbar", "Hinweis"],
+      "en": null
+    },
+    "appliesTo": {
+      "countries": ["DE", "TH"],
+      "propertyTypes": [
+        "condominium_unit",
+        "condominium_building",
+        "villa",
+        "townhouse",
+        "single_family_house",
+        "multi_family_house",
+        "new_build",
+        "renovation_object"
+      ],
+      "timeModes": ["red_flags", "short", "standard", "full"],
+      "climateTags": []
+    },
+    "requires": {
+      "photo": false,
+      "measurement": false,
+      "document": false,
+      "photoIf": ["Auffällig", "Nicht prüfbar"],
+      "measurementIf": [],
+      "documentIf": []
+    },
+    "askIf": [],
+    "skipIf": [],
+    "followUpIf": {
+      "Auffällig": [],
+      "Nicht prüfbar": []
+    },
+    "riskTags": [],
+    "severityHint": "low|medium|high|critical|unknown",
+    "capexRelevance": "none|low|medium|high|unknown",
+    "confidenceImpact": "low|medium|high",
+    "reportSection": "string",
+    "countryPolicy": {
+      "TH": {
+        "documentMode": "availability_check_only",
+        "forbiddenClaims": [
+          "validated",
+          "legally_checked",
+          "financially_verified",
+          "complete_governance_review"
+        ]
+      }
+    },
+    "reviewStatus": "auto_draft|expert_reviewed|approved",
+    "source": {
+      "document": "Pruef und Checklisten Meiferts",
+      "page": null,
+      "line": null
+    }
+  }
+}
