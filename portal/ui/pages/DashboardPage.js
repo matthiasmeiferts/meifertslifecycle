@@ -11,39 +11,40 @@ import FindingManager from "../../core/FindingManager.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
 import DecisionManager from "../../core/DecisionManager.js";
+import LanguageManager from "../../core/LanguageManager.js";
 
 export default class DashboardPage {
 
     static workflowStages = [
         {
             key: "evidence",
-            label: "Evidence",
-            description: "Captured inspection evidence"
+            labelKey: "NavEvidence",
+            descriptionKey: "DashboardCapturedInspectionEvidence"
         },
         {
             key: "finding",
-            label: "Finding",
-            description: "Technical findings identified"
+            labelKey: "WorkflowStepFinding",
+            descriptionKey: "DashboardTechnicalFindingsIdentified"
         },
         {
             key: "assessment",
-            label: "Assessment",
-            description: "Risk assessments completed"
+            labelKey: "WorkflowStepAssessment",
+            descriptionKey: "DashboardRiskAssessmentsCompleted"
         },
         {
             key: "recommendation",
-            label: "Recommendation",
-            description: "Actions recommended"
+            labelKey: "WorkflowStepRecommendation",
+            descriptionKey: "DashboardActionsRecommended"
         },
         {
             key: "decision",
-            label: "Decision",
-            description: "Governance decisions confirmed"
+            labelKey: "WorkflowStepDecision",
+            descriptionKey: "DashboardGovernanceDecisionsConfirmed"
         },
         {
             key: "report",
-            label: "Report",
-            description: "Final output prepared"
+            labelKey: "WorkflowStepReport",
+            descriptionKey: "DashboardFinalOutputPrepared"
         }
     ];
 
@@ -63,7 +64,7 @@ export default class DashboardPage {
         );
 
         fragment.appendChild(hero);
-    fragment.appendChild(demoDatasetStatus);
+        fragment.appendChild(demoDatasetStatus);
         fragment.appendChild(metrics);
         fragment.appendChild(readinessOverview);
         fragment.appendChild(readinessCards);
@@ -87,7 +88,7 @@ export default class DashboardPage {
         hero.className = "hero-card";
 
         hero.innerHTML = `
-            <p class="eyebrow">Active Case</p>
+            <p class="eyebrow">${LanguageManager.t("DashboardActiveCase")}</p>
             <h2>${summary.title}</h2>
             <p>${summary.subtitle}</p>
         `;
@@ -103,12 +104,12 @@ export default class DashboardPage {
             banner.className = "dashboard-demo-status dashboard-demo-status--active";
             banner.innerHTML = `
                 <div>
-                    <span>Controlled Demo Dataset</span>
-                    <strong>Not loaded</strong>
-                    <p>Load the controlled demo dataset to review the complete evidence-to-report workflow.</p>
+                    <span>${LanguageManager.t("DashboardControlledDemoDataset")}</span>
+                    <strong>${LanguageManager.t("DashboardDemoNotLoaded")}</strong>
+                    <p>${LanguageManager.t("DashboardDemoLoadDescription")}</p>
                 </div>
                 <button type="button" class="dashboard-demo-status__action" data-demo-load>
-                    Load Controlled Demo Dataset
+                    ${LanguageManager.t("DashboardLoadControlledDemoDataset")}
                 </button>
             `;
 
@@ -126,25 +127,25 @@ export default class DashboardPage {
         }
 
         const tone = status.isComplete ? "ready" : "active";
-        const label = status.isComplete ? "Complete" : "Incomplete";
+        const label = status.isComplete ? LanguageManager.t("DashboardDemoComplete") : LanguageManager.t("DashboardDemoIncomplete");
         const integrityLabel = status.integrity?.isValid
-            ? "Workflow links valid"
-            : "Workflow links incomplete";
+            ? LanguageManager.t("DashboardWorkflowLinksValid")
+            : LanguageManager.t("DashboardWorkflowLinksIncomplete");
 
         const banner = document.createElement("section");
         banner.className = `dashboard-demo-status dashboard-demo-status--${tone}`;
         banner.innerHTML = `
             <div>
-                <span>Controlled Demo Dataset</span>
+                <span>${LanguageManager.t("DashboardControlledDemoDataset")}</span>
                 <strong>${label} · ${status.percent}%</strong>
-                <p>${status.completeRecords} of ${status.totalRecords} demo records are available. ${integrityLabel}.</p>
+                <p>${status.completeRecords} ${LanguageManager.t("DashboardOf")} ${status.totalRecords} ${LanguageManager.t("DashboardDemoRecordsAvailable")}. ${integrityLabel}.</p>
             </div>
             <div class="dashboard-demo-status__actions">
                 <button type="button" class="dashboard-demo-status__action" data-demo-load>
-                    Reload Controlled Demo Dataset
+                    ${LanguageManager.t("DashboardReloadControlledDemoDataset")}
                 </button>
                 <button type="button" class="dashboard-demo-status__action" data-demo-review>
-                    Review Demo Report
+                    ${LanguageManager.t("DashboardReviewDemoReport")}
                 </button>
             </div>
         `;
@@ -231,11 +232,11 @@ export default class DashboardPage {
         const readiness = this.getWorkflowReadiness(data);
 
         return `
-            <section class="completion-panel" aria-label="Workflow readiness overview">
+            <section class="completion-panel" aria-label="${LanguageManager.t("DashboardWorkflowReadiness")}">
                 <div class="completion-panel__header">
                     <div>
-                        <span class="completion-panel__eyebrow">Workflow Readiness</span>
-                        <strong>${readiness.isComplete ? "Workflow Complete" : "Workflow In Progress"}</strong>
+                        <span class="completion-panel__eyebrow">${LanguageManager.t("DashboardWorkflowReadiness")}</span>
+                        <strong>${readiness.isComplete ? LanguageManager.t("DashboardWorkflowComplete") : LanguageManager.t("DashboardWorkflowInProgress")}</strong>
                     </div>
                     <span class="completion-panel__score">${readiness.percent}%</span>
                 </div>
@@ -252,7 +253,7 @@ export default class DashboardPage {
                         return `
                             <div class="completion-panel__check ${isComplete ? "is-complete" : "is-open"}">
                                 <span class="completion-panel__check-marker"></span>
-                                <span>${stage.label}: ${count}</span>
+                                <span>${LanguageManager.t(stage.labelKey)}: ${count}</span>
                             </div>
                         `;
                     }).join("")}
@@ -284,11 +285,11 @@ export default class DashboardPage {
 
             return {
                 key: stage.key,
-                label: stage.label,
-                description: stage.description,
+                label: LanguageManager.t(stage.labelKey),
+                description: LanguageManager.t(stage.descriptionKey),
                 count,
                 status: isActive ? "active" : "open",
-                actionLabel: isActive ? "Review workspace" : "Start workspace",
+                actionLabel: isActive ? LanguageManager.t("DashboardReviewWorkspace") : LanguageManager.t("DashboardStartWorkspace"),
                 route: this.getWorkspaceRoute(stage.key)
             };
         });
@@ -302,7 +303,7 @@ export default class DashboardPage {
                 ${cards.map((card) => `
                     <article class="dashboard-readiness-card dashboard-readiness-card--${card.status}">
                         <div>
-                            <span class="dashboard-readiness-card__eyebrow">${card.status === "active" ? "Active" : "Open"}</span>
+                            <span class="dashboard-readiness-card__eyebrow">${card.status === "active" ? LanguageManager.t("DashboardActiveStatus") : LanguageManager.t("DashboardOpenStatus")}</span>
                             <strong>${card.label}</strong>
                             <p>${card.description}</p>
                         </div>
@@ -342,8 +343,8 @@ export default class DashboardPage {
         if (readiness.isComplete) {
             return {
                 key: "complete",
-                label: "Workflow Complete",
-                description: "All workflow stages contain data. Review final output quality and completeness.",
+                label: LanguageManager.t("DashboardWorkflowComplete"),
+                description: LanguageManager.t("DashboardAllStagesContainData"),
                 tone: "ready"
             };
         }
@@ -356,16 +357,16 @@ export default class DashboardPage {
         if (!firstOpenStage) {
             return {
                 key: "review",
-                label: "Review workflow",
-                description: "Workflow data is present. Review stage quality before moving forward.",
+                label: LanguageManager.t("DashboardReviewWorkflow"),
+                description: LanguageManager.t("DashboardWorkflowDataPresent"),
                 tone: "linked"
             };
         }
 
         return {
             key: firstOpenStage.key,
-            label: `Next attention: ${firstOpenStage.label}`,
-            description: `${firstOpenStage.description} is still missing or not yet represented in the workflow.`,
+            label: `${LanguageManager.t("DashboardNextAttention")}: ${LanguageManager.t(firstOpenStage.labelKey)}`,
+            description: `${LanguageManager.t(firstOpenStage.descriptionKey)} ${LanguageManager.t("DashboardStageMissingSuffix")}`,
             tone: "active"
         };
     }
@@ -374,9 +375,9 @@ export default class DashboardPage {
         const bottleneck = this.getWorkflowBottleneck(data);
 
         return `
-            <section class="next-action next-action--${bottleneck.tone}" aria-label="Workflow bottleneck">
+            <section class="next-action next-action--${bottleneck.tone}" aria-label="${LanguageManager.t("DashboardWorkflowBottleneck")}">
                 <div>
-                    <span class="next-action__eyebrow">Workflow Bottleneck</span>
+                    <span class="next-action__eyebrow">${LanguageManager.t("DashboardWorkflowBottleneck")}</span>
                     <strong>${bottleneck.label}</strong>
                     <p>${bottleneck.description}</p>
                 </div>
@@ -401,35 +402,35 @@ export default class DashboardPage {
 
         if (readiness.percent >= 100) {
             return {
-                label: "Complete workflow coverage",
-                description: "All workflow stages are represented. Focus on review quality, consistency and final report confidence.",
-                score: "High",
+                label: LanguageManager.t("DashboardCompleteWorkflowCoverage"),
+                description: LanguageManager.t("DashboardCompleteWorkflowCoverageDescription"),
+                score: LanguageManager.t("WorkspaceHigh"),
                 tone: "ready"
             };
         }
 
         if (readiness.percent >= 67) {
             return {
-                label: "Strong workflow progress",
-                description: "Most workflow stages are represented. Remaining gaps should be closed before final decision or report output.",
-                score: "Medium High",
+                label: LanguageManager.t("DashboardStrongWorkflowProgress"),
+                description: LanguageManager.t("DashboardStrongWorkflowProgressDescription"),
+                score: LanguageManager.t("DashboardMediumHigh"),
                 tone: "linked"
             };
         }
 
         if (readiness.percent >= 34) {
             return {
-                label: "Partial workflow coverage",
+                label: LanguageManager.t("DashboardPartialWorkflowCoverage"),
                 description: "The workflow is active but still incomplete. Continue linking evidence, findings and downstream decisions.",
-                score: "Medium",
+                score: LanguageManager.t("DashboardMedium"),
                 tone: "active"
             };
         }
 
         return {
-            label: "Early workflow stage",
-            description: "Only the first workflow stages are represented. Start with evidence capture and finding creation.",
-            score: "Low",
+            label: LanguageManager.t("DashboardEarlyWorkflowStage"),
+            description: LanguageManager.t("DashboardEarlyWorkflowStageDescription"),
+            score: LanguageManager.t("DashboardLow"),
             tone: "draft"
         };
     }
@@ -438,9 +439,9 @@ export default class DashboardPage {
         const summary = this.getWorkflowQualitySummary(data);
 
         return `
-            <section class="next-action next-action--${summary.tone}" aria-label="Workflow quality summary">
+            <section class="next-action next-action--${summary.tone}" aria-label="${LanguageManager.t("DashboardWorkflowQuality")}">
                 <div>
-                    <span class="next-action__eyebrow">Workflow Quality</span>
+                    <span class="next-action__eyebrow">${LanguageManager.t("DashboardWorkflowQuality")}</span>
                     <strong>${summary.label}</strong>
                     <p>${summary.description}</p>
                 </div>
@@ -526,43 +527,43 @@ export default class DashboardPage {
         const riskSignalScore = riskInputs.reduce((sum, value) => sum + value, 0);
 
         let riskSignal = {
-            label: "Low signal density",
-            description: "Risk logic is still light. More findings and assessments are needed before strong conclusions.",
+            label: LanguageManager.t("DashboardLowSignalDensity"),
+            description: LanguageManager.t("DashboardLowSignalDensityDescription"),
             tone: "draft"
         };
 
         if (riskSignalScore >= 8) {
             riskSignal = {
-                label: "High signal density",
-                description: "Multiple downstream risk signals are present. Review consistency before decision output.",
+                label: LanguageManager.t("DashboardHighSignalDensity"),
+                description: LanguageManager.t("DashboardHighSignalDensityDescription"),
                 tone: "ready"
             };
         } else if (riskSignalScore >= 4) {
             riskSignal = {
-                label: "Moderate signal density",
-                description: "The workflow contains usable risk signals, but decision confidence depends on review quality.",
+                label: LanguageManager.t("DashboardModerateSignalDensity"),
+                description: LanguageManager.t("DashboardModerateSignalDensityDescription"),
                 tone: "active"
             };
         }
 
         let confidence = {
-            label: "Low confidence",
-            description: "The workflow is not yet sufficiently connected for reliable decision support.",
+            label: LanguageManager.t("DashboardLowConfidence"),
+            description: LanguageManager.t("DashboardLowConfidenceDescription"),
             score: confidenceScore,
             tone: "draft"
         };
 
         if (confidenceScore >= 80) {
             confidence = {
-                label: "High confidence",
-                description: "The workflow is strongly represented and ready for executive-level review.",
+                label: LanguageManager.t("DashboardHighConfidence"),
+                description: LanguageManager.t("DashboardHighConfidenceDescription"),
                 score: confidenceScore,
                 tone: "ready"
             };
         } else if (confidenceScore >= 55) {
             confidence = {
-                label: "Developing confidence",
-                description: "The platform has enough structure for directional insight, but key gaps may remain.",
+                label: LanguageManager.t("DashboardDevelopingConfidence"),
+                description: LanguageManager.t("DashboardDevelopingConfidenceDescription"),
                 score: confidenceScore,
                 tone: "active"
             };
@@ -570,15 +571,15 @@ export default class DashboardPage {
 
         const nextStrategicAction = readiness.isComplete
             ? {
-                label: "Review executive output",
-                description: "All workflow stages are represented. Focus on final report quality, consistency and decision confidence.",
+                label: LanguageManager.t("DashboardReviewExecutiveOutput"),
+                description: LanguageManager.t("DashboardReviewExecutiveOutputDescription"),
                 tone: "ready"
             }
             : this.getWorkflowBottleneck
                 ? this.getWorkflowBottleneck(data)
                 : {
-                    label: "Complete workflow chain",
-                    description: "Continue building the workflow from evidence through report.",
+                    label: LanguageManager.t("DashboardCompleteWorkflowChain"),
+                    description: LanguageManager.t("DashboardCompleteWorkflowChainDescription"),
                     tone: "active"
                 };
 
@@ -589,11 +590,11 @@ export default class DashboardPage {
             nextStrategicAction,
             executiveSummary: {
                 label: readiness.isComplete
-                    ? "Decision workflow is fully represented."
-                    : "Decision workflow is still developing.",
+                    ? LanguageManager.t("DashboardDecisionWorkflowComplete")
+                    : LanguageManager.t("DashboardDecisionWorkflowDeveloping"),
                 description: readiness.isComplete
-                    ? "The platform has enough cross-workspace coverage to support final review and reporting."
-                    : "The platform should continue closing workflow gaps before relying on the output for final decisions."
+                    ? LanguageManager.t("DashboardPlatformCoverageReady")
+                    : LanguageManager.t("DashboardPlatformCoverageDeveloping")
             }
         };
     }
@@ -602,10 +603,10 @@ export default class DashboardPage {
         const intelligence = this.getPlatformIntelligence(data);
 
         return `
-            <section class="platform-intelligence" aria-label="Workspace intelligence">
+            <section class="platform-intelligence" aria-label="${LanguageManager.t("DashboardWorkspaceIntelligence")}">
                 <div class="platform-intelligence__header">
                     <div>
-                        <span class="platform-intelligence__eyebrow">Workspace Intelligence</span>
+                        <span class="platform-intelligence__eyebrow">${LanguageManager.t("DashboardWorkspaceIntelligence")}</span>
                         <strong>${intelligence.executiveSummary.label}</strong>
                         <p>${intelligence.executiveSummary.description}</p>
                     </div>
@@ -614,19 +615,19 @@ export default class DashboardPage {
 
                 <div class="platform-intelligence__grid">
                     <article class="platform-intelligence__card platform-intelligence__card--${intelligence.confidence.tone}">
-                        <span>Workflow Confidence</span>
+                        <span>${LanguageManager.t("DashboardWorkflowConfidence")}</span>
                         <strong>${intelligence.confidence.label}</strong>
                         <p>${intelligence.confidence.description}</p>
                     </article>
 
                     <article class="platform-intelligence__card platform-intelligence__card--${intelligence.riskSignal.tone}">
-                        <span>Risk Signal Overview</span>
+                        <span>${LanguageManager.t("DashboardRiskSignalOverview")}</span>
                         <strong>${intelligence.riskSignal.label}</strong>
                         <p>${intelligence.riskSignal.description}</p>
                     </article>
 
                     <article class="platform-intelligence__card platform-intelligence__card--${intelligence.nextStrategicAction.tone}">
-                        <span>Next Strategic Action</span>
+                        <span>${LanguageManager.t("DashboardNextStrategicAction")}</span>
                         <strong>${intelligence.nextStrategicAction.label}</strong>
                         <p>${intelligence.nextStrategicAction.description}</p>
                     </article>

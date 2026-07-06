@@ -1,3 +1,4 @@
+import LanguageManager from "../../core/LanguageManager.js";
 export default class WorkflowCard {
 
     static create(workflow = {}) {
@@ -11,8 +12,8 @@ export default class WorkflowCard {
         card.innerHTML = `
             <div class="section-header">
                 <div>
-                    <p class="eyebrow">Decision Workflow</p>
-                    <h2>Evidence → Report</h2>
+                    <p class="eyebrow">${LanguageManager.t("DashboardDecisionWorkflow")}</p>
+                    <h2>${LanguageManager.t("DashboardEvidenceToReport")}</h2>
                 </div>
                 <span>${progress}%</span>
             </div>

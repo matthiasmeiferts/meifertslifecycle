@@ -755,6 +755,286 @@ export default class LanguageManager {
                 en: "Empty",
                 de: "Leer"
             },
+            DashboardActiveCase: {
+                en: "Active Case",
+                de: "Aktiver Case"
+            },
+            DashboardControlledDemoDataset: {
+                en: "Controlled Demo Dataset",
+                de: "Kontrollierter Demo-Datensatz"
+            },
+            DashboardDemoNotLoaded: {
+                en: "Not loaded",
+                de: "Nicht geladen"
+            },
+            DashboardDemoLoadDescription: {
+                en: "Load the controlled demo dataset to review the complete evidence-to-report workflow.",
+                de: "Kontrollierten Demo-Datensatz laden, um den vollständigen Evidence-to-Report-Workflow zu prüfen."
+            },
+            DashboardLoadControlledDemoDataset: {
+                en: "Load Controlled Demo Dataset",
+                de: "Kontrollierten Demo-Datensatz laden"
+            },
+            DashboardReloadControlledDemoDataset: {
+                en: "Reload Controlled Demo Dataset",
+                de: "Kontrollierten Demo-Datensatz neu laden"
+            },
+            DashboardReviewDemoReport: {
+                en: "Review Demo Report",
+                de: "Demo-Bericht prüfen"
+            },
+            DashboardDemoComplete: {
+                en: "Complete",
+                de: "Vollständig"
+            },
+            DashboardDemoIncomplete: {
+                en: "Incomplete",
+                de: "Unvollständig"
+            },
+            DashboardWorkflowLinksValid: {
+                en: "Workflow links valid",
+                de: "Workflow-Verknüpfungen gültig"
+            },
+            DashboardWorkflowLinksIncomplete: {
+                en: "Workflow links incomplete",
+                de: "Workflow-Verknüpfungen unvollständig"
+            },
+            DashboardDemoRecordsAvailable: {
+                en: "demo records are available",
+                de: "Demo-Datensätze sind verfügbar"
+            },
+            DashboardWorkflowReadiness: {
+                en: "Workflow Readiness",
+                de: "Workflow-Bereitschaft"
+            },
+            DashboardWorkflowComplete: {
+                en: "Workflow Complete",
+                de: "Workflow vollständig"
+            },
+            DashboardWorkflowInProgress: {
+                en: "Workflow In Progress",
+                de: "Workflow in Bearbeitung"
+            },
+            DashboardWorkflowBottleneck: {
+                en: "Workflow Bottleneck",
+                de: "Workflow-Engpass"
+            },
+            DashboardWorkflowQuality: {
+                en: "Workflow Quality",
+                de: "Workflow-Qualität"
+            },
+            DashboardWorkspaceIntelligence: {
+                en: "Workspace Intelligence",
+                de: "Workspace Intelligence"
+            },
+            DashboardWorkflowConfidence: {
+                en: "Workflow Confidence",
+                de: "Workflow-Vertrauen"
+            },
+            DashboardRiskSignalOverview: {
+                en: "Risk Signal Overview",
+                de: "Risikosignal-Übersicht"
+            },
+            DashboardNextStrategicAction: {
+                en: "Next Strategic Action",
+                de: "Nächste strategische Aktion"
+            },
+            DashboardReviewWorkspace: {
+                en: "Review workspace",
+                de: "Workspace prüfen"
+            },
+            DashboardStartWorkspace: {
+                en: "Start workspace",
+                de: "Workspace starten"
+            },
+            DashboardActiveStatus: {
+                en: "Active",
+                de: "Aktiv"
+            },
+            DashboardOpenStatus: {
+                en: "Open",
+                de: "Offen"
+            },
+            DashboardCapturedInspectionEvidence: {
+                en: "Captured inspection evidence",
+                de: "Erfasste Inspection Evidence"
+            },
+            DashboardTechnicalFindingsIdentified: {
+                en: "Technical findings identified",
+                de: "Technische Findings identifiziert"
+            },
+            DashboardRiskAssessmentsCompleted: {
+                en: "Risk assessments completed",
+                de: "Risk Assessments abgeschlossen"
+            },
+            DashboardActionsRecommended: {
+                en: "Actions recommended",
+                de: "Handlungen empfohlen"
+            },
+            DashboardGovernanceDecisionsConfirmed: {
+                en: "Governance decisions confirmed",
+                de: "Governance Decisions bestätigt"
+            },
+            DashboardFinalOutputPrepared: {
+                en: "Final output prepared",
+                de: "Finale Ausgabe vorbereitet"
+            },
+            DashboardAllStagesContainData: {
+                en: "All workflow stages contain data. Review final output quality and completeness.",
+                de: "Alle Workflow-Stufen enthalten Daten. Finale Ausgabequalität und Vollständigkeit prüfen."
+            },
+            DashboardReviewWorkflow: {
+                en: "Review workflow",
+                de: "Workflow prüfen"
+            },
+            DashboardWorkflowDataPresent: {
+                en: "Workflow data is present. Review stage quality before moving forward.",
+                de: "Workflow-Daten sind vorhanden. Stufenqualität vor dem nächsten Schritt prüfen."
+            },
+            DashboardNextAttention: {
+                en: "Next attention",
+                de: "Nächster Fokus"
+            },
+            DashboardStageMissingSuffix: {
+                en: "is still missing or not yet represented in the workflow.",
+                de: "fehlt noch oder ist im Workflow noch nicht abgebildet."
+            },
+            DashboardCompleteWorkflowCoverage: {
+                en: "Complete workflow coverage",
+                de: "Vollständige Workflow-Abdeckung"
+            },
+            DashboardCompleteWorkflowCoverageDescription: {
+                en: "All workflow stages are represented. Focus on review quality, consistency and final report confidence.",
+                de: "Alle Workflow-Stufen sind abgebildet. Fokus auf Prüfqualität, Konsistenz und finales Berichtvertrauen."
+            },
+            DashboardStrongWorkflowProgress: {
+                en: "Strong workflow progress",
+                de: "Starker Workflow-Fortschritt"
+            },
+            DashboardStrongWorkflowProgressDescription: {
+                en: "Most workflow stages are represented. Remaining gaps should be closed before final decision or report output.",
+                de: "Die meisten Workflow-Stufen sind abgebildet. Verbleibende Lücken sollten vor finaler Decision oder Berichtsausgabe geschlossen werden."
+            },
+            DashboardPartialWorkflowCoverage: {
+                en: "Partial workflow coverage",
+                de: "Teilweise Workflow-Abdeckung"
+            },
+            DashboardPartialWorkflowCoverageDescription: {
+                en: "The workflow is active but still incomplete. Continue linking evidence, findings and downstream decisions.",
+                de: "Der Workflow ist aktiv, aber noch unvollständig. Evidence, Findings und nachgelagerte Decisions weiter verknüpfen."
+            },
+            DashboardEarlyWorkflowStage: {
+                en: "Early workflow stage",
+                de: "Frühe Workflow-Stufe"
+            },
+            DashboardEarlyWorkflowStageDescription: {
+                en: "Only the first workflow stages are represented. Start with evidence capture and finding creation.",
+                de: "Nur die ersten Workflow-Stufen sind abgebildet. Mit Evidence-Erfassung und Finding-Erstellung starten."
+            },
+            DashboardLowSignalDensity: {
+                en: "Low signal density",
+                de: "Geringe Signaldichte"
+            },
+            DashboardLowSignalDensityDescription: {
+                en: "Risk logic is still light. More findings and assessments are needed before strong conclusions.",
+                de: "Die Risikologik ist noch dünn. Mehr Findings und Assessments sind vor belastbaren Schlussfolgerungen erforderlich."
+            },
+            DashboardHighSignalDensity: {
+                en: "High signal density",
+                de: "Hohe Signaldichte"
+            },
+            DashboardHighSignalDensityDescription: {
+                en: "Multiple downstream risk signals are present. Review consistency before decision output.",
+                de: "Mehrere nachgelagerte Risikosignale liegen vor. Konsistenz vor der Decision-Ausgabe prüfen."
+            },
+            DashboardModerateSignalDensity: {
+                en: "Moderate signal density",
+                de: "Mittlere Signaldichte"
+            },
+            DashboardModerateSignalDensityDescription: {
+                en: "The workflow contains usable risk signals, but decision confidence depends on review quality.",
+                de: "Der Workflow enthält nutzbare Risikosignale, aber das Decision-Vertrauen hängt von der Prüfqualität ab."
+            },
+            DashboardLowConfidence: {
+                en: "Low confidence",
+                de: "Geringes Vertrauen"
+            },
+            DashboardLowConfidenceDescription: {
+                en: "The workflow is not yet sufficiently connected for reliable decision support.",
+                de: "Der Workflow ist noch nicht ausreichend verknüpft für belastbare Entscheidungsunterstützung."
+            },
+            DashboardHighConfidence: {
+                en: "High confidence",
+                de: "Hohes Vertrauen"
+            },
+            DashboardHighConfidenceDescription: {
+                en: "The workflow is strongly represented and ready for executive-level review.",
+                de: "Der Workflow ist stark abgebildet und bereit für die Executive-Prüfung."
+            },
+            DashboardDevelopingConfidence: {
+                en: "Developing confidence",
+                de: "Vertrauen in Entwicklung"
+            },
+            DashboardDevelopingConfidenceDescription: {
+                en: "The platform has enough structure for directional insight, but key gaps may remain.",
+                de: "Die Plattform hat genügend Struktur für eine Richtungsaussage, zentrale Lücken können aber verbleiben."
+            },
+            DashboardReviewExecutiveOutput: {
+                en: "Review executive output",
+                de: "Executive Output prüfen"
+            },
+            DashboardReviewExecutiveOutputDescription: {
+                en: "All workflow stages are represented. Focus on final report quality, consistency and decision confidence.",
+                de: "Alle Workflow-Stufen sind abgebildet. Fokus auf finale Berichtqualität, Konsistenz und Decision-Vertrauen."
+            },
+            DashboardCompleteWorkflowChain: {
+                en: "Complete workflow chain",
+                de: "Workflow-Kette vervollständigen"
+            },
+            DashboardCompleteWorkflowChainDescription: {
+                en: "Continue building the workflow from evidence through report.",
+                de: "Workflow von Evidence bis Report weiter aufbauen."
+            },
+            DashboardDecisionWorkflowComplete: {
+                en: "Decision workflow is fully represented.",
+                de: "Decision Workflow ist vollständig abgebildet."
+            },
+            DashboardDecisionWorkflowDeveloping: {
+                en: "Decision workflow is still developing.",
+                de: "Decision Workflow ist noch in Entwicklung."
+            },
+            DashboardPlatformCoverageReady: {
+                en: "The platform has enough cross-workspace coverage to support final review and reporting.",
+                de: "Die Plattform verfügt über ausreichende Workspace-übergreifende Abdeckung für finale Prüfung und Reporting."
+            },
+            DashboardPlatformCoverageDeveloping: {
+                en: "The platform should continue closing workflow gaps before relying on the output for final decisions.",
+                de: "Die Plattform sollte Workflow-Lücken weiter schließen, bevor die Ausgabe für finale Entscheidungen genutzt wird."
+            },
+            DashboardDecisionWorkflow: {
+                en: "Decision Workflow",
+                de: "Decision Workflow"
+            },
+            DashboardEvidenceToReport: {
+                en: "Evidence → Report",
+                de: "Evidence → Report"
+            },
+            DashboardOf: {
+                en: "of",
+                de: "von"
+            },
+            DashboardMediumHigh: {
+                en: "Medium High",
+                de: "Mittel-hoch"
+            },
+            DashboardMedium: {
+                en: "Medium",
+                de: "Mittel"
+            },
+            DashboardLow: {
+                en: "Low",
+                de: "Niedrig"
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."
