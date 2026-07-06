@@ -631,9 +631,9 @@ export default class InspectionQuestionCatalog {
         return {
             title: data.title || "Adaptive Inspection Scope",
             scopeType: data.scopeType || "Visual Technical Due Diligence",
-            modules: this.modules,
-            questions: this.getStarterScopeQuestions(),
-            answers: {}
+            modules: data.modules || this.modules,
+            questions: this.getStarterScopeQuestions(data),
+            answers: data.answers || {}
         };
     }
 

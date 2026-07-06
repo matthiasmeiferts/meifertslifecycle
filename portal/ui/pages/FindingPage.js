@@ -1,4 +1,3 @@
-import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import WorkspaceController from "../../controllers/WorkspaceController.js";
 import FindingManager from "../../core/FindingManager.js";
 import EvidenceManager from "../../core/EvidenceManager.js";
@@ -631,7 +630,7 @@ export default class FindingPage {
         FindingManager.set(updatedFinding);
 
         Notification.success("Assessment created from selected finding.");
-        WorkspaceRouter.navigate("assessments");
+        window.location.hash = "assessments";
     }
 
     static editSelectedFinding() {

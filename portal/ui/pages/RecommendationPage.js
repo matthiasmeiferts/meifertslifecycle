@@ -1,4 +1,3 @@
-import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
 import CaseManager from "../../core/CaseManager.js";
@@ -610,7 +609,7 @@ export default class RecommendationPage {
         RecommendationManager.set(updatedRecommendation);
 
         Notification.success("Decision created from selected recommendation.");
-        WorkspaceRouter.navigate("decisions");
+        window.location.hash = "decisions";
     }
 
     static getRecommendations() {

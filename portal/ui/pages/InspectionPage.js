@@ -12,7 +12,6 @@ import EmptyState from "../components/EmptyState.js";
 import DetailPanel from "../components/DetailPanel.js";
 import Notification from "../components/Notification.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
-import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 
 export default class InspectionPage {
 
@@ -40,6 +39,97 @@ export default class InspectionPage {
         }
 
         return {};
+    }
+
+    static getEffectiveCatalogOptions(activeScope = null) {
+        const selectedProfile = this.getInspectionProfile();
+
+        if (selectedProfile === "pattaya" || activeScope?.profile === "pattaya") {
+            return {
+                profile: "pattaya",
+                country: "TH",
+                region: "Pattaya / Chonburi"
+            };
+        }
+
+        return {};
+    }
+
+    static isScopeCatalogMismatch(activeScope = null, catalogOptions = {}) {
+        if (!activeScope || !Array.isArray(activeScope.questions)) {
+            return false;
+        }
+
+        const selectedProfile = this.getInspectionProfile();
+        const isPattaya = selectedProfile === "pattaya" || catalogOptions.profile === "pattaya" || activeScope.profile === "pattaya";
+        const hasPattayaQuestions = activeScope.questions.some(question =>
+            String(question.id || "").startsWith("TH-PATTAYA-")
+        );
+
+        const hasDefaultQuestions = activeScope.questions.some(question =>
+            ["SCOPE-", "ROOF-", "FACADE-", "BASEMENT-", "ELECTRICAL-", "FIRE-", "DOCUMENTS-", "CAPEX-"]
+                .some(prefix => String(question.id || "").startsWith(prefix))
+        );
+
+        return isPattaya && (!hasPattayaQuestions || hasDefaultQuestions);
+    }
+
+    static getEffectiveScopeQuestions(activeScope = null, catalogOptions = {}) {
+        if (!activeScope) {
+            return InspectionQuestionCatalog.getStarterScopeQuestions(catalogOptions);
+        }
+
+        if (this.isScopeCatalogMismatch(activeScope, catalogOptions)) {
+            const scopeData = InspectionQuestionCatalog.createStarterScopeData(catalogOptions);
+            const resyncedScope = InspectionScopeManager.update({
+                ...activeScope,
+                ...scopeData,
+                profile: catalogOptions.profile || activeScope.profile || "default",
+                country: catalogOptions.country || activeScope.country || null,
+                region: catalogOptions.region || activeScope.region || null,
+                answers: {},
+                evidenceRequirements: [],
+                riskFlags: [],
+                limitations: [],
+                status: "Draft"
+            });
+
+            InspectionScopeManager.set(resyncedScope || {
+                ...activeScope,
+                ...scopeData,
+                profile: catalogOptions.profile || activeScope.profile || "default",
+                country: catalogOptions.country || activeScope.country || null,
+                region: catalogOptions.region || activeScope.region || null,
+                answers: {},
+                evidenceRequirements: [],
+                riskFlags: [],
+                limitations: [],
+                status: "Draft"
+            });
+
+            return scopeData.questions;
+        }
+
+        return activeScope.questions || InspectionQuestionCatalog.getStarterScopeQuestions(catalogOptions);
+    }
+
+    static getModuleSummaries(questions = []) {
+        const grouped = new Map();
+
+        questions.forEach(question => {
+            const moduleId = question.module || "Inspection";
+            const current = grouped.get(moduleId) || {
+                id: moduleId,
+                label: moduleId,
+                riskCategory: question.riskCategory || question.category || "Technical Review",
+                count: 0
+            };
+
+            current.count += 1;
+            grouped.set(moduleId, current);
+        });
+
+        return [...grouped.values()];
     }
 
     static createInspectionProfileControl(activeScope = null) {
@@ -376,10 +466,11 @@ export default class InspectionPage {
 
     static createInspectionScopeOverview(activeInspection = null) {
         const activeScope = this.getActiveScope(activeInspection);
-        const catalogOptions = this.getCatalogOptions();
-        const modules = InspectionQuestionCatalog.getModules();
-        const questions = activeScope?.questions || InspectionQuestionCatalog.getStarterScopeQuestions(catalogOptions);
-        const answers = activeScope?.answers || {};
+        const catalogOptions = this.getEffectiveCatalogOptions(activeScope);
+        const questions = this.getEffectiveScopeQuestions(activeScope, catalogOptions);
+        const refreshedScope = activeScope?.id ? (InspectionScopeManager.load(activeScope.id) || activeScope) : activeScope;
+        const modules = this.getModuleSummaries(questions);
+        const answers = refreshedScope?.answers || {};
         const coverage = activeScope
             ? InspectionScopeManager.createCoverageSummary(questions, answers)
             : InspectionScopeManager.createCoverageSummary(questions, answers);
@@ -459,7 +550,7 @@ export default class InspectionPage {
         modulePanel.appendChild(moduleHeader);
 
         modules.forEach((module, index) => {
-            const moduleQuestions = InspectionQuestionCatalog.getByModule(module.id, catalogOptions);
+            const moduleQuestions = questions.filter(question => question.module === module.id);
             const item = document.createElement("article");
             item.className = "inspection-scope-editorial__module";
 
@@ -532,7 +623,7 @@ export default class InspectionPage {
 
         workPanel.appendChild(workHeader);
         workPanel.appendChild(questionCard);
-        workPanel.appendChild(this.createScopeSignalPanel(activeScope));
+        workPanel.appendChild(this.createScopeSignalPanel(refreshedScope, questions));
         workPanel.appendChild(coveragePanel);
 
         body.appendChild(modulePanel);
@@ -556,6 +647,46 @@ export default class InspectionPage {
     }
 
     static getAnswerOptions(question = {}) {
+        const questionId = String(question.id || "");
+        const isPattayaQuestion = questionId.startsWith("TH-PATTAYA-");
+
+        if (isPattayaQuestion) {
+            if (
+                questionId.includes("-DOC-") ||
+                String(question.module || "").toLowerCase().includes("dokument")
+            ) {
+                return [
+                    { value: "Verfügbar", label: "Verfügbar" },
+                    { value: "Nicht verfügbar", label: "Nicht verfügbar" },
+                    { value: "Angefragt", label: "Angefragt" },
+                    { value: "Nicht geprüft", label: "Nicht geprüft" }
+                ];
+            }
+
+            return [
+                { value: "i.O.", label: "i.O." },
+                { value: "Auffällig", label: "Auffällig" },
+                { value: "Nicht prüfbar", label: "Nicht prüfbar" },
+                { value: "Hinweis", label: "Hinweis" }
+            ];
+        }
+
+        if (Array.isArray(question.answerOptions) && question.answerOptions.length) {
+            return question.answerOptions.map(option => {
+                if (typeof option === "object") {
+                    return {
+                        value: option.value || option.label || "",
+                        label: option.label || option.value || ""
+                    };
+                }
+
+                return {
+                    value: option,
+                    label: option
+                };
+            });
+        }
+
         const type = question.answerType || "yes_no_unknown";
 
         if (type.includes("not_accessible")) {
@@ -616,13 +747,24 @@ export default class InspectionPage {
         this.refresh();
     }
 
-    static createScopeSignalPanel(activeScope = null) {
+    static createScopeSignalPanel(activeScope = null, questions = []) {
         const panel = document.createElement("section");
         panel.className = "inspection-scope-editorial__signals";
 
-        const evidenceRequirements = activeScope?.evidenceRequirements || [];
-        const riskFlags = activeScope?.riskFlags || [];
-        const limitations = activeScope?.limitations || [];
+        const activeQuestionIds = new Set((questions || []).map(question => question.id));
+        const answeredQuestionIds = new Set(Object.keys(activeScope?.answers || {}));
+
+        const isActiveAnsweredSignal = item =>
+            activeQuestionIds.has(item.questionId) && answeredQuestionIds.has(item.questionId);
+
+        const evidenceRequirements = (activeScope?.evidenceRequirements || [])
+            .filter(isActiveAnsweredSignal);
+
+        const riskFlags = (activeScope?.riskFlags || [])
+            .filter(isActiveAnsweredSignal);
+
+        const limitations = (activeScope?.limitations || [])
+            .filter(isActiveAnsweredSignal);
 
         [
             {
@@ -689,7 +831,7 @@ export default class InspectionPage {
         wrapper.appendChild(header);
 
         evidenceRequirements.forEach(requirement => {
-            const question = InspectionQuestionCatalog.getById(requirement.questionId);
+            const question = InspectionQuestionCatalog.getById(requirement.questionId, activeScope?.profile === 'pattaya' || this.getInspectionProfile() === 'pattaya' ? { profile: 'pattaya', country: 'TH', region: 'Pattaya / Chonburi' } : {});
             const item = document.createElement("article");
             item.className = "inspection-scope-editorial__requirement";
 
@@ -815,7 +957,7 @@ export default class InspectionPage {
 
         Notification.success("Evidence created from inspection scope.");
         sessionStorage.setItem("workspaceScrollTarget", "evidence-list");
-        WorkspaceRouter.navigate("evidence");
+        window.location.hash = "evidence";
     }
 
     static formatEvidenceType(type = "note") {
@@ -826,11 +968,30 @@ export default class InspectionPage {
 
     static startAdaptiveScope(activeInspection = null) {
         try {
-            const currentCase = CaseManager.getCurrent();
+            const isPattayaProfile = this.getInspectionProfile() === "pattaya";
+
+            let currentCase = CaseManager.getCurrent();
+            let inspection = activeInspection || InspectionManager.getInspection();
+
+            if (!currentCase && isPattayaProfile) {
+                currentCase = CaseManager.getAll()[0] || null;
+
+                if (currentCase) {
+                    CaseManager.open(currentCase);
+                }
+            }
+
+            if (!inspection && isPattayaProfile) {
+                inspection = InspectionManager.getAllInspections()[0] || null;
+
+                if (inspection) {
+                    InspectionManager.set(inspection);
+                }
+            }
+
             const currentBuilding = currentCase?.buildingId
                 ? BuildingManager.load(currentCase.buildingId)
                 : BuildingManager.get();
-            const inspection = activeInspection || InspectionManager.getInspection();
 
             if (!currentCase) {
                 Notification.info("Open a case before starting an inspection scope.");

@@ -1,4 +1,3 @@
-import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import DecisionManager from "../../core/DecisionManager.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
@@ -635,7 +634,7 @@ export default class DecisionPage {
         DecisionManager.set(updatedDecision);
 
         Notification.success("Report created from selected decision.");
-        WorkspaceRouter.navigate("reports");
+        window.location.hash = "reports";
     }
 
     static getDecisions() {

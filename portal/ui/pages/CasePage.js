@@ -14,7 +14,6 @@ import StatusBadge from "../components/StatusBadge.js";
 import FormDialog from "../components/FormDialog.js";
 import DetailPanel from "../components/DetailPanel.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
-import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 
 export default class CasePage {
 
@@ -409,7 +408,7 @@ export default class CasePage {
 
             button.onclick = () => {
                 if (!current) return;
-                WorkspaceRouter.navigate(item.route);
+                window.location.hash = item.route;
             };
 
             actions.appendChild(button);

@@ -479,17 +479,7 @@ export default class DashboardPage {
                     return;
                 }
 
-                if (typeof WorkspaceRouter !== "undefined" && WorkspaceRouter.navigate) {
-                    WorkspaceRouter.navigate(route);
-                    return;
-                }
-
-                if (window.location.hash !== undefined) {
-                    window.location.hash = route;
-                    return;
-                }
-
-                window.location.href = `${route}.html`;
+                window.location.hash = route;
             });
         });
     }

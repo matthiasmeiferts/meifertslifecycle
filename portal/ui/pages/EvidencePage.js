@@ -1,4 +1,3 @@
-import WorkspaceRouter from "../../router/WorkspaceRouter.js";
 import WorkspaceController from "../../controllers/WorkspaceController.js";
 import EvidenceManager from "../../core/EvidenceManager.js";
 import CaseManager from "../../core/CaseManager.js";
@@ -664,7 +663,7 @@ export default class EvidencePage {
         EvidenceManager.set(updatedEvidence);
 
         Notification.success("Finding created from selected evidence.");
-        WorkspaceRouter.navigate("findings");
+        window.location.hash = "findings";
     }
 
     static editSelectedEvidence() {
