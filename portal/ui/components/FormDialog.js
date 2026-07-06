@@ -78,11 +78,18 @@ export default class FormDialog {
         select.name = field.id;
 
         (field.options || []).forEach(option => {
-            const item = document.createElement("option");
-            item.value = option;
-            item.textContent = option;
+            const optionValue = typeof option === "object" && option !== null
+                ? option.value
+                : option;
+            const optionLabel = typeof option === "object" && option !== null
+                ? option.label
+                : optionValue;
 
-            if (option === value) {
+            const item = document.createElement("option");
+            item.value = optionValue;
+            item.textContent = optionLabel;
+
+            if (optionValue === value) {
                 item.selected = true;
             }
 

@@ -5,6 +5,7 @@ import BuildingManager from "../../core/BuildingManager.js";
 import InspectionManager from "../../core/InspectionManager.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import LanguageManager from "../../core/LanguageManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
 import WorkflowProgressPanel from "../components/WorkflowProgressPanel.js";
@@ -21,22 +22,22 @@ export default class AssessmentPage {
     static flowSteps = [
         {
             key: "assessment",
-            label: "Assessment",
-            description: "Risk assessment defined"
+            label: LanguageManager.t("WorkflowStepAssessment"),
+            description: LanguageManager.t("AssessmentRiskAssessmentDefined")
         },
         {
             key: "recommendation",
-            label: "Recommendation",
-            description: "Action recommendation derived"
+            label: LanguageManager.t("AssessmentWorkflowRecommendation"),
+            description: LanguageManager.t("AssessmentActionRecommendationDerived")
         }
     ];
 
     static statusLabels = {
-        draft: "Draft",
-        assessed: "Assessed",
-        recommended: "Recommended",
-        reviewed: "Reviewed",
-        blocked: "Blocked"
+        draft: LanguageManager.t("AssessmentStatusDraft"),
+        assessed: LanguageManager.t("AssessmentStatusAssessed"),
+        recommended: LanguageManager.t("AssessmentStatusRecommended"),
+        reviewed: LanguageManager.t("AssessmentStatusReviewed"),
+        blocked: LanguageManager.t("AssessmentStatusBlocked")
     };
 
     static render() {
@@ -81,10 +82,10 @@ export default class AssessmentPage {
         const flowState = this.getFlowState(assessment);
 
         return `
-            <section class="workspace-flow" aria-label="Active workflow state">
+            <section class="workspace-flow" aria-label="${LanguageManager.t("AssessmentActiveWorkflowStateLabel")}">
                 <div class="workspace-flow__header">
-                    <span class="workspace-flow__eyebrow">Active Flow</span>
-                    <strong>Assessment → Recommendation</strong>
+                    <span class="workspace-flow__eyebrow">${LanguageManager.t("AssessmentActiveFlowLabel")}</span>
+                    <strong>${LanguageManager.t("AssessmentToRecommendationLabel")}</strong>
                 </div>
 
                 <div class="workspace-flow__steps">
@@ -147,7 +148,7 @@ export default class AssessmentPage {
     static renderAssessmentStatusBadge(assessment = {}) {
         assessment = assessment || {};
         const status = this.getAssessmentStatus(assessment);
-        const label = this.statusLabels[status] || "Draft";
+        const label = this.statusLabels[status] || LanguageManager.t("AssessmentStatusDraft");
 
         return `<span class="evidence-status evidence-status--${status}">${label}</span>`;
     }
@@ -160,39 +161,39 @@ export default class AssessmentPage {
 
         if (status === "blocked") {
             return {
-                label: "Resolve blocker",
-                description: "This assessment cannot move forward until the blocker is cleared.",
+                label: LanguageManager.t("AssessmentResolveBlocker"),
+                description: LanguageManager.t("AssessmentResolveBlockerDescription"),
                 tone: "blocked"
             };
         }
 
         if (status === "reviewed") {
             return {
-                label: "Create or confirm recommendation",
-                description: "Assessment is reviewed and ready to support an action recommendation.",
+                label: LanguageManager.t("AssessmentCreateConfirmRecommendation"),
+                description: LanguageManager.t("AssessmentReadyForRecommendation"),
                 tone: "ready"
             };
         }
 
         if (status === "recommended") {
             return {
-                label: "Review linked recommendation",
-                description: "This assessment is already connected to a recommendation. Check action logic and completeness.",
+                label: LanguageManager.t("AssessmentReviewLinkedRecommendation"),
+                description: LanguageManager.t("AssessmentAlreadyLinkedRecommendationDescription"),
                 tone: "linked"
             };
         }
 
         if (status === "assessed") {
             return {
-                label: "Create recommendation",
-                description: "The assessment is complete enough to derive a recommended action.",
+                label: LanguageManager.t("AssessmentCreateRecommendationShort"),
+                description: LanguageManager.t("AssessmentCompleteEnoughForRecommendation"),
                 tone: "active"
             };
         }
 
         return {
-            label: "Complete assessment",
-            description: "Define risk level, severity, probability or impact before creating a recommendation.",
+            label: LanguageManager.t("AssessmentCompleteAssessment"),
+            description: LanguageManager.t("AssessmentCompleteAssessmentDescription"),
             tone: "draft"
         };
     }
@@ -202,9 +203,9 @@ export default class AssessmentPage {
         const action = this.getNextAction(assessment);
 
         return `
-            <section class="next-action next-action--${action.tone}" aria-label="Next action">
+            <section class="next-action next-action--${action.tone}" aria-label="${LanguageManager.t("AssessmentNextActionAriaLabel")}">
                 <div>
-                    <span class="next-action__eyebrow">Next Action</span>
+                    <span class="next-action__eyebrow">${LanguageManager.t("AssessmentNextActionHeading")}</span>
                     <strong>${action.label}</strong>
                     <p>${action.description}</p>
                 </div>
@@ -221,15 +222,15 @@ export default class AssessmentPage {
 
     static createHeader(activeAssessment = null) {
         return SectionHeader.create({
-            eyebrow: "Assessment Workspace",
-            title: "Assessments",
+            eyebrow: LanguageManager.t("AssessmentWorkspaceTitle"),
+            title: LanguageManager.t("AssessmentTitlePlural"),
             description: activeAssessment
-                ? `Active assessment: ${activeAssessment.title || activeAssessment.id}`
-                : "Evaluate findings, determine condition, estimate remaining useful life, assess technical risk, and prepare CAPEX planning.",
+                ? `${LanguageManager.t("AssessmentActivePrefix")}: ${activeAssessment.title || activeAssessment.id}`
+                : LanguageManager.t("AssessmentHeaderDescription"),
             actions: [
                 {
                     id: "new-assessment",
-                    label: "+ New Assessment",
+                    label: LanguageManager.t("AssessmentNewAction"),
                     onClick: () => this.createSampleAssessment()
                 }
             ]
@@ -238,7 +239,7 @@ export default class AssessmentPage {
 
     static createMetrics(assessments = this.getAssessments()) {
         const highRiskCount = assessments.filter(item => item.severity === "High" || item.severity === "Critical").length;
-        const acceptedCount = assessments.filter(item => item.status === "Accepted").length;
+        const acceptedCount = assessments.filter(item => String(item.status || "").toLowerCase() === "accepted").length;
         const highestRisk = assessments.length
             ? Math.max(...assessments.map(item => item.riskScore || 0))
             : 0;
@@ -246,10 +247,10 @@ export default class AssessmentPage {
         const grid = document.createElement("section");
         grid.className = "metrics-grid";
 
-        grid.appendChild(MetricCard.create("Assessments", assessments.length));
-        grid.appendChild(MetricCard.create("High Risk", highRiskCount));
-        grid.appendChild(MetricCard.create("Accepted", acceptedCount));
-        grid.appendChild(MetricCard.create("Linked Recommendations", this.countRecommendationsLinkedToAssessment()));
+        grid.appendChild(MetricCard.create(LanguageManager.t("AssessmentTotalMetric"), assessments.length));
+        grid.appendChild(MetricCard.create(LanguageManager.t("AssessmentHighRiskMetric"), highRiskCount));
+        grid.appendChild(MetricCard.create(LanguageManager.t("AssessmentAcceptedMetric"), acceptedCount));
+        grid.appendChild(MetricCard.create(LanguageManager.t("AssessmentLinkedRecommendationsMetric"), this.countRecommendationsLinkedToAssessment()));
 
         return grid;
     }
@@ -261,12 +262,12 @@ export default class AssessmentPage {
         wrapper.appendChild(ActionBar.create([
             {
                 id: "refresh",
-                label: "Refresh",
+                label: LanguageManager.t("FindingRefreshAction"),
                 onClick: () => this.refresh()
             },
             {
                 id: "close-assessment",
-                label: "Close Assessment",
+                label: LanguageManager.t("AssessmentCloseAction"),
                 onClick: () => {
                     AssessmentManager.clear();
                     this.refresh();
@@ -274,12 +275,12 @@ export default class AssessmentPage {
             },
             {
                 id: "risk-model",
-                label: "Create Assessment",
+                label: LanguageManager.t("AssessmentCreateAction"),
                 onClick: () => this.createSampleAssessment()
             },
             {
                 id: "create-recommendation",
-                label: "Create Recommendation",
+                label: LanguageManager.t("AssessmentCreateRecommendationAction"),
                 onClick: () => this.createRecommendationFromSelectedAssessment()
             }
         ]));
@@ -300,10 +301,10 @@ export default class AssessmentPage {
     static createContent(assessments = this.getAssessments()) {
         if (!assessments.length) {
             return EmptyState.create({
-                eyebrow: "Assessment Workspace",
-                title: "No assessments available",
-                description: "Assessment records will translate findings into condition, risk, remaining useful life, and CAPEX logic.",
-                actionLabel: "+ New Assessment",
+                eyebrow: LanguageManager.t("AssessmentWorkspaceTitle"),
+                title: LanguageManager.t("AssessmentEmptyTitle"),
+                description: LanguageManager.t("AssessmentEmptyStateDescriptionLong"),
+                actionLabel: LanguageManager.t("AssessmentNewAction"),
                 onAction: () => this.createSampleAssessment()
             });
         }
@@ -331,12 +332,12 @@ export default class AssessmentPage {
         content.className = "evidence-row__content";
 
         const title = document.createElement("strong");
-        title.textContent = assessment.title || assessment.id || "Assessment Item";
+        title.textContent = assessment.title || assessment.id || LanguageManager.t("AssessmentItemFallback");
 
         const meta = document.createElement("span");
         meta.textContent = [
             assessment.category || "General",
-            `Risk ${assessment.riskScore || 0}`,
+            `${LanguageManager.t("AssessmentRiskPrefix")} ${assessment.riskScore || 0}`,
             assessment.source || ""
         ].filter(Boolean).join(" · ");
 
@@ -351,9 +352,9 @@ export default class AssessmentPage {
         actions.className = "evidence-row__actions";
 
         [
-            ["open", "Open"],
-            ["edit", "Edit"],
-            ["delete", "Delete"]
+            ["open", LanguageManager.t("ReportOpenAction")],
+            ["edit", LanguageManager.t("ReportEditAction")],
+            ["delete", LanguageManager.t("ReportDeleteAction")]
         ].forEach(([action, label]) => {
             const button = document.createElement("button");
             button.type = "button";
@@ -391,36 +392,36 @@ export default class AssessmentPage {
 
     static createDetailPanel(activeAssessment = AssessmentManager.get(), assessments = this.getAssessments()) {
         if (!activeAssessment) {
-            return DetailPanel.create("Assessment Context", [
-                { label: "Assessments", value: String(assessments.length) },
-                { label: "Selected Assessment", value: "Not selected" },
-                { label: "Technical Risk", value: assessments.length ? "In Review" : "Pending" },
-                { label: "Workspace Status", value: "—" },
-                { label: "Next Step", value: "Create or select an assessment" }
+            return DetailPanel.create(LanguageManager.t("AssessmentContextTitle"), [
+                { label: LanguageManager.t("AssessmentTotalMetric"), value: String(assessments.length) },
+                { label: LanguageManager.t("AssessmentSelectedLabel"), value: LanguageManager.t("AssessmentNotSelected") },
+                { label: LanguageManager.t("AssessmentTechnicalRiskLabel"), value: assessments.length ? LanguageManager.t("AssessmentInReview") : LanguageManager.t("AssessmentPending") },
+                { label: LanguageManager.t("AssessmentWorkspaceStatusLabel"), value: "—" },
+                { label: LanguageManager.t("AssessmentNextStepLabel"), value: LanguageManager.t("AssessmentCreateOrSelect") }
             ]);
         }
 
-        const statusLabel = this.statusLabels[this.getAssessmentStatus(activeAssessment)] || "Draft";
+        const statusLabel = this.statusLabels[this.getAssessmentStatus(activeAssessment)] || LanguageManager.t("AssessmentStatusDraft");
 
-        return DetailPanel.create("Assessment Context", [
-            { label: "Selected Assessment", value: activeAssessment.title || activeAssessment.id },
-            { label: "Workspace Status", value: statusLabel },
-            { label: "Safety Boundaries", value: DetailPanel.createBoundaryBadges(activeAssessment) },
-            { label: "Source", value: activeAssessment.source || "Assessment Review" },
-            { label: "Case ID", value: activeAssessment.caseId || "Not linked" },
-            { label: "Building ID", value: activeAssessment.buildingId || "Not linked" },
-            { label: "Inspection ID", value: activeAssessment.inspectionId || "Not linked" },
-            { label: "Finding IDs", value: (activeAssessment.findingIds || []).join(", ") || "None" },
-            { label: "Evidence IDs", value: (activeAssessment.evidenceIds || []).join(", ") || "None" },
-            { label: "Category", value: activeAssessment.category || "General" },
-            { label: "Building System", value: activeAssessment.buildingSystem || "Not linked" },
-            { label: "Severity", value: activeAssessment.severity || "Unrated" },
-            { label: "Probability", value: activeAssessment.probability || "Unrated" },
-            { label: "Consequence", value: activeAssessment.consequence || "Unrated" },
-            { label: "Risk Score", value: String(activeAssessment.riskScore || 0) },
-            { label: "Description", value: activeAssessment.description || "No description" },
-            { label: "Recommendation IDs", value: (activeAssessment.recommendationIds || []).join(", ") || "None" },
-            { label: "Linked Recommendations", value: String(this.countRecommendationsLinkedToAssessment(activeAssessment.id)) }
+        return DetailPanel.create(LanguageManager.t("AssessmentContextTitle"), [
+            { label: LanguageManager.t("AssessmentSelectedLabel"), value: activeAssessment.title || activeAssessment.id },
+            { label: LanguageManager.t("AssessmentWorkspaceStatusLabel"), value: statusLabel },
+            { label: LanguageManager.t("AssessmentSafetyBoundariesLabel"), value: DetailPanel.createBoundaryBadges(activeAssessment) },
+            { label: LanguageManager.t("AssessmentSourceLabel"), value: activeAssessment.source || LanguageManager.t("AssessmentReviewSource") },
+            { label: LanguageManager.t("AssessmentCaseIdLabel"), value: activeAssessment.caseId || LanguageManager.t("AssessmentNotLinked") },
+            { label: LanguageManager.t("AssessmentBuildingIdLabel"), value: activeAssessment.buildingId || LanguageManager.t("AssessmentNotLinked") },
+            { label: LanguageManager.t("AssessmentInspectionIdLabel"), value: activeAssessment.inspectionId || LanguageManager.t("AssessmentNotLinked") },
+            { label: LanguageManager.t("AssessmentFindingIdsLabel"), value: (activeAssessment.findingIds || []).join(", ") || LanguageManager.t("AssessmentNone") },
+            { label: LanguageManager.t("AssessmentEvidenceIdsLabel"), value: (activeAssessment.evidenceIds || []).join(", ") || LanguageManager.t("AssessmentNone") },
+            { label: LanguageManager.t("AssessmentCategoryLabel"), value: activeAssessment.category || LanguageManager.t("AssessmentGeneral") },
+            { label: LanguageManager.t("AssessmentBuildingSystemLabel"), value: activeAssessment.buildingSystem || LanguageManager.t("AssessmentNotLinked") },
+            { label: LanguageManager.t("AssessmentSeverityLabel"), value: activeAssessment.severity || LanguageManager.t("AssessmentUnrated") },
+            { label: LanguageManager.t("AssessmentProbabilityLabel"), value: activeAssessment.probability || LanguageManager.t("AssessmentUnrated") },
+            { label: LanguageManager.t("AssessmentConsequenceLabel"), value: activeAssessment.consequence || LanguageManager.t("AssessmentUnrated") },
+            { label: LanguageManager.t("AssessmentRiskScoreLabel"), value: String(activeAssessment.riskScore || 0) },
+            { label: LanguageManager.t("AssessmentDescriptionField"), value: activeAssessment.description || LanguageManager.t("AssessmentNoDescription") },
+            { label: LanguageManager.t("AssessmentRecommendationIdsLabel"), value: (activeAssessment.recommendationIds || []).join(", ") || LanguageManager.t("AssessmentNone") },
+            { label: LanguageManager.t("AssessmentLinkedRecommendationsMetric"), value: String(this.countRecommendationsLinkedToAssessment(activeAssessment.id)) }
         ]);
     }
 
@@ -441,17 +442,17 @@ export default class AssessmentPage {
         const currentCase = CaseManager.getCurrent();
 
         if (!assessment) {
-            Notification.warning("Select an assessment first.");
+            Notification.warning(LanguageManager.t("AssessmentSelectFirstWarning"));
             return;
         }
 
         if (!assessment.caseId) {
-            Notification.warning("Selected assessment is not linked to a case.");
+            Notification.warning(LanguageManager.t("AssessmentNotLinkedCaseWarning"));
             return;
         }
 
         if (currentCase && currentCase.id !== assessment.caseId) {
-            Notification.warning("Selected assessment belongs to another case.");
+            Notification.warning(LanguageManager.t("AssessmentBelongsOtherCaseWarning"));
             return;
         }
 
@@ -463,12 +464,12 @@ export default class AssessmentPage {
         const riskScore = assessment.riskScore || 0;
 
         const recommendationTitle = assessment.title
-            ? `Recommendation Draft: ${assessment.title}`
-            : `Recommendation Draft from ${assessment.id}`;
+            ? `${LanguageManager.t("AssessmentRecommendationDraftPrefix")}: ${assessment.title}`
+            : `${LanguageManager.t("AssessmentRecommendationDraftFrom")} ${assessment.id}`;
 
         const actionText = isAvailabilityCheckOnly
-            ? "Record document availability status and request expert review before using this information for assessment, recommendation, decision or report purposes."
-            : "Review assessment context and define expert-approved next action.";
+            ? LanguageManager.t("AssessmentAvailabilityActionText")
+            : LanguageManager.t("AssessmentDefaultActionText");
 
         const timeframe = isAvailabilityCheckOnly
             ? "Planned"
@@ -482,38 +483,38 @@ export default class AssessmentPage {
             : "Medium";
 
         const descriptionParts = [
-            assessment.description || "Recommendation prepared from selected assessment.",
+            assessment.description || LanguageManager.t("AssessmentRecommendationPreparedFromSelected"),
             "",
-            "Recommendation status:",
-            "Draft recommendation created from selected assessment.",
-            "Expert review required before decision or report use.",
-            "No automatic decision or purchase recommendation is created by this action."
+            LanguageManager.t("AssessmentRecommendationStatusLabel"),
+            LanguageManager.t("AssessmentDraftRecommendationCreatedLine"),
+            LanguageManager.t("AssessmentExpertReviewBeforeDecisionLine"),
+            LanguageManager.t("AssessmentNoAutomaticDecisionLine")
         ];
 
         if (isAvailabilityCheckOnly) {
             descriptionParts.push("");
-            descriptionParts.push("Review boundary:");
-            descriptionParts.push("Document availability only. No legal, financial, technical or governance document review has been performed.");
-            descriptionParts.push("This recommendation draft may only request, record or clarify document availability. It must not validate document content.");
+            descriptionParts.push(LanguageManager.t("AssessmentReviewBoundaryLabel"));
+            descriptionParts.push(LanguageManager.t("AssessmentAvailabilityBoundaryLine"));
+            descriptionParts.push(LanguageManager.t("AssessmentRecommendationDraftBoundaryLine"));
         }
 
         if (isPattayaAssessment) {
             descriptionParts.push("");
-            descriptionParts.push("Thailand / Pattaya context:");
-            descriptionParts.push("Field review context retained for downstream decision and reporting.");
+            descriptionParts.push(LanguageManager.t("AssessmentThailandPattayaContextLabel"));
+            descriptionParts.push(LanguageManager.t("AssessmentFieldReviewContextLine"));
         }
 
         descriptionParts.push("");
-        descriptionParts.push("Assessment trace:");
-        descriptionParts.push(`Assessment ID: ${assessment.id}`);
-        descriptionParts.push(`Assessment source: ${assessment.source || "Assessment Review"}`);
-        descriptionParts.push(`Finding IDs: ${(assessment.findingIds || []).join(", ") || "None"}`);
-        descriptionParts.push(`Evidence IDs: ${(assessment.evidenceIds || []).join(", ") || "None"}`);
-        descriptionParts.push(`Source Finding IDs: ${(assessment.sourceFindingIds || []).join(", ") || "None"}`);
-        descriptionParts.push(`Source Evidence IDs: ${(assessment.sourceEvidenceIds || []).join(", ") || "None"}`);
-        descriptionParts.push(`Source policy: ${assessment.sourcePolicy || "None"}`);
-        descriptionParts.push(`Risk score: ${riskScore}`);
-        descriptionParts.push(`Expert review required: ${assessment.expertReviewRequired === false ? "No" : "Yes"}`);
+        descriptionParts.push(LanguageManager.t("AssessmentTraceLabel"));
+        descriptionParts.push(`${LanguageManager.t("AssessmentIdTraceLabel")}: ${assessment.id}`);
+        descriptionParts.push(`${LanguageManager.t("AssessmentSourceTraceLabel")}: ${assessment.source || LanguageManager.t("AssessmentReviewSource")}`);
+        descriptionParts.push(`${LanguageManager.t("AssessmentFindingIdsLabel")}: ${(assessment.findingIds || []).join(", ") || LanguageManager.t("AssessmentNone")}`);
+        descriptionParts.push(`${LanguageManager.t("AssessmentEvidenceIdsLabel")}: ${(assessment.evidenceIds || []).join(", ") || LanguageManager.t("AssessmentNone")}`);
+        descriptionParts.push(`${LanguageManager.t("AssessmentSourceFindingIdsTraceLabel")}: ${(assessment.sourceFindingIds || []).join(", ") || LanguageManager.t("AssessmentNone")}`);
+        descriptionParts.push(`${LanguageManager.t("AssessmentSourceEvidenceIdsTraceLabel")}: ${(assessment.sourceEvidenceIds || []).join(", ") || LanguageManager.t("AssessmentNone")}`);
+        descriptionParts.push(`${LanguageManager.t("AssessmentSourcePolicyTraceLabel")}: ${assessment.sourcePolicy || LanguageManager.t("AssessmentNone")}`);
+        descriptionParts.push(`${LanguageManager.t("AssessmentRiskScoreTraceLabel")}: ${riskScore}`);
+        descriptionParts.push(`${LanguageManager.t("AssessmentExpertReviewRequiredTraceLabel")}: ${assessment.expertReviewRequired === false ? LanguageManager.t("AssessmentNo") : LanguageManager.t("AssessmentYes")}`);
 
         const recommendation = RecommendationManager.create({
             caseId: assessment.caseId,
@@ -531,7 +532,7 @@ export default class AssessmentPage {
             title: recommendationTitle,
             description: descriptionParts.join("\n"),
             action: actionText,
-            source: assessment.source || "Assessment Review",
+            source: assessment.source || LanguageManager.t("AssessmentReviewSource"),
             buildingSystem: assessment.buildingSystem || "",
             riskScore,
 
@@ -583,7 +584,7 @@ export default class AssessmentPage {
 
         AssessmentManager.set(updatedAssessment);
 
-        Notification.success("Recommendation draft created. Expert review required. No automatic decision created.");
+        Notification.success(LanguageManager.t("AssessmentRecommendationDraftCreated"));
         window.location.hash = "recommendations";
     }
 
@@ -608,13 +609,13 @@ export default class AssessmentPage {
         const activeFinding = FindingManager.get();
 
         if (!currentCase) {
-            Notification.info("Open a case before creating an assessment.");
+            Notification.info(LanguageManager.t("AssessmentOpenCaseFirst"));
             return;
         }
 
         FormDialog.open({
-            title: "New Assessment",
-            submitLabel: "Create Assessment",
+            title: LanguageManager.t("AssessmentNewTitle"),
+            submitLabel: LanguageManager.t("AssessmentCreateAction"),
             values: {
                 title: "",
                 description: "",
@@ -628,54 +629,87 @@ export default class AssessmentPage {
             fields: [
                 {
                     id: "title",
-                    label: "Assessment title"
+                    label: LanguageManager.t("AssessmentTitleField")
                 },
                 {
                     id: "description",
-                    label: "Description"
+                    label: LanguageManager.t("AssessmentDescriptionField")
                 },
                 {
                     id: "category",
-                    label: "Category",
+                    label: LanguageManager.t("AssessmentCategoryLabel"),
                     type: "select",
-                    options: ["General", "Envelope", "Roof", "Structure", "MEP", "Moisture", "Fire Safety", "Other"]
+                    options: [
+                            { value: "General", label: LanguageManager.t("AssessmentOptionGeneral") },
+                            { value: "Envelope", label: LanguageManager.t("AssessmentOptionEnvelope") },
+                            { value: "Roof", label: LanguageManager.t("AssessmentOptionRoof") },
+                            { value: "Structure", label: LanguageManager.t("AssessmentOptionStructure") },
+                            { value: "MEP", label: LanguageManager.t("AssessmentOptionMEP") },
+                            { value: "Moisture", label: LanguageManager.t("AssessmentOptionMoisture") },
+                            { value: "Fire Safety", label: LanguageManager.t("AssessmentOptionFireSafety") },
+                            { value: "Other", label: LanguageManager.t("AssessmentOptionOther") }
+                        ]
                 },
                 {
                     id: "severity",
-                    label: "Severity",
+                    label: LanguageManager.t("AssessmentSeverityLabel"),
                     type: "select",
-                    options: ["Low", "Medium", "High", "Critical"]
+                    options: [
+                            { value: "Low", label: LanguageManager.t("AssessmentOptionLow") },
+                            { value: "Medium", label: LanguageManager.t("AssessmentOptionMedium") },
+                            { value: "High", label: LanguageManager.t("AssessmentOptionHigh") },
+                            { value: "Critical", label: LanguageManager.t("AssessmentOptionCritical") }
+                        ]
                 },
                 {
                     id: "probability",
-                    label: "Probability",
+                    label: LanguageManager.t("AssessmentProbabilityLabel"),
                     type: "select",
-                    options: ["Low", "Medium", "High"]
+                    options: [
+                            { value: "Low", label: LanguageManager.t("AssessmentOptionLow") },
+                            { value: "Medium", label: LanguageManager.t("AssessmentOptionMedium") },
+                            { value: "High", label: LanguageManager.t("AssessmentOptionHigh") }
+                        ]
                 },
                 {
                     id: "consequence",
-                    label: "Consequence",
+                    label: LanguageManager.t("AssessmentConsequenceLabel"),
                     type: "select",
-                    options: ["Low", "Medium", "High"]
+                    options: [
+                            { value: "Low", label: LanguageManager.t("AssessmentOptionLow") },
+                            { value: "Medium", label: LanguageManager.t("AssessmentOptionMedium") },
+                            { value: "High", label: LanguageManager.t("AssessmentOptionHigh") }
+                        ]
                 },
                 {
                     id: "priority",
-                    label: "Priority",
+                    label: LanguageManager.t("AssessmentPriorityLabel"),
                     type: "select",
-                    options: ["Low", "Medium", "High", "Critical"]
+                    options: [
+                            { value: "Low", label: LanguageManager.t("AssessmentOptionLow") },
+                            { value: "Medium", label: LanguageManager.t("AssessmentOptionMedium") },
+                            { value: "High", label: LanguageManager.t("AssessmentOptionHigh") },
+                            { value: "Critical", label: LanguageManager.t("AssessmentOptionCritical") }
+                        ]
                 },
                 {
                     id: "status",
-                    label: "Status",
+                    label: LanguageManager.t("CaseStatusLabel"),
                     type: "select",
-                    options: ["Draft", "Assessed", "Recommended", "Reviewed", "Blocked"]
+                    options: [
+                            { value: "Draft", label: LanguageManager.t("AssessmentStatusDraft") },
+                            { value: "Assessed", label: LanguageManager.t("AssessmentStatusAssessed") },
+                            { value: "Recommended", label: LanguageManager.t("AssessmentStatusRecommended") },
+                            { value: "Reviewed", label: LanguageManager.t("AssessmentStatusReviewed") },
+                            { value: "Blocked", label: LanguageManager.t("AssessmentStatusBlocked") }
+                        ]
                 }
             ],
             onSubmit: (values, dialog) => {
                 if (!values.title) return;
 
                 if (!activeFinding) {
-            Notification.info("Select a finding before creating an assessment.");
+            Notification.info(LanguageManager.t("AssessmentSelectFindingBeforeCreating"));
             return;
         }
 
@@ -701,7 +735,7 @@ export default class AssessmentPage {
 
                 AssessmentManager.set(assessment);
                 dialog.remove();
-                Notification.success("Assessment created.");
+                Notification.success(LanguageManager.t("AssessmentCreatedNotification"));
                 this.refresh();
             }
         });
@@ -711,13 +745,13 @@ export default class AssessmentPage {
         const assessment = AssessmentManager.get();
 
         if (!assessment) {
-            Notification.info("Select an assessment before editing.");
+            Notification.info(LanguageManager.t("AssessmentSelectBeforeEditing"));
             return;
         }
 
         FormDialog.open({
-            title: "Edit Assessment",
-            submitLabel: "Save Assessment",
+            title: LanguageManager.t("AssessmentEditTitle"),
+            submitLabel: LanguageManager.t("AssessmentSaveAction"),
             values: {
                 title: assessment.title || "",
                 description: assessment.description || "",
@@ -729,43 +763,76 @@ export default class AssessmentPage {
                 status: assessment.status || "Draft"
             },
             fields: [
-                { id: "title", label: "Assessment title" },
-                { id: "description", label: "Description" },
+                { id: "title", label: LanguageManager.t("AssessmentTitleField") },
+                { id: "description", label: LanguageManager.t("AssessmentDescriptionField") },
                 {
                     id: "category",
-                    label: "Category",
+                    label: LanguageManager.t("AssessmentCategoryLabel"),
                     type: "select",
-                    options: ["General", "Envelope", "Roof", "Structure", "MEP", "Moisture", "Fire Safety", "Other"]
+                    options: [
+                            { value: "General", label: LanguageManager.t("AssessmentOptionGeneral") },
+                            { value: "Envelope", label: LanguageManager.t("AssessmentOptionEnvelope") },
+                            { value: "Roof", label: LanguageManager.t("AssessmentOptionRoof") },
+                            { value: "Structure", label: LanguageManager.t("AssessmentOptionStructure") },
+                            { value: "MEP", label: LanguageManager.t("AssessmentOptionMEP") },
+                            { value: "Moisture", label: LanguageManager.t("AssessmentOptionMoisture") },
+                            { value: "Fire Safety", label: LanguageManager.t("AssessmentOptionFireSafety") },
+                            { value: "Other", label: LanguageManager.t("AssessmentOptionOther") }
+                        ]
                 },
                 {
                     id: "severity",
-                    label: "Severity",
+                    label: LanguageManager.t("AssessmentSeverityLabel"),
                     type: "select",
-                    options: ["Low", "Medium", "High", "Critical"]
+                    options: [
+                            { value: "Low", label: LanguageManager.t("AssessmentOptionLow") },
+                            { value: "Medium", label: LanguageManager.t("AssessmentOptionMedium") },
+                            { value: "High", label: LanguageManager.t("AssessmentOptionHigh") },
+                            { value: "Critical", label: LanguageManager.t("AssessmentOptionCritical") }
+                        ]
                 },
                 {
                     id: "probability",
-                    label: "Probability",
+                    label: LanguageManager.t("AssessmentProbabilityLabel"),
                     type: "select",
-                    options: ["Low", "Medium", "High"]
+                    options: [
+                            { value: "Low", label: LanguageManager.t("AssessmentOptionLow") },
+                            { value: "Medium", label: LanguageManager.t("AssessmentOptionMedium") },
+                            { value: "High", label: LanguageManager.t("AssessmentOptionHigh") }
+                        ]
                 },
                 {
                     id: "consequence",
-                    label: "Consequence",
+                    label: LanguageManager.t("AssessmentConsequenceLabel"),
                     type: "select",
-                    options: ["Low", "Medium", "High"]
+                    options: [
+                            { value: "Low", label: LanguageManager.t("AssessmentOptionLow") },
+                            { value: "Medium", label: LanguageManager.t("AssessmentOptionMedium") },
+                            { value: "High", label: LanguageManager.t("AssessmentOptionHigh") }
+                        ]
                 },
                 {
                     id: "priority",
-                    label: "Priority",
+                    label: LanguageManager.t("AssessmentPriorityLabel"),
                     type: "select",
-                    options: ["Low", "Medium", "High", "Critical"]
+                    options: [
+                            { value: "Low", label: LanguageManager.t("AssessmentOptionLow") },
+                            { value: "Medium", label: LanguageManager.t("AssessmentOptionMedium") },
+                            { value: "High", label: LanguageManager.t("AssessmentOptionHigh") },
+                            { value: "Critical", label: LanguageManager.t("AssessmentOptionCritical") }
+                        ]
                 },
                 {
                     id: "status",
-                    label: "Status",
+                    label: LanguageManager.t("CaseStatusLabel"),
                     type: "select",
-                    options: ["Draft", "Assessed", "Recommended", "Reviewed", "Blocked"]
+                    options: [
+                            { value: "Draft", label: LanguageManager.t("AssessmentStatusDraft") },
+                            { value: "Assessed", label: LanguageManager.t("AssessmentStatusAssessed") },
+                            { value: "Recommended", label: LanguageManager.t("AssessmentStatusRecommended") },
+                            { value: "Reviewed", label: LanguageManager.t("AssessmentStatusReviewed") },
+                            { value: "Blocked", label: LanguageManager.t("AssessmentStatusBlocked") }
+                        ]
                 }
             ],
             onSubmit: (values, dialog) => {
@@ -791,14 +858,14 @@ export default class AssessmentPage {
 
                 AssessmentManager.set(updated);
                 dialog.remove();
-                Notification.success("Assessment updated.");
+                Notification.success(LanguageManager.t("AssessmentUpdatedNotification"));
                 this.refresh();
             }
         });
     }
 
     static deleteAssessment(item) {
-        if (!window.confirm(`Delete assessment "${item.title || item.id}"?`)) {
+        if (!window.confirm(`${LanguageManager.t("AssessmentDeleteConfirmPrefix")} "${item.title || item.id}"?`)) {
             return;
         }
 
@@ -808,7 +875,7 @@ export default class AssessmentPage {
             AssessmentManager.clear();
         }
 
-        Notification.success("Assessment deleted.");
+        Notification.success(LanguageManager.t("AssessmentDeletedNotification"));
         this.refresh();
     }
 
@@ -822,7 +889,7 @@ export default class AssessmentPage {
     }
 
     static showPendingFeature(feature = "This feature") {
-        Notification.info(`${feature} is reserved for a later workspace release.`);
+        Notification.info(`${feature} ${LanguageManager.t("AssessmentPendingFeatureSuffix")}`);
     }
 
     static getAssessmentIntelligence(assessment = {}) {
@@ -878,40 +945,40 @@ export default class AssessmentPage {
         });
 
         let riskLogicSignal = {
-            label: "Low risk logic",
-            description: "Assessment risk logic is still incomplete. Define risk level, severity, probability and impact.",
+            label: LanguageManager.t("AssessmentLowRiskLogic"),
+            description: LanguageManager.t("AssessmentLowRiskLogicDescription"),
             tone: "draft"
         };
 
         if (hasRiskLevel && hasSeverity && hasProbability && hasImpact && hasRecommendationLink) {
             riskLogicSignal = {
-                label: "Strong risk logic",
-                description: "Assessment contains complete risk logic and is connected to downstream recommendation.",
+                label: LanguageManager.t("AssessmentStrongRiskLogic"),
+                description: LanguageManager.t("AssessmentStrongRiskLogicDescription"),
                 tone: "ready"
             };
         } else if (hasRiskLevel && (hasSeverity || hasProbability || hasImpact)) {
             riskLogicSignal = {
-                label: "Developing risk logic",
-                description: "Assessment contains useful risk context but still needs complete risk parameters or recommendation linkage.",
+                label: LanguageManager.t("AssessmentDevelopingRiskLogic"),
+                description: LanguageManager.t("AssessmentDevelopingRiskLogicDescription"),
                 tone: "active"
             };
         }
 
         const nextAction = hasRecommendationLink
             ? {
-                label: "Review linked recommendation",
-                description: "Assessment is connected to a recommendation. Review whether action logic reflects the risk assessment.",
+                label: LanguageManager.t("AssessmentReviewLinkedRecommendation"),
+                description: LanguageManager.t("AssessmentReviewLinkedRecommendationDescription"),
                 tone: "ready"
             }
             : hasRiskLevel && hasSeverity && hasProbability && hasImpact
                 ? {
-                    label: "Create or link recommendation",
-                    description: "Risk logic is complete enough to derive a recommended action.",
+                    label: LanguageManager.t("AssessmentCreateOrLinkRecommendation"),
+                    description: LanguageManager.t("AssessmentCreateOrLinkRecommendationDescription"),
                     tone: "active"
                 }
                 : {
-                    label: "Complete risk logic",
-                    description: "Define risk level, severity, probability and impact before creating a recommendation.",
+                    label: LanguageManager.t("AssessmentCompleteRiskLogic"),
+                    description: LanguageManager.t("AssessmentCompleteRiskLogicDescription"),
                     tone: "draft"
                 };
 
@@ -923,10 +990,10 @@ export default class AssessmentPage {
             riskLogicSignal,
             nextAction,
             label: readinessPercent >= 100
-                ? "Assessment intelligence complete"
+                ? LanguageManager.t("AssessmentIntelligenceComplete")
                 : readinessPercent >= 50
-                    ? "Assessment intelligence developing"
-                    : "Assessment intelligence early"
+                    ? LanguageManager.t("AssessmentIntelligenceDeveloping")
+                    : LanguageManager.t("AssessmentIntelligenceEarly")
         };
     }
 
@@ -935,31 +1002,31 @@ export default class AssessmentPage {
         const intelligence = this.getAssessmentIntelligence(assessment);
 
         return `
-            <section class="assessment-intelligence intelligence-snapshot" aria-label="Assessment intelligence snapshot">
+            <section class="assessment-intelligence intelligence-snapshot" aria-label="${LanguageManager.t("AssessmentIntelligenceLabel")}">
                 <div class="assessment-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="assessment-intelligence__eyebrow intelligence-snapshot__eyebrow">Assessment Intelligence</span>
+                        <span class="assessment-intelligence__eyebrow intelligence-snapshot__eyebrow">${LanguageManager.t("AssessmentIntelligenceLabel")}</span>
                         <strong>${intelligence.label}</strong>
-                        <p>${intelligence.completed}/${intelligence.total} assessment intelligence checks completed</p>
+                        <p>${intelligence.completed}/${intelligence.total} ${LanguageManager.t("AssessmentChecksCompleted")}</p>
                     </div>
                     <span class="assessment-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
                 <div class="assessment-intelligence__grid intelligence-snapshot__grid">
                     <article class="assessment-intelligence__card intelligence-snapshot__card">
-                        <span>Recommendation Readiness</span>
+                        <span>${LanguageManager.t("AssessmentRecommendationReadiness")}</span>
                         <strong>${intelligence.readinessPercent}%</strong>
-                        <p>Readiness based on identity, risk logic, finding link, recommendation link and review state.</p>
+                        <p>${LanguageManager.t("AssessmentRecommendationReadinessDescription")}</p>
                     </article>
 
                     <article class="assessment-intelligence__card intelligence-snapshot__card assessment-intelligence__card--${intelligence.riskLogicSignal.tone} intelligence-snapshot__card--${intelligence.riskLogicSignal.tone}">
-                        <span>Risk Logic Signal</span>
+                        <span>${LanguageManager.t("AssessmentRiskLogicSignalLabel")}</span>
                         <strong>${intelligence.riskLogicSignal.label}</strong>
                         <p>${intelligence.riskLogicSignal.description}</p>
                     </article>
 
                     <article class="assessment-intelligence__card intelligence-snapshot__card assessment-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
-                        <span>Next Assessment Action</span>
+                        <span>${LanguageManager.t("AssessmentNextActionLabel")}</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>
                     </article>

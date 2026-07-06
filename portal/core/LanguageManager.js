@@ -2171,6 +2171,578 @@ export default class LanguageManager {
                 en: "Blocked",
                 de: "Blockiert"
             },
+            AssessmentWorkspaceTitle: {
+                en: "Assessment Workspace",
+                de: "Assessment Workspace"
+            },
+            AssessmentTitlePlural: {
+                en: "Assessments",
+                de: "Assessments"
+            },
+            AssessmentActivePrefix: {
+                en: "Active assessment",
+                de: "Aktives Assessment"
+            },
+            AssessmentNewAction: {
+                en: "+ New Assessment",
+                de: "+ Neues Assessment"
+            },
+            AssessmentEmptyTitle: {
+                en: "No assessments available",
+                de: "Keine Assessments verfügbar"
+            },
+            AssessmentEmptyDescription: {
+                en: "Create risk assessments from findings to begin the recommendation chain.",
+                de: "Risk Assessments aus Findings erstellen, um die Recommendation-Kette zu starten."
+            },
+            AssessmentRiskAssessmentDefined: {
+                en: "Risk assessment defined",
+                de: "Risk Assessment definiert"
+            },
+            AssessmentWorkflowRecommendation: {
+                en: "Recommendation",
+                de: "Recommendation"
+            },
+            AssessmentToRecommendationLabel: {
+                en: "Assessment → Recommendation",
+                de: "Assessment → Recommendation"
+            },
+            AssessmentTotalMetric: {
+                en: "Assessments",
+                de: "Assessments"
+            },
+            AssessmentHighRiskMetric: {
+                en: "High Risk",
+                de: "Hohes Risiko"
+            },
+            AssessmentLinkedRecommendationsMetric: {
+                en: "Linked Recommendations",
+                de: "Verknüpfte Recommendations"
+            },
+            AssessmentCloseAction: {
+                en: "Close Assessment",
+                de: "Assessment schließen"
+            },
+            AssessmentCreateAction: {
+                en: "Create Assessment",
+                de: "Assessment erstellen"
+            },
+            AssessmentCreateRecommendationAction: {
+                en: "Create Recommendation",
+                de: "Recommendation erstellen"
+            },
+            AssessmentContextTitle: {
+                en: "Assessment Context",
+                de: "Assessment-Kontext"
+            },
+            AssessmentSelectedLabel: {
+                en: "Selected Assessment",
+                de: "Ausgewähltes Assessment"
+            },
+            AssessmentNotSelected: {
+                en: "Not selected",
+                de: "Nicht ausgewählt"
+            },
+            AssessmentTechnicalRiskLabel: {
+                en: "Technical Risk",
+                de: "Technisches Risiko"
+            },
+            AssessmentInReview: {
+                en: "In Review",
+                de: "In Prüfung"
+            },
+            AssessmentPending: {
+                en: "Pending",
+                de: "Ausstehend"
+            },
+            AssessmentWorkspaceStatusLabel: {
+                en: "Workspace Status",
+                de: "Workspace-Status"
+            },
+            AssessmentNextStepLabel: {
+                en: "Next Step",
+                de: "Nächster Schritt"
+            },
+            AssessmentCreateOrSelect: {
+                en: "Create or select an assessment",
+                de: "Assessment erstellen oder auswählen"
+            },
+            AssessmentSafetyBoundariesLabel: {
+                en: "Safety Boundaries",
+                de: "Safety Boundaries"
+            },
+            AssessmentCaseIdLabel: {
+                en: "Case ID",
+                de: "Case-ID"
+            },
+            AssessmentBuildingIdLabel: {
+                en: "Building ID",
+                de: "Gebäude-ID"
+            },
+            AssessmentInspectionIdLabel: {
+                en: "Inspection ID",
+                de: "Inspection-ID"
+            },
+            AssessmentFindingIdsLabel: {
+                en: "Finding IDs",
+                de: "Finding-IDs"
+            },
+            AssessmentEvidenceIdsLabel: {
+                en: "Evidence IDs",
+                de: "Evidence-IDs"
+            },
+            AssessmentCategoryLabel: {
+                en: "Category",
+                de: "Kategorie"
+            },
+            AssessmentBuildingSystemLabel: {
+                en: "Building System",
+                de: "Gebäudesystem"
+            },
+            AssessmentSeverityLabel: {
+                en: "Severity",
+                de: "Schweregrad"
+            },
+            AssessmentProbabilityLabel: {
+                en: "Probability",
+                de: "Wahrscheinlichkeit"
+            },
+            AssessmentConsequenceLabel: {
+                en: "Consequence",
+                de: "Auswirkung"
+            },
+            AssessmentPriorityLabel: {
+                en: "Priority",
+                de: "Priorität"
+            },
+            AssessmentRiskScoreLabel: {
+                en: "Risk Score",
+                de: "Risk Score"
+            },
+            AssessmentNoDescription: {
+                en: "No description",
+                de: "Keine Beschreibung"
+            },
+            AssessmentRecommendationIdsLabel: {
+                en: "Recommendation IDs",
+                de: "Recommendation-IDs"
+            },
+            AssessmentNone: {
+                en: "None",
+                de: "Keine"
+            },
+            AssessmentNotLinked: {
+                en: "Not linked",
+                de: "Nicht verknüpft"
+            },
+            AssessmentGeneral: {
+                en: "General",
+                de: "Allgemein"
+            },
+            AssessmentUnrated: {
+                en: "Unrated",
+                de: "Nicht bewertet"
+            },
+            AssessmentRiskPrefix: {
+                en: "Risk",
+                de: "Risiko"
+            },
+            AssessmentRecommendationDraftCreated: {
+                en: "Recommendation draft created. Expert review required. No automatic decision created.",
+                de: "Recommendation Draft erstellt. Fachliche Prüfung erforderlich. Keine automatische Decision erstellt."
+            },
+            AssessmentOpenCaseFirst: {
+                en: "Open a case before creating an assessment.",
+                de: "Öffnen Sie zuerst einen Case, bevor ein Assessment erstellt wird."
+            },
+            AssessmentNewTitle: {
+                en: "New Assessment",
+                de: "Neues Assessment"
+            },
+            AssessmentTitleField: {
+                en: "Assessment title",
+                de: "Assessment-Titel"
+            },
+            AssessmentDescriptionField: {
+                en: "Description",
+                de: "Beschreibung"
+            },
+            AssessmentSelectFindingBeforeCreating: {
+                en: "Select a finding before creating an assessment.",
+                de: "Finding auswählen, bevor ein Assessment erstellt wird."
+            },
+            AssessmentCreatedNotification: {
+                en: "Assessment created.",
+                de: "Assessment erstellt."
+            },
+            AssessmentSelectBeforeEditing: {
+                en: "Select an assessment before editing.",
+                de: "Assessment vor dem Bearbeiten auswählen."
+            },
+            AssessmentEditTitle: {
+                en: "Edit Assessment",
+                de: "Assessment bearbeiten"
+            },
+            AssessmentSaveAction: {
+                en: "Save Assessment",
+                de: "Assessment speichern"
+            },
+            AssessmentUpdatedNotification: {
+                en: "Assessment updated.",
+                de: "Assessment aktualisiert."
+            },
+            AssessmentDeleteConfirmPrefix: {
+                en: "Delete assessment",
+                de: "Assessment löschen"
+            },
+            AssessmentDeletedNotification: {
+                en: "Assessment deleted.",
+                de: "Assessment gelöscht."
+            },
+            AssessmentPendingFeatureSuffix: {
+                en: "is reserved for a later workspace release.",
+                de: "ist für ein späteres Workspace-Release reserviert."
+            },
+            AssessmentLowRiskLogic: {
+                en: "Low risk logic",
+                de: "Geringe Risikologik"
+            },
+            AssessmentLowRiskLogicDescription: {
+                en: "Assessment risk logic is still incomplete. Define risk level, severity, probability and impact.",
+                de: "Die Assessment-Risikologik ist noch unvollständig. Risikoniveau, Schweregrad, Wahrscheinlichkeit und Auswirkung definieren."
+            },
+            AssessmentStrongRiskLogic: {
+                en: "Strong risk logic",
+                de: "Starke Risikologik"
+            },
+            AssessmentStrongRiskLogicDescription: {
+                en: "Assessment contains complete risk logic and is connected to downstream recommendation.",
+                de: "Das Assessment enthält vollständige Risikologik und ist mit einer nachgelagerten Recommendation verknüpft."
+            },
+            AssessmentDevelopingRiskLogic: {
+                en: "Developing risk logic",
+                de: "Risikologik in Entwicklung"
+            },
+            AssessmentDevelopingRiskLogicDescription: {
+                en: "Assessment contains useful risk context but still needs complete risk parameters or recommendation linkage.",
+                de: "Das Assessment enthält nutzbaren Risikokontext, benötigt aber noch vollständige Risikoparameter oder Recommendation-Verknüpfung."
+            },
+            AssessmentReviewLinkedRecommendation: {
+                en: "Review linked recommendation",
+                de: "Verknüpfte Recommendation prüfen"
+            },
+            AssessmentReviewLinkedRecommendationDescription: {
+                en: "Assessment is connected to a recommendation. Review whether action logic reflects the risk assessment.",
+                de: "Das Assessment ist mit einer Recommendation verknüpft. Prüfen, ob die Handlungslogik das Risk Assessment korrekt widerspiegelt."
+            },
+            AssessmentCreateOrLinkRecommendation: {
+                en: "Create or link recommendation",
+                de: "Recommendation erstellen oder verknüpfen"
+            },
+            AssessmentCreateOrLinkRecommendationDescription: {
+                en: "Risk logic is complete enough to derive a recommended action.",
+                de: "Die Risikologik ist ausreichend vollständig, um eine empfohlene Maßnahme abzuleiten."
+            },
+            AssessmentCompleteRiskLogic: {
+                en: "Complete risk logic",
+                de: "Risikologik vervollständigen"
+            },
+            AssessmentCompleteRiskLogicDescription: {
+                en: "Define risk level, severity, probability and impact before creating a recommendation.",
+                de: "Risikoniveau, Schweregrad, Wahrscheinlichkeit und Auswirkung definieren, bevor eine Recommendation erstellt wird."
+            },
+            AssessmentIntelligenceComplete: {
+                en: "Assessment intelligence complete",
+                de: "Assessment Intelligence vollständig"
+            },
+            AssessmentIntelligenceDeveloping: {
+                en: "Assessment intelligence developing",
+                de: "Assessment Intelligence in Entwicklung"
+            },
+            AssessmentIntelligenceEarly: {
+                en: "Assessment intelligence early",
+                de: "Assessment Intelligence frühe Phase"
+            },
+            AssessmentIntelligenceLabel: {
+                en: "Assessment Intelligence",
+                de: "Assessment Intelligence"
+            },
+            AssessmentChecksCompleted: {
+                en: "assessment intelligence checks completed",
+                de: "Assessment-Intelligence-Prüfungen abgeschlossen"
+            },
+            AssessmentRecommendationReadiness: {
+                en: "Recommendation Readiness",
+                de: "Recommendation-Bereitschaft"
+            },
+            AssessmentRecommendationReadinessDescription: {
+                en: "Readiness based on identity, risk logic, finding link, recommendation link and review state.",
+                de: "Bereitschaft basierend auf Identität, Risikologik, Finding-Link, Recommendation-Link und Review-Status."
+            },
+            AssessmentRiskLogicSignalLabel: {
+                en: "Risk Logic Signal",
+                de: "Risikologik-Signal"
+            },
+            AssessmentNextActionLabel: {
+                en: "Next Assessment Action",
+                de: "Nächste Assessment-Aktion"
+            },
+            AssessmentActionRecommendationDerived: {
+                en: "Action recommendation derived",
+                de: "Handlungsempfehlung abgeleitet"
+            },
+            AssessmentActiveFlowLabel: {
+                en: "Active Flow",
+                de: "Aktiver Workflow"
+            },
+            AssessmentNextActionHeading: {
+                en: "Next Action",
+                de: "Nächste Aktion"
+            },
+            AssessmentHeaderDescription: {
+                en: "Evaluate findings, determine condition, estimate remaining useful life, assess technical risk, and prepare CAPEX planning.",
+                de: "Findings bewerten, Zustand bestimmen, Restnutzungsdauer einschätzen, technisches Risiko beurteilen und CAPEX-Planung vorbereiten."
+            },
+            AssessmentAcceptedMetric: {
+                en: "Accepted",
+                de: "Akzeptiert"
+            },
+            AssessmentItemFallback: {
+                en: "Assessment Item",
+                de: "Assessment-Eintrag"
+            },
+            AssessmentEmptyStateDescriptionLong: {
+                en: "Assessment records will translate findings into condition, risk, remaining useful life, and CAPEX logic.",
+                de: "Assessment-Datensätze übersetzen Findings in Zustand, Risiko, Restnutzungsdauer und CAPEX-Logik."
+            },
+            AssessmentSourceLabel: {
+                en: "Source",
+                de: "Quelle"
+            },
+            AssessmentReviewSource: {
+                en: "Assessment Review",
+                de: "Assessment Review"
+            },
+            AssessmentSelectFirstWarning: {
+                en: "Select an assessment first.",
+                de: "Zuerst ein Assessment auswählen."
+            },
+            AssessmentNotLinkedCaseWarning: {
+                en: "Selected assessment is not linked to a case.",
+                de: "Ausgewähltes Assessment ist nicht mit einem Case verknüpft."
+            },
+            AssessmentBelongsOtherCaseWarning: {
+                en: "Selected assessment belongs to another case.",
+                de: "Ausgewähltes Assessment gehört zu einem anderen Case."
+            },
+            AssessmentResolveBlocker: {
+                en: "Resolve blocker",
+                de: "Blocker lösen"
+            },
+            AssessmentResolveBlockerDescription: {
+                en: "This assessment cannot move forward until the blocker is cleared.",
+                de: "Dieses Assessment kann erst fortgeführt werden, wenn der Blocker gelöst ist."
+            },
+            AssessmentCreateConfirmRecommendation: {
+                en: "Create or confirm recommendation",
+                de: "Recommendation erstellen oder bestätigen"
+            },
+            AssessmentReadyForRecommendation: {
+                en: "Assessment is reviewed and ready to support an action recommendation.",
+                de: "Das Assessment ist geprüft und bereit, eine Handlungsempfehlung zu unterstützen."
+            },
+            AssessmentAlreadyLinkedRecommendationDescription: {
+                en: "This assessment is already connected to a recommendation. Check action logic and completeness.",
+                de: "Dieses Assessment ist bereits mit einer Recommendation verknüpft. Handlungslogik und Vollständigkeit prüfen."
+            },
+            AssessmentCreateRecommendationShort: {
+                en: "Create recommendation",
+                de: "Recommendation erstellen"
+            },
+            AssessmentCompleteEnoughForRecommendation: {
+                en: "The assessment is complete enough to derive a recommended action.",
+                de: "Das Assessment ist ausreichend vollständig, um eine empfohlene Maßnahme abzuleiten."
+            },
+            AssessmentCompleteAssessment: {
+                en: "Complete assessment",
+                de: "Assessment vervollständigen"
+            },
+            AssessmentCompleteAssessmentDescription: {
+                en: "Define risk level, severity, probability or impact before creating a recommendation.",
+                de: "Risikoniveau, Schweregrad, Wahrscheinlichkeit oder Auswirkung definieren, bevor eine Recommendation erstellt wird."
+            },
+            AssessmentActiveWorkflowStateLabel: {
+                en: "Active workflow state",
+                de: "Aktiver Workflow-Status"
+            },
+            AssessmentNextActionAriaLabel: {
+                en: "Next action",
+                de: "Nächste Aktion"
+            },
+            AssessmentRecommendationDraftPrefix: {
+                en: "Recommendation Draft",
+                de: "Recommendation Draft"
+            },
+            AssessmentRecommendationDraftFrom: {
+                en: "Recommendation Draft from",
+                de: "Recommendation Draft aus"
+            },
+            AssessmentAvailabilityActionText: {
+                en: "Record document availability status and request expert review before using this information for assessment, recommendation, decision or report purposes.",
+                de: "Dokumentenverfügbarkeit erfassen und fachliche Prüfung anfordern, bevor diese Information für Assessment, Recommendation, Decision oder Report verwendet wird."
+            },
+            AssessmentDefaultActionText: {
+                en: "Review assessment context and define expert-approved next action.",
+                de: "Assessment-Kontext prüfen und fachlich freigegebene nächste Maßnahme definieren."
+            },
+            AssessmentRecommendationPreparedFromSelected: {
+                en: "Recommendation prepared from selected assessment.",
+                de: "Recommendation aus ausgewähltem Assessment vorbereitet."
+            },
+            AssessmentRecommendationStatusLabel: {
+                en: "Recommendation status:",
+                de: "Recommendation-Status:"
+            },
+            AssessmentDraftRecommendationCreatedLine: {
+                en: "Draft recommendation created from selected assessment.",
+                de: "Draft Recommendation aus ausgewähltem Assessment erstellt."
+            },
+            AssessmentExpertReviewBeforeDecisionLine: {
+                en: "Expert review required before decision or report use.",
+                de: "Fachliche Prüfung vor Verwendung für Decision oder Report erforderlich."
+            },
+            AssessmentNoAutomaticDecisionLine: {
+                en: "No automatic decision or purchase recommendation is created by this action.",
+                de: "Durch diese Aktion wird keine automatische Decision oder Kaufempfehlung erstellt."
+            },
+            AssessmentReviewBoundaryLabel: {
+                en: "Review boundary:",
+                de: "Review-Grenze:"
+            },
+            AssessmentAvailabilityBoundaryLine: {
+                en: "Document availability only. No legal, financial, technical or governance document review has been performed.",
+                de: "Nur Dokumentenverfügbarkeit. Es wurde keine rechtliche, finanzielle, technische oder Governance-Dokumentenprüfung durchgeführt."
+            },
+            AssessmentRecommendationDraftBoundaryLine: {
+                en: "This recommendation draft may only request, record or clarify document availability. It must not validate document content.",
+                de: "Dieser Recommendation Draft darf nur Dokumentenverfügbarkeit anfordern, erfassen oder klären. Er darf keine Dokumenteninhalte validieren."
+            },
+            AssessmentThailandPattayaContextLabel: {
+                en: "Thailand / Pattaya context:",
+                de: "Thailand / Pattaya-Kontext:"
+            },
+            AssessmentFieldReviewContextLine: {
+                en: "Field review context retained for downstream decision and reporting.",
+                de: "Field-Review-Kontext bleibt für nachgelagerte Decision und Reporting erhalten."
+            },
+            AssessmentTraceLabel: {
+                en: "Assessment trace:",
+                de: "Assessment-Nachverfolgung:"
+            },
+            AssessmentIdTraceLabel: {
+                en: "Assessment ID",
+                de: "Assessment-ID"
+            },
+            AssessmentSourceTraceLabel: {
+                en: "Assessment source",
+                de: "Assessment-Quelle"
+            },
+            AssessmentSourceFindingIdsTraceLabel: {
+                en: "Source Finding IDs",
+                de: "Source-Finding-IDs"
+            },
+            AssessmentSourceEvidenceIdsTraceLabel: {
+                en: "Source Evidence IDs",
+                de: "Source-Evidence-IDs"
+            },
+            AssessmentSourcePolicyTraceLabel: {
+                en: "Source policy",
+                de: "Source Policy"
+            },
+            AssessmentRiskScoreTraceLabel: {
+                en: "Risk score",
+                de: "Risk Score"
+            },
+            AssessmentExpertReviewRequiredTraceLabel: {
+                en: "Expert review required",
+                de: "Fachliche Prüfung erforderlich"
+            },
+            AssessmentYes: {
+                en: "Yes",
+                de: "Ja"
+            },
+            AssessmentNo: {
+                en: "No",
+                de: "Nein"
+            },
+            AssessmentOptionGeneral: {
+                en: "General",
+                de: "Allgemein"
+            },
+            AssessmentOptionEnvelope: {
+                en: "Envelope",
+                de: "Gebäudehülle"
+            },
+            AssessmentOptionRoof: {
+                en: "Roof",
+                de: "Dach"
+            },
+            AssessmentOptionStructure: {
+                en: "Structure",
+                de: "Tragwerk"
+            },
+            AssessmentOptionMEP: {
+                en: "MEP",
+                de: "TGA"
+            },
+            AssessmentOptionMoisture: {
+                en: "Moisture",
+                de: "Feuchte"
+            },
+            AssessmentOptionFireSafety: {
+                en: "Fire Safety",
+                de: "Brandschutz"
+            },
+            AssessmentOptionOther: {
+                en: "Other",
+                de: "Sonstiges"
+            },
+            AssessmentOptionLow: {
+                en: "Low",
+                de: "Niedrig"
+            },
+            AssessmentOptionMedium: {
+                en: "Medium",
+                de: "Mittel"
+            },
+            AssessmentOptionHigh: {
+                en: "High",
+                de: "Hoch"
+            },
+            AssessmentOptionCritical: {
+                en: "Critical",
+                de: "Kritisch"
+            },
+            AssessmentStatusDraft: {
+                en: "Draft",
+                de: "Entwurf"
+            },
+            AssessmentStatusAssessed: {
+                en: "Assessed",
+                de: "Bewertet"
+            },
+            AssessmentStatusRecommended: {
+                en: "Recommended",
+                de: "Empfohlen"
+            },
+            AssessmentStatusReviewed: {
+                en: "Reviewed",
+                de: "Geprüft"
+            },
+            AssessmentStatusBlocked: {
+                en: "Blocked",
+                de: "Blockiert"
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."
