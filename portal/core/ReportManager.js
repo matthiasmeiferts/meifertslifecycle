@@ -91,6 +91,12 @@ export default class ReportManager {
             recommendationIds: data.recommendationIds  || [],
             decisionIds:       data.decisionIds        || [],
 
+            sourceDecisionIds: data.sourceDecisionIds || data.decisionIds || [],
+            sourceRecommendationIds: data.sourceRecommendationIds || data.recommendationIds || [],
+            sourceAssessmentIds: data.sourceAssessmentIds || data.assessmentIds || [],
+            sourceFindingIds: data.sourceFindingIds || data.findingIds || [],
+            sourceEvidenceIds: data.sourceEvidenceIds || data.evidenceIds || [],
+
             title:      data.title      || "Professional Building Intelligence Report",
             sourceTitle: data.sourceTitle || "",
             reportType: data.reportType || "Technical Due Diligence",
@@ -101,6 +107,17 @@ export default class ReportManager {
             riskScore:      data.riskScore      || 0,
             decisionImpact: data.decisionImpact || "",
             riskLevel:      data.riskLevel      || "",
+
+            sourceQuestionId: data.sourceQuestionId || "",
+            sourceQuestion: data.sourceQuestion || "",
+            sourceModule: data.sourceModule || "",
+            sourceCategory: data.sourceCategory || "",
+            sourcePolicy: data.sourcePolicy || "",
+            sourceRequiredEvidenceRaw: data.sourceRequiredEvidenceRaw || "",
+
+            profile: data.profile || "",
+            country: data.country || "",
+            region: data.region || "",
 
             executiveSummary: data.executiveSummary || "",
             scope:            data.scope            || "",
@@ -117,10 +134,24 @@ export default class ReportManager {
             decisionSummary: data.decisionSummary  || this.createDecisionSummary(data.decisions || []),
 
             status: data.status || "Draft",
+            reviewStatus: data.reviewStatus || "Draft",
+            expertReviewRequired: data.expertReviewRequired !== undefined
+                ? data.expertReviewRequired
+                : true,
+            reportPreparationOnly: data.reportPreparationOnly !== undefined
+                ? data.reportPreparationOnly
+                : true,
+            noAutomaticFinalReport: data.noAutomaticFinalReport !== undefined
+                ? data.noAutomaticFinalReport
+                : true,
+            noAutomaticOpinion: data.noAutomaticOpinion !== undefined
+                ? data.noAutomaticOpinion
+                : true,
 
             preparedBy: data.preparedBy || this.defaultPreparedBy,
             reviewedBy: data.reviewedBy || "",
             approvedBy: data.approvedBy || "",
+            updatedBy: data.updatedBy || data.preparedBy || this.defaultPreparedBy,
 
             createdAt: data.createdAt || new Date().toISOString(),
             updatedAt: new Date().toISOString()

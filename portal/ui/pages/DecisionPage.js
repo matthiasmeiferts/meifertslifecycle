@@ -570,47 +570,119 @@ export default class DecisionPage {
             return;
         }
 
+        const isPattayaDecision =
+            decision.profile === "pattaya" ||
+            String(decision.sourceQuestionId || "").startsWith("TH-PATTAYA-");
+
+        const isAvailabilityCheckOnly = decision.sourcePolicy === "availability_check_only";
+
         const resolvedFindingIds = (decision.findingIds || []).length
             ? decision.findingIds
             : (decision.assessmentIds || [])
                 .flatMap(id => AssessmentManager.load(id)?.findingIds || []);
 
+        const riskScore = decision.riskScore || 0;
+
+        const reportTitle = decision.title
+            ? `Report Draft: ${decision.title}`
+            : `Report Draft from ${decision.id}`;
+
+        const executiveSummaryParts = [
+            decision.description || "Report draft prepared from selected decision.",
+            "",
+            "Report status:",
+            "Draft report preparation record created from selected decision.",
+            "Expert review required before final report, opinion, issue or delivery.",
+            "No automatic final report, expert opinion, purchase recommendation or Go/No-Go result is created by this action."
+        ];
+
+        if (isAvailabilityCheckOnly) {
+            executiveSummaryParts.push("");
+            executiveSummaryParts.push("Review boundary:");
+            executiveSummaryParts.push("Document availability only. No legal, financial, technical or governance document review has been performed.");
+            executiveSummaryParts.push("This report draft may only preserve document availability context. It must not present document content as validated.");
+        }
+
+        if (isPattayaDecision) {
+            executiveSummaryParts.push("");
+            executiveSummaryParts.push("Thailand / Pattaya context:");
+            executiveSummaryParts.push("Field review context retained for structured report preparation.");
+        }
+
+        executiveSummaryParts.push("");
+        executiveSummaryParts.push("Decision trace:");
+        executiveSummaryParts.push(`Decision ID: ${decision.id}`);
+        executiveSummaryParts.push(`Decision source: ${decision.source || "Recommendation Review"}`);
+        executiveSummaryParts.push(`Recommendation IDs: ${(decision.recommendationIds || []).join(", ") || "None"}`);
+        executiveSummaryParts.push(`Assessment IDs: ${(decision.assessmentIds || []).join(", ") || "None"}`);
+        executiveSummaryParts.push(`Finding IDs: ${([...new Set(resolvedFindingIds)]).join(", ") || "None"}`);
+        executiveSummaryParts.push(`Evidence IDs: ${(decision.evidenceIds || []).join(", ") || "None"}`);
+        executiveSummaryParts.push(`Source Recommendation IDs: ${(decision.sourceRecommendationIds || []).join(", ") || "None"}`);
+        executiveSummaryParts.push(`Source Assessment IDs: ${(decision.sourceAssessmentIds || []).join(", ") || "None"}`);
+        executiveSummaryParts.push(`Source Finding IDs: ${(decision.sourceFindingIds || []).join(", ") || "None"}`);
+        executiveSummaryParts.push(`Source Evidence IDs: ${(decision.sourceEvidenceIds || []).join(", ") || "None"}`);
+        executiveSummaryParts.push(`Source policy: ${decision.sourcePolicy || "None"}`);
+        executiveSummaryParts.push(`Risk score: ${riskScore}`);
+        executiveSummaryParts.push(`Decision impact: ${decision.decisionImpact || "Medium"}`);
+        executiveSummaryParts.push(`Decision support only: ${decision.decisionSupportOnly === false ? "No" : "Yes"}`);
+        executiveSummaryParts.push(`No automatic decision: ${decision.noAutomaticDecision === false ? "No" : "Yes"}`);
+        executiveSummaryParts.push(`Expert review required: ${decision.expertReviewRequired === false ? "No" : "Yes"}`);
+        executiveSummaryParts.push(`Rationale: ${decision.rationale || "No rationale"}`);
+
         const report = ReportManager.create({
             caseId: decision.caseId,
             buildingId: decision.buildingId || currentCase?.buildingId || null,
             inspectionId: decision.inspectionId || currentCase?.inspectionId || null,
+
             decisionIds: [decision.id],
             recommendationIds: decision.recommendationIds || [],
             assessmentIds: decision.assessmentIds || [],
             findingIds: [...new Set(resolvedFindingIds)],
             evidenceIds: decision.evidenceIds || [],
-            title: "Technical Due Diligence Report",
+
+            sourceDecisionIds: [decision.id],
+            sourceRecommendationIds: decision.sourceRecommendationIds || decision.recommendationIds || [],
+            sourceAssessmentIds: decision.sourceAssessmentIds || decision.assessmentIds || [],
+            sourceFindingIds: decision.sourceFindingIds || [...new Set(resolvedFindingIds)],
+            sourceEvidenceIds: decision.sourceEvidenceIds || decision.evidenceIds || [],
+
+            title: reportTitle,
             sourceTitle: decision.title || decision.id,
             reportType: "Technical Due Diligence",
-            version: "1.0.0",
+            version: "1.0.0-draft",
+
             source: decision.source || "Decision Review",
             buildingSystem: decision.buildingSystem || "",
-            riskScore: decision.riskScore || 0,
+            riskScore,
             decisionImpact: decision.decisionImpact || "",
             riskLevel: decision.riskLevel || "",
-            executiveSummary: [
-                decision.description || "Report prepared from selected decision.",
-                "",
-                "Decision trace:",
-                `Decision ID: ${decision.id}`,
-                `Decision source: ${decision.source || "Recommendation Review"}`,
-                `Recommendation IDs: ${(decision.recommendationIds || []).join(", ") || "None"}`,
-                `Assessment IDs: ${(decision.assessmentIds || []).join(", ") || "None"}`,
-                `Finding IDs: ${([...new Set(resolvedFindingIds)]).join(", ") || "None"}`,
-                `Evidence IDs: ${(decision.evidenceIds || []).join(", ") || "None"}`,
-                `Risk score: ${decision.riskScore || 0}`,
-                `Decision impact: ${decision.decisionImpact || "Medium"}`,
-                `Rationale: ${decision.rationale || "No rationale"}`
-            ].join("\n"),
-            scope: "Decision-based technical due diligence report.",
-            methodology: "Evidence-first workflow chain review.",
+
+            sourceQuestionId: decision.sourceQuestionId || "",
+            sourceQuestion: decision.sourceQuestion || "",
+            sourceModule: decision.sourceModule || "",
+            sourceCategory: decision.sourceCategory || "",
+            sourcePolicy: decision.sourcePolicy || "",
+            sourceRequiredEvidenceRaw: decision.sourceRequiredEvidenceRaw || "",
+
+            profile: isPattayaDecision ? "pattaya" : "",
+            country: isPattayaDecision ? "TH" : "",
+            region: isPattayaDecision ? "Pattaya / Chonburi" : "",
+
+            executiveSummary: executiveSummaryParts.join("\n"),
+            scope: isAvailabilityCheckOnly
+                ? "Report preparation based on document availability context only."
+                : "Decision-based technical due diligence report preparation.",
+            methodology: "Evidence-first workflow chain review. Expert review required before final report use.",
+
             decisions: [decision],
-            status: "Draft"
+            status: "Draft",
+            reviewStatus: "Draft",
+            expertReviewRequired: true,
+            reportPreparationOnly: true,
+            noAutomaticFinalReport: true,
+            noAutomaticOpinion: true,
+            preparedBy: "MEIFERTS Building Intelligence",
+            updatedBy: "System"
         });
 
         ReportManager.set(report);
@@ -628,12 +700,14 @@ export default class DecisionPage {
         const updatedDecision = DecisionManager.update({
             ...decision,
             reportIds: [...new Set([...(decision.reportIds || []), report.id])],
+            linkedReportId: report.id,
+            hasReport: true,
             updatedAt: new Date().toISOString()
         });
 
         DecisionManager.set(updatedDecision);
 
-        Notification.success("Report created from selected decision.");
+        Notification.success("Report draft created. Expert review required. No final report created.");
         window.location.hash = "reports";
     }
 
