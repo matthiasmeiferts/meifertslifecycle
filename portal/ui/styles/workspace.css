@@ -4923,3 +4923,71 @@ button.dashboard-readiness-card__action:focus-visible {
 .settings-demo-status--draft {
     background: rgba(244, 241, 235, 0.72);
 }
+
+/* Field-Test Cleanup 1: readable detail panels */
+.detail-panel {
+    min-width: 0;
+}
+
+.detail-panel h2 {
+    overflow-wrap: anywhere;
+    word-break: normal;
+    hyphens: auto;
+}
+
+.detail-row {
+    align-items: flex-start;
+    min-width: 0;
+}
+
+.detail-row span {
+    flex: 0 0 auto;
+    padding-top: 1px;
+    line-height: 1.35;
+}
+
+.detail-row strong {
+    max-width: min(320px, 58%);
+    min-width: 0;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+.detail-row--long {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+}
+
+.detail-row--long strong {
+    max-width: none;
+    width: 100%;
+    text-align: left;
+}
+
+.detail-row--id strong {
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 12px;
+    letter-spacing: -0.01em;
+    line-height: 1.45;
+}
+
+.detail-row--id.detail-row--long strong,
+.detail-row--id strong {
+    padding: 7px 9px;
+    border-radius: 10px;
+    background: rgba(27, 43, 69, 0.045);
+    border: 1px solid rgba(27, 43, 69, 0.06);
+}
+
+.detail-row--empty strong {
+    color: rgba(27, 43, 69, 0.42);
+}
+
+@media (max-width: 1280px) {
+    .detail-row strong {
+        max-width: none;
+    }
+}
