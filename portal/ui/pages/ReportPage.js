@@ -28,14 +28,14 @@ export default class ReportPage {
         {
             key: "report",
             label: "Report",
-            description: "Final report output prepared"
+            description: "Draft report output prepared"
         }
     ];
 
     static statusLabels = {
         draft: "Draft",
-        prepared: "Prepared",
-        preparedOutput: "Prepared",
+        prepared: "Draft Prepared",
+        preparedOutput: "Draft Prepared",
         reviewed: "Reviewed",
         finalized: "Finalized",
         blocked: "Blocked"
@@ -287,33 +287,33 @@ export default class ReportPage {
         if (hasContent && hasDecisionLink && hasOutput && isFinalized) {
             outputQualitySignal = {
                 label: "Strong output quality",
-                description: "Report contains decision context, prepared content, prepared output and final approval.",
+                description: "Report contains decision context, prepared content, draft output and final approval.",
                 tone: "ready"
             };
         } else if (hasContent && hasDecisionLink) {
             outputQualitySignal = {
                 label: "Developing output quality",
-                description: "Report has meaningful content and decision context, but output generation or finalization may still be missing.",
+                description: "Report has meaningful content and decision context. Draft output or expert finalization may still be pending.",
                 tone: "active"
             };
         }
 
         const nextAction = isFinalized
             ? {
-                label: "Archive or publish report",
-                description: "Report is finalized. Confirm publication, export or archive workflow.",
+                label: "Archive approved report",
+                description: "Report is finalized. Confirm approved export or archive workflow.",
                 tone: "ready"
             }
             : hasOutput
                 ? {
-                    label: "Review and finalize report",
-                    description: "Report output exists. Complete final review and approval.",
+                    label: "Review draft report",
+                    description: "Draft output exists. Complete expert review before final use.",
                     tone: "active"
                 }
                 : hasContent && hasDecisionLink
                     ? {
-                        label: "Generate report output",
-                        description: "Report content and decision context are available. Generate the final output.",
+                        label: "Prepare draft report output",
+                        description: "Report content and decision context are available. Prepare the draft output for expert review.",
                         tone: "active"
                     }
                     : {
@@ -394,12 +394,12 @@ export default class ReportPage {
             },
             {
                 key: "output",
-                label: "Output prepared",
+                label: "Draft output prepared",
                 complete: hasOutput
             },
             {
                 key: "final",
-                label: "Report finalized",
+                label: "Finalization pending",
                 complete: isFinalized
             }
         ];
@@ -424,7 +424,7 @@ export default class ReportPage {
         const readinessLabel = completion.isComplete
             ? "Final Report Complete"
             : completion.isReadyForFinalReview
-                ? "Ready for Final Review"
+                ? "Ready for Expert Review"
                 : "Needs more report data";
 
         return `
@@ -479,7 +479,7 @@ export default class ReportPage {
                     <article class="report-intelligence__card intelligence-snapshot__card">
                         <span>Final Review Readiness</span>
                         <strong>${intelligence.readinessPercent}%</strong>
-                        <p>Readiness based on identity, report type, decision link, content, output, review and finalization.</p>
+                        <p>Readiness based on identity, report type, decision link, content, draft output, expert review and finalization.</p>
                     </article>
 
                     <article class="report-intelligence__card intelligence-snapshot__card report-intelligence__card--${intelligence.outputQualitySignal.tone} intelligence-snapshot__card--${intelligence.outputQualitySignal.tone}">
@@ -749,10 +749,38 @@ export default class ReportPage {
         ];
     }
 
+    static isDraftPreparedForReview(report = {}) {
+        return (
+            this.getReportStatus(report) === "prepared" ||
+            report.prepared ||
+            report.preparedAt ||
+            report.status === "Prepared" ||
+            report.status === "prepared"
+        );
+    }
+
+    static formatDraftExportFormat(report = {}) {
+        if (report.exportFormat === "PDF") {
+            return "Print / Save PDF draft";
+        }
+
+        return report.exportFormat || (this.isDraftPreparedForReview(report) ? "Print / Save PDF draft" : "Pending");
+    }
+
+    static formatDraftPreparedValue(report = {}) {
+        if (report.preparedAt) {
+            return new Date(report.preparedAt).toLocaleString();
+        }
+
+        return this.isDraftPreparedForReview(report)
+            ? "Draft prepared for expert review"
+            : "Draft preparation pending";
+    }
+
     static getReportStatusRows(report = {}) {
         return [
-            ["Export Format", report.exportFormat || ((report.prepared || report.status === "Prepared") ? "Print / Save PDF" : "Pending")],
-            ["Prepared", report.preparedAt ? new Date(report.preparedAt).toLocaleString() : ((report.prepared || report.status === "Prepared") ? "Prepared for review" : "Preparation pending")]
+            ["Export Format", this.formatDraftExportFormat(report)],
+            ["Draft Prepared", this.formatDraftPreparedValue(report)]
         ];
     }
 
@@ -973,10 +1001,10 @@ export default class ReportPage {
             { label: "Risk Score", value: String(activeReport.riskScore || 0) },
             { label: "Decision Impact", value: activeReport.decisionImpact || "Medium" },
             { label: "Risk Level", value: activeReport.riskLevel || "Medium" },
-            { label: "Prepared", value: activeReport.preparedAt ? new Date(activeReport.preparedAt).toLocaleString() : ((activeReport.prepared || activeReport.status === "Prepared") ? "Prepared for review" : "Preparation pending") },
+            { label: "Draft Prepared", value: this.formatDraftPreparedValue(activeReport) },
             { label: "Report Type", value: activeReport.reportType || "Technical Due Diligence" },
             { label: "Executive Summary", value: activeReport.executiveSummary || "No executive summary" },
-            { label: "Export Format", value: activeReport.exportFormat || ((activeReport.prepared || activeReport.status === "Prepared") ? "Print / Save PDF" : "Pending") },
+            { label: "Export Format", value: this.formatDraftExportFormat(activeReport) },
             { label: "Export Requested", value: activeReport.exportRequestedAt ? new Date(activeReport.exportRequestedAt).toLocaleString() : "Not requested" }
         ]);
     }
