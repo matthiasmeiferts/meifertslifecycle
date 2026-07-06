@@ -5043,3 +5043,70 @@ button.dashboard-readiness-card__action:focus-visible {
 .detail-boundary-badge--neutral {
     color: rgba(27, 43, 69, 0.52);
 }
+
+
+/* Field-Test Cleanup 3: report preview safety notice */
+.report-preview__safety-notice {
+    background: rgba(124, 47, 47, 0.045);
+    border: 1px solid rgba(124, 47, 47, 0.14);
+    border-left: 4px solid rgba(124, 47, 47, 0.45);
+    border-radius: 10px;
+    display: grid;
+    gap: 18px;
+    grid-template-columns: minmax(180px, 0.45fr) minmax(0, 1fr);
+    margin-top: 22px;
+    padding: 18px 20px;
+}
+
+.report-preview__safety-notice strong {
+    color: #7C2F2F;
+    display: block;
+    font-size: 1rem;
+    line-height: 1.3;
+}
+
+.report-preview__safety-notice ul {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.report-preview__safety-notice li {
+    color: #1B2B45;
+    font-size: 0.94rem;
+    font-weight: 700;
+    line-height: 1.4;
+    padding-left: 18px;
+    position: relative;
+}
+
+.report-preview__safety-notice li::before {
+    background: #7C2F2F;
+    border-radius: 50%;
+    content: "";
+    height: 6px;
+    left: 0;
+    position: absolute;
+    top: 0.62em;
+    width: 6px;
+}
+
+@media (max-width: 900px) {
+    .report-preview__safety-notice {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media print {
+    .report-preview__safety-notice {
+        background: #ffffff !important;
+        border: 1px solid rgba(20, 35, 61, 0.20) !important;
+        border-left: 3px solid #7C2F2F !important;
+        break-inside: avoid !important;
+        padding: 4mm !important;
+    }
+}
+

@@ -780,6 +780,52 @@ export default class ReportPage {
         return "";
     }
 
+    static getReportSafetyNoticeItems(report = {}) {
+        const items = [];
+
+        if (report.expertReviewRequired !== false) {
+            items.push("Expert review required before final report use.");
+        }
+
+        if (report.reportPreparationOnly) {
+            items.push("Draft report preparation only.");
+        }
+
+        if (report.noAutomaticFinalReport) {
+            items.push("No final report has been created by this action.");
+        }
+
+        if (report.noAutomaticOpinion) {
+            items.push("No automatic expert opinion or purchase recommendation.");
+        }
+
+        if (report.sourcePolicy === "availability_check_only") {
+            items.push("Document availability only. Document content has not been validated.");
+        }
+
+        if (!items.length) {
+            items.push("Review report content before external use.");
+        }
+
+        return items;
+    }
+
+    static renderReportSafetyNotice(report = {}) {
+        const items = this.getReportSafetyNoticeItems(report);
+
+        return `
+            <section class="report-preview__section report-preview__safety-notice" aria-label="Report safety notice">
+                <div>
+                    <span class="report-preview__section-label">Safety Notice</span>
+                    <strong>Draft boundary</strong>
+                </div>
+                <ul>
+                    ${items.map(item => `<li>${this.escapeHtml(item)}</li>`).join("")}
+                </ul>
+            </section>
+        `;
+    }
+
     static createReportPreview(report = {}) {
         const section = document.createElement("section");
         section.className = "workflow-card report-preview";
@@ -804,6 +850,8 @@ export default class ReportPage {
                         <strong>${this.escapeHtml(this.formatReportStatus(report))}</strong>
                     </div>
                 </header>
+
+                  ${this.renderReportSafetyNotice(report)}
 
                 <section class="report-preview__section report-preview__summary">
                     <span class="report-preview__section-label">Executive Summary</span>
