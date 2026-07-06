@@ -5,6 +5,7 @@ import BuildingManager from "../../core/BuildingManager.js";
 import InspectionManager from "../../core/InspectionManager.js";
 import FindingManager from "../../core/FindingManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import LanguageManager from "../../core/LanguageManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
 import WorkflowProgressPanel from "../components/WorkflowProgressPanel.js";
@@ -21,8 +22,8 @@ export default class EvidencePage {
     static flowSteps = [
         {
             key: "evidence",
-            label: "Evidence",
-            description: "Inspection evidence captured"
+            label: LanguageManager.t("NavEvidence"),
+            description: LanguageManager.t("EvidenceInspectionCaptured")
         },
         {
             key: "finding",
@@ -32,11 +33,12 @@ export default class EvidencePage {
     ];
 
     static statusLabels = {
-        draft: "Draft",
-        captured: "Captured",
-        linked: "Linked",
-        reviewed: "Reviewed",
-        blocked: "Blocked"
+        draft: LanguageManager.t("EvidenceStatusDraft"),
+        open: LanguageManager.t("EvidenceStatusOpen"),
+        captured: LanguageManager.t("EvidenceStatusCaptured"),
+        linked: LanguageManager.t("EvidenceStatusLinked"),
+        reviewed: LanguageManager.t("EvidenceStatusReviewed"),
+        blocked: LanguageManager.t("EvidenceStatusBlocked")
     };
 
     static render() {
@@ -113,15 +115,15 @@ export default class EvidencePage {
 
         if (status === "reviewed") {
             return {
-                label: "Create or confirm finding",
-                description: "Evidence is reviewed and ready to support a technical finding.",
+                label: LanguageManager.t("EvidenceCreateConfirmFinding"),
+                description: LanguageManager.t("EvidenceReadyForFinding"),
                 tone: "ready"
             };
         }
 
         if (status === "linked") {
             return {
-                label: "Review linked finding",
+                label: LanguageManager.t("EvidenceReviewLinkedFindingAction"),
                 description: "This evidence is already connected to a finding. Check completeness before assessment.",
                 tone: "linked"
             };
@@ -129,7 +131,7 @@ export default class EvidencePage {
 
         if (status === "captured") {
             return {
-                label: "Review evidence",
+                label: LanguageManager.t("EvidenceReviewEvidence"),
                 description: "Captured evidence should be checked before it is linked to a finding.",
                 tone: "active"
             };
@@ -170,17 +172,17 @@ export default class EvidencePage {
         const checks = [
             {
                 key: "identity",
-                label: "Evidence identified",
+                label: LanguageManager.t("EvidenceIdentified"),
                 complete: hasTitle
             },
             {
                 key: "classification",
-                label: "Evidence classified",
+                label: LanguageManager.t("EvidenceClassified"),
                 complete: hasType
             },
             {
                 key: "source",
-                label: "Source linked",
+                label: LanguageManager.t("EvidenceSourceLinked"),
                 complete: hasSource
             },
             {
@@ -239,7 +241,7 @@ export default class EvidencePage {
             : "Needs more evidence data";
 
         return `
-            <section class="completion-panel" aria-label="Evidence completion">
+            <section class="completion-panel" aria-label="${LanguageManager.t("EvidenceCompletionLabel")}">
                 <div class="completion-panel__header">
                     <div>
                         <span class="completion-panel__eyebrow">Completion</span>
@@ -286,7 +288,7 @@ export default class EvidencePage {
             <section class="workspace-flow" aria-label="Active workflow state">
                 <div class="workspace-flow__header">
                     <span class="workspace-flow__eyebrow">Active Flow</span>
-                    <strong>Evidence → Finding</strong>
+                    <strong>${LanguageManager.t("EvidenceToFindingLabel")}</strong>
                 </div>
 
                 <div class="workspace-flow__steps">
@@ -329,15 +331,15 @@ export default class EvidencePage {
         const summary = WorkspaceController.getActiveCaseSummary();
 
         return SectionHeader.create({
-            eyebrow: "Evidence Workspace",
-            title: "Evidence Collection",
+            eyebrow: LanguageManager.t("EvidenceWorkspaceTitle"),
+            title: LanguageManager.t("EvidenceCollectionTitle"),
             description: activeEvidence
-                ? `Active evidence: ${activeEvidence.title || activeEvidence.id}`
+                ? `${LanguageManager.t("EvidenceActivePrefix")}: ${activeEvidence.title || activeEvidence.id}`
                 : `${summary.title} · Capture, classify, and prepare evidence for findings.`,
             actions: [
                 {
                     id: "new-evidence",
-                    label: "+ New Evidence",
+                    label: LanguageManager.t("EvidenceNewAction"),
                     onClick: () => this.createSampleEvidence()
                 }
             ]
@@ -351,10 +353,10 @@ export default class EvidencePage {
         const grid = document.createElement("section");
         grid.className = "metrics-grid";
 
-        grid.appendChild(MetricCard.create("Total Evidence", evidenceCount));
-        grid.appendChild(MetricCard.create("Selected", EvidenceManager.get() ? "1" : "0"));
-        grid.appendChild(MetricCard.create("Linked Findings", this.countFindingsLinkedToEvidence()));
-        grid.appendChild(MetricCard.create("Review Status", "Open"));
+        grid.appendChild(MetricCard.create(LanguageManager.t("EvidenceTotalMetric"), evidenceCount));
+        grid.appendChild(MetricCard.create(LanguageManager.t("EvidenceSelectedMetric"), EvidenceManager.get() ? "1" : "0"));
+        grid.appendChild(MetricCard.create(LanguageManager.t("EvidenceLinkedFindingsMetric"), this.countFindingsLinkedToEvidence()));
+        grid.appendChild(MetricCard.create(LanguageManager.t("EvidenceReviewStatusMetric"), LanguageManager.t("EvidenceStatusOpen")));
 
         return grid;
     }
@@ -366,12 +368,12 @@ export default class EvidencePage {
         wrapper.appendChild(ActionBar.create([
             {
                 id: "refresh",
-                label: "Refresh",
+                label: LanguageManager.t("EvidenceRefreshAction"),
                 onClick: () => this.refresh()
             },
             {
                 id: "close-evidence",
-                label: "Close Evidence",
+                label: LanguageManager.t("EvidenceCloseAction"),
                 onClick: () => {
                     EvidenceManager.clear();
                     this.refresh();
@@ -379,12 +381,12 @@ export default class EvidencePage {
             },
             {
                 id: "upload-evidence",
-                label: "Upload",
+                label: LanguageManager.t("EvidenceUploadAction"),
                 onClick: () => this.createSampleEvidence()
             },
             {
                 id: "create-finding",
-                label: "Create Finding",
+                label: LanguageManager.t("EvidenceCreateFindingAction"),
                 onClick: () => this.createFindingFromSelectedEvidence()
             }
         ]));
@@ -408,10 +410,10 @@ export default class EvidencePage {
     static createContent(evidenceItems = this.getEvidenceItems()) {
         if (!evidenceItems.length) {
             return EmptyState.create({
-                eyebrow: "Evidence Workspace",
-                title: "No evidence available",
-                description: "Add photos, documents, inspection notes, or technical records to begin the evidence chain.",
-                actionLabel: "+ New Evidence",
+                eyebrow: LanguageManager.t("EvidenceWorkspaceTitle"),
+                title: LanguageManager.t("EvidenceEmptyTitle"),
+                description: LanguageManager.t("EvidenceEmptyDescription"),
+                actionLabel: LanguageManager.t("EvidenceNewAction"),
                 onAction: () => this.createSampleEvidence()
             });
         }
@@ -440,11 +442,11 @@ export default class EvidencePage {
         content.className = "evidence-row__content";
 
         const title = document.createElement("strong");
-        title.textContent = item.title || item.name || item.id || "Evidence Item";
+        title.textContent = item.title || item.name || item.id || LanguageManager.t("EvidenceItemFallback");
 
         const meta = document.createElement("span");
         meta.textContent = [
-            item.evidenceType || item.type || "Evidence",
+            item.evidenceType || item.type || LanguageManager.t("EvidenceDefaultType"),
             item.source || item.sourceType || ""
         ].filter(Boolean).join(" · ");
 
@@ -460,9 +462,9 @@ export default class EvidencePage {
         actions.className = "evidence-row__actions";
 
         [
-            ["open", "Open"],
-            ["edit", "Edit"],
-            ["delete", "Delete"]
+            ["open", LanguageManager.t("ReportOpenAction")],
+            ["edit", LanguageManager.t("ReportEditAction")],
+            ["delete", LanguageManager.t("ReportDeleteAction")]
         ].forEach(([action, label]) => {
             const button = document.createElement("button");
             button.type = "button";
@@ -499,7 +501,7 @@ export default class EvidencePage {
     }
 
     static deleteEvidence(item) {
-        if (!window.confirm(`Delete evidence "${item.title || item.id}"?`)) {
+        if (!window.confirm(`${LanguageManager.t("EvidenceDeleteConfirmPrefix")} "${item.title || item.id}"?`)) {
             return;
         }
 
@@ -509,37 +511,37 @@ export default class EvidencePage {
             EvidenceManager.clear();
         }
 
-        Notification.success("Evidence deleted.");
+        Notification.success(LanguageManager.t("EvidenceDeletedNotification"));
         this.refresh();
     }
 
     static createDetailPanel(activeEvidence = EvidenceManager.get(), evidenceItems = this.getEvidenceItems()) {
         if (!activeEvidence) {
-            return DetailPanel.create("Evidence Context", [
-                { label: "Evidence Items", value: String(evidenceItems.length) },
-                { label: "Selected Evidence", value: "Not selected" },
-                { label: "Evidence Status", value: evidenceItems.length ? "In Review" : "Not started" },
-                { label: "Workspace Status", value: "—" },
-                { label: "Next Step", value: "Create or select evidence" }
+            return DetailPanel.create(LanguageManager.t("EvidenceContextTitle"), [
+                { label: LanguageManager.t("EvidenceItemsLabel"), value: String(evidenceItems.length) },
+                { label: LanguageManager.t("EvidenceSelectedLabel"), value: LanguageManager.t("EvidenceNotSelected") },
+                { label: LanguageManager.t("EvidenceStatusLabel"), value: evidenceItems.length ? LanguageManager.t("EvidenceInReview") : LanguageManager.t("EvidenceNotStarted") },
+                { label: LanguageManager.t("EvidenceWorkspaceStatusLabel"), value: "—" },
+                { label: LanguageManager.t("EvidenceNextStepLabel"), value: LanguageManager.t("EvidenceCreateOrSelect") }
             ]);
         }
 
         const statusLabel = this.statusLabels[this.getEvidenceStatus(activeEvidence)] || "Draft";
 
-        return DetailPanel.create("Evidence Context", [
-            { label: "Selected Evidence", value: activeEvidence.title || activeEvidence.id },
-            { label: "Workspace Status", value: statusLabel },
-            { label: "Safety Boundaries", value: DetailPanel.createBoundaryBadges(activeEvidence) },
-            { label: "Case ID", value: activeEvidence.caseId || "Not linked" },
-            { label: "Building ID", value: activeEvidence.buildingId || "Not linked" },
-            { label: "Inspection ID", value: activeEvidence.inspectionId || "Not linked" },
-            { label: "Source", value: activeEvidence.source || activeEvidence.sourceType || "Manual Evidence" },
-            { label: "Question ID", value: activeEvidence.sourceQuestionId || "Not linked" },
-            { label: "Question", value: activeEvidence.sourceQuestion || "Not linked" },
-            { label: "Required Evidence", value: (activeEvidence.sourceRequiredEvidence || []).join(", ") || "None" },
-            { label: "Scope ID", value: activeEvidence.scopeId || "Not linked" },
-            { label: "Finding IDs", value: (activeEvidence.findingIds || []).join(", ") || "None" },
-            { label: "Linked Findings", value: String(this.countFindingsLinkedToEvidence(activeEvidence.id)) }
+        return DetailPanel.create(LanguageManager.t("EvidenceContextTitle"), [
+            { label: LanguageManager.t("EvidenceSelectedLabel"), value: activeEvidence.title || activeEvidence.id },
+            { label: LanguageManager.t("EvidenceWorkspaceStatusLabel"), value: statusLabel },
+            { label: LanguageManager.t("EvidenceSafetyBoundariesLabel"), value: DetailPanel.createBoundaryBadges(activeEvidence) },
+            { label: LanguageManager.t("EvidenceCaseIdLabel"), value: activeEvidence.caseId || LanguageManager.t("EvidenceNotLinked") },
+            { label: LanguageManager.t("EvidenceBuildingIdLabel"), value: activeEvidence.buildingId || LanguageManager.t("EvidenceNotLinked") },
+            { label: LanguageManager.t("EvidenceInspectionIdLabel"), value: activeEvidence.inspectionId || LanguageManager.t("EvidenceNotLinked") },
+            { label: LanguageManager.t("EvidenceSourceLabel"), value: activeEvidence.source || activeEvidence.sourceType || LanguageManager.t("EvidenceManualEvidence") },
+            { label: LanguageManager.t("EvidenceQuestionIdLabel"), value: activeEvidence.sourceQuestionId || LanguageManager.t("EvidenceNotLinked") },
+            { label: LanguageManager.t("EvidenceQuestionLabel"), value: activeEvidence.sourceQuestion || LanguageManager.t("EvidenceNotLinked") },
+            { label: LanguageManager.t("EvidenceRequiredEvidenceLabel"), value: (activeEvidence.sourceRequiredEvidence || []).join(", ") || LanguageManager.t("EvidenceNone") },
+            { label: LanguageManager.t("EvidenceScopeIdLabel"), value: activeEvidence.scopeId || LanguageManager.t("EvidenceNotLinked") },
+            { label: LanguageManager.t("EvidenceFindingIdsLabel"), value: (activeEvidence.findingIds || []).join(", ") || LanguageManager.t("EvidenceNone") },
+            { label: LanguageManager.t("EvidenceLinkedFindingsMetric"), value: String(this.countFindingsLinkedToEvidence(activeEvidence.id)) }
         ]);
     }
 
@@ -595,17 +597,17 @@ export default class EvidencePage {
         const currentCase = CaseManager.getCurrent();
 
         if (!evidence) {
-            Notification.warning("Select evidence first.");
+            Notification.warning(LanguageManager.t("EvidenceSelectFirstWarning"));
             return;
         }
 
         if (!evidence.caseId) {
-            Notification.warning("Selected evidence is not linked to a case.");
+            Notification.warning(LanguageManager.t("EvidenceNotLinkedCaseWarning"));
             return;
         }
 
         if (currentCase && currentCase.id !== evidence.caseId) {
-            Notification.warning("Selected evidence belongs to another case.");
+            Notification.warning(LanguageManager.t("EvidenceBelongsOtherCaseWarning"));
             return;
         }
 
@@ -710,7 +712,7 @@ export default class EvidencePage {
 
         EvidenceManager.set(updatedEvidence);
 
-        Notification.success("Finding draft created. Expert review required.");
+        Notification.success(LanguageManager.t("EvidenceFindingDraftCreated"));
         window.location.hash = "findings";
     }
 
@@ -720,7 +722,7 @@ export default class EvidencePage {
 
         if (!evidence) {
 
-            Notification.info("Select evidence before editing.");
+            Notification.info(LanguageManager.t("EvidenceSelectBeforeEditing"));
 
             return;
 
@@ -728,9 +730,9 @@ export default class EvidencePage {
 
         FormDialog.open({
 
-            title: "Edit Evidence",
+            title: LanguageManager.t("EvidenceEditTitle"),
 
-            submitLabel: "Save Evidence",
+            submitLabel: LanguageManager.t("EvidenceSaveAction"),
 
             values: {
 
@@ -750,7 +752,7 @@ export default class EvidencePage {
 
                     id: "title",
 
-                    label: "Evidence title"
+                    label: LanguageManager.t("EvidenceTitleField")
 
                 },
 
@@ -758,7 +760,7 @@ export default class EvidencePage {
 
                     id: "description",
 
-                    label: "Description"
+                    label: LanguageManager.t("EvidenceDescriptionField")
 
                 },
 
@@ -766,7 +768,7 @@ export default class EvidencePage {
 
                     id: "evidenceType",
 
-                    label: "Evidence type",
+                    label: LanguageManager.t("EvidenceTypeField"),
 
                     type: "select",
 
@@ -778,7 +780,7 @@ export default class EvidencePage {
 
                     id: "status",
 
-                    label: "Status",
+                    label: LanguageManager.t("CaseStatusLabel"),
 
                     type: "select",
 
@@ -812,7 +814,7 @@ export default class EvidencePage {
 
                 dialog.remove();
 
-                Notification.success("Evidence updated.");
+                Notification.success(LanguageManager.t("EvidenceUpdatedNotification"));
 
                 this.refresh();
 
@@ -846,7 +848,7 @@ export default class EvidencePage {
 
         if (!currentCase) {
 
-            Notification.info("Open a case before creating evidence.");
+            Notification.info(LanguageManager.t("EvidenceOpenCaseFirst"));
 
             return;
 
@@ -854,9 +856,9 @@ export default class EvidencePage {
 
         FormDialog.open({
 
-            title: "New Evidence",
+            title: LanguageManager.t("EvidenceNewTitle"),
 
-            submitLabel: "Create Evidence",
+            submitLabel: LanguageManager.t("EvidenceCreateAction"),
 
             values: {
 
@@ -876,7 +878,7 @@ export default class EvidencePage {
 
                     id: "title",
 
-                    label: "Evidence title"
+                    label: LanguageManager.t("EvidenceTitleField")
 
                 },
 
@@ -884,7 +886,7 @@ export default class EvidencePage {
 
                     id: "description",
 
-                    label: "Description"
+                    label: LanguageManager.t("EvidenceDescriptionField")
 
                 },
 
@@ -892,7 +894,7 @@ export default class EvidencePage {
 
                     id: "evidenceType",
 
-                    label: "Evidence type",
+                    label: LanguageManager.t("EvidenceTypeField"),
 
                     type: "select",
 
@@ -904,7 +906,7 @@ export default class EvidencePage {
 
                     id: "status",
 
-                    label: "Status",
+                    label: LanguageManager.t("CaseStatusLabel"),
 
                     type: "select",
 
@@ -940,7 +942,7 @@ export default class EvidencePage {
 
                 dialog.remove();
 
-                Notification.success("Evidence created.");
+                Notification.success(LanguageManager.t("EvidenceCreatedNotification"));
 
                 this.refresh();
 
@@ -952,7 +954,7 @@ export default class EvidencePage {
 
 
     static showPendingFeature(feature = "This feature") {
-        Notification.info(`${feature} is reserved for a later workspace release.`);
+        Notification.info(`${feature} ${LanguageManager.t("EvidencePendingFeatureSuffix")}`);
     }
 
     static getEvidenceIntelligence(evidence = {}) {
@@ -1009,40 +1011,40 @@ export default class EvidencePage {
         });
 
         let qualitySignal = {
-            label: "Low evidence quality",
-            description: "Evidence is still incomplete. Add content, source and classification before deriving a finding.",
+            label: LanguageManager.t("EvidenceLowQuality"),
+            description: LanguageManager.t("EvidenceLowQualityDescription"),
             tone: "draft"
         };
 
         if (hasIdentity && hasType && hasSource && hasContent && hasFindingLink) {
             qualitySignal = {
-                label: "Strong evidence quality",
-                description: "Evidence is well structured and connected to the downstream finding workflow.",
+                label: LanguageManager.t("EvidenceStrongQuality"),
+                description: LanguageManager.t("EvidenceStrongQualityDescription"),
                 tone: "ready"
             };
         } else if (hasIdentity && hasType && hasContent) {
             qualitySignal = {
-                label: "Developing evidence quality",
-                description: "Evidence has useful substance, but source or finding linkage may still be missing.",
+                label: LanguageManager.t("EvidenceDevelopingQuality"),
+                description: LanguageManager.t("EvidenceDevelopingQualityDescription"),
                 tone: "active"
             };
         }
 
         const nextAction = hasFindingLink
             ? {
-                label: "Review linked finding",
-                description: "Evidence is connected to a finding. Review whether the finding reflects the evidence accurately.",
+                label: LanguageManager.t("EvidenceReviewLinkedFindingAction"),
+                description: LanguageManager.t("EvidenceReviewLinkedFindingDescription"),
                 tone: "ready"
             }
             : hasContent
                 ? {
-                    label: "Create or link finding",
-                    description: "Evidence content is available. Connect it to a technical finding.",
+                    label: LanguageManager.t("EvidenceCreateOrLinkFinding"),
+                    description: LanguageManager.t("EvidenceCreateOrLinkFindingDescription"),
                     tone: "active"
                 }
                 : {
-                    label: "Capture evidence content",
-                    description: "Add a note, document, photo or description before moving toward finding creation.",
+                    label: LanguageManager.t("EvidenceCaptureContent"),
+                    description: LanguageManager.t("EvidenceCaptureContentDescription"),
                     tone: "draft"
                 };
 
@@ -1054,10 +1056,10 @@ export default class EvidencePage {
             qualitySignal,
             nextAction,
             label: readinessPercent >= 100
-                ? "Evidence intelligence complete"
+                ? LanguageManager.t("EvidenceIntelligenceComplete")
                 : readinessPercent >= 50
-                    ? "Evidence intelligence developing"
-                    : "Evidence intelligence early"
+                    ? LanguageManager.t("EvidenceIntelligenceDeveloping")
+                    : LanguageManager.t("EvidenceIntelligenceEarly")
         };
     }
 
@@ -1066,31 +1068,31 @@ export default class EvidencePage {
         const intelligence = this.getEvidenceIntelligence(evidence);
 
         return `
-            <section class="evidence-intelligence intelligence-snapshot" aria-label="Evidence intelligence snapshot">
+            <section class="evidence-intelligence intelligence-snapshot" aria-label="${LanguageManager.t("EvidenceIntelligenceLabel")}">
                 <div class="evidence-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="evidence-intelligence__eyebrow intelligence-snapshot__eyebrow">Evidence Intelligence</span>
+                        <span class="evidence-intelligence__eyebrow intelligence-snapshot__eyebrow">${LanguageManager.t("EvidenceIntelligenceLabel")}</span>
                         <strong>${intelligence.label}</strong>
-                        <p>${intelligence.completed}/${intelligence.total} evidence intelligence checks completed</p>
+                        <p>${intelligence.completed}/${intelligence.total} ${LanguageManager.t("EvidenceChecksCompleted")}</p>
                     </div>
                     <span class="evidence-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
                 <div class="evidence-intelligence__grid intelligence-snapshot__grid">
                     <article class="evidence-intelligence__card intelligence-snapshot__card">
-                        <span>Finding Readiness</span>
+                        <span>${LanguageManager.t("EvidenceFindingReadiness")}</span>
                         <strong>${intelligence.readinessPercent}%</strong>
-                        <p>Readiness based on identity, classification, source, content, finding link and review state.</p>
+                        <p>${LanguageManager.t("EvidenceFindingReadinessDescription")}</p>
                     </article>
 
                     <article class="evidence-intelligence__card intelligence-snapshot__card evidence-intelligence__card--${intelligence.qualitySignal.tone} intelligence-snapshot__card--${intelligence.qualitySignal.tone}">
-                        <span>Evidence Quality Signal</span>
+                        <span>${LanguageManager.t("EvidenceQualitySignalLabel")}</span>
                         <strong>${intelligence.qualitySignal.label}</strong>
                         <p>${intelligence.qualitySignal.description}</p>
                     </article>
 
                     <article class="evidence-intelligence__card intelligence-snapshot__card evidence-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
-                        <span>Next Evidence Action</span>
+                        <span>${LanguageManager.t("EvidenceNextActionLabel")}</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>
                     </article>

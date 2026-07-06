@@ -1439,6 +1439,382 @@ export default class LanguageManager {
                 en: "Inspection ID / reference",
                 de: "Inspection-ID / Referenz"
             },
+            EvidenceWorkspaceTitle: {
+                en: "Evidence Workspace",
+                de: "Evidence Workspace"
+            },
+            EvidenceCollectionTitle: {
+                en: "Evidence Collection",
+                de: "Evidence Collection"
+            },
+            EvidenceActivePrefix: {
+                en: "Active evidence",
+                de: "Aktive Evidence"
+            },
+            EvidenceNewAction: {
+                en: "+ New Evidence",
+                de: "+ Neue Evidence"
+            },
+            EvidenceEmptyTitle: {
+                en: "No evidence available",
+                de: "Keine Evidence verfügbar"
+            },
+            EvidenceEmptyDescription: {
+                en: "Add photos, documents, inspection notes, or technical records to begin the evidence chain.",
+                de: "Fotos, Dokumente, Inspection Notes oder technische Datensätze hinzufügen, um die Evidence-Kette zu starten."
+            },
+            EvidenceItemFallback: {
+                en: "Evidence Item",
+                de: "Evidence-Eintrag"
+            },
+            EvidenceDefaultType: {
+                en: "Evidence",
+                de: "Evidence"
+            },
+            EvidenceInspectionCaptured: {
+                en: "Inspection evidence captured",
+                de: "Inspection Evidence erfasst"
+            },
+            EvidenceIdentified: {
+                en: "Evidence identified",
+                de: "Evidence identifiziert"
+            },
+            EvidenceClassified: {
+                en: "Evidence classified",
+                de: "Evidence klassifiziert"
+            },
+            EvidenceSourceLinked: {
+                en: "Source linked",
+                de: "Quelle verknüpft"
+            },
+            EvidenceCreateConfirmFinding: {
+                en: "Create or confirm finding",
+                de: "Finding erstellen oder bestätigen"
+            },
+            EvidenceReadyForFinding: {
+                en: "Evidence is reviewed and ready to support a technical finding.",
+                de: "Evidence ist geprüft und bereit, ein technisches Finding zu unterstützen."
+            },
+            EvidenceReviewLinkedFinding: {
+                en: "Review linked finding",
+                de: "Verknüpftes Finding prüfen"
+            },
+            EvidenceReviewEvidence: {
+                en: "Review evidence",
+                de: "Evidence prüfen"
+            },
+            EvidenceCompletionLabel: {
+                en: "Evidence completion",
+                de: "Evidence-Vollständigkeit"
+            },
+            EvidenceToFindingLabel: {
+                en: "Evidence → Finding",
+                de: "Evidence → Finding"
+            },
+            EvidenceTotalMetric: {
+                en: "Total Evidence",
+                de: "Evidence gesamt"
+            },
+            EvidenceSelectedMetric: {
+                en: "Selected",
+                de: "Ausgewählt"
+            },
+            EvidenceLinkedFindingsMetric: {
+                en: "Linked Findings",
+                de: "Verknüpfte Findings"
+            },
+            EvidenceReviewStatusMetric: {
+                en: "Review Status",
+                de: "Review-Status"
+            },
+            EvidenceRefreshAction: {
+                en: "Refresh",
+                de: "Aktualisieren"
+            },
+            EvidenceCloseAction: {
+                en: "Close Evidence",
+                de: "Evidence schließen"
+            },
+            EvidenceUploadAction: {
+                en: "Upload",
+                de: "Upload"
+            },
+            EvidenceCreateFindingAction: {
+                en: "Create Finding",
+                de: "Finding erstellen"
+            },
+            EvidenceDeleteConfirmPrefix: {
+                en: "Delete evidence",
+                de: "Evidence löschen"
+            },
+            EvidenceDeletedNotification: {
+                en: "Evidence deleted.",
+                de: "Evidence gelöscht."
+            },
+            EvidenceContextTitle: {
+                en: "Evidence Context",
+                de: "Evidence-Kontext"
+            },
+            EvidenceItemsLabel: {
+                en: "Evidence Items",
+                de: "Evidence-Einträge"
+            },
+            EvidenceSelectedLabel: {
+                en: "Selected Evidence",
+                de: "Ausgewählte Evidence"
+            },
+            EvidenceNotSelected: {
+                en: "Not selected",
+                de: "Nicht ausgewählt"
+            },
+            EvidenceStatusLabel: {
+                en: "Evidence Status",
+                de: "Evidence-Status"
+            },
+            EvidenceInReview: {
+                en: "In Review",
+                de: "In Prüfung"
+            },
+            EvidenceNotStarted: {
+                en: "Not started",
+                de: "Nicht gestartet"
+            },
+            EvidenceWorkspaceStatusLabel: {
+                en: "Workspace Status",
+                de: "Workspace-Status"
+            },
+            EvidenceNextStepLabel: {
+                en: "Next Step",
+                de: "Nächster Schritt"
+            },
+            EvidenceCreateOrSelect: {
+                en: "Create or select evidence",
+                de: "Evidence erstellen oder auswählen"
+            },
+            EvidenceSafetyBoundariesLabel: {
+                en: "Safety Boundaries",
+                de: "Safety Boundaries"
+            },
+            EvidenceCaseIdLabel: {
+                en: "Case ID",
+                de: "Case-ID"
+            },
+            EvidenceBuildingIdLabel: {
+                en: "Building ID",
+                de: "Gebäude-ID"
+            },
+            EvidenceInspectionIdLabel: {
+                en: "Inspection ID",
+                de: "Inspection-ID"
+            },
+            EvidenceSourceLabel: {
+                en: "Source",
+                de: "Quelle"
+            },
+            EvidenceManualEvidence: {
+                en: "Manual Evidence",
+                de: "Manuelle Evidence"
+            },
+            EvidenceQuestionIdLabel: {
+                en: "Question ID",
+                de: "Question-ID"
+            },
+            EvidenceQuestionLabel: {
+                en: "Question",
+                de: "Frage"
+            },
+            EvidenceRequiredEvidenceLabel: {
+                en: "Required Evidence",
+                de: "Erforderliche Evidence"
+            },
+            EvidenceScopeIdLabel: {
+                en: "Scope ID",
+                de: "Scope-ID"
+            },
+            EvidenceFindingIdsLabel: {
+                en: "Finding IDs",
+                de: "Finding-IDs"
+            },
+            EvidenceNone: {
+                en: "None",
+                de: "Keine"
+            },
+            EvidenceNotLinked: {
+                en: "Not linked",
+                de: "Nicht verknüpft"
+            },
+            EvidenceSelectFirstWarning: {
+                en: "Select evidence first.",
+                de: "Zuerst Evidence auswählen."
+            },
+            EvidenceNotLinkedCaseWarning: {
+                en: "Selected evidence is not linked to a case.",
+                de: "Ausgewählte Evidence ist nicht mit einem Case verknüpft."
+            },
+            EvidenceBelongsOtherCaseWarning: {
+                en: "Selected evidence belongs to another case.",
+                de: "Ausgewählte Evidence gehört zu einem anderen Case."
+            },
+            EvidenceFindingDraftCreated: {
+                en: "Finding draft created. Expert review required.",
+                de: "Finding Draft erstellt. Fachliche Prüfung erforderlich."
+            },
+            EvidenceSelectBeforeEditing: {
+                en: "Select evidence before editing.",
+                de: "Evidence vor dem Bearbeiten auswählen."
+            },
+            EvidenceEditTitle: {
+                en: "Edit Evidence",
+                de: "Evidence bearbeiten"
+            },
+            EvidenceSaveAction: {
+                en: "Save Evidence",
+                de: "Evidence speichern"
+            },
+            EvidenceTitleField: {
+                en: "Evidence title",
+                de: "Evidence-Titel"
+            },
+            EvidenceDescriptionField: {
+                en: "Description",
+                de: "Beschreibung"
+            },
+            EvidenceTypeField: {
+                en: "Evidence type",
+                de: "Evidence-Typ"
+            },
+            EvidenceUpdatedNotification: {
+                en: "Evidence updated.",
+                de: "Evidence aktualisiert."
+            },
+            EvidenceOpenCaseFirst: {
+                en: "Open a case before creating evidence.",
+                de: "Öffnen Sie zuerst einen Case, bevor Evidence erstellt wird."
+            },
+            EvidenceNewTitle: {
+                en: "New Evidence",
+                de: "Neue Evidence"
+            },
+            EvidenceCreateAction: {
+                en: "Create Evidence",
+                de: "Evidence erstellen"
+            },
+            EvidenceCreatedNotification: {
+                en: "Evidence created.",
+                de: "Evidence erstellt."
+            },
+            EvidencePendingFeatureSuffix: {
+                en: "is reserved for a later workspace release.",
+                de: "ist für ein späteres Workspace-Release reserviert."
+            },
+            EvidenceLowQuality: {
+                en: "Low evidence quality",
+                de: "Geringe Evidence-Qualität"
+            },
+            EvidenceLowQualityDescription: {
+                en: "Evidence is still incomplete. Add content, source and classification before deriving a finding.",
+                de: "Evidence ist noch unvollständig. Inhalt, Quelle und Klassifizierung ergänzen, bevor ein Finding abgeleitet wird."
+            },
+            EvidenceStrongQuality: {
+                en: "Strong evidence quality",
+                de: "Starke Evidence-Qualität"
+            },
+            EvidenceStrongQualityDescription: {
+                en: "Evidence is well structured and connected to the downstream finding workflow.",
+                de: "Evidence ist gut strukturiert und mit dem nachgelagerten Finding-Workflow verknüpft."
+            },
+            EvidenceDevelopingQuality: {
+                en: "Developing evidence quality",
+                de: "Evidence-Qualität in Entwicklung"
+            },
+            EvidenceDevelopingQualityDescription: {
+                en: "Evidence has useful substance, but source or finding linkage may still be missing.",
+                de: "Evidence enthält nutzbare Substanz, aber Quelle oder Finding-Verknüpfung können noch fehlen."
+            },
+            EvidenceReviewLinkedFindingAction: {
+                en: "Review linked finding",
+                de: "Verknüpftes Finding prüfen"
+            },
+            EvidenceReviewLinkedFindingDescription: {
+                en: "Evidence is connected to a finding. Review whether the finding reflects the evidence accurately.",
+                de: "Evidence ist mit einem Finding verknüpft. Prüfen, ob das Finding die Evidence korrekt widerspiegelt."
+            },
+            EvidenceCreateOrLinkFinding: {
+                en: "Create or link finding",
+                de: "Finding erstellen oder verknüpfen"
+            },
+            EvidenceCreateOrLinkFindingDescription: {
+                en: "Evidence content is available. Connect it to a technical finding.",
+                de: "Evidence-Inhalt ist vorhanden. Mit einem technischen Finding verknüpfen."
+            },
+            EvidenceCaptureContent: {
+                en: "Capture evidence content",
+                de: "Evidence-Inhalt erfassen"
+            },
+            EvidenceCaptureContentDescription: {
+                en: "Add a note, document, photo or description before moving toward finding creation.",
+                de: "Notiz, Dokument, Foto oder Beschreibung ergänzen, bevor ein Finding erstellt wird."
+            },
+            EvidenceIntelligenceComplete: {
+                en: "Evidence intelligence complete",
+                de: "Evidence Intelligence vollständig"
+            },
+            EvidenceIntelligenceDeveloping: {
+                en: "Evidence intelligence developing",
+                de: "Evidence Intelligence in Entwicklung"
+            },
+            EvidenceIntelligenceEarly: {
+                en: "Evidence intelligence early",
+                de: "Evidence Intelligence frühe Phase"
+            },
+            EvidenceIntelligenceLabel: {
+                en: "Evidence Intelligence",
+                de: "Evidence Intelligence"
+            },
+            EvidenceChecksCompleted: {
+                en: "evidence intelligence checks completed",
+                de: "Evidence-Intelligence-Prüfungen abgeschlossen"
+            },
+            EvidenceFindingReadiness: {
+                en: "Finding Readiness",
+                de: "Finding-Bereitschaft"
+            },
+            EvidenceFindingReadinessDescription: {
+                en: "Readiness based on identity, classification, source, content, finding link and review state.",
+                de: "Bereitschaft basierend auf Identität, Klassifizierung, Quelle, Inhalt, Finding-Verknüpfung und Review-Status."
+            },
+            EvidenceQualitySignalLabel: {
+                en: "Evidence Quality Signal",
+                de: "Evidence-Qualitätssignal"
+            },
+            EvidenceNextActionLabel: {
+                en: "Next Evidence Action",
+                de: "Nächste Evidence-Aktion"
+            },
+            EvidenceStatusDraft: {
+                en: "Draft",
+                de: "Entwurf"
+            },
+            EvidenceStatusOpen: {
+                en: "Open",
+                de: "Offen"
+            },
+            EvidenceStatusCaptured: {
+                en: "Captured",
+                de: "Erfasst"
+            },
+            EvidenceStatusLinked: {
+                en: "Linked",
+                de: "Verknüpft"
+            },
+            EvidenceStatusReviewed: {
+                en: "Reviewed",
+                de: "Geprüft"
+            },
+            EvidenceStatusBlocked: {
+                en: "Blocked",
+                de: "Blockiert"
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."
