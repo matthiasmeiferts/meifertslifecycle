@@ -860,6 +860,16 @@ export default class InspectionPage {
             content.appendChild(meta);
             content.appendChild(tags);
 
+            const isDocumentAvailabilityRequirement = (requirement.requiredEvidence || [])
+                .includes("document_availability_check") ||
+                question?.reportSection === "Document Availability Check";
+
+            if (isDocumentAvailabilityRequirement) {
+                const policyNote = document.createElement("p");
+                policyNote.textContent = "Availability check only. No legal, financial, technical or governance document review is performed.";
+                content.appendChild(policyNote);
+            }
+
             const action = document.createElement("button");
             action.type = "button";
             action.className = "button inspection-scope-editorial__requirement-action";
@@ -883,14 +893,29 @@ export default class InspectionPage {
             return;
         }
 
-        const question = InspectionQuestionCatalog.getById(requirement.questionId);
+        const catalogOptions = activeScope?.profile === "pattaya" || this.getInspectionProfile() === "pattaya"
+            ? { profile: "pattaya", country: "TH", region: "Pattaya / Chonburi" }
+            : {};
+
+        const question = InspectionQuestionCatalog.getById(requirement.questionId, catalogOptions);
 
         if (!question) {
             Notification.warning("Inspection question could not be found.");
             return;
         }
 
-        const evidenceType = (requirement.requiredEvidence || ["note"])[0];
+        const rawEvidenceType = (requirement.requiredEvidence || ["note"])[0];
+        const isDocumentAvailabilityCheck =
+            rawEvidenceType === "document_availability_check" ||
+            question.reportSection === "Document Availability Check" ||
+            String(question.id || "").includes("-DOC-AVAILABILITY-");
+
+        const evidenceType = rawEvidenceType === "document_availability_check"
+            ? "document"
+            : rawEvidenceType;
+
+        const availabilityOnlyNotice = "Thailand document handling: availability check only. No legal, financial, technical or governance document review has been performed.";
+
         const answer = activeScope.answers?.[question.id] || null;
 
         const evidence = EvidenceManager.create({
@@ -898,15 +923,19 @@ export default class InspectionPage {
             buildingId: activeScope.buildingId || null,
             inspectionId: activeScope.inspectionId || null,
             type: evidenceType,
-            category: question.category || "Inspection Scope",
-            title: `${this.formatEvidenceType(evidenceType)} required · ${question.question}`,
+            category: isDocumentAvailabilityCheck ? "Document Availability Check" : (question.category || "Inspection Scope"),
+            title: isDocumentAvailabilityCheck
+                ? `Document availability check · ${question.question}`
+                : `${this.formatEvidenceType(evidenceType)} required · ${question.question}`,
             description: [
                 "Evidence requirement generated from adaptive inspection scope.",
+                isDocumentAvailabilityCheck ? availabilityOnlyNotice : "",
                 `Question: ${question.id}`,
                 `Module: ${question.module}`,
                 `Category: ${question.category}`,
-                `Component: ${question.component || "Not specified"}`
-            ].join("\n"),
+                `Component: ${question.component || "Not specified"}`,
+                isDocumentAvailabilityCheck ? "Review boundary: availability recorded only. Content, legal validity, financial adequacy and governance completeness are not assessed by this action." : ""
+            ].filter(Boolean).join("\n"),
             buildingSystem: question.module || "",
             componentId: question.component || null,
             source: "Inspection Scope",
@@ -916,12 +945,15 @@ export default class InspectionPage {
             sourceModule: question.module || "",
             sourceCategory: question.category || "",
             sourceRequiredEvidence: requirement.requiredEvidence || [],
+            sourceRequiredEvidenceRaw: rawEvidenceType,
+            sourcePolicy: isDocumentAvailabilityCheck ? "availability_check_only" : "",
             scopeId: activeScope.id,
             status: "Open",
             tags: [
                 "inspection-scope",
                 question.id,
-                ...(requirement.requiredEvidence || [])
+                ...(requirement.requiredEvidence || []),
+                ...(isDocumentAvailabilityCheck ? ["availability-check-only", "no-document-review"] : [])
             ]
         });
 

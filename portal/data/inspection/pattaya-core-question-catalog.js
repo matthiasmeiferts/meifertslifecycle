@@ -493,13 +493,13 @@ const pattayaCoreQuestionCatalog = [
             en: null
         },
         helpText: {
-            de: "Thailand: keine Dokumentenprüfung. Nur erfassen, ob Informationen vorliegen, angefordert wurden oder nicht verfügbar sind.",
+            de: "Thailand: keine Dokumentenprüfung. Nur erfassen, ob Informationen vorliegen, angefragt wurden oder nicht verfügbar sind.",
             en: null
         },
         priority: "medium",
         answerType: "status",
         answerOptions: {
-            de: ["Verfügbar", "Nicht verfügbar", "Angefordert", "Nicht geprüft"],
+            de: ["Verfügbar", "Nicht verfügbar", "Angefragt", "Nicht geprüft"],
             en: null
         },
         appliesTo: {
@@ -513,7 +513,7 @@ const pattayaCoreQuestionCatalog = [
             document: true,
             photoIf: [],
             measurementIf: [],
-            documentIf: ["Verfügbar", "Angefordert"]
+            documentIf: ["Verfügbar", "Angefragt"]
         },
         riskTags: ["maintenance_evidence", "document_availability", "limitation"],
         severityHint: "medium",

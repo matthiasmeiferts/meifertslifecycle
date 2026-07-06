@@ -137,8 +137,9 @@ export default class EvidenceManager {
             sourceModule: data.sourceModule || "",
             sourceCategory: data.sourceCategory || "",
             sourceRequiredEvidence: data.sourceRequiredEvidence || [],
+            sourceRequiredEvidenceRaw: data.sourceRequiredEvidenceRaw || "",
+            sourcePolicy: data.sourcePolicy || "",
             scopeId: data.scopeId || null,
-
             confidence: data.confidence || null,
             
             createdBy: data.createdBy || this.defaultCreator,
