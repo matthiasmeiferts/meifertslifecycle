@@ -5,6 +5,7 @@ import AssessmentManager from "../../core/AssessmentManager.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
 import DecisionManager from "../../core/DecisionManager.js";
 import ReportManager from "../../core/ReportManager.js";
+import LanguageManager from "../../core/LanguageManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import SearchBar from "../components/SearchBar.js";
 import ActionBar from "../components/ActionBar.js";
@@ -22,27 +23,33 @@ export default class CasePage {
     static intelligenceStages = [
         {
             key: "evidence",
-            label: "Evidence"
+            label: LanguageManager.t("NavEvidence"),
+            labelKey: "NavEvidence"
         },
         {
             key: "finding",
-            label: "Finding"
+            label: "Finding",
+            labelKey: "WorkflowStepFinding"
         },
         {
             key: "assessment",
-            label: "Assessment"
+            label: "Assessment",
+            labelKey: "WorkflowStepAssessment"
         },
         {
             key: "recommendation",
-            label: "Recommendation"
+            label: "Recommendation",
+            labelKey: "WorkflowStepRecommendation"
         },
         {
             key: "decision",
-            label: "Decision"
+            label: "Decision",
+            labelKey: "WorkflowStepDecision"
         },
         {
             key: "report",
-            label: "Report"
+            label: "Report",
+            labelKey: "WorkflowStepReport"
         }
     ];
 
@@ -61,15 +68,15 @@ export default class CasePage {
         const current = CaseManager.getCurrent();
 
         return SectionHeader.create({
-            eyebrow: "Case Workspace",
-            title: "Cases",
+            eyebrow: LanguageManager.t("CaseWorkspaceTitle"),
+            title: LanguageManager.t("NavCases"),
             description: current
-                ? `Active case: ${current.title}`
-                : "Create or manage Technical Property Review cases.",
+                ? `${LanguageManager.t("CaseActiveCasePrefix")}: ${current.title}`
+                : LanguageManager.t("CaseCreateManageDescription"),
             actions: [
                 {
                     id: "new-case",
-                    label: "+ New Case",
+                    label: LanguageManager.t("CaseNewCaseAction"),
                     onClick: () => this.createCase()
                 }
             ]
@@ -160,10 +167,10 @@ export default class CasePage {
 
         if (!cases.length) {
             return EmptyState.create({
-                eyebrow: "Case Workspace",
+                eyebrow: LanguageManager.t("CaseWorkspaceTitle"),
                 title: "No cases available",
-                description: "Create your first case to begin the Building Intelligence workflow.",
-                actionLabel: "+ New Case",
+                description: LanguageManager.t("CaseEmptyDescription"),
+                actionLabel: LanguageManager.t("CaseNewCaseAction"),
                 onAction: () => this.createCase()
             });
         }
@@ -191,7 +198,7 @@ export default class CasePage {
                         if (isActive) {
                             const active = document.createElement("span");
                             active.className = "active-case-pill";
-                            active.textContent = "Active";
+                            active.textContent = LanguageManager.t("CaseActiveBadge");
                             meta.appendChild(active);
                         }
 
@@ -204,7 +211,7 @@ export default class CasePage {
                 },
                 {
                     key: "type",
-                    label: "Type"
+                    label: LanguageManager.t("CaseTypeLabel")
                 },
             ],
             rows: cases,
@@ -218,55 +225,55 @@ export default class CasePage {
         if (!current) {
             return DetailPanel.create("No Case Selected", [
                 {
-                    label: "Status",
+                    label: LanguageManager.t("CaseStatusLabel"),
                     value: "No active case"
                 },
                 {
-                    label: "Next Step",
-                    value: "Create or open a case"
+                    label: LanguageManager.t("CaseNextStepLabel"),
+                    value: LanguageManager.t("CaseCreateOrOpen")
                 }
             ]);
         }
 
         return DetailPanel.create(current.title, [
             {
-                label: "Case ID",
-                value: current.id || "Not available"
+                label: LanguageManager.t("CaseIdLabel"),
+                value: current.id || LanguageManager.t("CaseNotAvailable")
             },
             {
-                label: "Status",
+                label: LanguageManager.t("CaseStatusLabel"),
                 value: current.status || "Draft"
             },
             {
-                label: "Client / Context",
-                value: current.clientName || current.client || "Not specified"
+                label: LanguageManager.t("CaseClientContextLabel"),
+                value: current.clientName || current.client || LanguageManager.t("CaseNotSpecified")
             },
             {
-                label: "Type",
+                label: LanguageManager.t("CaseTypeLabel"),
                 value: current.type || "Technical Property Review"
             },
             {
-                label: "Progress",
+                label: LanguageManager.t("CaseProgressLabel"),
                 value: `${current.progress || 0}%`
             },
             {
-                label: "Building",
-                value: current.buildingId || "Not linked"
+                label: LanguageManager.t("CaseBuildingLabel"),
+                value: current.buildingId || LanguageManager.t("CaseNotLinked")
             },
             {
-                label: "Inspection",
-                value: current.inspectionId || "Not linked"
+                label: LanguageManager.t("CaseInspectionLabel"),
+                value: current.inspectionId || LanguageManager.t("CaseNotLinked")
             },
             {
-                label: "Evidence",
+                label: LanguageManager.t("NavEvidence"),
                 value: current.evidenceIds?.length || 0
             },
             {
-                label: "Findings",
+                label: LanguageManager.t("NavFindings"),
                 value: current.findingIds?.length || 0
             },
             {
-                label: "Updated",
+                label: LanguageManager.t("CaseUpdatedLabel"),
                 value: this.formatDate(current.updatedAt)
             }
         ]);
@@ -283,7 +290,7 @@ export default class CasePage {
 
         const eyebrow = document.createElement("span");
         eyebrow.className = "eyebrow";
-        eyebrow.textContent = "Continue Workflow";
+        eyebrow.textContent = LanguageManager.t("CaseContinueWorkflow");
 
         const workflowData = current ? {
             evidence: EvidenceManager.getByCase(current.id),
@@ -300,16 +307,16 @@ export default class CasePage {
         const title = document.createElement("strong");
         title.textContent = current
             ? workflowComplete
-                ? "Review complete intelligence chain"
-                : "Move this case through the intelligence chain"
-            : "Select a case to continue the workflow";
+                ? LanguageManager.t("CaseReviewCompleteChain")
+                : LanguageManager.t("CaseMoveThroughChain")
+            : LanguageManager.t("CaseSelectToContinueWorkflow");
 
         const description = document.createElement("p");
         description.textContent = current
             ? workflowComplete
-                ? "All workflow stages are represented. Review links or rebuild the chain when required."
-                : "Create or review linked records from Evidence to final Report."
-            : "Open a case first, then continue with evidence, findings and decision output.";
+                ? LanguageManager.t("CaseAllStagesReviewLinks")
+                : LanguageManager.t("CaseCreateReviewLinkedRecords")
+            : LanguageManager.t("CaseOpenFirstThenContinue");
 
         header.appendChild(eyebrow);
         header.appendChild(title);
@@ -322,7 +329,7 @@ export default class CasePage {
             const builderButton = document.createElement("button");
             builderButton.type = "button";
             builderButton.className = "button button--primary case-workflow-actions__primary";
-            builderButton.textContent = workflowComplete ? "Review Workflow Chain" : "Create Workflow Chain";
+            builderButton.textContent = workflowComplete ? LanguageManager.t("CaseReviewWorkflowChain") : LanguageManager.t("CaseCreateWorkflowChain");
             builderButton.addEventListener("click", () => this.createWorkflowChainBuilder());
             workflowTools.appendChild(builderButton);
 
@@ -331,20 +338,20 @@ export default class CasePage {
 
             const maintenanceLabel = document.createElement("span");
             maintenanceLabel.className = "case-workflow-actions__maintenance-label";
-            maintenanceLabel.textContent = "Maintenance";
+            maintenanceLabel.textContent = LanguageManager.t("CaseMaintenanceLabel");
             maintenance.appendChild(maintenanceLabel);
 
             const repairButton = document.createElement("button");
             repairButton.type = "button";
             repairButton.className = "button button--secondary case-workflow-actions__maintenance-button";
-            repairButton.textContent = "Repair Links";
+            repairButton.textContent = LanguageManager.t("CaseRepairLinksAction");
             repairButton.addEventListener("click", () => this.repairWorkflowLinks());
             maintenance.appendChild(repairButton);
 
             const orphanButton = document.createElement("button");
             orphanButton.type = "button";
             orphanButton.className = "button button--secondary case-workflow-actions__maintenance-button";
-            orphanButton.textContent = "Clean Orphans";
+            orphanButton.textContent = LanguageManager.t("CaseCleanOrphansAction");
             orphanButton.addEventListener("click", () => this.cleanOrphanWorkflowRecords());
             maintenance.appendChild(orphanButton);
 
@@ -357,34 +364,34 @@ export default class CasePage {
 
         [
             {
-                label: "Evidence",
+                labelKey: "NavEvidence",
                 route: "evidence",
-                description: "Collect photos, documents and inspection inputs."
+                descriptionKey: "CaseWorkflowEvidenceDescription"
             },
             {
-                label: "Findings",
+                labelKey: "NavFindings",
                 route: "findings",
-                description: "Turn evidence into technical observations."
+                descriptionKey: "CaseWorkflowFindingsDescription"
             },
             {
-                label: "Assessments",
+                labelKey: "NavAssessments",
                 route: "assessments",
-                description: "Evaluate relevance, severity and lifecycle impact."
+                descriptionKey: "CaseWorkflowAssessmentsDescription"
             },
             {
-                label: "Recommendations",
+                labelKey: "NavRecommendations",
                 route: "recommendations",
-                description: "Define technical and commercial next steps."
+                descriptionKey: "CaseWorkflowRecommendationsDescription"
             },
             {
-                label: "Decisions",
+                labelKey: "NavDecisions",
                 route: "decisions",
-                description: "Prepare decision-ready conclusions."
+                descriptionKey: "CaseWorkflowDecisionsDescription"
             },
             {
-                label: "Reports",
+                labelKey: "NavReports",
                 route: "reports",
-                description: "Generate structured output for review."
+                descriptionKey: "CaseWorkflowReportsDescription"
             }
         ].forEach((item, index) => {
             const button = document.createElement("button");
@@ -397,10 +404,10 @@ export default class CasePage {
             step.textContent = String(index + 1).padStart(2, "0");
 
             const label = document.createElement("strong");
-            label.textContent = item.label;
+            label.textContent = LanguageManager.t(item.labelKey);
 
             const copy = document.createElement("p");
-            copy.textContent = item.description;
+            copy.textContent = LanguageManager.t(item.descriptionKey);
 
             button.appendChild(step);
             button.appendChild(label);
@@ -425,9 +432,9 @@ export default class CasePage {
         wrapper.className = "table-actions";
 
         [
-            ["open", "Open"],
-            ["edit", "Edit"],
-            ["delete", "Delete"]
+            ["open", LanguageManager.t("ReportOpenAction")],
+            ["edit", LanguageManager.t("ReportEditAction")],
+            ["delete", LanguageManager.t("ReportDeleteAction")]
         ].forEach(([action, label]) => {
 
             const button = document.createElement("button");
@@ -509,21 +516,21 @@ export default class CasePage {
         });
 
         let riskSignal = {
-            label: "Low risk signal",
-            description: "Case risk logic is still light. More evidence and findings are needed.",
+            label: LanguageManager.t("CaseLowRiskSignal"),
+            description: LanguageManager.t("CaseLowRiskSignalDescription"),
             tone: "draft"
         };
 
         if (downstreamSignals >= 8) {
             riskSignal = {
-                label: "High risk signal",
-                description: "Multiple downstream risk signals are present. Review before recommendation or decision.",
+                label: LanguageManager.t("CaseHighRiskSignal"),
+                description: LanguageManager.t("CaseHighRiskSignalDescription"),
                 tone: "ready"
             };
         } else if (downstreamSignals >= 4) {
             riskSignal = {
-                label: "Moderate risk signal",
-                description: "The case contains usable risk signals, but downstream validation may still be needed.",
+                label: LanguageManager.t("CaseModerateRiskSignal"),
+                description: LanguageManager.t("CaseModerateRiskSignalDescription"),
                 tone: "active"
             };
         }
@@ -532,13 +539,13 @@ export default class CasePage {
 
         const nextAction = firstOpenStage
             ? {
-                label: `Strengthen ${firstOpenStage.label}`,
-                description: `${firstOpenStage.label} data is missing for this case. Complete this stage before relying on final output.`,
+                label: `${LanguageManager.t("CaseStrengthenPrefix")} ${LanguageManager.t(firstOpenStage.labelKey || firstOpenStage.label)}`,
+                description: `${LanguageManager.t(firstOpenStage.labelKey || firstOpenStage.label)} ${LanguageManager.t("CaseStageMissingDescription")}`,
                 tone: "active"
             }
             : {
-                label: "Review case output",
-                description: "All workflow stages are represented for this case. Review consistency and final report confidence.",
+                label: LanguageManager.t("CaseReviewOutput"),
+                description: LanguageManager.t("CaseReviewOutputDescription"),
                 tone: "ready"
             };
 
@@ -551,10 +558,10 @@ export default class CasePage {
             riskSignal,
             nextAction,
             label: readinessPercent >= 100
-                ? "Case workflow complete"
+                ? LanguageManager.t("CaseWorkflowComplete")
                 : readinessPercent >= 50
-                    ? "Case workflow developing"
-                    : "Case workflow early"
+                    ? LanguageManager.t("CaseWorkflowDeveloping")
+                    : LanguageManager.t("CaseWorkflowEarly")
         };
     }
 
@@ -566,43 +573,43 @@ export default class CasePage {
             <section class="case-intelligence intelligence-snapshot case-intelligence--refined" aria-label="Case intelligence snapshot">
                 <div class="case-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="case-intelligence__eyebrow intelligence-snapshot__eyebrow">Case Intelligence</span>
+                        <span class="case-intelligence__eyebrow intelligence-snapshot__eyebrow">${LanguageManager.t("CaseIntelligenceLabel")}</span>
                         <strong>${intelligence.label}</strong>
-                        <p>Workflow coverage, risk signal and next action for the active case.</p>
+                        <p>${LanguageManager.t("CaseIntelligenceDescription")}</p>
                     </div>
                     <span class="case-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
                 <div class="case-intelligence__summary">
                     <div>
-                        <span>Readiness</span>
+                        <span>${LanguageManager.t("CaseReadinessLabel")}</span>
                         <strong>${intelligence.readinessPercent}%</strong>
                     </div>
                     <div>
-                        <span>Confidence</span>
+                        <span>${LanguageManager.t("CaseConfidenceLabel")}</span>
                         <strong>${intelligence.confidenceScore}%</strong>
                     </div>
                     <div>
-                        <span>Stages</span>
+                        <span>${LanguageManager.t("CaseStagesLabel")}</span>
                         <strong>${stageSummary}</strong>
                     </div>
                 </div>
 
                 <div class="case-intelligence__grid intelligence-snapshot__grid">
                     <article class="case-intelligence__card intelligence-snapshot__card">
-                        <span>Workflow Coverage</span>
-                        <strong>${intelligence.readinessPercent}% ready</strong>
-                        <p>${stageSummary} stages represented. ${intelligence.readinessPercent >= 100 ? "All workflow stages are represented for this case." : "Continue with the first missing workflow stage."}</p>
+                        <span>${LanguageManager.t("CaseWorkflowCoverageLabel")}</span>
+                        <strong>${intelligence.readinessPercent}% ${LanguageManager.t("CaseReadySuffix")}</strong>
+                        <p>${stageSummary} ${LanguageManager.t("CaseStagesRepresented")}. ${intelligence.readinessPercent >= 100 ? LanguageManager.t("CaseAllStagesRepresented") : LanguageManager.t("CaseContinueMissingStage")}</p>
                     </article>
 
                     <article class="case-intelligence__card intelligence-snapshot__card case-intelligence__card--${intelligence.riskSignal.tone} intelligence-snapshot__card--${intelligence.riskSignal.tone}">
-                        <span>Risk Signal</span>
+                        <span>${LanguageManager.t("CaseRiskSignalLabel")}</span>
                         <strong>${intelligence.riskSignal.label}</strong>
                         <p>${intelligence.riskSignal.description}</p>
                     </article>
 
                     <article class="case-intelligence__card intelligence-snapshot__card case-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
-                        <span>Next Action</span>
+                        <span>${LanguageManager.t("CaseNextActionLabel")}</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>
                     </article>
@@ -718,7 +725,7 @@ export default class CasePage {
         );
 
         if (!orphanRecords.length) {
-            window.alert("No orphan workflow records found.");
+            window.alert(LanguageManager.t("CaseNoOrphanRecords"));
             return;
         }
 
@@ -727,7 +734,7 @@ export default class CasePage {
             .join("\n");
 
         const confirmed = window.confirm(
-            `Delete ${orphanRecords.length} orphan workflow records?\n\n${summary}`
+            `${LanguageManager.t("CaseDeleteOrphanPrefix")} ${orphanRecords.length} ${LanguageManager.t("CaseOrphanRecordsQuestion")}\n\n${summary}`
         );
 
         if (!confirmed) return;
@@ -736,7 +743,7 @@ export default class CasePage {
             record.manager.delete(record.item.id);
         });
 
-        window.alert(`${orphanRecords.length} orphan workflow records deleted.`);
+        window.alert(`${orphanRecords.length} ${LanguageManager.t("CaseOrphanRecordsDeleted")}`);
         this.refresh();
     }
 
@@ -744,7 +751,7 @@ export default class CasePage {
         const current = CaseManager.getCurrent();
 
         if (!current) {
-            window.alert("Open a case before repairing workflow links.");
+            window.alert(LanguageManager.t("CaseOpenBeforeRepairing"));
             return;
         }
 
@@ -886,7 +893,7 @@ export default class CasePage {
         });
         CaseManager.save();
 
-        window.alert("Workflow links repaired for active case.");
+        window.alert(LanguageManager.t("CaseWorkflowLinksRepaired"));
         this.refresh();
     }
 
@@ -894,13 +901,13 @@ export default class CasePage {
         const current = CaseManager.getCurrent();
 
         if (!current) {
-            window.alert("Open a case before creating a workflow chain.");
+            window.alert(LanguageManager.t("CaseOpenBeforeCreatingChain"));
             return;
         }
 
         FormDialog.open({
-            title: "Create Workflow Chain",
-            submitLabel: "Create Workflow Chain",
+            title: LanguageManager.t("CaseCreateWorkflowChain"),
+            submitLabel: LanguageManager.t("CaseCreateWorkflowChain"),
             values: {
                 evidenceTitle: "Evidence input",
                 evidenceDescription: "Initial evidence input.",
@@ -922,24 +929,24 @@ export default class CasePage {
                 reportType: "Technical Due Diligence"
             },
             fields: [
-                { id: "evidenceTitle", label: "Evidence title" },
-                { id: "evidenceDescription", label: "Evidence description" },
-                { id: "evidenceType", label: "Evidence type" },
-                { id: "findingTitle", label: "Finding title" },
-                { id: "findingDescription", label: "Finding description" },
-                { id: "findingSeverity", label: "Finding severity" },
-                { id: "assessmentTitle", label: "Assessment title" },
-                { id: "assessmentDescription", label: "Assessment description" },
-                { id: "assessmentSeverity", label: "Assessment severity" },
-                { id: "recommendationTitle", label: "Recommendation title" },
-                { id: "recommendationDescription", label: "Recommendation description" },
-                { id: "recommendationPriority", label: "Recommendation priority" },
-                { id: "decisionTitle", label: "Decision title" },
-                { id: "decisionDescription", label: "Decision description" },
-                { id: "decisionType", label: "Decision type" },
-                { id: "reportTitle", label: "Report title" },
-                { id: "reportDescription", label: "Report description" },
-                { id: "reportType", label: "Report type" }
+                { id: "evidenceTitle", label: LanguageManager.t("CaseEvidenceTitleField") },
+                { id: "evidenceDescription", label: LanguageManager.t("CaseEvidenceDescriptionField") },
+                { id: "evidenceType", label: LanguageManager.t("CaseEvidenceTypeField") },
+                { id: "findingTitle", label: LanguageManager.t("CaseFindingTitleField") },
+                { id: "findingDescription", label: LanguageManager.t("CaseFindingDescriptionField") },
+                { id: "findingSeverity", label: LanguageManager.t("CaseFindingSeverityField") },
+                { id: "assessmentTitle", label: LanguageManager.t("CaseAssessmentTitleField") },
+                { id: "assessmentDescription", label: LanguageManager.t("CaseAssessmentDescriptionField") },
+                { id: "assessmentSeverity", label: LanguageManager.t("CaseAssessmentSeverityField") },
+                { id: "recommendationTitle", label: LanguageManager.t("CaseRecommendationTitleField") },
+                { id: "recommendationDescription", label: LanguageManager.t("CaseRecommendationDescriptionField") },
+                { id: "recommendationPriority", label: LanguageManager.t("CaseRecommendationPriorityField") },
+                { id: "decisionTitle", label: LanguageManager.t("CaseDecisionTitleField") },
+                { id: "decisionDescription", label: LanguageManager.t("CaseDecisionDescriptionField") },
+                { id: "decisionType", label: LanguageManager.t("CaseDecisionTypeField") },
+                { id: "reportTitle", label: LanguageManager.t("ReportTitleFieldLabel") },
+                { id: "reportDescription", label: LanguageManager.t("CaseReportDescriptionField") },
+                { id: "reportType", label: LanguageManager.t("ReportTypeFieldLabel") }
             ],
             onSubmit: (values, dialog) => {
                 const evidence = EvidenceManager.create({
@@ -1089,15 +1096,15 @@ export default class CasePage {
     }
 
     static createCase() {
-        const title = window.prompt("Case title:");
+        const title = window.prompt(LanguageManager.t("CaseTitlePrompt"));
 
         if (!title) return;
 
-        const clientName = window.prompt("Client / Property context:", "") || "";
-        const type = window.prompt("Case type:", "Technical Property Review") || "Technical Property Review";
-        const status = window.prompt("Status:", "Draft") || "Draft";
-        const buildingId = window.prompt("Building ID / reference:", "") || null;
-        const inspectionId = window.prompt("Inspection ID / reference:", "") || null;
+        const clientName = window.prompt(LanguageManager.t("CaseClientContextPrompt"), "") || "";
+        const type = window.prompt(LanguageManager.t("CaseTypePrompt"), "Technical Property Review") || "Technical Property Review";
+        const status = window.prompt(LanguageManager.t("CaseStatusPrompt"), "Draft") || "Draft";
+        const buildingId = window.prompt(LanguageManager.t("CaseBuildingReferencePrompt"), "") || null;
+        const inspectionId = window.prompt(LanguageManager.t("CaseInspectionReferencePrompt"), "") || null;
 
         CaseManager.create({
             id: "case-" + Date.now(),
@@ -1123,8 +1130,8 @@ export default class CasePage {
 
     static editCase(caseData) {
         FormDialog.open({
-            title: "Edit Case",
-            submitLabel: "Save Case",
+            title: LanguageManager.t("CaseEditTitle"),
+            submitLabel: LanguageManager.t("CaseSaveAction"),
             values: {
                 title: caseData.title || "",
                 clientName: caseData.clientName || "",
@@ -1136,29 +1143,29 @@ export default class CasePage {
             fields: [
                 {
                     id: "title",
-                    label: "Case title"
+                    label: LanguageManager.t("CaseTitleFieldLabel")
                 },
                 {
                     id: "clientName",
-                    label: "Client / Property context"
+                    label: LanguageManager.t("CaseClientContextFieldLabel")
                 },
                 {
                     id: "type",
-                    label: "Case type"
+                    label: LanguageManager.t("CaseTypeLabel")
                 },
                 {
                     id: "status",
-                    label: "Status",
+                    label: LanguageManager.t("CaseStatusLabel"),
                     type: "select",
                     options: ["Draft", "In Progress", "Completed", "Archived"]
                 },
                 {
                     id: "buildingId",
-                    label: "Building ID / reference"
+                    label: LanguageManager.t("CaseBuildingReferenceFieldLabel")
                 },
                 {
                     id: "inspectionId",
-                    label: "Inspection ID / reference"
+                    label: LanguageManager.t("CaseInspectionReferenceFieldLabel")
                 }
             ],
             onSubmit: (values, dialog) => {
@@ -1185,7 +1192,7 @@ export default class CasePage {
 
         if (
             !window.confirm(
-                `Delete case "${caseData.title}"?`
+                `${LanguageManager.t("CaseDeleteConfirmPrefix")} "${caseData.title}"?`
             )
         ) {
             return;

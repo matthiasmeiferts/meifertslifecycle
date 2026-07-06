@@ -1035,6 +1035,410 @@ export default class LanguageManager {
                 en: "Low",
                 de: "Niedrig"
             },
+            CaseWorkspaceTitle: {
+                en: "Case Workspace",
+                de: "Case Workspace"
+            },
+            CaseCreateManageDescription: {
+                en: "Create or manage Technical Property Review cases.",
+                de: "Technical-Property-Review-Cases erstellen oder verwalten."
+            },
+            CaseActiveCasePrefix: {
+                en: "Active case",
+                de: "Aktiver Case"
+            },
+            CaseNewCaseAction: {
+                en: "+ New Case",
+                de: "+ Neuer Case"
+            },
+            CaseEmptyDescription: {
+                en: "Create your first case to begin the Building Intelligence workflow.",
+                de: "Erstellen Sie den ersten Case, um den Building-Intelligence-Workflow zu starten."
+            },
+            CaseActiveBadge: {
+                en: "Active",
+                de: "Aktiv"
+            },
+            CaseOverviewTitle: {
+                en: "Case Overview",
+                de: "Case-Übersicht"
+            },
+            CaseSelectedCaseLabel: {
+                en: "Selected Case",
+                de: "Ausgewählter Case"
+            },
+            CaseNoSelection: {
+                en: "No selection",
+                de: "Keine Auswahl"
+            },
+            CaseNextStepLabel: {
+                en: "Next Step",
+                de: "Nächster Schritt"
+            },
+            CaseCreateOrOpen: {
+                en: "Create or open a case",
+                de: "Case erstellen oder öffnen"
+            },
+            CaseIdLabel: {
+                en: "Case ID",
+                de: "Case-ID"
+            },
+            CaseStatusLabel: {
+                en: "Status",
+                de: "Status"
+            },
+            CaseClientContextLabel: {
+                en: "Client / Context",
+                de: "Kunde / Kontext"
+            },
+            CaseTypeLabel: {
+                en: "Type",
+                de: "Typ"
+            },
+            CaseProgressLabel: {
+                en: "Progress",
+                de: "Fortschritt"
+            },
+            CaseBuildingLabel: {
+                en: "Building",
+                de: "Gebäude"
+            },
+            CaseInspectionLabel: {
+                en: "Inspection",
+                de: "Inspection"
+            },
+            CaseUpdatedLabel: {
+                en: "Updated",
+                de: "Aktualisiert"
+            },
+            CaseNotAvailable: {
+                en: "Not available",
+                de: "Nicht verfügbar"
+            },
+            CaseNotSpecified: {
+                en: "Not specified",
+                de: "Nicht angegeben"
+            },
+            CaseNotLinked: {
+                en: "Not linked",
+                de: "Nicht verknüpft"
+            },
+            CaseContinueWorkflow: {
+                en: "Continue Workflow",
+                de: "Workflow fortsetzen"
+            },
+            CaseReviewCompleteChain: {
+                en: "Review complete intelligence chain",
+                de: "Vollständige Intelligence-Kette prüfen"
+            },
+            CaseMoveThroughChain: {
+                en: "Move this case through the intelligence chain",
+                de: "Diesen Case durch die Intelligence-Kette führen"
+            },
+            CaseSelectToContinueWorkflow: {
+                en: "Select a case to continue the workflow",
+                de: "Case auswählen, um den Workflow fortzusetzen"
+            },
+            CaseAllStagesReviewLinks: {
+                en: "All workflow stages are represented. Review links or rebuild the chain when required.",
+                de: "Alle Workflow-Stufen sind abgebildet. Verknüpfungen prüfen oder die Kette bei Bedarf neu aufbauen."
+            },
+            CaseCreateReviewLinkedRecords: {
+                en: "Create or review linked records from Evidence to final Report.",
+                de: "Verknüpfte Datensätze von Evidence bis zum finalen Report erstellen oder prüfen."
+            },
+            CaseOpenFirstThenContinue: {
+                en: "Open a case first, then continue with evidence, findings and decision output.",
+                de: "Zuerst einen Case öffnen, dann mit Evidence, Findings und Decision Output fortfahren."
+            },
+            CaseReviewWorkflowChain: {
+                en: "Review Workflow Chain",
+                de: "Workflow-Kette prüfen"
+            },
+            CaseCreateWorkflowChain: {
+                en: "Create Workflow Chain",
+                de: "Workflow-Kette erstellen"
+            },
+            CaseMaintenanceLabel: {
+                en: "Maintenance",
+                de: "Wartung"
+            },
+            CaseRepairLinksAction: {
+                en: "Repair Links",
+                de: "Links reparieren"
+            },
+            CaseCleanOrphansAction: {
+                en: "Clean Orphans",
+                de: "Verwaiste Einträge bereinigen"
+            },
+            CaseWorkflowEvidenceDescription: {
+                en: "Collect photos, documents and inspection inputs.",
+                de: "Fotos, Dokumente und Inspection Inputs erfassen."
+            },
+            CaseWorkflowFindingsDescription: {
+                en: "Turn evidence into technical observations.",
+                de: "Evidence in technische Beobachtungen überführen."
+            },
+            CaseWorkflowAssessmentsDescription: {
+                en: "Evaluate relevance, severity and lifecycle impact.",
+                de: "Relevanz, Schweregrad und Lifecycle-Auswirkung bewerten."
+            },
+            CaseWorkflowRecommendationsDescription: {
+                en: "Define technical and commercial next steps.",
+                de: "Technische und wirtschaftliche nächste Schritte definieren."
+            },
+            CaseWorkflowDecisionsDescription: {
+                en: "Prepare decision-ready conclusions.",
+                de: "Entscheidungsreife Schlussfolgerungen vorbereiten."
+            },
+            CaseWorkflowReportsDescription: {
+                en: "Generate structured output for review.",
+                de: "Strukturierte Ausgabe zur Prüfung erzeugen."
+            },
+            CaseLowRiskSignal: {
+                en: "Low risk signal",
+                de: "Geringes Risikosignal"
+            },
+            CaseLowRiskSignalDescription: {
+                en: "Case risk logic is still light. More evidence and findings are needed.",
+                de: "Die Case-Risiko-Logik ist noch dünn. Mehr Evidence und Findings sind erforderlich."
+            },
+            CaseHighRiskSignal: {
+                en: "High risk signal",
+                de: "Hohes Risikosignal"
+            },
+            CaseHighRiskSignalDescription: {
+                en: "Multiple downstream risk signals are present. Review before recommendation or decision.",
+                de: "Mehrere nachgelagerte Risikosignale liegen vor. Vor Recommendation oder Decision prüfen."
+            },
+            CaseModerateRiskSignal: {
+                en: "Moderate risk signal",
+                de: "Mittleres Risikosignal"
+            },
+            CaseModerateRiskSignalDescription: {
+                en: "The case contains usable risk signals, but downstream validation may still be needed.",
+                de: "Der Case enthält nutzbare Risikosignale, aber nachgelagerte Validierung kann noch erforderlich sein."
+            },
+            CaseStrengthenPrefix: {
+                en: "Strengthen",
+                de: "Stärken"
+            },
+            CaseStageMissingDescription: {
+                en: "data is missing for this case. Complete this stage before relying on final output.",
+                de: "Daten fehlen für diesen Case. Diese Stufe abschließen, bevor die finale Ausgabe genutzt wird."
+            },
+            CaseReviewOutput: {
+                en: "Review case output",
+                de: "Case Output prüfen"
+            },
+            CaseReviewOutputDescription: {
+                en: "All workflow stages are represented for this case. Review consistency and final report confidence.",
+                de: "Alle Workflow-Stufen sind für diesen Case abgebildet. Konsistenz und finales Berichtvertrauen prüfen."
+            },
+            CaseWorkflowComplete: {
+                en: "Case workflow complete",
+                de: "Case Workflow vollständig"
+            },
+            CaseWorkflowDeveloping: {
+                en: "Case workflow developing",
+                de: "Case Workflow in Entwicklung"
+            },
+            CaseWorkflowEarly: {
+                en: "Case workflow early",
+                de: "Case Workflow frühe Phase"
+            },
+            CaseIntelligenceLabel: {
+                en: "Case Intelligence",
+                de: "Case Intelligence"
+            },
+            CaseIntelligenceDescription: {
+                en: "Workflow coverage, risk signal and next action for the active case.",
+                de: "Workflow-Abdeckung, Risikosignal und nächste Aktion für den aktiven Case."
+            },
+            CaseReadinessLabel: {
+                en: "Readiness",
+                de: "Bereitschaft"
+            },
+            CaseConfidenceLabel: {
+                en: "Confidence",
+                de: "Vertrauen"
+            },
+            CaseStagesLabel: {
+                en: "Stages",
+                de: "Stufen"
+            },
+            CaseWorkflowCoverageLabel: {
+                en: "Workflow Coverage",
+                de: "Workflow-Abdeckung"
+            },
+            CaseReadySuffix: {
+                en: "ready",
+                de: "bereit"
+            },
+            CaseStagesRepresented: {
+                en: "stages represented",
+                de: "Stufen abgebildet"
+            },
+            CaseAllStagesRepresented: {
+                en: "All workflow stages are represented for this case.",
+                de: "Alle Workflow-Stufen sind für diesen Case abgebildet."
+            },
+            CaseContinueMissingStage: {
+                en: "Continue with the first missing workflow stage.",
+                de: "Mit der ersten fehlenden Workflow-Stufe fortfahren."
+            },
+            CaseRiskSignalLabel: {
+                en: "Risk Signal",
+                de: "Risikosignal"
+            },
+            CaseNextActionLabel: {
+                en: "Next Action",
+                de: "Nächste Aktion"
+            },
+            CaseNoOrphanRecords: {
+                en: "No orphan workflow records found.",
+                de: "Keine verwaisten Workflow-Datensätze gefunden."
+            },
+            CaseDeleteOrphanPrefix: {
+                en: "Delete",
+                de: "Löschen"
+            },
+            CaseOrphanRecordsQuestion: {
+                en: "orphan workflow records?",
+                de: "verwaiste Workflow-Datensätze?"
+            },
+            CaseOrphanRecordsDeleted: {
+                en: "orphan workflow records deleted.",
+                de: "verwaiste Workflow-Datensätze gelöscht."
+            },
+            CaseOpenBeforeRepairing: {
+                en: "Open a case before repairing workflow links.",
+                de: "Öffnen Sie zuerst einen Case, bevor Workflow-Links repariert werden."
+            },
+            CaseWorkflowLinksRepaired: {
+                en: "Workflow links repaired for active case.",
+                de: "Workflow-Links für den aktiven Case repariert."
+            },
+            CaseOpenBeforeCreatingChain: {
+                en: "Open a case before creating a workflow chain.",
+                de: "Öffnen Sie zuerst einen Case, bevor eine Workflow-Kette erstellt wird."
+            },
+            CaseEvidenceTitleField: {
+                en: "Evidence title",
+                de: "Evidence-Titel"
+            },
+            CaseEvidenceDescriptionField: {
+                en: "Evidence description",
+                de: "Evidence-Beschreibung"
+            },
+            CaseEvidenceTypeField: {
+                en: "Evidence type",
+                de: "Evidence-Typ"
+            },
+            CaseFindingTitleField: {
+                en: "Finding title",
+                de: "Finding-Titel"
+            },
+            CaseFindingDescriptionField: {
+                en: "Finding description",
+                de: "Finding-Beschreibung"
+            },
+            CaseFindingSeverityField: {
+                en: "Finding severity",
+                de: "Finding-Schweregrad"
+            },
+            CaseAssessmentTitleField: {
+                en: "Assessment title",
+                de: "Assessment-Titel"
+            },
+            CaseAssessmentDescriptionField: {
+                en: "Assessment description",
+                de: "Assessment-Beschreibung"
+            },
+            CaseAssessmentSeverityField: {
+                en: "Assessment severity",
+                de: "Assessment-Schweregrad"
+            },
+            CaseRecommendationTitleField: {
+                en: "Recommendation title",
+                de: "Recommendation-Titel"
+            },
+            CaseRecommendationDescriptionField: {
+                en: "Recommendation description",
+                de: "Recommendation-Beschreibung"
+            },
+            CaseRecommendationPriorityField: {
+                en: "Recommendation priority",
+                de: "Recommendation-Priorität"
+            },
+            CaseDecisionTitleField: {
+                en: "Decision title",
+                de: "Decision-Titel"
+            },
+            CaseDecisionDescriptionField: {
+                en: "Decision description",
+                de: "Decision-Beschreibung"
+            },
+            CaseDecisionTypeField: {
+                en: "Decision type",
+                de: "Decision-Typ"
+            },
+            CaseReportDescriptionField: {
+                en: "Report description",
+                de: "Report-Beschreibung"
+            },
+            CaseTitlePrompt: {
+                en: "Case title:",
+                de: "Case-Titel:"
+            },
+            CaseClientContextPrompt: {
+                en: "Client / Property context:",
+                de: "Kunde / Objektkontext:"
+            },
+            CaseTypePrompt: {
+                en: "Case type:",
+                de: "Case-Typ:"
+            },
+            CaseStatusPrompt: {
+                en: "Status:",
+                de: "Status:"
+            },
+            CaseBuildingReferencePrompt: {
+                en: "Building ID / reference:",
+                de: "Gebäude-ID / Referenz:"
+            },
+            CaseInspectionReferencePrompt: {
+                en: "Inspection ID / reference:",
+                de: "Inspection-ID / Referenz:"
+            },
+            CaseEditTitle: {
+                en: "Edit Case",
+                de: "Case bearbeiten"
+            },
+            CaseSaveAction: {
+                en: "Save Case",
+                de: "Case speichern"
+            },
+            CaseDeleteConfirmPrefix: {
+                en: "Delete case",
+                de: "Case löschen"
+            },
+            CaseTitleFieldLabel: {
+                en: "Case title",
+                de: "Case-Titel"
+            },
+            CaseClientContextFieldLabel: {
+                en: "Client / Property context",
+                de: "Kunde / Objektkontext"
+            },
+            CaseBuildingReferenceFieldLabel: {
+                en: "Building ID / reference",
+                de: "Gebäude-ID / Referenz"
+            },
+            CaseInspectionReferenceFieldLabel: {
+                en: "Inspection ID / reference",
+                de: "Inspection-ID / Referenz"
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."
