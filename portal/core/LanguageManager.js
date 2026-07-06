@@ -491,6 +491,110 @@ export default class LanguageManager {
                 en: "Report content and decision context are available. Prepare the draft output for expert review.",
                 de: "Berichtsinhalte und Entscheidungskontext sind verfügbar. Bereiten Sie die Entwurfsausgabe zur fachlichen Prüfung vor."
             },
+            ReportNewReportAction: {
+                en: "+ New Report",
+                de: "+ Neuer Bericht"
+            },
+            ReportNewReportTitle: {
+                en: "New Report",
+                de: "Neuer Bericht"
+            },
+            ReportCreateReportAction: {
+                en: "Create Report",
+                de: "Bericht erstellen"
+            },
+            ReportEditReportTitle: {
+                en: "Edit Report",
+                de: "Bericht bearbeiten"
+            },
+            ReportSaveReportAction: {
+                en: "Save Report",
+                de: "Bericht speichern"
+            },
+            ReportTitleFieldLabel: {
+                en: "Report title",
+                de: "Berichtstitel"
+            },
+            ReportTypeFieldLabel: {
+                en: "Report type",
+                de: "Berichtstyp"
+            },
+            ReportExecutiveSummaryFieldLabel: {
+                en: "Executive summary",
+                de: "Zusammenfassung"
+            },
+            ReportOutputPreparedSummary: {
+                en: "Building Intelligence report output prepared from workflow data.",
+                de: "Building-Intelligence-Berichtsausgabe aus Workflow-Daten vorbereitet."
+            },
+            ReportTechnicalScopeDefault: {
+                en: "Technical due diligence report scope.",
+                de: "Prüfumfang für den Technical-Due-Diligence-Bericht."
+            },
+            ReportEvidenceFirstWorkflowReview: {
+                en: "Evidence-first Building Intelligence workflow review.",
+                de: "Evidence-first Building-Intelligence-Workflow-Prüfung."
+            },
+            ReportPreparedForReviewNotification: {
+                en: "Report prepared for review.",
+                de: "Bericht zur Prüfung vorbereitet."
+            },
+            ReportSelectReportFirstNotification: {
+                en: "Select a report first.",
+                de: "Bitte zuerst einen Bericht auswählen."
+            },
+            ReportPrintDialogNotification: {
+                en: "Print dialog opened. Use Save as PDF in Safari.",
+                de: "Druckdialog geöffnet. In Safari „Als PDF sichern“ verwenden."
+            },
+            ReportOpenCaseFirstNotification: {
+                en: "Open a case before creating a report.",
+                de: "Öffnen Sie zuerst einen Case, bevor ein Bericht erstellt wird."
+            },
+            ReportActiveDecisionOtherCaseNotification: {
+                en: "Active decision belongs to another case.",
+                de: "Die aktive Decision gehört zu einem anderen Case."
+            },
+            ReportSelectDecisionFirstNotification: {
+                en: "Select a decision before creating a report.",
+                de: "Bitte zuerst eine Decision auswählen, bevor ein Bericht erstellt wird."
+            },
+            ReportCreatedNotification: {
+                en: "Report created.",
+                de: "Bericht erstellt."
+            },
+            ReportInitialOutputPrepared: {
+                en: "Initial report output prepared from the workspace.",
+                de: "Erste Berichtsausgabe aus dem Workspace vorbereitet."
+            },
+            ReportDecisionBasedScopeDefault: {
+                en: "Decision-based technical due diligence report.",
+                de: "Decision-basierter Technical-Due-Diligence-Bericht."
+            },
+            ReportSelectReportBeforeEditingNotification: {
+                en: "Select a report before editing.",
+                de: "Bitte zuerst einen Bericht auswählen, bevor er bearbeitet wird."
+            },
+            ReportUpdatedNotification: {
+                en: "Report updated.",
+                de: "Bericht aktualisiert."
+            },
+            ReportDeleteConfirmPrefix: {
+                en: "Delete report",
+                de: "Bericht löschen"
+            },
+            ReportDeletedNotification: {
+                en: "Report deleted.",
+                de: "Bericht gelöscht."
+            },
+            ReportPendingFeatureFallback: {
+                en: "This feature",
+                de: "Diese Funktion"
+            },
+            ReportPendingFeatureReserved: {
+                en: "is reserved for a later workspace release.",
+                de: "ist für ein späteres Workspace-Release vorgesehen."
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."

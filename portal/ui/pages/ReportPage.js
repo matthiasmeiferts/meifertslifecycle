@@ -97,7 +97,7 @@ export default class ReportPage {
             actions: [
                 {
                     id: "new-report",
-                    label: "+ New Report",
+                    label: LanguageManager.t("ReportNewReportAction"),
                     onClick: () => this.createSampleReport()
                 }
             ]
@@ -612,7 +612,7 @@ export default class ReportPage {
                 eyebrow: "Report Workspace",
                 title: "No reports available",
                 description: "Reports will compile evidence, findings, assessments, recommendations, and decisions into a professional output.",
-                actionLabel: "+ New Report",
+                actionLabel: LanguageManager.t("ReportNewReportAction"),
                 onAction: () => this.createSampleReport()
             });
         }
@@ -1071,13 +1071,13 @@ export default class ReportPage {
             status: "Prepared",
             prepared: true,
             preparedAt: new Date().toISOString(),
-            executiveSummary: sourceReport.executiveSummary || "Building Intelligence report output prepared from workflow data.",
-            scope: sourceReport.scope || "Technical due diligence report scope.",
-            methodology: sourceReport.methodology || "Evidence-first Building Intelligence workflow review."
+            executiveSummary: sourceReport.executiveSummary || LanguageManager.t("ReportOutputPreparedSummary"),
+            scope: sourceReport.scope || LanguageManager.t("ReportTechnicalScopeDefault"),
+            methodology: sourceReport.methodology || LanguageManager.t("ReportEvidenceFirstWorkflowReview")
         });
 
         ReportManager.set(report);
-        Notification.success("Report prepared for review.");
+        Notification.success(LanguageManager.t("ReportPreparedForReviewNotification"));
         this.refresh();
     }
 
@@ -1085,7 +1085,7 @@ export default class ReportPage {
         const activeReport = report || this.getActiveReport();
 
         if (!activeReport) {
-            Notification.warning("Select a report first.");
+            Notification.warning(LanguageManager.t("ReportSelectReportFirstNotification"));
             return;
         }
 
@@ -1100,7 +1100,7 @@ export default class ReportPage {
             ReportManager.set(printableReport);
         }
 
-        Notification.info("Print dialog opened. Use Save as PDF in Safari.");
+        Notification.info(LanguageManager.t("ReportPrintDialogNotification"));
 
         setTimeout(() => {
             window.print();
@@ -1125,12 +1125,12 @@ export default class ReportPage {
         const activeDecision = DecisionManager.get();
 
         if (!currentCase) {
-            Notification.info("Open a case before creating a report.");
+            Notification.info(LanguageManager.t("ReportOpenCaseFirstNotification"));
             return;
         }
 
         if (activeDecision && activeDecision.caseId !== currentCase.id) {
-            Notification.warning("Active decision belongs to another case.");
+            Notification.warning(LanguageManager.t("ReportActiveDecisionOtherCaseNotification"));
             return;
         }
 
@@ -1141,7 +1141,7 @@ export default class ReportPage {
                     .flatMap(id => AssessmentManager.load(id)?.findingIds || []);
 
             if (!activeDecision) {
-                Notification.info("Select a decision before creating a report.");
+                Notification.info(LanguageManager.t("ReportSelectDecisionFirstNotification"));
                 return;
             }
 
@@ -1166,7 +1166,7 @@ export default class ReportPage {
             ReportManager.set(report);
 
             if (!options.silent) {
-                Notification.success("Report created.");
+                Notification.success(LanguageManager.t("ReportCreatedNotification"));
             }
 
             this.refresh();
@@ -1177,8 +1177,8 @@ export default class ReportPage {
                 title: "Building Intelligence Report",
                 reportType: "Technical Due Diligence",
                 version: "1.0.0",
-                executiveSummary: "Initial report output prepared from the workspace.",
-                scope: "Technical due diligence report scope.",
+                executiveSummary: LanguageManager.t("ReportInitialOutputPrepared"),
+                scope: LanguageManager.t("ReportTechnicalScopeDefault"),
                 methodology: "Evidence-based workflow review.",
                 status: "Draft"
             });
@@ -1186,29 +1186,29 @@ export default class ReportPage {
         }
 
         FormDialog.open({
-            title: "New Report",
-            submitLabel: "Create Report",
+            title: LanguageManager.t("ReportNewReportTitle"),
+            submitLabel: LanguageManager.t("ReportCreateReportAction"),
             values: {
                 title: "Technical Due Diligence Report",
                 reportType: "Technical Due Diligence",
                 version: "1.0.0",
                 executiveSummary: activeDecision?.description || "",
-                scope: "Decision-based technical due diligence report.",
+                scope: LanguageManager.t("ReportDecisionBasedScopeDefault"),
                 methodology: "Evidence-based workflow review.",
                 status: "Draft"
             },
             fields: [
-                { id: "title", label: "Report title" },
+                { id: "title", label: LanguageManager.t("ReportTitleFieldLabel") },
                 {
                     id: "reportType",
-                    label: "Report type",
+                    label: LanguageManager.t("ReportTypeFieldLabel"),
                     type: "select",
                     options: ["Technical Due Diligence", "Building Intelligence Report", "Condition Assessment", "CAPEX Review"]
                 },
                 { id: "version", label: "Version" },
-                { id: "executiveSummary", label: "Executive summary" },
-                { id: "scope", label: "Scope" },
-                { id: "methodology", label: "Methodology" },
+                { id: "executiveSummary", label: LanguageManager.t("ReportExecutiveSummaryFieldLabel") },
+                { id: "scope", label: LanguageManager.t("ReportScopeLabel") },
+                { id: "methodology", label: LanguageManager.t("ReportMethodologyLabel") },
                 {
                     id: "status",
                     label: "Status",
@@ -1229,13 +1229,13 @@ export default class ReportPage {
         const report = ReportManager.get();
 
         if (!report) {
-            Notification.info("Select a report before editing.");
+            Notification.info(LanguageManager.t("ReportSelectReportBeforeEditingNotification"));
             return;
         }
 
         FormDialog.open({
-            title: "Edit Report",
-            submitLabel: "Save Report",
+            title: LanguageManager.t("ReportEditReportTitle"),
+            submitLabel: LanguageManager.t("ReportSaveReportAction"),
             values: {
                 title: report.title || "",
                 reportType: report.reportType || "Technical Due Diligence",
@@ -1246,17 +1246,17 @@ export default class ReportPage {
                 status: report.status || "Draft"
             },
             fields: [
-                { id: "title", label: "Report title" },
+                { id: "title", label: LanguageManager.t("ReportTitleFieldLabel") },
                 {
                     id: "reportType",
-                    label: "Report type",
+                    label: LanguageManager.t("ReportTypeFieldLabel"),
                     type: "select",
                     options: ["Technical Due Diligence", "Building Intelligence Report", "Condition Assessment", "CAPEX Review"]
                 },
                 { id: "version", label: "Version" },
-                { id: "executiveSummary", label: "Executive summary" },
-                { id: "scope", label: "Scope" },
-                { id: "methodology", label: "Methodology" },
+                { id: "executiveSummary", label: LanguageManager.t("ReportExecutiveSummaryFieldLabel") },
+                { id: "scope", label: LanguageManager.t("ReportScopeLabel") },
+                { id: "methodology", label: LanguageManager.t("ReportMethodologyLabel") },
                 {
                     id: "status",
                     label: "Status",
@@ -1281,14 +1281,14 @@ export default class ReportPage {
 
                 ReportManager.set(updated);
                 dialog.remove();
-                Notification.success("Report updated.");
+                Notification.success(LanguageManager.t("ReportUpdatedNotification"));
                 this.refresh();
             }
         });
     }
 
     static deleteReport(item) {
-        if (!window.confirm(`Delete report "${item.title || item.id}"?`)) {
+        if (!window.confirm(`${LanguageManager.t("ReportDeleteConfirmPrefix")} "${item.title || item.id}"?`)) {
             return;
         }
 
@@ -1298,7 +1298,7 @@ export default class ReportPage {
             ReportManager.clear();
         }
 
-        Notification.success("Report deleted.");
+        Notification.success(LanguageManager.t("ReportDeletedNotification"));
         this.refresh();
     }
 
@@ -1311,8 +1311,8 @@ export default class ReportPage {
         container.appendChild(this.render());
     }
 
-    static showPendingFeature(feature = "This feature") {
-        Notification.info(`${feature} is reserved for a later workspace release.`);
+    static showPendingFeature(feature = LanguageManager.t("ReportPendingFeatureFallback")) {
+        Notification.info(`${feature} ${LanguageManager.t("ReportPendingFeatureReserved")}`);
     }
 
 }
