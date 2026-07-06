@@ -4,16 +4,17 @@ import AssessmentManager from "../../core/AssessmentManager.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
 import DecisionManager from "../../core/DecisionManager.js";
 import ReportManager from "../../core/ReportManager.js";
+import LanguageManager from "../../core/LanguageManager.js";
 
 export default class WorkflowProgressPanel {
 
     static steps = [
-        { key: "evidence", label: "Evidence", manager: EvidenceManager },
-        { key: "findings", label: "Findings", manager: FindingManager },
-        { key: "assessments", label: "Assessments", manager: AssessmentManager },
-        { key: "recommendations", label: "Recommendations", manager: RecommendationManager },
-        { key: "decisions", label: "Decisions", manager: DecisionManager },
-        { key: "reports", label: "Reports", manager: ReportManager }
+        { key: "evidence", labelKey: "NavEvidence", manager: EvidenceManager },
+        { key: "findings", labelKey: "NavFindings", manager: FindingManager },
+        { key: "assessments", labelKey: "NavAssessments", manager: AssessmentManager },
+        { key: "recommendations", labelKey: "NavRecommendations", manager: RecommendationManager },
+        { key: "decisions", labelKey: "NavDecisions", manager: DecisionManager },
+        { key: "reports", labelKey: "NavReports", manager: ReportManager }
     ];
 
     static create(currentCase = null, currentStep = "") {
@@ -24,12 +25,12 @@ export default class WorkflowProgressPanel {
         header.className = "workflow-progress-panel__header";
 
         const title = document.createElement("strong");
-        title.textContent = "Workflow Progress";
+        title.textContent = LanguageManager.t("WorkflowProgressTitle");
 
         const meta = document.createElement("span");
         meta.textContent = currentCase
-            ? "Active case decision path"
-            : "Select a case to activate progress tracking";
+            ? LanguageManager.t("WorkflowActiveCaseDecisionPath")
+            : LanguageManager.t("WorkflowSelectCaseProgress");
 
         header.appendChild(title);
         header.appendChild(meta);
@@ -50,13 +51,13 @@ export default class WorkflowProgressPanel {
 
             const label = document.createElement("span");
             label.className = "workflow-progress-panel__label";
-            label.textContent = step.label;
+            label.textContent = LanguageManager.t(step.labelKey);
 
             const status = document.createElement("span");
             status.className = "workflow-progress-panel__status";
             status.textContent = currentCase
-                ? (count > 0 ? `${count} Ready` : "Empty")
-                : "No active case";
+                ? (count > 0 ? `${count} ${LanguageManager.t("WorkflowReady")}` : LanguageManager.t("WorkflowEmpty"))
+                : LanguageManager.t("WorkspaceNoActiveCase");
 
             item.appendChild(label);
             item.appendChild(status);

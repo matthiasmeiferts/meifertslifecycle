@@ -595,6 +595,166 @@ export default class LanguageManager {
                 en: "is reserved for a later workspace release.",
                 de: "ist für ein späteres Workspace-Release vorgesehen."
             },
+            NavDashboard: {
+                en: "Dashboard",
+                de: "Dashboard"
+            },
+            NavCases: {
+                en: "Cases",
+                de: "Cases"
+            },
+            NavBuildings: {
+                en: "Buildings",
+                de: "Gebäude"
+            },
+            NavInspections: {
+                en: "Inspections",
+                de: "Inspections"
+            },
+            NavEvidence: {
+                en: "Evidence",
+                de: "Evidence"
+            },
+            NavFindings: {
+                en: "Findings",
+                de: "Findings"
+            },
+            NavAssessments: {
+                en: "Assessments",
+                de: "Assessments"
+            },
+            NavRecommendations: {
+                en: "Recommendations",
+                de: "Recommendations"
+            },
+            NavDecisions: {
+                en: "Decisions",
+                de: "Decisions"
+            },
+            NavReports: {
+                en: "Reports",
+                de: "Reports"
+            },
+            NavSettings: {
+                en: "Settings",
+                de: "Einstellungen"
+            },
+            WorkspaceDocumentTitle: {
+                en: "MEIFERTS Building Intelligence | Professional Workspace",
+                de: "MEIFERTS Building Intelligence | Professional Workspace"
+            },
+            WorkspaceFoundationRelease: {
+                en: "Foundation Release 1.0",
+                de: "Foundation Release 1.0"
+            },
+            WorkspaceProfessionalTitle: {
+                en: "Professional Workspace",
+                de: "Professional Workspace"
+            },
+            WorkspaceEngineConnected: {
+                en: "Engine connected",
+                de: "Engine verbunden"
+            },
+            WorkspaceIntelligenceSidebar: {
+                en: "Intelligence Sidebar",
+                de: "Intelligence Sidebar"
+            },
+            WorkspaceCurrentSignal: {
+                en: "Current Signal",
+                de: "Aktuelles Signal"
+            },
+            WorkspaceBuildingRiskScore: {
+                en: "Building Risk Score™",
+                de: "Building Risk Score™"
+            },
+            WorkspaceBuildingConfidence: {
+                en: "Building Confidence™",
+                de: "Building Confidence™"
+            },
+            WorkspaceKnowledgeCoverage: {
+                en: "Knowledge Coverage™",
+                de: "Knowledge Coverage™"
+            },
+            WorkspaceNoActiveCase: {
+                en: "No active case",
+                de: "Kein aktiver Case"
+            },
+            WorkspaceOpenCasePrompt: {
+                en: "Create or open a case to begin the decision workflow.",
+                de: "Case erstellen oder öffnen, um den Entscheidungsworkflow zu starten."
+            },
+            WorkspaceReadyForReview: {
+                en: "Ready for review",
+                de: "Bereit zur Prüfung"
+            },
+            WorkspaceInReview: {
+                en: "In review",
+                de: "In Prüfung"
+            },
+            WorkspacePending: {
+                en: "Pending",
+                de: "Offen"
+            },
+            WorkspaceHigh: {
+                en: "High",
+                de: "Hoch"
+            },
+            WorkspaceDeveloping: {
+                en: "Developing",
+                de: "In Entwicklung"
+            },
+            WorkflowStepBuilding: {
+                en: "Building",
+                de: "Gebäude"
+            },
+            WorkflowStepInspection: {
+                en: "Inspection",
+                de: "Inspection"
+            },
+            WorkflowStepEvidence: {
+                en: "Evidence",
+                de: "Evidence"
+            },
+            WorkflowStepFinding: {
+                en: "Finding",
+                de: "Finding"
+            },
+            WorkflowStepAssessment: {
+                en: "Assessment",
+                de: "Assessment"
+            },
+            WorkflowStepRecommendation: {
+                en: "Recommendation",
+                de: "Recommendation"
+            },
+            WorkflowStepDecision: {
+                en: "Decision",
+                de: "Decision"
+            },
+            WorkflowStepReport: {
+                en: "Report",
+                de: "Report"
+            },
+            WorkflowProgressTitle: {
+                en: "Workflow Progress",
+                de: "Workflow-Fortschritt"
+            },
+            WorkflowActiveCaseDecisionPath: {
+                en: "Active case decision path",
+                de: "Aktiver Case-Entscheidungsweg"
+            },
+            WorkflowSelectCaseProgress: {
+                en: "Select a case to activate progress tracking",
+                de: "Case auswählen, um die Fortschrittsverfolgung zu aktivieren"
+            },
+            WorkflowReady: {
+                en: "Ready",
+                de: "Bereit"
+            },
+            WorkflowEmpty: {
+                en: "Empty",
+                de: "Leer"
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."

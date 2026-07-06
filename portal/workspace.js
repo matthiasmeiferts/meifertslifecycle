@@ -1,12 +1,26 @@
 import WorkspaceController from "./controllers/WorkspaceController.js";
 import WorkspaceRouter from "./router/WorkspaceRouter.js";
+import LanguageManager from "./core/LanguageManager.js";
 
 function renderWorkspace() {
     const container = document.getElementById("workspace-page");
 
+    updateShellLanguage();
     WorkspaceRouter.render(container);
     updateSignals();
     updateActiveNavigation();
+}
+
+function updateShellLanguage() {
+    const language = LanguageManager.getLanguage();
+
+    document.documentElement.lang = language;
+    document.title = LanguageManager.t("WorkspaceDocumentTitle");
+
+    document.querySelectorAll("[data-i18n]").forEach(element => {
+        const key = element.dataset.i18n;
+        element.textContent = LanguageManager.t(key);
+    });
 }
 
 function updateSignals() {

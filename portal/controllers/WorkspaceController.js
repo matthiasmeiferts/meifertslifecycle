@@ -7,6 +7,7 @@ import AssessmentManager from "../core/AssessmentManager.js";
 import RecommendationManager from "../core/RecommendationManager.js";
 import DecisionManager from "../core/DecisionManager.js";
 import ReportManager from "../core/ReportManager.js";
+import LanguageManager from "../core/LanguageManager.js";
 
 export default class WorkspaceController {
 
@@ -26,13 +27,13 @@ export default class WorkspaceController {
 
     static getActiveCaseBuilding() {
         const currentCase = this.getActiveCase();
-        if (!currentCase?.buildingId) return null;
+        if (!currentCase ?.buildingId) return null;
         return this.safeValue(() => BuildingManager.load(currentCase.buildingId), null);
     }
 
     static getActiveCaseInspection() {
         const currentCase = this.getActiveCase();
-        if (!currentCase?.inspectionId) return null;
+        if (!currentCase ?.inspectionId) return null;
         return this.safeValue(() => InspectionManager.load(currentCase.inspectionId), null);
     }
 
@@ -71,15 +72,15 @@ export default class WorkspaceController {
         const workflowCounts = this.getScopedWorkflowCounts();
 
         return [
-            { title: "Cases", value: this.safeValue(() => CaseManager.getAll().length) },
-            { title: "Buildings", value: currentCase ? (activeCaseBuilding ? 1 : 0) : this.safeValue(() => BuildingManager.count()) },
-            { title: "Inspections", value: currentCase ? (activeCaseInspection ? 1 : 0) : this.safeValue(() => InspectionManager.getAllInspections().length) },
-            { title: "Evidence", value: workflowCounts.evidence },
-            { title: "Findings", value: workflowCounts.findings },
-            { title: "Assessments", value: workflowCounts.assessments },
-            { title: "Recommendations", value: workflowCounts.recommendations },
-            { title: "Decisions", value: workflowCounts.decisions },
-            { title: "Reports", value: workflowCounts.reports }
+            { title: LanguageManager.t("NavCases"), value: this.safeValue(() => CaseManager.getAll().length) },
+            { title: LanguageManager.t("NavBuildings"), value: currentCase ? (activeCaseBuilding ? 1 : 0) : this.safeValue(() => BuildingManager.count()) },
+            { title: LanguageManager.t("NavInspections"), value: currentCase ? (activeCaseInspection ? 1 : 0) : this.safeValue(() => InspectionManager.getAllInspections().length) },
+            { title: LanguageManager.t("NavEvidence"), value: workflowCounts.evidence },
+            { title: LanguageManager.t("NavFindings"), value: workflowCounts.findings },
+            { title: LanguageManager.t("NavAssessments"), value: workflowCounts.assessments },
+            { title: LanguageManager.t("NavRecommendations"), value: workflowCounts.recommendations },
+            { title: LanguageManager.t("NavDecisions"), value: workflowCounts.decisions },
+            { title: LanguageManager.t("NavReports"), value: workflowCounts.reports }
         ];
     }
 
@@ -88,7 +89,7 @@ export default class WorkspaceController {
         const building = this.getActiveCaseBuilding();
         const inspection = this.getActiveCaseInspection();
 
-        let subtitle = "Create or open a case to begin the decision workflow.";
+        let subtitle = LanguageManager.t("WorkspaceOpenCasePrompt");
 
         if (building && inspection) {
             subtitle = `${building.name || building.address} · ${inspection.title || inspection.inspectionType || inspection.id}`;
@@ -99,7 +100,7 @@ export default class WorkspaceController {
         }
 
         return {
-            title: currentCase?.name || currentCase?.title || "No active case",
+            title: currentCase ?.name || currentCase ?.title || LanguageManager.t("WorkspaceNoActiveCase"),
             subtitle
         };
     }
@@ -117,14 +118,14 @@ export default class WorkspaceController {
         const reports = workflowCounts.reports;
 
         const steps = [
-            { title: "Building", complete: currentCase ? activeCaseBuilding !== null : this.safeValue(() => BuildingManager.hasBuilding() ? 1 : 0) > 0 },
-            { title: "Inspection", complete: currentCase ? activeCaseInspection !== null : this.safeValue(() => InspectionManager.getAllInspections().length) > 0 },
-            { title: "Evidence", complete: evidence > 0 },
-            { title: "Finding", complete: findings > 0 },
-            { title: "Assessment", complete: assessments > 0 },
-            { title: "Recommendation", complete: recommendations > 0 },
-            { title: "Decision", complete: decisions > 0 },
-            { title: "Report", complete: reports > 0 }
+            { title: LanguageManager.t("WorkflowStepBuilding"), complete: currentCase ? activeCaseBuilding !== null : this.safeValue(() => BuildingManager.hasBuilding() ? 1 : 0) > 0 },
+            { title: LanguageManager.t("WorkflowStepInspection"), complete: currentCase ? activeCaseInspection !== null : this.safeValue(() => InspectionManager.getAllInspections().length) > 0 },
+            { title: LanguageManager.t("WorkflowStepEvidence"), complete: evidence > 0 },
+            { title: LanguageManager.t("WorkflowStepFinding"), complete: findings > 0 },
+            { title: LanguageManager.t("WorkflowStepAssessment"), complete: assessments > 0 },
+            { title: LanguageManager.t("WorkflowStepRecommendation"), complete: recommendations > 0 },
+            { title: LanguageManager.t("WorkflowStepDecision"), complete: decisions > 0 },
+            { title: LanguageManager.t("WorkflowStepReport"), complete: reports > 0 }
         ];
 
         const completed = steps.filter(step => step.complete).length;
@@ -143,8 +144,8 @@ export default class WorkspaceController {
         const workflowCounts = this.getScopedWorkflowCounts();
 
         return {
-            riskScore: workflowCounts.reports > 0 ? "Ready for review" : (workflowCounts.findings > 0 ? "In review" : "Pending"),
-            confidenceScore: workflowCounts.reports > 0 ? "High" : (workflowCounts.evidence > 0 ? "Developing" : "Pending"),
+            riskScore: workflowCounts.reports > 0 ? LanguageManager.t("WorkspaceReadyForReview") : (workflowCounts.findings > 0 ? LanguageManager.t("WorkspaceInReview") : LanguageManager.t("WorkspacePending")),
+            confidenceScore: workflowCounts.reports > 0 ? LanguageManager.t("WorkspaceHigh") : (workflowCounts.evidence > 0 ? LanguageManager.t("WorkspaceDeveloping") : LanguageManager.t("WorkspacePending")),
             coverageScore: `${workflow.progress}%`
         };
     }
