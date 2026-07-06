@@ -79,35 +79,36 @@ export default class SettingsPage {
         const terminology = translationBoundary.productTerms
             .slice(0, 6)
             .join(", ");
+        const t = (key) => LanguageManager.t(key, currentLanguage);
 
         panel.innerHTML = `
             <div class="settings-cleanup__header">
                 <div>
-                    <p class="eyebrow">Interface Language</p>
-                    <h3>Language readiness</h3>
-                    <p>The workspace is currently operated in English. German interface support is prepared for a later controlled rollout.</p>
+                    <p class="eyebrow">${t("InterfaceLanguage")}</p>
+                    <h3>${t("LanguageReadiness")}</h3>
+                    <p>${t("LanguageReadinessDescription")}</p>
                 </div>
             </div>
             <div class="settings-cleanup__grid">
                 <article>
-                    <span>Current language</span>
+                    <span>${t("CurrentLanguage")}</span>
                     <strong>${currentLanguageLabel}</strong>
                 </article>
                 <article>
-                    <span>Supported languages</span>
+                    <span>${t("SupportedLanguages")}</span>
                     <p>${supportedLanguages}</p>
                 </article>
                 <article>
-                    <span>Product terminology</span>
+                    <span>${t("ProductTerminology")}</span>
                     <p>${terminology}</p>
                 </article>
             </div>
             <div class="settings-cleanup__header">
                 <div>
-                    <p>Core product terms remain controlled to protect workflow consistency.</p>
-                    <p>Translation boundary: core product terms are controlled; interface copy may be localized.</p>
+                    <p>${t("CoreTermsRule")}</p>
+                    <p>${t("TranslationBoundary")}</p>
                 </div>
-                <select class="button" data-action="set-language" aria-label="Interface language">
+                <select class="button" data-action="set-language" aria-label="${t("InterfaceLanguage")}">
                     <option value="en" ${currentLanguage === "en" ? "selected" : ""}>English</option>
                     <option value="de" ${currentLanguage === "de" ? "selected" : ""}>Deutsch</option>
                 </select>

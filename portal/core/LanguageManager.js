@@ -6,7 +6,7 @@ export default class LanguageManager {
 
     static supportedLanguages = [
         { code: "en", label: "English", status: "Active" },
-        { code: "de", label: "Deutsch", status: "Prepared" }
+        { code: "de", label: "Deutsch", status: "Active" }
     ];
 
     static getLanguage() {
@@ -71,6 +71,58 @@ export default class LanguageManager {
         const selected = this.supportedLanguages.find(item => item.code === language);
 
         return selected?.label || this.getLanguageLabel(this.defaultLanguage);
+    }
+
+    static getInterfaceCopy() {
+        return {
+            InterfaceLanguage: {
+                en: "Interface Language",
+                de: "Arbeitssprache"
+            },
+            LanguageReadiness: {
+                en: "Language foundation",
+                de: "Sprachgrundlage"
+            },
+            LanguageReadinessDescription: {
+                en: "The workspace supports English and German as controlled working languages for international real estate due diligence.",
+                de: "Der Workspace unterstützt Englisch und Deutsch als kontrollierte Arbeitssprachen für internationale Immobilien-Due-Diligence."
+            },
+            CurrentLanguage: {
+                en: "Current language",
+                de: "Aktuelle Sprache"
+            },
+            SupportedLanguages: {
+                en: "Supported languages",
+                de: "Unterstützte Sprachen"
+            },
+            ProductTerminology: {
+                en: "Product terminology",
+                de: "Produktterminologie"
+            },
+            CoreTermsRule: {
+                en: "Core product terms remain controlled to protect workflow consistency.",
+                de: "Zentrale Produktbegriffe bleiben kontrolliert, damit die Workflow-Logik konsistent bleibt."
+            },
+            TranslationBoundary: {
+                en: "Translation boundary: core product terms are controlled; interface copy may be localized.",
+                de: "Übersetzungsgrenze: zentrale Produktbegriffe bleiben kontrolliert; allgemeine Bedienoberfläche kann lokalisiert werden."
+            },
+            InterfaceLanguageSaved: {
+                en: "Interface language preference saved.",
+                de: "Arbeitssprache gespeichert."
+            }
+        };
+    }
+
+    static t(key, language = this.getLanguage()) {
+        const copy = this.getInterfaceCopy();
+        const entry = copy[key];
+
+        if (!entry) {
+            return key;
+        }
+
+        return entry[language] || entry.en || key;
     }
 
     static getTerminology() {
