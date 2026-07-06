@@ -608,13 +608,32 @@ export default class EvidencePage {
             return;
         }
 
+        const isPattayaEvidence = String(evidence.sourceQuestionId || "").startsWith("TH-PATTAYA-");
+        const isAvailabilityCheckOnly = evidence.sourcePolicy === "availability_check_only";
+
         const findingTitle = evidence.sourceQuestion
-            ? `Finding: ${evidence.sourceQuestion}`
-            : `Finding from ${evidence.title || evidence.id}`;
+            ? `Finding Draft: ${evidence.sourceQuestion}`
+            : `Finding Draft from ${evidence.title || evidence.id}`;
 
         const descriptionParts = [
-            evidence.description || "Finding prepared from selected evidence."
+            evidence.description || "Finding prepared from selected evidence.",
+            "",
+            "Finding status:",
+            "Draft finding created from selected evidence.",
+            "Expert review required before assessment, recommendation or decision use."
         ];
+
+        if (isAvailabilityCheckOnly) {
+            descriptionParts.push("");
+            descriptionParts.push("Review boundary:");
+            descriptionParts.push("Document availability only. No legal, financial, technical or governance document review has been performed.");
+        }
+
+        if (isPattayaEvidence) {
+            descriptionParts.push("");
+            descriptionParts.push("Thailand / Pattaya context:");
+            descriptionParts.push("Field review context retained for downstream assessment.");
+        }
 
         if (evidence.sourceQuestionId || evidence.sourceQuestion) {
             descriptionParts.push("");
@@ -622,6 +641,8 @@ export default class EvidencePage {
             descriptionParts.push(`Question ID: ${evidence.sourceQuestionId || "Not linked"}`);
             descriptionParts.push(`Question: ${evidence.sourceQuestion || "Not linked"}`);
             descriptionParts.push(`Required evidence: ${(evidence.sourceRequiredEvidence || []).join(", ") || "None"}`);
+            descriptionParts.push(`Required evidence raw: ${evidence.sourceRequiredEvidenceRaw || "None"}`);
+            descriptionParts.push(`Source policy: ${evidence.sourcePolicy || "None"}`);
             descriptionParts.push(`Scope ID: ${evidence.scopeId || "Not linked"}`);
         }
 
@@ -629,17 +650,41 @@ export default class EvidencePage {
             caseId: evidence.caseId,
             buildingId: evidence.buildingId || currentCase?.buildingId || null,
             inspectionId: evidence.inspectionId || currentCase?.inspectionId || null,
+
             evidenceIds: [evidence.id],
+            sourceEvidenceIds: [evidence.id],
+
             title: findingTitle,
             description: descriptionParts.join("\n"),
-            category: evidence.sourceCategory || evidence.evidenceType || evidence.type || "General",
+            category: evidence.sourceCategory || evidence.category || evidence.evidenceType || evidence.type || "General",
             buildingSystem: evidence.sourceModule || evidence.buildingSystem || "",
             location: evidence.location || "",
-            severity: "Medium",
+
+            severity: isAvailabilityCheckOnly ? "Unrated" : "Medium",
+            priority: isAvailabilityCheckOnly ? "Medium" : "High",
+            confidence: isAvailabilityCheckOnly ? 50 : 60,
+
             status: "Draft",
+            reviewStatus: "Draft",
+            expertReviewRequired: true,
+
             source: evidence.sourceType === "inspection-scope"
                 ? "Inspection Scope Evidence"
-                : "Evidence Review"
+                : "Evidence Review",
+
+            sourceQuestionId: evidence.sourceQuestionId || "",
+            sourceQuestion: evidence.sourceQuestion || "",
+            sourceModule: evidence.sourceModule || "",
+            sourceCategory: evidence.sourceCategory || "",
+            sourcePolicy: evidence.sourcePolicy || "",
+            sourceRequiredEvidenceRaw: evidence.sourceRequiredEvidenceRaw || "",
+
+            profile: isPattayaEvidence ? "pattaya" : "",
+            country: isPattayaEvidence ? "TH" : "",
+            region: isPattayaEvidence ? "Pattaya / Chonburi" : "",
+
+            createdBy: "System",
+            updatedBy: "System"
         });
 
         FindingManager.set(finding);
@@ -657,12 +702,14 @@ export default class EvidencePage {
         const updatedEvidence = EvidenceManager.update({
             ...evidence,
             findingIds: [...new Set([...(evidence.findingIds || []), finding.id])],
+            linkedFindingId: finding.id,
+            hasFinding: true,
             updatedAt: new Date().toISOString()
         });
 
         EvidenceManager.set(updatedEvidence);
 
-        Notification.success("Finding created from selected evidence.");
+        Notification.success("Finding draft created. Expert review required.");
         window.location.hash = "findings";
     }
 

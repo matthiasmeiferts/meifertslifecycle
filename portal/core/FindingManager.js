@@ -92,12 +92,24 @@ export default class FindingManager {
             inspectionId: data.inspectionId || null,
 
             evidenceIds: data.evidenceIds || [],
+            sourceEvidenceIds: data.sourceEvidenceIds || data.evidenceIds || [],
 
             title: data.title || "Untitled Finding",
             description: data.description || "",
             category: data.category || "General",
             buildingSystem: data.buildingSystem || "",
             location: data.location || "",
+
+            sourceQuestionId: data.sourceQuestionId || "",
+            sourceQuestion: data.sourceQuestion || "",
+            sourceModule: data.sourceModule || "",
+            sourceCategory: data.sourceCategory || "",
+            sourcePolicy: data.sourcePolicy || "",
+            sourceRequiredEvidenceRaw: data.sourceRequiredEvidenceRaw || "",
+
+            profile: data.profile || "",
+            country: data.country || "",
+            region: data.region || "",
 
             severity: data.severity || "Unrated",
             probability: data.probability || "Unrated",
@@ -106,12 +118,17 @@ export default class FindingManager {
             confidence: data.confidence || null,
 
             status: data.status || "Draft",
+            reviewStatus: data.reviewStatus || "Draft",
+            expertReviewRequired: data.expertReviewRequired !== undefined
+                ? data.expertReviewRequired
+                : true,
             source: data.source || "Expert Review",
 
             recommendationIds: data.recommendationIds || [],
             assessmentIds: data.assessmentIds || [],
 
             createdBy: data.createdBy || this.defaultCreator,
+            updatedBy: data.updatedBy || data.createdBy || this.defaultCreator,
             createdAt: data.createdAt || new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
