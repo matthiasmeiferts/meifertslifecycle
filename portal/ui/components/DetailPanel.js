@@ -38,6 +38,54 @@ export default class DetailPanel {
         return panel;
     }
 
+    static createBoundaryBadges(record = {}) {
+        const badges = [];
+
+        if (record.expertReviewRequired !== false) {
+            badges.push({ label: "Expert Review Required", tone: "warning" });
+        }
+
+        if (record.noAutomaticDecision) {
+            badges.push({ label: "No Automatic Decision", tone: "critical" });
+        }
+
+        if (record.decisionSupportOnly) {
+            badges.push({ label: "Decision Support Only", tone: "info" });
+        }
+
+        if (record.reportPreparationOnly) {
+            badges.push({ label: "Report Preparation Only", tone: "info" });
+        }
+
+        if (record.noAutomaticFinalReport) {
+            badges.push({ label: "No Final Report", tone: "critical" });
+        }
+
+        if (record.noAutomaticOpinion) {
+            badges.push({ label: "No Automatic Opinion", tone: "critical" });
+        }
+
+        if (record.sourcePolicy === "availability_check_only") {
+            badges.push({ label: "Document Availability Only", tone: "boundary" });
+        }
+
+        if (!badges.length) {
+            badges.push({ label: "Standard Review", tone: "neutral" });
+        }
+
+        const container = document.createElement("div");
+        container.className = "detail-boundary-badges";
+
+        badges.forEach(item => {
+            const badge = document.createElement("span");
+            badge.className = `detail-boundary-badge detail-boundary-badge--${item.tone}`;
+            badge.textContent = item.label;
+            container.appendChild(badge);
+        });
+
+        return container;
+    }
+
     static formatValue(value) {
         if (value === null || value === undefined || value === "") {
             return "—";

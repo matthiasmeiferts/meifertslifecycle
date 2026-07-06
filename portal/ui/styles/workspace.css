@@ -4991,3 +4991,55 @@ button.dashboard-readiness-card__action:focus-visible {
         max-width: none;
     }
 }
+
+/* Field-Test Cleanup 2: safety boundary badges */
+.detail-boundary-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+}
+
+.detail-boundary-badge {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    border-radius: 999px;
+    padding: 5px 9px;
+    font-size: 11px;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    border: 1px solid rgba(27, 43, 69, 0.10);
+    background: rgba(255, 255, 255, 0.62);
+    color: rgba(27, 43, 69, 0.74);
+}
+
+.detail-boundary-badge--warning {
+    background: rgba(184, 153, 104, 0.14);
+    border-color: rgba(184, 153, 104, 0.30);
+    color: #6F552C;
+}
+
+.detail-boundary-badge--critical {
+    background: rgba(124, 47, 47, 0.09);
+    border-color: rgba(124, 47, 47, 0.18);
+    color: #7C2F2F;
+}
+
+.detail-boundary-badge--info {
+    background: rgba(27, 43, 69, 0.07);
+    border-color: rgba(27, 43, 69, 0.12);
+    color: #1B2B45;
+}
+
+.detail-boundary-badge--boundary {
+    background: rgba(27, 43, 69, 0.11);
+    border-color: rgba(27, 43, 69, 0.18);
+    color: #1B2B45;
+}
+
+.detail-boundary-badge--neutral {
+    color: rgba(27, 43, 69, 0.52);
+}

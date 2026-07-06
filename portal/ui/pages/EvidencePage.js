@@ -529,6 +529,7 @@ export default class EvidencePage {
         return DetailPanel.create("Evidence Context", [
             { label: "Selected Evidence", value: activeEvidence.title || activeEvidence.id },
             { label: "Workspace Status", value: statusLabel },
+            { label: "Safety Boundaries", value: DetailPanel.createBoundaryBadges(activeEvidence) },
             { label: "Case ID", value: activeEvidence.caseId || "Not linked" },
             { label: "Building ID", value: activeEvidence.buildingId || "Not linked" },
             { label: "Inspection ID", value: activeEvidence.inspectionId || "Not linked" },

@@ -502,6 +502,7 @@ export default class RecommendationPage {
         return DetailPanel.create("Recommendation Context", [
             { label: "Selected Recommendation", value: activeRecommendation.title || activeRecommendation.id },
             { label: "Workspace Status", value: statusLabel },
+            { label: "Safety Boundaries", value: DetailPanel.createBoundaryBadges(activeRecommendation) },
             { label: "Source", value: activeRecommendation.source || "Assessment Review" },
             { label: "Case ID", value: activeRecommendation.caseId || "Not linked" },
             { label: "Building ID", value: activeRecommendation.buildingId || "Not linked" },

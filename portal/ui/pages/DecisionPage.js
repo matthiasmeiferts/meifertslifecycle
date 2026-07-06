@@ -518,6 +518,7 @@ export default class DecisionPage {
         return DetailPanel.create("Decision Context", [
             { label: "Selected Decision", value: activeDecision.title || activeDecision.id },
             { label: "Workspace Status", value: statusLabel },
+            { label: "Safety Boundaries", value: DetailPanel.createBoundaryBadges(activeDecision) },
             { label: "Source", value: activeDecision.source || "Recommendation Review" },
             { label: "Case ID", value: activeDecision.caseId || "Not linked" },
             { label: "Building ID", value: activeDecision.buildingId || "Not linked" },

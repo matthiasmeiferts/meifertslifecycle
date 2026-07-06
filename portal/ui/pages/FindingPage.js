@@ -518,6 +518,7 @@ export default class FindingPage {
         return DetailPanel.create("Finding Context", [
             { label: "Selected Finding", value: activeFinding.title || activeFinding.id },
             { label: "Workspace Status", value: statusLabel },
+            { label: "Safety Boundaries", value: DetailPanel.createBoundaryBadges(activeFinding) },
             { label: "Source", value: activeFinding.source || "Expert Review" },
             { label: "Case ID", value: activeFinding.caseId || "Not linked" },
             { label: "Building ID", value: activeFinding.buildingId || "Not linked" },

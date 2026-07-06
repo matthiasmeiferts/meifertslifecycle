@@ -869,6 +869,7 @@ export default class ReportPage {
             { label: "Selected Report", value: this.getDisplayTitle(activeReport) },
             { label: "Source Title", value: this.getSourceTitle(activeReport) || "Not linked" },
             { label: "Report Status", value: this.formatReportStatus(activeReport) },
+            { label: "Safety Boundaries", value: DetailPanel.createBoundaryBadges(activeReport) },
             { label: "Source", value: activeReport.source || "Decision Review" },
             { label: "Case ID", value: activeReport.caseId || "Not linked" },
             { label: "Building ID", value: activeReport.buildingId || "Not linked" },

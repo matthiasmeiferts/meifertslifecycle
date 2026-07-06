@@ -405,6 +405,7 @@ export default class AssessmentPage {
         return DetailPanel.create("Assessment Context", [
             { label: "Selected Assessment", value: activeAssessment.title || activeAssessment.id },
             { label: "Workspace Status", value: statusLabel },
+            { label: "Safety Boundaries", value: DetailPanel.createBoundaryBadges(activeAssessment) },
             { label: "Source", value: activeAssessment.source || "Assessment Review" },
             { label: "Case ID", value: activeAssessment.caseId || "Not linked" },
             { label: "Building ID", value: activeAssessment.buildingId || "Not linked" },
