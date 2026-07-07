@@ -3327,6 +3327,46 @@ export default class LanguageManager {
                 en: "Select an assessment before creating a recommendation.",
                 de: "Assessment auswählen, bevor eine Recommendation erstellt wird."
             },
+            RecommendationOpenAction: {
+                en: "Open",
+                de: "Öffnen"
+            },
+            RecommendationEditAction: {
+                en: "Edit",
+                de: "Bearbeiten"
+            },
+            RecommendationDeleteAction: {
+                en: "Delete",
+                de: "Löschen"
+            },
+            RecommendationActionLockedLabel: {
+                en: "Locked",
+                de: "Gesperrt"
+            },
+            RecommendationActionBlockedNotification: {
+                en: "This recommendation action is blocked by workspace governance.",
+                de: "Diese Recommendation-Aktion wird durch Workspace Governance blockiert."
+            },
+            RecommendationEditBlockedNotification: {
+                en: "This recommendation record cannot be edited.",
+                de: "Dieser Recommendation-Datensatz kann nicht bearbeitet werden."
+            },
+            RecommendationDeleteBlockedNotification: {
+                en: "This recommendation record cannot be deleted.",
+                de: "Dieser Recommendation-Datensatz kann nicht gelöscht werden."
+            },
+            RecommendationDownstreamActionBlockedNotification: {
+                en: "A decision cannot be created from this recommendation yet.",
+                de: "Aus dieser Recommendation kann noch keine Decision erstellt werden."
+            },
+            RecommendationBlockedActionReason: {
+                en: "Recommendation is blocked by workspace governance.",
+                de: "Recommendation wird durch Workspace Governance blockiert."
+            },
+            RecommendationContentRequiredBeforeDecisionReason: {
+                en: "Recommendation content is required before creating a decision.",
+                de: "Recommendation-Inhalt ist erforderlich, bevor eine Decision erstellt werden kann."
+            },
             RecommendationCreatedNotification: {
                 en: "Recommendation created.",
                 de: "Recommendation erstellt."

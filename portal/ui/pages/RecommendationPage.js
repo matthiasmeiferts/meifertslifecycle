@@ -5,6 +5,7 @@ import BuildingManager from "../../core/BuildingManager.js";
 import InspectionManager from "../../core/InspectionManager.js";
 import DecisionManager from "../../core/DecisionManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import WorkspaceActionGovernanceManager from "../../core/WorkspaceActionGovernanceManager.js";
 import LanguageManager from "../../core/LanguageManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
@@ -470,18 +471,27 @@ export default class RecommendationPage {
         const actions = document.createElement("div");
         actions.className = "evidence-row__actions";
 
+        const actionState = WorkspaceActionGovernanceManager.getActionState(recommendation);
+
         [
-            ["open", LanguageManager.t("ReportOpenAction")],
-            ["edit", LanguageManager.t("ReportEditAction")],
-            ["delete", LanguageManager.t("ReportDeleteAction")]
-        ].forEach(([action, label]) => {
+            ["open", LanguageManager.t("RecommendationOpenAction"), actionState.openAllowed],
+            ["edit", LanguageManager.t("RecommendationEditAction"), actionState.editAllowed],
+            ["delete", LanguageManager.t("RecommendationDeleteAction"), actionState.deleteAllowed]
+        ].forEach(([action, label, isAllowed]) => {
             const button = document.createElement("button");
             button.type = "button";
-            button.className = "button";
-            button.textContent = label;
+            button.className = isAllowed ? "button" : "button secondary";
+            button.textContent = isAllowed ? label : `${label} · ${LanguageManager.t("RecommendationActionLockedLabel")}`;
+            button.disabled = !isAllowed;
+            button.title = isAllowed ? "" : actionState.reason;
 
             button.addEventListener("click", event => {
                 event.stopPropagation();
+
+                if (!isAllowed) {
+                    Notification.warning(LanguageManager.t("RecommendationActionBlockedNotification"));
+                    return;
+                }
 
                 if (action === "open") {
                     RecommendationManager.set(recommendation);
@@ -585,6 +595,17 @@ export default class RecommendationPage {
 
         if (currentCase && currentCase.id !== recommendation.caseId) {
             Notification.warning("Selected recommendation belongs to another case.");
+            return;
+        }
+
+        const actionState = WorkspaceActionGovernanceManager.getActionState(recommendation, {
+            requireContent: true,
+            blockedReason: LanguageManager.t("RecommendationBlockedActionReason"),
+            contentRequiredReason: LanguageManager.t("RecommendationContentRequiredBeforeDecisionReason")
+        });
+
+        if (!actionState.downstreamAllowed) {
+            Notification.warning(LanguageManager.t("RecommendationDownstreamActionBlockedNotification"));
             return;
         }
 
@@ -1023,6 +1044,13 @@ export default class RecommendationPage {
             return;
         }
 
+        const actionState = WorkspaceActionGovernanceManager.getActionState(recommendation);
+
+        if (!actionState.editAllowed) {
+            Notification.warning(LanguageManager.t("RecommendationEditBlockedNotification"));
+            return;
+        }
+
         FormDialog.open({
             title: LanguageManager.t("RecommendationEditTitle"),
             submitLabel: LanguageManager.t("RecommendationSaveAction"),
@@ -1123,6 +1151,13 @@ export default class RecommendationPage {
     }
 
     static deleteRecommendation(item) {
+        const actionState = WorkspaceActionGovernanceManager.getActionState(item);
+
+        if (!actionState.deleteAllowed) {
+            Notification.warning(LanguageManager.t("RecommendationDeleteBlockedNotification"));
+            return;
+        }
+
         if (!window.confirm(`${LanguageManager.t("RecommendationDeleteConfirmPrefix")} "${item.title || item.id}"?`)) {
             return;
         }
