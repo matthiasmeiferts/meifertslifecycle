@@ -5,6 +5,7 @@ import BuildingManager from "../../core/BuildingManager.js";
 import InspectionManager from "../../core/InspectionManager.js";
 import FindingManager from "../../core/FindingManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import WorkspaceActionGovernanceManager from "../../core/WorkspaceActionGovernanceManager.js";
 import LanguageManager from "../../core/LanguageManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
@@ -462,18 +463,27 @@ export default class EvidencePage {
         const actions = document.createElement("div");
         actions.className = "evidence-row__actions";
 
+        const actionState = WorkspaceActionGovernanceManager.getActionState(item);
+
         [
-            ["open", LanguageManager.t("ReportOpenAction")],
-            ["edit", LanguageManager.t("ReportEditAction")],
-            ["delete", LanguageManager.t("ReportDeleteAction")]
-        ].forEach(([action, label]) => {
+            ["open", LanguageManager.t("EvidenceOpenAction"), actionState.openAllowed],
+            ["edit", LanguageManager.t("EvidenceEditAction"), actionState.editAllowed],
+            ["delete", LanguageManager.t("EvidenceDeleteAction"), actionState.deleteAllowed]
+        ].forEach(([action, label, isAllowed]) => {
             const button = document.createElement("button");
             button.type = "button";
-            button.className = "button";
-            button.textContent = label;
+            button.className = isAllowed ? "button" : "button secondary";
+            button.textContent = isAllowed ? label : `${label} · ${LanguageManager.t("EvidenceActionLockedLabel")}`;
+            button.disabled = !isAllowed;
+            button.title = isAllowed ? "" : actionState.reason;
 
             button.addEventListener("click", event => {
                 event.stopPropagation();
+
+                if (!isAllowed) {
+                    Notification.warning(LanguageManager.t("EvidenceActionBlockedNotification"));
+                    return;
+                }
 
                 if (action === "open") {
                     EvidenceManager.set(item);
@@ -530,6 +540,13 @@ export default class EvidencePage {
     }
 
     static deleteEvidence(item) {
+        const actionState = WorkspaceActionGovernanceManager.getActionState(item);
+
+        if (!actionState.deleteAllowed) {
+            Notification.warning(LanguageManager.t("EvidenceDeleteBlockedNotification"));
+            return;
+        }
+
         if (!window.confirm(`${LanguageManager.t("EvidenceDeleteConfirmPrefix")} "${item.title || item.id}"?`)) {
             return;
         }
@@ -647,6 +664,17 @@ export default class EvidencePage {
 
         if (currentCase && currentCase.id !== evidence.caseId) {
             Notification.warning(LanguageManager.t("EvidenceBelongsOtherCaseWarning"));
+            return;
+        }
+
+        const actionState = WorkspaceActionGovernanceManager.getActionState(evidence, {
+            requireContent: true,
+            blockedReason: LanguageManager.t("EvidenceBlockedActionReason"),
+            contentRequiredReason: LanguageManager.t("EvidenceContentRequiredBeforeFindingReason")
+        });
+
+        if (!actionState.downstreamAllowed) {
+            Notification.warning(LanguageManager.t("EvidenceDownstreamActionBlockedNotification"));
             return;
         }
 
@@ -802,6 +830,16 @@ export default class EvidencePage {
         if (!evidence) {
 
             Notification.info(LanguageManager.t("EvidenceSelectBeforeEditing"));
+
+            return;
+
+        }
+
+        const actionState = WorkspaceActionGovernanceManager.getActionState(evidence);
+
+        if (!actionState.editAllowed) {
+
+            Notification.warning(LanguageManager.t("EvidenceEditBlockedNotification"));
 
             return;
 

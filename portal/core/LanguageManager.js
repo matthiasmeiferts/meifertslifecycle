@@ -1767,6 +1767,46 @@ export default class LanguageManager {
                 en: "Create Finding",
                 de: "Finding erstellen"
             },
+            EvidenceOpenAction: {
+                en: "Open",
+                de: "Öffnen"
+            },
+            EvidenceEditAction: {
+                en: "Edit",
+                de: "Bearbeiten"
+            },
+            EvidenceDeleteAction: {
+                en: "Delete",
+                de: "Löschen"
+            },
+            EvidenceActionLockedLabel: {
+                en: "Locked",
+                de: "Gesperrt"
+            },
+            EvidenceActionBlockedNotification: {
+                en: "This evidence action is blocked by workspace governance.",
+                de: "Diese Evidence-Aktion wird durch Workspace Governance blockiert."
+            },
+            EvidenceEditBlockedNotification: {
+                en: "This evidence record cannot be edited.",
+                de: "Dieser Evidence-Datensatz kann nicht bearbeitet werden."
+            },
+            EvidenceDeleteBlockedNotification: {
+                en: "This evidence record cannot be deleted.",
+                de: "Dieser Evidence-Datensatz kann nicht gelöscht werden."
+            },
+            EvidenceDownstreamActionBlockedNotification: {
+                en: "A finding cannot be created from this evidence yet.",
+                de: "Aus dieser Evidence kann noch kein Finding erstellt werden."
+            },
+            EvidenceBlockedActionReason: {
+                en: "Evidence is blocked by workspace governance.",
+                de: "Evidence wird durch Workspace Governance blockiert."
+            },
+            EvidenceContentRequiredBeforeFindingReason: {
+                en: "Evidence content is required before creating a finding.",
+                de: "Evidence-Inhalt ist erforderlich, bevor ein Finding erstellt werden kann."
+            },
             EvidenceDeleteConfirmPrefix: {
                 en: "Delete evidence",
                 de: "Evidence löschen"
