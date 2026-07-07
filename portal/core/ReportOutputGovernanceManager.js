@@ -28,10 +28,12 @@ export default class ReportOutputGovernanceManager {
             allowWarnings: options.allowWarnings !== false
         });
 
+        const hardBlocked = this.hasHardDraftBlocker(report, gate);
+
         return this.createResult(report, gate, this.outputUses.draft, {
-            canProceed: gate.status !== "blocked",
-            reason: gate.status === "blocked"
-                ? "Draft output is blocked by unresolved review items."
+            canProceed: !hardBlocked,
+            reason: hardBlocked
+                ? "Draft output is blocked by unresolved hard blockers."
                 : "Draft output may be prepared for expert review."
         });
     }
@@ -81,6 +83,26 @@ export default class ReportOutputGovernanceManager {
             reviewCleared: this.isReviewCleared(report),
             gate
         };
+    }
+
+    static hasHardDraftBlocker(report = {}, gate = {}) {
+        const status = ReviewQueueManager.normalize(report.status);
+        const reviewStatus = ReviewQueueManager.normalize(report.reviewStatus);
+
+        if (status === "blocked" || reviewStatus === "blocked") {
+            return true;
+        }
+
+        return (gate.blockingItems || []).some(item => {
+            const itemStatus = ReviewQueueManager.normalize(item.status);
+            const itemReviewStatus = ReviewQueueManager.normalize(item.reviewStatus);
+
+            return (
+                itemStatus === "blocked" ||
+                itemReviewStatus === "blocked" ||
+                itemReviewStatus === "requires expert check"
+            );
+        });
     }
 
     static isReviewCleared(report = {}) {
