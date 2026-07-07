@@ -4643,6 +4643,34 @@ export default class LanguageManager {
                 en: "Create Evidence",
                 de: "Evidence erstellen"
             },
+            InspectionProfileChangedScopeReset: {
+                en: "Inspection profile changed. Active scope was reset for the selected catalog.",
+                de: "Inspection-Profil geändert. Der aktive Scope wurde für den ausgewählten Katalog zurückgesetzt."
+            },
+            InspectionProfileUpdated: {
+                en: "Inspection profile updated.",
+                de: "Inspection-Profil aktualisiert."
+            },
+            InspectionStartScopeBeforeAnswering: {
+                en: "Start the adaptive scope before answering questions.",
+                de: "Starten Sie den adaptiven Scope, bevor Fragen beantwortet werden."
+            },
+            InspectionAnswerSaved: {
+                en: "Inspection answer saved.",
+                de: "Inspection-Antwort gespeichert."
+            },
+            InspectionQuestionNotFound: {
+                en: "Inspection question could not be found.",
+                de: "Inspection-Frage konnte nicht gefunden werden."
+            },
+            InspectionCreatedNotification: {
+                en: "Inspection created.",
+                de: "Inspection erstellt."
+            },
+            InspectionPendingFeatureReserved: {
+                en: "is reserved for a later workspace release.",
+                de: "ist für ein späteres Workspace-Release vorgesehen."
+            },
             InspectionEvidenceCreatedFromScope: {
                 en: "Evidence created from inspection scope.",
                 de: "Evidence aus Inspection Scope erstellt."
