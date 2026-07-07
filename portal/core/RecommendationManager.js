@@ -111,6 +111,20 @@ export default class RecommendationManager {
             sourcePolicy: data.sourcePolicy || "",
             sourceRequiredEvidenceRaw: data.sourceRequiredEvidenceRaw || "",
 
+            // Foundation 1.1-D2: Evidence metadata trace from assessment
+            sourceFileName: data.sourceFileName || "",
+            sourceFileType: data.sourceFileType || "",
+            sourceFileReference: data.sourceFileReference || "",
+            sourceCaptureMethod: data.sourceCaptureMethod || "",
+            sourceLocationLabel: data.sourceLocationLabel || "",
+            sourceInspectionArea: data.sourceInspectionArea || "",
+            sourceMeasurementValue: data.sourceMeasurementValue ?? null,
+            sourceMeasurementUnit: data.sourceMeasurementUnit || "",
+            sourceReviewStatus: data.sourceReviewStatus || "",
+            sourceExpertReviewRequired: data.sourceExpertReviewRequired !== undefined
+                ? data.sourceExpertReviewRequired
+                : true,
+
             profile: data.profile || "",
             country: data.country || "",
             region: data.region || "",

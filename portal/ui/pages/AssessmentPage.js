@@ -437,6 +437,18 @@ export default class AssessmentPage {
             .length;
     }
 
+    static formatSourceMeasurement(assessment = {}) {
+        if (
+            assessment.sourceMeasurementValue === null ||
+            assessment.sourceMeasurementValue === undefined ||
+            assessment.sourceMeasurementValue === ""
+        ) {
+            return "None";
+        }
+
+        return `${assessment.sourceMeasurementValue}${assessment.sourceMeasurementUnit ? " " + assessment.sourceMeasurementUnit : ""}`;
+    }
+
     static createRecommendationFromSelectedAssessment() {
         const assessment = AssessmentManager.get();
         const currentCase = CaseManager.getCurrent();
@@ -516,6 +528,32 @@ export default class AssessmentPage {
         descriptionParts.push(`${LanguageManager.t("AssessmentRiskScoreTraceLabel")}: ${riskScore}`);
         descriptionParts.push(`${LanguageManager.t("AssessmentExpertReviewRequiredTraceLabel")}: ${assessment.expertReviewRequired === false ? LanguageManager.t("AssessmentNo") : LanguageManager.t("AssessmentYes")}`);
 
+        const hasEvidenceMetadataTrace = Boolean(
+            assessment.sourceFileName ||
+            assessment.sourceFileType ||
+            assessment.sourceFileReference ||
+            assessment.sourceCaptureMethod ||
+            assessment.sourceLocationLabel ||
+            assessment.sourceInspectionArea ||
+            assessment.sourceMeasurementValue !== null && assessment.sourceMeasurementValue !== undefined ||
+            assessment.sourceMeasurementUnit ||
+            assessment.sourceReviewStatus
+        );
+
+        if (hasEvidenceMetadataTrace) {
+            descriptionParts.push("");
+            descriptionParts.push("Evidence metadata trace:");
+            descriptionParts.push(`File name: ${assessment.sourceFileName || "None"}`);
+            descriptionParts.push(`File type: ${assessment.sourceFileType || "None"}`);
+            descriptionParts.push(`File reference: ${assessment.sourceFileReference || "None"}`);
+            descriptionParts.push(`Capture method: ${assessment.sourceCaptureMethod || "None"}`);
+            descriptionParts.push(`Location label: ${assessment.sourceLocationLabel || "None"}`);
+            descriptionParts.push(`Inspection area: ${assessment.sourceInspectionArea || "None"}`);
+            descriptionParts.push(`Measurement: ${this.formatSourceMeasurement(assessment)}`);
+            descriptionParts.push(`Evidence review status: ${assessment.sourceReviewStatus || "None"}`);
+            descriptionParts.push(`Expert review required: ${assessment.sourceExpertReviewRequired === false ? "No" : "Yes"}`);
+        }
+
         const recommendation = RecommendationManager.create({
             caseId: assessment.caseId,
             buildingId: assessment.buildingId || currentCase?.buildingId || null,
@@ -553,6 +591,19 @@ export default class AssessmentPage {
             sourceCategory: assessment.sourceCategory || "",
             sourcePolicy: assessment.sourcePolicy || "",
             sourceRequiredEvidenceRaw: assessment.sourceRequiredEvidenceRaw || "",
+
+            sourceFileName: assessment.sourceFileName || "",
+            sourceFileType: assessment.sourceFileType || "",
+            sourceFileReference: assessment.sourceFileReference || "",
+            sourceCaptureMethod: assessment.sourceCaptureMethod || "",
+            sourceLocationLabel: assessment.sourceLocationLabel || "",
+            sourceInspectionArea: assessment.sourceInspectionArea || "",
+            sourceMeasurementValue: assessment.sourceMeasurementValue ?? null,
+            sourceMeasurementUnit: assessment.sourceMeasurementUnit || "",
+            sourceReviewStatus: assessment.sourceReviewStatus || "",
+            sourceExpertReviewRequired: assessment.sourceExpertReviewRequired !== undefined
+                ? assessment.sourceExpertReviewRequired
+                : true,
 
             profile: isPattayaAssessment ? "pattaya" : "",
             country: isPattayaAssessment ? "TH" : "",
