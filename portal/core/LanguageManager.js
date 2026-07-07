@@ -539,6 +539,22 @@ export default class LanguageManager {
                 en: "Report prepared for review.",
                 de: "Bericht zur Prüfung vorbereitet."
             },
+            ReportValidationGateBlockedNotification: {
+                en: "Workflow validation is blocked. Resolve blocking review items before preparing the report.",
+                de: "Workflow-Validierung ist blockiert. Blockierende Review-Items vor Report-Vorbereitung lösen."
+            },
+            ReportValidationGateWarningNotification: {
+                en: "Workflow validation has warnings. Review open items before relying on the report.",
+                de: "Workflow-Validierung enthält Warnungen. Offene Items vor Nutzung des Reports prüfen."
+            },
+            ReportValidationGateExternalBlockedNotification: {
+                en: "External output is blocked by unresolved validation items.",
+                de: "Externe Ausgabe ist durch ungelöste Validierungs-Items blockiert."
+            },
+            ReportValidationGateExternalWarningNotification: {
+                en: "External output has validation warnings. Review open items before use.",
+                de: "Externe Ausgabe enthält Validierungswarnungen. Offene Items vor Nutzung prüfen."
+            },
             ReportSelectReportFirstNotification: {
                 en: "Select a report first.",
                 de: "Bitte zuerst einen Bericht auswählen."
@@ -3702,6 +3718,10 @@ export default class LanguageManager {
             DecisionReportDraftCreated: {
                 en: "Report draft created. Expert review required. No final report created.",
                 de: "Report Draft erstellt. Fachliche Prüfung erforderlich. Kein finaler Report erstellt."
+            },
+            DecisionValidationGateDraftWarningNotification: {
+                en: "Validation gate has unresolved blockers. Report draft may be created, but final use remains restricted.",
+                de: "Validation Gate enthält ungelöste Blocker. Report Draft kann erstellt werden, finale Nutzung bleibt eingeschränkt."
             },
             DecisionYes: {
                 en: "Yes",

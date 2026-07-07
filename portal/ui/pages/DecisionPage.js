@@ -6,6 +6,7 @@ import BuildingManager from "../../core/BuildingManager.js";
 import InspectionManager from "../../core/InspectionManager.js";
 import ReportManager from "../../core/ReportManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import WorkflowValidationGateManager from "../../core/WorkflowValidationGateManager.js";
 import LanguageManager from "../../core/LanguageManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
@@ -570,6 +571,14 @@ export default class DecisionPage {
         if (currentCase && currentCase.id !== decision.caseId) {
             Notification.warning("Selected decision belongs to another case.");
             return;
+        }
+
+        const reportGate = WorkflowValidationGateManager.validateForReport(decision.caseId, {
+            allowWarnings: true
+        });
+
+        if (reportGate.status === "blocked") {
+            Notification.warning(LanguageManager.t("DecisionValidationGateDraftWarningNotification"));
         }
 
         const isPattayaDecision =

@@ -6,6 +6,7 @@ import DecisionManager from "../../core/DecisionManager.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
 import DemoDatasetManager from "../../core/DemoDatasetManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import WorkflowValidationGateManager from "../../core/WorkflowValidationGateManager.js";
 import LanguageManager from "../../core/LanguageManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
@@ -1087,6 +1088,21 @@ export default class ReportPage {
         const existingReport = ReportManager.get();
         const sourceReport = existingReport || this.createSampleReport({ silent: true });
 
+        if (!sourceReport) {
+            return;
+        }
+
+        const reportGate = WorkflowValidationGateManager.validateForReport(sourceReport.caseId);
+
+        if (!reportGate.canProceed && reportGate.status === "blocked") {
+            Notification.warning(LanguageManager.t("ReportValidationGateBlockedNotification"));
+            return;
+        }
+
+        if (!reportGate.canProceed && reportGate.status === "warning") {
+            Notification.info(LanguageManager.t("ReportValidationGateWarningNotification"));
+        }
+
         const report = ReportManager.update({
             ...sourceReport,
             status: "Prepared",
@@ -1108,6 +1124,17 @@ export default class ReportPage {
         if (!activeReport) {
             Notification.warning(LanguageManager.t("ReportSelectReportFirstNotification"));
             return;
+        }
+
+        const externalGate = WorkflowValidationGateManager.validateForExternalUse(activeReport.caseId);
+
+        if (!externalGate.canProceed && externalGate.status === "blocked") {
+            Notification.warning(LanguageManager.t("ReportValidationGateExternalBlockedNotification"));
+            return;
+        }
+
+        if (!externalGate.canProceed && externalGate.status === "warning") {
+            Notification.info(LanguageManager.t("ReportValidationGateExternalWarningNotification"));
         }
 
         let printableReport = activeReport;
