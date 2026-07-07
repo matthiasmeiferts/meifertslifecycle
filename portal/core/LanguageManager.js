@@ -5307,6 +5307,114 @@ export default class LanguageManager {
                 en: "Reports will compile evidence, findings, assessments, recommendations, and decisions into a professional output.",
                 de: "Reports bündeln Evidence, Findings, Assessments, Recommendations und Decisions zu einem professionellen Output."
             },
+            FinalInspectionScopesLabel: {
+                en: "Inspection Scopes",
+                de: "Inspection Scopes"
+            },
+            SettingsWorkspaceEyebrow: {
+                en: "Workspace Settings",
+                de: "Workspace-Einstellungen"
+            },
+            SettingsTitle: {
+                en: "Settings",
+                de: "Einstellungen"
+            },
+            SettingsWorkflowRecordsMetric: {
+                en: "Workflow Records",
+                de: "Workflow-Datensätze"
+            },
+            SettingsPreservedRecordsMetric: {
+                en: "Preserved Records",
+                de: "Erhaltene Datensätze"
+            },
+            SettingsResetScopeMetric: {
+                en: "Reset Scope",
+                de: "Reset-Umfang"
+            },
+            SettingsStorageModeMetric: {
+                en: "Storage Mode",
+                de: "Speichermodus"
+            },
+            SettingsStorageModeLocal: {
+                en: "Local",
+                de: "Lokal"
+            },
+            SettingsWorkflowTestDataEyebrow: {
+                en: "Workflow Test Data",
+                de: "Workflow-Testdaten"
+            },
+            SettingsClearWorkflowTitle: {
+                en: "Clear generated workflow records",
+                de: "Generierte Workflow-Datensätze löschen"
+            },
+            SettingsClearWorkflowButton: {
+                en: "Clear Workflow Test Data",
+                de: "Workflow-Testdaten löschen"
+            },
+            SettingsControlledDemoDatasetEyebrow: {
+                en: "Controlled Demo Dataset",
+                de: "Kontrollierter Demo-Datensatz"
+            },
+            SettingsCreateCleanDemoTitle: {
+                en: "Create a clean end-to-end demo case",
+                de: "Sauberen End-to-End-Demo-Case erstellen"
+            },
+            SettingsRebuildControlledDemoDatasetButton: {
+                en: "Rebuild Controlled Demo Dataset",
+                de: "Kontrollierten Demo-Datensatz neu aufbauen"
+            },
+            SettingsResetDemoWorkflowDataButton: {
+                en: "Reset Demo Workflow Data",
+                de: "Demo-Workflow-Daten zurücksetzen"
+            },
+            SettingsDemoDatasetStatusLabel: {
+                en: "Demo Dataset Status",
+                de: "Demo-Datensatzstatus"
+            },
+            SettingsDemoStatusComplete: {
+                en: "Complete",
+                de: "Vollständig"
+            },
+            SettingsDemoStatusIncomplete: {
+                en: "Incomplete",
+                de: "Unvollständig"
+            },
+            SettingsDemoStatusNotCreated: {
+                en: "Not Created",
+                de: "Nicht erstellt"
+            },
+            SettingsWorkflowLinksValid: {
+                en: "Workflow links valid",
+                de: "Workflow-Verknüpfungen gültig"
+            },
+            SettingsWorkflowLinksIncomplete: {
+                en: "Workflow links incomplete",
+                de: "Workflow-Verknüpfungen unvollständig"
+            },
+            SettingsIntegrityLinksValidText: {
+                en: "{valid} of {total} links valid",
+                de: "{valid} von {total} Links gültig"
+            },
+            SettingsIntegrityNotChecked: {
+                en: "Integrity not checked",
+                de: "Integrität nicht geprüft"
+            },
+            SettingsControlledDemoStatusText: {
+                en: "{complete} of {total} controlled demo records available. {integrityLabel} ({integrityCount}).",
+                de: "{complete} von {total} kontrollierten Demo-Datensätzen verfügbar. {integrityLabel} ({integrityCount})."
+            },
+            SettingsPreservedContextEyebrow: {
+                en: "Preserved Context",
+                de: "Erhaltener Kontext"
+            },
+            SettingsKeptDuringWorkflowCleanupTitle: {
+                en: "Kept during workflow cleanup",
+                de: "Während der Workflow-Bereinigung erhalten"
+            },
+            SettingsPreservedContextText: {
+                en: "These records are intentionally preserved so the active working context remains stable.",
+                de: "Diese Datensätze werden bewusst erhalten, damit der aktive Arbeitskontext stabil bleibt."
+            },
             FoundationSettingsDataDescription: {
                 en: "Control local workspace data without deleting the active case, building, or inspection context.",
                 de: "Lokale Workspace-Daten steuern, ohne aktiven Case-, Gebäude- oder Inspection-Kontext zu löschen."
