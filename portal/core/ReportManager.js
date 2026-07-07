@@ -115,6 +115,20 @@ export default class ReportManager {
             sourcePolicy: data.sourcePolicy || "",
             sourceRequiredEvidenceRaw: data.sourceRequiredEvidenceRaw || "",
 
+            // Foundation 1.1-D4: Evidence metadata trace from decision
+            sourceFileName: data.sourceFileName || "",
+            sourceFileType: data.sourceFileType || "",
+            sourceFileReference: data.sourceFileReference || "",
+            sourceCaptureMethod: data.sourceCaptureMethod || "",
+            sourceLocationLabel: data.sourceLocationLabel || "",
+            sourceInspectionArea: data.sourceInspectionArea || "",
+            sourceMeasurementValue: data.sourceMeasurementValue ?? null,
+            sourceMeasurementUnit: data.sourceMeasurementUnit || "",
+            sourceReviewStatus: data.sourceReviewStatus || "",
+            sourceExpertReviewRequired: data.sourceExpertReviewRequired !== undefined
+                ? data.sourceExpertReviewRequired
+                : true,
+
             profile: data.profile || "",
             country: data.country || "",
             region: data.region || "",

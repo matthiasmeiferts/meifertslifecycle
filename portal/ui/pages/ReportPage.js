@@ -767,6 +767,18 @@ export default class ReportPage {
         return methodology;
     }
 
+    static formatSourceMeasurement(report = {}) {
+        if (
+            report.sourceMeasurementValue === null ||
+            report.sourceMeasurementValue === undefined ||
+            report.sourceMeasurementValue === ""
+        ) {
+            return LanguageManager.t("ReportNone");
+        }
+
+        return `${report.sourceMeasurementValue}${report.sourceMeasurementUnit ? " " + report.sourceMeasurementUnit : ""}`;
+    }
+
     static getReportTraceRows(report = {}) {
         return [
             [LanguageManager.t("ReportSourceLabel"), report.source || LanguageManager.t("ReportDecisionReview")],
@@ -778,6 +790,15 @@ export default class ReportPage {
             [LanguageManager.t("ReportFindingIdsLabel"), this.formatIdList(report.findingIds || [])],
             [LanguageManager.t("ReportEvidenceIdsLabel"), this.formatIdList(report.evidenceIds || [])],
             [LanguageManager.t("ReportBuildingSystemLabel"), report.buildingSystem || LanguageManager.t("ReportNotLinked")],
+            ["File name", report.sourceFileName || LanguageManager.t("ReportNone")],
+            ["File type", report.sourceFileType || LanguageManager.t("ReportNone")],
+            ["File reference", report.sourceFileReference || LanguageManager.t("ReportNone")],
+            ["Capture method", report.sourceCaptureMethod || LanguageManager.t("ReportNone")],
+            ["Location label", report.sourceLocationLabel || LanguageManager.t("ReportNone")],
+            ["Inspection area", report.sourceInspectionArea || LanguageManager.t("ReportNone")],
+            ["Measurement", this.formatSourceMeasurement(report)],
+            ["Evidence review status", report.sourceReviewStatus || LanguageManager.t("ReportNone")],
+            ["Expert review required", report.sourceExpertReviewRequired === false ? "No" : "Yes"],
             [LanguageManager.t("ReportRiskScoreLabel"), String(report.riskScore || 0)],
             [LanguageManager.t("ReportDecisionImpactLabel"), report.decisionImpact || "Medium"],
             [LanguageManager.t("ReportRiskLevelLabel"), report.riskLevel || "Medium"]
@@ -1153,6 +1174,35 @@ export default class ReportPage {
                 recommendationIds: activeDecision?.recommendationIds || [],
                 assessmentIds: activeDecision?.assessmentIds || [],
                 findingIds: [...new Set(resolvedFindingIds)],
+                evidenceIds: activeDecision?.evidenceIds || [],
+                sourceDecisionIds: activeDecision ? [activeDecision.id] : [],
+                sourceRecommendationIds: activeDecision?.sourceRecommendationIds || activeDecision?.recommendationIds || [],
+                sourceAssessmentIds: activeDecision?.sourceAssessmentIds || activeDecision?.assessmentIds || [],
+                sourceFindingIds: activeDecision?.sourceFindingIds || [...new Set(resolvedFindingIds)],
+                sourceEvidenceIds: activeDecision?.sourceEvidenceIds || activeDecision?.evidenceIds || [],
+                source: activeDecision?.source || "Decision Review",
+                buildingSystem: activeDecision?.buildingSystem || "",
+                riskScore: activeDecision?.riskScore || 0,
+                decisionImpact: activeDecision?.decisionImpact || "",
+                riskLevel: activeDecision?.riskLevel || "",
+                sourceQuestionId: activeDecision?.sourceQuestionId || "",
+                sourceQuestion: activeDecision?.sourceQuestion || "",
+                sourceModule: activeDecision?.sourceModule || "",
+                sourceCategory: activeDecision?.sourceCategory || "",
+                sourcePolicy: activeDecision?.sourcePolicy || "",
+                sourceRequiredEvidenceRaw: activeDecision?.sourceRequiredEvidenceRaw || "",
+                sourceFileName: activeDecision?.sourceFileName || "",
+                sourceFileType: activeDecision?.sourceFileType || "",
+                sourceFileReference: activeDecision?.sourceFileReference || "",
+                sourceCaptureMethod: activeDecision?.sourceCaptureMethod || "",
+                sourceLocationLabel: activeDecision?.sourceLocationLabel || "",
+                sourceInspectionArea: activeDecision?.sourceInspectionArea || "",
+                sourceMeasurementValue: activeDecision?.sourceMeasurementValue ?? null,
+                sourceMeasurementUnit: activeDecision?.sourceMeasurementUnit || "",
+                sourceReviewStatus: activeDecision?.sourceReviewStatus || "",
+                sourceExpertReviewRequired: activeDecision?.sourceExpertReviewRequired !== undefined
+                    ? activeDecision.sourceExpertReviewRequired
+                    : true,
                 title: values.title || "Building Intelligence Report",
                 sourceTitle: activeDecision?.title || "",
                 reportType: values.reportType || "Technical Due Diligence",
