@@ -4547,6 +4547,106 @@ export default class LanguageManager {
                 en: "Inspection Context",
                 de: "Inspection-Kontext"
             },
+            InspectionProfileAriaLabel: {
+                en: "Inspection profile",
+                de: "Inspection-Profil"
+            },
+            InspectionDefaultGermanyProfileLabel: {
+                en: "Default / Germany",
+                de: "Standard / Deutschland"
+            },
+            InspectionThailandPattayaProfileLabel: {
+                en: "Thailand / Pattaya",
+                de: "Thailand / Pattaya"
+            },
+            InspectionDefaultStarterCatalogActive: {
+                en: "Default starter catalog active.",
+                de: "Standard-Starterkatalog aktiv."
+            },
+            InspectionLowSignalDensityLabel: {
+                en: "Low signal density",
+                de: "Geringe Signaldichte"
+            },
+            InspectionLowSignalDensityDescription: {
+                en: "Inspection output is still light. More evidence and findings are needed.",
+                de: "Der Inspection-Output ist noch dünn. Mehr Evidence und Findings sind erforderlich."
+            },
+            InspectionHighSignalDensityLabel: {
+                en: "High signal density",
+                de: "Hohe Signaldichte"
+            },
+            InspectionHighSignalDensityDescription: {
+                en: "Inspection contains multiple technical signals. Review consistency before downstream assessment.",
+                de: "Die Inspection enthält mehrere technische Signale. Konsistenz vor dem nachgelagerten Assessment prüfen."
+            },
+            InspectionModerateSignalDensityLabel: {
+                en: "Moderate signal density",
+                de: "Mittlere Signaldichte"
+            },
+            InspectionModerateSignalDensityDescription: {
+                en: "Inspection contains useful technical signals, but further validation may still be needed.",
+                de: "Die Inspection enthält nutzbare technische Signale, benötigt aber möglicherweise noch weitere Validierung."
+            },
+            InspectionWorkflowCompleteLabel: {
+                en: "Inspection workflow complete",
+                de: "Inspection Workflow vollständig"
+            },
+            InspectionWorkflowDevelopingLabel: {
+                en: "Inspection workflow developing",
+                de: "Inspection Workflow in Entwicklung"
+            },
+            InspectionWorkflowEarlyLabel: {
+                en: "Inspection workflow early",
+                de: "Inspection Workflow frühe Phase"
+            },
+            InspectionTechnicalSignalDensityLabel: {
+                en: "Technical Signal Density",
+                de: "Technische Signaldichte"
+            },
+            InspectionStageInspectionLabel: {
+                en: "Inspection",
+                de: "Inspection"
+            },
+            InspectionStageFindingLabel: {
+                en: "Finding",
+                de: "Finding"
+            },
+            InspectionStageAssessmentLabel: {
+                en: "Assessment",
+                de: "Assessment"
+            },
+            InspectionMetricInProgress: {
+                en: "In Progress",
+                de: "In Bearbeitung"
+            },
+            InspectionAnswerYes: {
+                en: "Yes",
+                de: "Ja"
+            },
+            InspectionAnswerNo: {
+                en: "No",
+                de: "Nein"
+            },
+            InspectionAnswerUnknown: {
+                en: "Unknown",
+                de: "Unbekannt"
+            },
+            InspectionAnswerNotAccessible: {
+                en: "Not Accessible",
+                de: "Nicht zugänglich"
+            },
+            InspectionStartScopeToAnswerQuestion: {
+                en: "Start the scope to answer this question.",
+                de: "Scope starten, um diese Frage zu beantworten."
+            },
+            InspectionInspectorLabel: {
+                en: "Inspector",
+                de: "Prüfer"
+            },
+            InspectionNotAssigned: {
+                en: "Not assigned",
+                de: "Nicht zugewiesen"
+            },
             InspectionCurrentLabel: {
                 en: "Current Inspection",
                 de: "Aktuelle Inspection"
@@ -4833,7 +4933,7 @@ export default class LanguageManager {
             },
             InspectionRiskFlagsUpper: {
                 en: "Risk Flags",
-                de: "Risikosignale"
+                de: "Risiko-Flags"
             },
             InspectionLimitationsUpper: {
                 en: "Limitations",

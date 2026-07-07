@@ -151,13 +151,13 @@ export default class InspectionPage {
         ].join(";");
         panel.innerHTML = `
             <span>${LanguageManager.t("InspectionProfileLabel")}</span>
-            <select aria-label="Inspection profile" style="display:block;width:100%;margin-top:8px;padding:10px;border-radius:10px;border:1px solid rgba(27,43,69,0.25);background:white;color:#1b2b45;">
-                <option value="default"${currentProfile === "default" ? " selected" : ""}>Default / Germany</option>
-                <option value="pattaya"${currentProfile === "pattaya" ? " selected" : ""}>Thailand / Pattaya</option>
+            <select aria-label="${LanguageManager.t("InspectionProfileAriaLabel")}" style="display:block;width:100%;margin-top:8px;padding:10px;border-radius:10px;border:1px solid rgba(27,43,69,0.25);background:white;color:#1b2b45;">
+                <option value="default"${currentProfile === "default" ? " selected" : ""}>${LanguageManager.t("InspectionDefaultGermanyProfileLabel")}</option>
+                <option value="pattaya"${currentProfile === "pattaya" ? " selected" : ""}>${LanguageManager.t("InspectionThailandPattayaProfileLabel")}</option>
             </select>
             <p>${currentProfile === "pattaya"
                 ? LanguageManager.t("InspectionThailandProfileActive")
-                : "Default starter catalog active."}</p>
+                : LanguageManager.t("InspectionDefaultStarterCatalogActive")}</p>
         `;
 
         const select = panel.querySelector("select");
@@ -258,21 +258,21 @@ export default class InspectionPage {
         });
 
         let signalDensity = {
-            label: "Low signal density",
-            description: "Inspection output is still light. More evidence and findings are needed.",
+            label: LanguageManager.t("InspectionLowSignalDensityLabel"),
+            description: LanguageManager.t("InspectionLowSignalDensityDescription"),
             tone: "draft"
         };
 
         if (technicalSignals >= 10) {
             signalDensity = {
-                label: "High signal density",
-                description: "Inspection contains multiple technical signals. Review consistency before downstream assessment.",
+                label: LanguageManager.t("InspectionHighSignalDensityLabel"),
+                description: LanguageManager.t("InspectionHighSignalDensityDescription"),
                 tone: "ready"
             };
         } else if (technicalSignals >= 5) {
             signalDensity = {
-                label: "Moderate signal density",
-                description: "Inspection contains useful technical signals, but further validation may still be needed.",
+                label: LanguageManager.t("InspectionModerateSignalDensityLabel"),
+                description: LanguageManager.t("InspectionModerateSignalDensityDescription"),
                 tone: "active"
             };
         }
@@ -300,10 +300,10 @@ export default class InspectionPage {
             signalDensity,
             nextAction,
             label: evidenceCoverage >= 100
-                ? "Inspection workflow complete"
+                ? LanguageManager.t("InspectionWorkflowCompleteLabel")
                 : evidenceCoverage >= 50
-                    ? "Inspection workflow developing"
-                    : "Inspection workflow early"
+                    ? LanguageManager.t("InspectionWorkflowDevelopingLabel")
+                    : LanguageManager.t("InspectionWorkflowEarlyLabel")
         };
     }
 
@@ -329,7 +329,7 @@ export default class InspectionPage {
                     </article>
 
                     <article class="inspection-intelligence__card intelligence-snapshot__card inspection-intelligence__card--${intelligence.signalDensity.tone} intelligence-snapshot__card--${intelligence.signalDensity.tone}">
-                        <span>Technical Signal Density</span>
+                        <span>${LanguageManager.t("InspectionTechnicalSignalDensityLabel")}</span>
                         <strong>${intelligence.signalDensity.label}</strong>
                         <p>${intelligence.signalDensity.description}</p>
                     </article>
@@ -360,7 +360,7 @@ export default class InspectionPage {
     static intelligenceStages = [
         {
             key: "inspection",
-            label: "Inspection"
+            label: LanguageManager.t("InspectionStageInspectionLabel")
         },
         {
             key: "evidence",
@@ -368,11 +368,11 @@ export default class InspectionPage {
         },
         {
             key: "finding",
-            label: "Finding"
+            label: LanguageManager.t("InspectionStageFindingLabel")
         },
         {
             key: "assessment",
-            label: "Assessment"
+            label: LanguageManager.t("InspectionStageAssessmentLabel")
         }
     ];
 
@@ -417,7 +417,7 @@ export default class InspectionPage {
 
         grid.appendChild(this.createMetricCard(LanguageManager.t("InspectionTitlePlural"), inspections.length));
         grid.appendChild(this.createMetricCard(LanguageManager.t("InspectionMetricDraft"), draftCount));
-        grid.appendChild(this.createMetricCard("In Progress", progressCount));
+        grid.appendChild(this.createMetricCard(LanguageManager.t("InspectionMetricInProgress"), progressCount));
         grid.appendChild(this.createMetricCard(LanguageManager.t("InspectionMetricCompleted"), completedCount));
 
         return grid;
@@ -647,6 +647,20 @@ export default class InspectionPage {
         return unanswered || visibleQuestions[0] || questions[0] || null;
     }
 
+    static getAnswerDisplayLabel(label = "") {
+        const normalized = String(label || "");
+        const labelKeys = {
+            Yes: "InspectionAnswerYes",
+            No: "InspectionAnswerNo",
+            Unknown: "InspectionAnswerUnknown",
+            "Not Accessible": "InspectionAnswerNotAccessible"
+        };
+
+        return labelKeys[normalized]
+            ? LanguageManager.t(labelKeys[normalized])
+            : normalized;
+    }
+
     static getAnswerOptions(question = {}) {
         const questionId = String(question.id || "");
         const isPattayaQuestion = questionId.startsWith("TH-PATTAYA-");
@@ -677,13 +691,13 @@ export default class InspectionPage {
                 if (typeof option === "object") {
                     return {
                         value: option.value || option.label || "",
-                        label: option.label || option.value || ""
+                        label: this.getAnswerDisplayLabel(option.label || option.value || "")
                     };
                 }
 
                 return {
                     value: option,
-                    label: option
+                    label: this.getAnswerDisplayLabel(option)
                 };
             });
         }
@@ -692,16 +706,16 @@ export default class InspectionPage {
 
         if (type.includes("not_accessible")) {
             return [
-                { value: "yes", label: "Yes" },
-                { value: "no", label: "No" },
-                { value: "not_accessible", label: "Not Accessible" }
+                { value: "yes", label: LanguageManager.t("InspectionAnswerYes") },
+                { value: "no", label: LanguageManager.t("InspectionAnswerNo") },
+                { value: "not_accessible", label: LanguageManager.t("InspectionAnswerNotAccessible") }
             ];
         }
 
         return [
-            { value: "yes", label: "Yes" },
-            { value: "no", label: "No" },
-            { value: "unknown", label: "Unknown" }
+            { value: "yes", label: LanguageManager.t("InspectionAnswerYes") },
+            { value: "no", label: LanguageManager.t("InspectionAnswerNo") },
+            { value: "unknown", label: LanguageManager.t("InspectionAnswerUnknown") }
         ];
     }
 
@@ -715,7 +729,7 @@ export default class InspectionPage {
 
         if (!activeScope) {
             const note = document.createElement("span");
-            note.textContent = "Start the scope to answer this question.";
+            note.textContent = LanguageManager.t("InspectionStartScopeToAnswerQuestion");
             controls.appendChild(note);
             return controls;
         }
@@ -776,7 +790,7 @@ export default class InspectionPage {
                     : LanguageManager.t("FoundationNoEvidenceRequirements")
             },
             {
-                label: "Risk Flags",
+                label: LanguageManager.t("InspectionRiskFlagsUpper"),
                 value: riskFlags.length,
                 detail: riskFlags.length
                     ? riskFlags.map(item => item.reason).slice(0, 2).join(" · ")
@@ -1179,9 +1193,9 @@ export default class InspectionPage {
 
         return DetailPanel.create(LanguageManager.t("InspectionContextTitle"), [
             { label: LanguageManager.t("InspectionCurrentLabel"), value: activeInspection.title || activeInspection.id },
-            { label: "Inspection Status", value: activeInspection.status || "draft" },
+            { label: LanguageManager.t("InspectionStatusLabel"), value: activeInspection.status || LanguageManager.t("InspectionStatusDraftLower") },
             { label: LanguageManager.t("InspectionBuildingIdLabel"), value: activeInspection.buildingId || LanguageManager.t("InspectionNotLinked") },
-            { label: "Inspector", value: activeInspection.inspector || "Not assigned" }
+            { label: LanguageManager.t("InspectionInspectorLabel"), value: activeInspection.inspector || LanguageManager.t("InspectionNotAssigned") }
         ]);
     }
 
