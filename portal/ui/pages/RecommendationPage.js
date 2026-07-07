@@ -555,6 +555,18 @@ export default class RecommendationPage {
             .length;
     }
 
+    static formatSourceMeasurement(recommendation = {}) {
+        if (
+            recommendation.sourceMeasurementValue === null ||
+            recommendation.sourceMeasurementValue === undefined ||
+            recommendation.sourceMeasurementValue === ""
+        ) {
+            return "None";
+        }
+
+        return `${recommendation.sourceMeasurementValue}${recommendation.sourceMeasurementUnit ? " " + recommendation.sourceMeasurementUnit : ""}`;
+    }
+
     static createDecisionFromSelectedRecommendation() {
         const recommendation = RecommendationManager.get();
         const currentCase = CaseManager.getCurrent();
@@ -644,6 +656,32 @@ export default class RecommendationPage {
         descriptionParts.push(`${LanguageManager.t("RecommendationNoAutomaticDecisionTraceLabel")}: ${recommendation.noAutomaticDecision === false ? LanguageManager.t("RecommendationNo") : LanguageManager.t("RecommendationYes")}`);
         descriptionParts.push(`Expert review required: ${recommendation.expertReviewRequired === false ? "No" : "Yes"}`);
 
+        const hasEvidenceMetadataTrace = Boolean(
+            recommendation.sourceFileName ||
+            recommendation.sourceFileType ||
+            recommendation.sourceFileReference ||
+            recommendation.sourceCaptureMethod ||
+            recommendation.sourceLocationLabel ||
+            recommendation.sourceInspectionArea ||
+            recommendation.sourceMeasurementValue !== null && recommendation.sourceMeasurementValue !== undefined ||
+            recommendation.sourceMeasurementUnit ||
+            recommendation.sourceReviewStatus
+        );
+
+        if (hasEvidenceMetadataTrace) {
+            descriptionParts.push("");
+            descriptionParts.push("Evidence metadata trace:");
+            descriptionParts.push(`File name: ${recommendation.sourceFileName || "None"}`);
+            descriptionParts.push(`File type: ${recommendation.sourceFileType || "None"}`);
+            descriptionParts.push(`File reference: ${recommendation.sourceFileReference || "None"}`);
+            descriptionParts.push(`Capture method: ${recommendation.sourceCaptureMethod || "None"}`);
+            descriptionParts.push(`Location label: ${recommendation.sourceLocationLabel || "None"}`);
+            descriptionParts.push(`Inspection area: ${recommendation.sourceInspectionArea || "None"}`);
+            descriptionParts.push(`Measurement: ${this.formatSourceMeasurement(recommendation)}`);
+            descriptionParts.push(`Evidence review status: ${recommendation.sourceReviewStatus || "None"}`);
+            descriptionParts.push(`Expert review required: ${recommendation.sourceExpertReviewRequired === false ? "No" : "Yes"}`);
+        }
+
         const decision = DecisionManager.create({
             caseId: recommendation.caseId,
             buildingId: recommendation.buildingId || currentCase?.buildingId || null,
@@ -682,6 +720,19 @@ export default class RecommendationPage {
             sourceCategory: recommendation.sourceCategory || "",
             sourcePolicy: recommendation.sourcePolicy || "",
             sourceRequiredEvidenceRaw: recommendation.sourceRequiredEvidenceRaw || "",
+
+            sourceFileName: recommendation.sourceFileName || "",
+            sourceFileType: recommendation.sourceFileType || "",
+            sourceFileReference: recommendation.sourceFileReference || "",
+            sourceCaptureMethod: recommendation.sourceCaptureMethod || "",
+            sourceLocationLabel: recommendation.sourceLocationLabel || "",
+            sourceInspectionArea: recommendation.sourceInspectionArea || "",
+            sourceMeasurementValue: recommendation.sourceMeasurementValue ?? null,
+            sourceMeasurementUnit: recommendation.sourceMeasurementUnit || "",
+            sourceReviewStatus: recommendation.sourceReviewStatus || "",
+            sourceExpertReviewRequired: recommendation.sourceExpertReviewRequired !== undefined
+                ? recommendation.sourceExpertReviewRequired
+                : true,
 
             profile: isPattayaRecommendation ? "pattaya" : "",
             country: isPattayaRecommendation ? "TH" : "",
