@@ -725,18 +725,35 @@ export default class DashboardPage {
             ? `<p class="platform-intelligence__note">${LanguageManager.t("DashboardBlockedReviewItemsNotice")}</p>`
             : "";
 
-        const actionPanel = highestPriority
+        const reviewList = queue.length
             ? `
-                <div class="platform-intelligence__actions" data-review-resolution-panel>
-                    <button type="button" class="button secondary" data-review-resolution-action="in-review" data-review-queue-id="${highestPriority.id}">
-                        ${LanguageManager.t("DashboardReviewMarkInReviewAction")}
-                    </button>
-                    <button type="button" class="button" data-review-resolution-action="resolve" data-review-queue-id="${highestPriority.id}">
-                        ${LanguageManager.t("DashboardReviewResolveAction")}
-                    </button>
-                    <button type="button" class="button secondary" data-review-resolution-action="reopen" data-review-queue-id="${highestPriority.id}">
-                        ${LanguageManager.t("DashboardReviewReopenAction")}
-                    </button>
+                <div class="platform-intelligence__review-list" data-review-resolution-panel>
+                    <div class="platform-intelligence__subheader">
+                        <strong>${LanguageManager.t("DashboardReviewOpenItemsTitle")}</strong>
+                        <span>${Math.min(queue.length, 5)} / ${queue.length}</span>
+                    </div>
+
+                    ${queue.slice(0, 5).map(item => `
+                        <article class="platform-intelligence__review-item">
+                            <div>
+                                <span>${item.stageLabel} · ${item.reviewStatus || item.status || LanguageManager.t("DashboardReviewStatusOpen")}</span>
+                                <strong>${item.title}</strong>
+                                <p>${item.reason}</p>
+                            </div>
+
+                            <div class="platform-intelligence__actions">
+                                <button type="button" class="button secondary" data-review-resolution-action="in-review" data-review-queue-id="${item.id}">
+                                    ${LanguageManager.t("DashboardReviewMarkInReviewAction")}
+                                </button>
+                                <button type="button" class="button" data-review-resolution-action="resolve" data-review-queue-id="${item.id}">
+                                    ${LanguageManager.t("DashboardReviewResolveAction")}
+                                </button>
+                                <button type="button" class="button secondary" data-review-resolution-action="reopen" data-review-queue-id="${item.id}">
+                                    ${LanguageManager.t("DashboardReviewReopenAction")}
+                                </button>
+                            </div>
+                        </article>
+                    `).join("")}
                 </div>
             `
             : "";
@@ -747,7 +764,7 @@ export default class DashboardPage {
                 <div class="platform-intelligence__grid">
                     ${stageItems}
                 </div>
-                ${actionPanel}
+                ${reviewList}
                 ${blockedNotice}
             </section>
         `;

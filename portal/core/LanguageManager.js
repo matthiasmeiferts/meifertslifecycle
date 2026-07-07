@@ -883,6 +883,14 @@ export default class LanguageManager {
                 en: "Blocked review items require attention before downstream decision or report use.",
                 de: "Blockierte Review-Items müssen vor nachgelagerter Decision- oder Report-Nutzung geprüft werden."
             },
+            DashboardReviewOpenItemsTitle: {
+                en: "Open review items",
+                de: "Offene Review-Items"
+            },
+            DashboardReviewStatusOpen: {
+                en: "Open",
+                de: "Offen"
+            },
             DashboardReviewMarkInReviewAction: {
                 en: "Mark in review",
                 de: "In Review setzen"
