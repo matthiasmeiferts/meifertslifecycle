@@ -367,6 +367,14 @@ export default class EvidencePage {
         const wrapper = document.createElement("section");
         wrapper.className = "workflow-card";
 
+        const activeEvidence = EvidenceManager.get();
+        const downstreamActionState = WorkspaceActionGovernanceManager.getActionState(activeEvidence || {}, {
+            requireContent: true,
+            blockedReason: LanguageManager.t("EvidenceBlockedActionReason"),
+            contentRequiredReason: LanguageManager.t("EvidenceContentRequiredBeforeFindingReason")
+        });
+        const createFindingDisabled = !activeEvidence || !downstreamActionState.downstreamAllowed;
+
         wrapper.appendChild(ActionBar.create([
             {
                 id: "refresh",
@@ -389,6 +397,8 @@ export default class EvidencePage {
             {
                 id: "create-finding",
                 label: LanguageManager.t("EvidenceCreateFindingAction"),
+                disabled: createFindingDisabled,
+                title: createFindingDisabled ? downstreamActionState.reason : "",
                 onClick: () => this.createFindingFromSelectedEvidence()
             }
         ]));

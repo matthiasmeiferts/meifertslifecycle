@@ -372,6 +372,14 @@ export default class FindingPage {
         const wrapper = document.createElement("section");
         wrapper.className = "workflow-card";
 
+        const activeFinding = FindingManager.get();
+        const downstreamActionState = WorkspaceActionGovernanceManager.getActionState(activeFinding || {}, {
+            requireContent: true,
+            blockedReason: LanguageManager.t("FindingBlockedActionReason"),
+            contentRequiredReason: LanguageManager.t("FindingContentRequiredBeforeAssessmentReason")
+        });
+        const createAssessmentDisabled = !activeFinding || !downstreamActionState.downstreamAllowed;
+
         wrapper.appendChild(ActionBar.create([
             {
                 id: "refresh",
@@ -394,6 +402,8 @@ export default class FindingPage {
             {
                 id: "create-assessment",
                 label: LanguageManager.t("FindingCreateAssessmentAction"),
+                disabled: createAssessmentDisabled,
+                title: createAssessmentDisabled ? downstreamActionState.reason : "",
                 onClick: () => this.createAssessmentFromSelectedFinding()
             }
         ]));

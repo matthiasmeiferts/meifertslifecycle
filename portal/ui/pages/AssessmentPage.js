@@ -261,6 +261,14 @@ export default class AssessmentPage {
         const wrapper = document.createElement("section");
         wrapper.className = "workflow-card";
 
+        const activeAssessment = AssessmentManager.get();
+        const downstreamActionState = WorkspaceActionGovernanceManager.getActionState(activeAssessment || {}, {
+            requireContent: true,
+            blockedReason: LanguageManager.t("AssessmentBlockedActionReason"),
+            contentRequiredReason: LanguageManager.t("AssessmentContentRequiredBeforeRecommendationReason")
+        });
+        const createRecommendationDisabled = !activeAssessment || !downstreamActionState.downstreamAllowed;
+
         wrapper.appendChild(ActionBar.create([
             {
                 id: "refresh",
@@ -283,6 +291,8 @@ export default class AssessmentPage {
             {
                 id: "create-recommendation",
                 label: LanguageManager.t("AssessmentCreateRecommendationAction"),
+                disabled: createRecommendationDisabled,
+                title: createRecommendationDisabled ? downstreamActionState.reason : "",
                 onClick: () => this.createRecommendationFromSelectedAssessment()
             }
         ]));

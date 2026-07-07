@@ -375,6 +375,14 @@ export default class DecisionPage {
         const wrapper = document.createElement("section");
         wrapper.className = "workflow-card";
 
+        const activeDecision = DecisionManager.get();
+        const downstreamActionState = WorkspaceActionGovernanceManager.getActionState(activeDecision || {}, {
+            requireContent: true,
+            blockedReason: LanguageManager.t("DecisionBlockedActionReason"),
+            contentRequiredReason: LanguageManager.t("DecisionContentRequiredBeforeReportReason")
+        });
+        const createReportDisabled = !activeDecision || !downstreamActionState.downstreamAllowed;
+
         wrapper.appendChild(ActionBar.create([
             {
                 id: "refresh",
@@ -397,6 +405,8 @@ export default class DecisionPage {
             {
                 id: "create-report",
                 label: LanguageManager.t("DecisionCreateReportAction"),
+                disabled: createReportDisabled,
+                title: createReportDisabled ? downstreamActionState.reason : "",
                 onClick: () => this.createReportFromSelectedDecision()
             }
         ]));

@@ -163,6 +163,14 @@ export default class RecommendationPage {
         const wrapper = document.createElement("section");
         wrapper.className = "workflow-card";
 
+        const activeRecommendation = RecommendationManager.get();
+        const downstreamActionState = WorkspaceActionGovernanceManager.getActionState(activeRecommendation || {}, {
+            requireContent: true,
+            blockedReason: LanguageManager.t("RecommendationBlockedActionReason"),
+            contentRequiredReason: LanguageManager.t("RecommendationContentRequiredBeforeDecisionReason")
+        });
+        const createDecisionDisabled = !activeRecommendation || !downstreamActionState.downstreamAllowed;
+
         wrapper.appendChild(ActionBar.create([
             {
                 id: "refresh",
@@ -185,6 +193,8 @@ export default class RecommendationPage {
             {
                 id: "create-decision",
                 label: LanguageManager.t("RecommendationCreateDecisionAction"),
+                disabled: createDecisionDisabled,
+                title: createDecisionDisabled ? downstreamActionState.reason : "",
                 onClick: () => this.createDecisionFromSelectedRecommendation()
             }
         ]));
