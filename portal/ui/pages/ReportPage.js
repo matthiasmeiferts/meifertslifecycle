@@ -7,6 +7,7 @@ import AssessmentManager from "../../core/AssessmentManager.js";
 import DemoDatasetManager from "../../core/DemoDatasetManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import ReportOutputGovernanceManager from "../../core/ReportOutputGovernanceManager.js";
+import ReportFinalizationLockManager from "../../core/ReportFinalizationLockManager.js";
 import LanguageManager from "../../core/LanguageManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
@@ -697,18 +698,27 @@ export default class ReportPage {
         const actions = document.createElement("div");
         actions.className = "evidence-row__actions";
 
+        const lockState = ReportFinalizationLockManager.getLockState(report);
+
         [
-            ["open", LanguageManager.t("ReportOpenAction")],
-            ["edit", LanguageManager.t("ReportEditAction")],
-            ["delete", LanguageManager.t("ReportDeleteAction")]
-        ].forEach(([action, label]) => {
+            ["open", LanguageManager.t("ReportOpenAction"), true],
+            ["edit", LanguageManager.t("ReportEditAction"), lockState.canEdit],
+            ["delete", LanguageManager.t("ReportDeleteAction"), lockState.canDelete]
+        ].forEach(([action, label, isAllowed]) => {
             const button = document.createElement("button");
             button.type = "button";
-            button.className = "button";
-            button.textContent = label;
+            button.className = isAllowed ? "button" : "button secondary";
+            button.textContent = isAllowed ? label : `${label} · ${LanguageManager.t("ReportLockedActionLabel")}`;
+            button.disabled = !isAllowed;
+            button.title = isAllowed ? "" : lockState.reason;
 
             button.addEventListener("click", event => {
                 event.stopPropagation();
+
+                if (!isAllowed) {
+                    Notification.warning(LanguageManager.t("ReportLockedActionNotification"));
+                    return;
+                }
 
                 if (action === "open") {
                     ReportManager.set(report);
@@ -1130,6 +1140,13 @@ export default class ReportPage {
             return;
         }
 
+        const lockState = ReportFinalizationLockManager.getLockState(sourceReport);
+
+        if (!lockState.canPrepareDraftOutput) {
+            Notification.warning(LanguageManager.t("ReportLockedDraftOutputNotification"));
+            return;
+        }
+
         const draftOutputGate = ReportOutputGovernanceManager.validateDraftOutput(sourceReport);
 
         if (!draftOutputGate.canProceed) {
@@ -1348,6 +1365,13 @@ export default class ReportPage {
             return;
         }
 
+        const lockState = ReportFinalizationLockManager.getLockState(report);
+
+        if (!lockState.canEdit) {
+            Notification.warning(LanguageManager.t("ReportLockedEditNotification"));
+            return;
+        }
+
         FormDialog.open({
             title: LanguageManager.t("ReportEditReportTitle"),
             submitLabel: LanguageManager.t("ReportSaveReportAction"),
@@ -1403,6 +1427,13 @@ export default class ReportPage {
     }
 
     static deleteReport(item) {
+        const lockState = ReportFinalizationLockManager.getLockState(item);
+
+        if (!lockState.canDelete) {
+            Notification.warning(LanguageManager.t("ReportLockedDeleteNotification"));
+            return;
+        }
+
         if (!window.confirm(`${LanguageManager.t("ReportDeleteConfirmPrefix")} "${item.title || item.id}"?`)) {
             return;
         }
