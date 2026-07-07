@@ -14,6 +14,7 @@ import WorkflowProgressPanel from "../components/WorkflowProgressPanel.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
 import DetailPanel from "../components/DetailPanel.js";
+import ReviewAuditTrailFields from "../components/ReviewAuditTrailFields.js";
 import MetricCard from "../components/MetricCard.js";
 import StatusBadge from "../components/StatusBadge.js";
 import Notification from "../components/Notification.js";
@@ -520,6 +521,7 @@ export default class DecisionPage {
         return DetailPanel.create(LanguageManager.t("DecisionContextTitle"), [
             { label: LanguageManager.t("DecisionSelectedLabel"), value: activeDecision.title || activeDecision.id },
             { label: LanguageManager.t("DecisionWorkspaceStatusLabel"), value: statusLabel },
+            ...ReviewAuditTrailFields.create(activeDecision),
             { label: "Safety Boundaries", value: DetailPanel.createBoundaryBadges(activeDecision) },
             { label: LanguageManager.t("DecisionSourceLabel"), value: activeDecision.source || LanguageManager.t("DecisionRecommendationReviewSource") },
             { label: LanguageManager.t("DecisionCaseIdLabel"), value: activeDecision.caseId || LanguageManager.t("DecisionNotLinked") },

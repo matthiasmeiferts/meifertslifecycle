@@ -907,6 +907,10 @@ export default class LanguageManager {
                 en: "Notes",
                 de: "Notizen"
             },
+            DashboardReviewAuditNotRecorded: {
+                en: "Not recorded",
+                de: "Nicht erfasst"
+            },
             DashboardReviewMarkInReviewAction: {
                 en: "Mark in review",
                 de: "In Review setzen"

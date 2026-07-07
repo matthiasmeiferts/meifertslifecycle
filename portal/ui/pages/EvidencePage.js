@@ -12,6 +12,7 @@ import WorkflowProgressPanel from "../components/WorkflowProgressPanel.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
 import DetailPanel from "../components/DetailPanel.js";
+import ReviewAuditTrailFields from "../components/ReviewAuditTrailFields.js";
 import MetricCard from "../components/MetricCard.js";
 import StatusBadge from "../components/StatusBadge.js";
 import Notification from "../components/Notification.js";
@@ -576,6 +577,7 @@ export default class EvidencePage {
             { label: LanguageManager.t("EvidenceMeasurementField"), value: this.formatMeasurement(activeEvidence) },
             { label: LanguageManager.t("EvidenceReviewStatusField"), value: activeEvidence.reviewStatus || LanguageManager.t("EvidenceNone") },
             { label: LanguageManager.t("EvidenceExpertReviewRequiredField"), value: activeEvidence.expertReviewRequired ? LanguageManager.t("EvidenceYes") : LanguageManager.t("EvidenceNo") },
+            ...ReviewAuditTrailFields.create(activeEvidence),
             { label: LanguageManager.t("EvidenceScopeIdLabel"), value: activeEvidence.scopeId || LanguageManager.t("EvidenceNotLinked") },
             { label: LanguageManager.t("EvidenceFindingIdsLabel"), value: (activeEvidence.findingIds || []).join(", ") || LanguageManager.t("EvidenceNone") },
             { label: LanguageManager.t("EvidenceLinkedFindingsMetric"), value: String(this.countFindingsLinkedToEvidence(activeEvidence.id)) }

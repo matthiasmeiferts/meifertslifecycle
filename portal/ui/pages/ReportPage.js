@@ -14,6 +14,7 @@ import WorkflowProgressPanel from "../components/WorkflowProgressPanel.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
 import DetailPanel from "../components/DetailPanel.js";
+import ReviewAuditTrailFields from "../components/ReviewAuditTrailFields.js";
 import MetricCard from "../components/MetricCard.js";
 import StatusBadge from "../components/StatusBadge.js";
 import Notification from "../components/Notification.js";
@@ -1044,6 +1045,7 @@ export default class ReportPage {
             { label: LanguageManager.t("ReportSelectedReportLabel"), value: this.getDisplayTitle(activeReport) },
             { label: LanguageManager.t("ReportSourceTitleLabel"), value: this.getSourceTitle(activeReport) || LanguageManager.t("ReportNotLinked") },
             { label: LanguageManager.t("ReportReportStatusLabel"), value: this.formatReportStatus(activeReport) },
+            ...ReviewAuditTrailFields.create(activeReport),
             { label: LanguageManager.t("ReportSafetyBoundariesLabel"), value: DetailPanel.createBoundaryBadges(activeReport) },
             { label: LanguageManager.t("ReportSourceLabel"), value: activeReport.source || LanguageManager.t("ReportDecisionReview") },
             { label: LanguageManager.t("ReportCaseIdLabel"), value: activeReport.caseId || LanguageManager.t("ReportNotLinked") },

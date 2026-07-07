@@ -12,6 +12,7 @@ import WorkflowProgressPanel from "../components/WorkflowProgressPanel.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
 import DetailPanel from "../components/DetailPanel.js";
+import ReviewAuditTrailFields from "../components/ReviewAuditTrailFields.js";
 import MetricCard from "../components/MetricCard.js";
 import StatusBadge from "../components/StatusBadge.js";
 import Notification from "../components/Notification.js";
@@ -524,6 +525,7 @@ export default class RecommendationPage {
         return DetailPanel.create(LanguageManager.t("RecommendationContextTitle"), [
             { label: LanguageManager.t("RecommendationSelectedLabel"), value: activeRecommendation.title || activeRecommendation.id },
             { label: LanguageManager.t("RecommendationWorkspaceStatusLabel"), value: statusLabel },
+            ...ReviewAuditTrailFields.create(activeRecommendation),
             { label: LanguageManager.t("RecommendationSafetyBoundariesLabel"), value: DetailPanel.createBoundaryBadges(activeRecommendation) },
             { label: LanguageManager.t("RecommendationSourceLabel"), value: activeRecommendation.source || LanguageManager.t("RecommendationAssessmentReviewSource") },
             { label: LanguageManager.t("RecommendationCaseIdLabel"), value: activeRecommendation.caseId || LanguageManager.t("RecommendationNotLinked") },

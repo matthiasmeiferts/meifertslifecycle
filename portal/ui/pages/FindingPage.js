@@ -13,6 +13,7 @@ import WorkflowProgressPanel from "../components/WorkflowProgressPanel.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
 import DetailPanel from "../components/DetailPanel.js";
+import ReviewAuditTrailFields from "../components/ReviewAuditTrailFields.js";
 import MetricCard from "../components/MetricCard.js";
 import StatusBadge from "../components/StatusBadge.js";
 import Notification from "../components/Notification.js";
@@ -520,6 +521,7 @@ export default class FindingPage {
         return DetailPanel.create(LanguageManager.t("FindingContextTitle"), [
             { label: LanguageManager.t("FindingSelectedLabel"), value: activeFinding.title || activeFinding.id },
             { label: LanguageManager.t("FindingWorkspaceStatusLabel"), value: statusLabel },
+            ...ReviewAuditTrailFields.create(activeFinding),
             { label: LanguageManager.t("FindingSafetyBoundariesLabel"), value: DetailPanel.createBoundaryBadges(activeFinding) },
             { label: LanguageManager.t("FindingSourceLabel"), value: activeFinding.source || LanguageManager.t("FindingExpertReview") },
             { label: LanguageManager.t("FindingCaseIdLabel"), value: activeFinding.caseId || LanguageManager.t("FindingNotLinked") },

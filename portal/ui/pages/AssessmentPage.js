@@ -12,6 +12,7 @@ import WorkflowProgressPanel from "../components/WorkflowProgressPanel.js";
 import ActionBar from "../components/ActionBar.js";
 import EmptyState from "../components/EmptyState.js";
 import DetailPanel from "../components/DetailPanel.js";
+import ReviewAuditTrailFields from "../components/ReviewAuditTrailFields.js";
 import MetricCard from "../components/MetricCard.js";
 import StatusBadge from "../components/StatusBadge.js";
 import Notification from "../components/Notification.js";
@@ -406,6 +407,7 @@ export default class AssessmentPage {
         return DetailPanel.create(LanguageManager.t("AssessmentContextTitle"), [
             { label: LanguageManager.t("AssessmentSelectedLabel"), value: activeAssessment.title || activeAssessment.id },
             { label: LanguageManager.t("AssessmentWorkspaceStatusLabel"), value: statusLabel },
+            ...ReviewAuditTrailFields.create(activeAssessment),
             { label: LanguageManager.t("AssessmentSafetyBoundariesLabel"), value: DetailPanel.createBoundaryBadges(activeAssessment) },
             { label: LanguageManager.t("AssessmentSourceLabel"), value: activeAssessment.source || LanguageManager.t("AssessmentReviewSource") },
             { label: LanguageManager.t("AssessmentCaseIdLabel"), value: activeAssessment.caseId || LanguageManager.t("AssessmentNotLinked") },
