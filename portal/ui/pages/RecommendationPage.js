@@ -515,7 +515,7 @@ export default class RecommendationPage {
                 { label: LanguageManager.t("RecommendationSelectedLabel"), value: LanguageManager.t("RecommendationNotSelected") },
                 { label: LanguageManager.t("RecommendationWorkspaceStatusLabel"), value: LanguageManager.t("RecommendationNoSelection") },
                 { label: LanguageManager.t("RecommendationDecisionRelevanceLabel"), value: recommendations.length ? LanguageManager.t("RecommendationInReview") : LanguageManager.t("RecommendationPending") },
-                { label: "Next Step", value: "Create or select a recommendation" }
+                { label: LanguageManager.t("FinalNextStepLabel"), value: LanguageManager.t("FinalCreateOrSelectRecommendation") }
             ]);
         }
 

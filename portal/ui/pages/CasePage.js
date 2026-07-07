@@ -104,7 +104,7 @@ export default class CasePage {
             ActionBar.create([
                 {
                     id: "refresh",
-                    label: "Refresh",
+                    label: LanguageManager.t("CaseRefreshAction"),
                     onClick: () => this.refresh()
                 },
                 {
@@ -168,7 +168,7 @@ export default class CasePage {
         if (!cases.length) {
             return EmptyState.create({
                 eyebrow: LanguageManager.t("CaseWorkspaceTitle"),
-                title: "No cases available",
+                title: LanguageManager.t("CaseEmptyTitle"),
                 description: LanguageManager.t("CaseEmptyDescription"),
                 actionLabel: LanguageManager.t("CaseNewCaseAction"),
                 onAction: () => this.createCase()
@@ -710,7 +710,7 @@ export default class CasePage {
     static cleanOrphanWorkflowRecords() {
         const caseIds = new Set(CaseManager.getAll().map(item => item.id));
         const groups = [
-            ["Evidence", EvidenceManager],
+            [LanguageManager.t("FinalEvidenceLabel"), EvidenceManager],
             ["Finding", FindingManager],
             ["Assessment", AssessmentManager],
             ["Recommendation", RecommendationManager],

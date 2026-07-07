@@ -375,7 +375,7 @@ export default class DecisionPage {
         wrapper.appendChild(ActionBar.create([
             {
                 id: "refresh",
-                label: "Refresh",
+                label: LanguageManager.t("DecisionRefreshAction"),
                 onClick: () => this.refresh()
             },
             {
@@ -510,7 +510,7 @@ export default class DecisionPage {
                 { label: LanguageManager.t("DecisionSelectedLabel"), value: LanguageManager.t("DecisionNotSelected") },
                 { label: LanguageManager.t("DecisionWorkspaceStatusLabel"), value: LanguageManager.t("DecisionNoSelection") },
                 { label: "Approval", value: decisions.length ? "In Review" : "Pending" },
-                { label: "Next Step", value: "Create or select a decision" }
+                { label: LanguageManager.t("FinalNextStepLabel"), value: LanguageManager.t("FinalCreateOrSelectDecision") }
             ]);
         }
 

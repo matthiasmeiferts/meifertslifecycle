@@ -286,7 +286,7 @@ export default class InspectionPage {
                 tone: "active"
             }
             : {
-                label: "Review inspection output",
+                label: LanguageManager.t("FinalReviewInspectionOutput"),
                 description: "Inspection evidence, findings and assessments are represented. Review consistency before recommendations.",
                 tone: "ready"
             };
@@ -364,7 +364,7 @@ export default class InspectionPage {
         },
         {
             key: "evidence",
-            label: "Evidence"
+            label: LanguageManager.t("FinalEvidenceLabel")
         },
         {
             key: "finding",

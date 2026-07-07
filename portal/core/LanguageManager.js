@@ -4323,6 +4323,74 @@ export default class LanguageManager {
                 en: "Active",
                 de: "Aktiv"
             },
+            FinalNextStepLabel: {
+                en: "Next Step",
+                de: "Nächster Schritt"
+            },
+            FinalQuestionIdLabel: {
+                en: "Question ID",
+                de: "Question ID"
+            },
+            FinalQuestionLabel: {
+                en: "Question",
+                de: "Frage"
+            },
+            FinalScopeIdLabel: {
+                en: "Scope ID",
+                de: "Scope ID"
+            },
+            FinalNotLinked: {
+                en: "Not linked",
+                de: "Nicht verknüpft"
+            },
+            FinalCreateOrSelectRecommendation: {
+                en: "Create or select a recommendation",
+                de: "Recommendation erstellen oder auswählen"
+            },
+            FinalCreateOrSelectDecision: {
+                en: "Create or select a decision",
+                de: "Decision erstellen oder auswählen"
+            },
+            FinalReviewInspectionOutput: {
+                en: "Review inspection output",
+                de: "Inspection Output prüfen"
+            },
+            FinalEvidenceLabel: {
+                en: "Evidence",
+                de: "Evidence"
+            },
+            FinalFindingsLabel: {
+                en: "Findings",
+                de: "Findings"
+            },
+            FinalAssessmentsLabel: {
+                en: "Assessments",
+                de: "Assessments"
+            },
+            FinalRecommendationsLabel: {
+                en: "Recommendations",
+                de: "Recommendations"
+            },
+            FinalDecisionsLabel: {
+                en: "Decisions",
+                de: "Decisions"
+            },
+            FinalReportsLabel: {
+                en: "Reports",
+                de: "Reports"
+            },
+            FinalCasesLabel: {
+                en: "Cases",
+                de: "Cases"
+            },
+            FinalBuildingsLabel: {
+                en: "Buildings",
+                de: "Gebäude"
+            },
+            FinalInspectionsLabel: {
+                en: "Inspections",
+                de: "Inspections"
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."

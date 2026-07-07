@@ -641,12 +641,12 @@ export default class EvidencePage {
         if (evidence.sourceQuestionId || evidence.sourceQuestion) {
             descriptionParts.push("");
             descriptionParts.push("Inspection scope trace:");
-            descriptionParts.push(`Question ID: ${evidence.sourceQuestionId || "Not linked"}`);
-            descriptionParts.push(`Question: ${evidence.sourceQuestion || "Not linked"}`);
+            descriptionParts.push(`${LanguageManager.t("FinalQuestionIdLabel")}: ${evidence.sourceQuestionId || LanguageManager.t("FinalNotLinked")}`);
+            descriptionParts.push(`${LanguageManager.t("FinalQuestionLabel")}: ${evidence.sourceQuestion || LanguageManager.t("FinalNotLinked")}`);
             descriptionParts.push(`Required evidence: ${(evidence.sourceRequiredEvidence || []).join(", ") || "None"}`);
             descriptionParts.push(`Required evidence raw: ${evidence.sourceRequiredEvidenceRaw || "None"}`);
             descriptionParts.push(`Source policy: ${evidence.sourcePolicy || "None"}`);
-            descriptionParts.push(`Scope ID: ${evidence.scopeId || "Not linked"}`);
+            descriptionParts.push(`${LanguageManager.t("FinalScopeIdLabel")}: ${evidence.scopeId || LanguageManager.t("FinalNotLinked")}`);
         }
 
         const finding = FindingManager.create({

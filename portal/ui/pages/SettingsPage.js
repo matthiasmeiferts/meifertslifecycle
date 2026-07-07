@@ -16,18 +16,18 @@ export default class SettingsPage {
 
     static workflowCollections = [
         { key: "inspectionScopes", label: "Inspection Scopes" },
-        { key: "evidence", label: "Evidence" },
-        { key: "findings", label: "Findings" },
-        { key: "assessments", label: "Assessments" },
-        { key: "recommendations", label: "Recommendations" },
-        { key: "decisions", label: "Decisions" },
-        { key: "reports", label: "Reports" }
+        { key: "evidence", label: LanguageManager.t("FinalEvidenceLabel") },
+        { key: "findings", label: LanguageManager.t("FinalFindingsLabel") },
+        { key: "assessments", label: LanguageManager.t("FinalAssessmentsLabel") },
+        { key: "recommendations", label: LanguageManager.t("FinalRecommendationsLabel") },
+        { key: "decisions", label: LanguageManager.t("FinalDecisionsLabel") },
+        { key: "reports", label: LanguageManager.t("FinalReportsLabel") }
     ];
 
     static preservedCollections = [
-        { key: "cases", label: "Cases" },
-        { key: "buildings", label: "Buildings" },
-        { key: "inspections", label: "Inspections" }
+        { key: "cases", label: LanguageManager.t("FinalCasesLabel") },
+        { key: "buildings", label: LanguageManager.t("FinalBuildingsLabel") },
+        { key: "inspections", label: LanguageManager.t("FinalInspectionsLabel") }
     ];
 
     static render() {

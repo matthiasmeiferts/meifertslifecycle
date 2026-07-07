@@ -44,7 +44,7 @@ export default class BuildingPage {
         },
         {
             key: "evidence",
-            label: "Evidence"
+            label: LanguageManager.t("FinalEvidenceLabel")
         },
         {
             key: "finding",

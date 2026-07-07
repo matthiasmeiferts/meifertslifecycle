@@ -90,7 +90,7 @@ export default class ReportPage {
     static createHeader(activeReport = null) {
         return SectionHeader.create({
             eyebrow: "Report Workspace",
-            title: "Reports",
+            title: LanguageManager.t("FinalReportsLabel"),
             description: activeReport
                 ? `Active report: ${this.getDisplayTitle(activeReport)}`
                 : "Prepare professional Technical Due Diligence report output for review.",
@@ -112,7 +112,7 @@ export default class ReportPage {
         const grid = document.createElement("section");
         grid.className = "metrics-grid";
 
-        grid.appendChild(MetricCard.create("Reports", reports.length));
+        grid.appendChild(MetricCard.create(LanguageManager.t("FinalReportsLabel"), reports.length));
         grid.appendChild(MetricCard.create("Drafts", draftCount));
         grid.appendChild(MetricCard.create("Approved", approvedCount));
         grid.appendChild(MetricCard.create("Archived", archivedCount));
@@ -610,7 +610,7 @@ export default class ReportPage {
         if (!reports.length) {
             return EmptyState.create({
                 eyebrow: "Report Workspace",
-                title: "No reports available",
+                title: LanguageManager.t("ReportEmptyTitle"),
                 description: "Reports will compile evidence, findings, assessments, recommendations, and decisions into a professional output.",
                 actionLabel: LanguageManager.t("ReportNewReportAction"),
                 onAction: () => this.createSampleReport()
@@ -1211,7 +1211,7 @@ export default class ReportPage {
                 { id: "methodology", label: LanguageManager.t("ReportMethodologyLabel") },
                 {
                     id: "status",
-                    label: "Status",
+                    label: LanguageManager.t("ReportStatusLabel"),
                     type: "select",
                     options: ["Draft", "Prepared", "Reviewed", "Final", "Archived"]
                 }
@@ -1259,7 +1259,7 @@ export default class ReportPage {
                 { id: "methodology", label: LanguageManager.t("ReportMethodologyLabel") },
                 {
                     id: "status",
-                    label: "Status",
+                    label: LanguageManager.t("ReportStatusLabel"),
                     type: "select",
                     options: ["Draft", "Prepared", "Reviewed", "Final", "Archived"]
                 }
