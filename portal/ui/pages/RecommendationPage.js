@@ -5,6 +5,7 @@ import BuildingManager from "../../core/BuildingManager.js";
 import InspectionManager from "../../core/InspectionManager.js";
 import DecisionManager from "../../core/DecisionManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import LanguageManager from "../../core/LanguageManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
 import WorkflowProgressPanel from "../components/WorkflowProgressPanel.js";
@@ -19,12 +20,33 @@ import FormDialog from "../components/FormDialog.js";
 export default class RecommendationPage {
 
     static statusLabels = {
-        draft: "Draft",
-        recommended: "Recommended",
-        decided: "Decided",
-        reviewed: "Reviewed",
-        blocked: "Blocked"
+        draft: LanguageManager.t("RecommendationStatusDraft"),
+        recommended: LanguageManager.t("RecommendationStatusRecommended"),
+        decided: LanguageManager.t("RecommendationStatusDecided"),
+        reviewed: LanguageManager.t("RecommendationStatusReviewed"),
+        blocked: LanguageManager.t("RecommendationStatusBlocked")
     };
+
+    static formatRecommendationValue(value) {
+        const map = {
+            Low: LanguageManager.t("AssessmentOptionLow"),
+            Medium: LanguageManager.t("AssessmentOptionMedium"),
+            High: LanguageManager.t("AssessmentOptionHigh"),
+            Critical: LanguageManager.t("AssessmentOptionCritical"),
+            Immediate: LanguageManager.t("RecommendationOptionImmediate"),
+            "Short Term": LanguageManager.t("RecommendationOptionShortTerm"),
+            "Medium Term": LanguageManager.t("RecommendationOptionMediumTerm"),
+            "Long Term": LanguageManager.t("RecommendationOptionLongTerm"),
+            Planned: LanguageManager.t("RecommendationOptionPlanned"),
+            Draft: LanguageManager.t("RecommendationStatusDraft"),
+            Recommended: LanguageManager.t("RecommendationStatusRecommended"),
+            Decided: LanguageManager.t("RecommendationStatusDecided"),
+            Reviewed: LanguageManager.t("RecommendationStatusReviewed"),
+            Blocked: LanguageManager.t("RecommendationStatusBlocked")
+        };
+
+        return map[value] || value;
+    }
 
     static render() {
         const fragment = document.createDocumentFragment();
@@ -73,24 +95,24 @@ export default class RecommendationPage {
         return `
             <section class="workspace-flow" aria-label="Active workflow state">
                 <div class="workspace-flow__header">
-                    <span class="workspace-flow__eyebrow">Active Flow</span>
-                    <strong>Recommendation → Decision</strong>
+                    <span class="workspace-flow__eyebrow">${LanguageManager.t("RecommendationActiveFlowLabel")}</span>
+                    <strong>${LanguageManager.t("RecommendationToDecisionLabel")}</strong>
                 </div>
 
                 <div class="workspace-flow__steps">
                     <div class="workspace-flow__step workspace-flow__step--${flowState.recommendation}">
                         <span class="workspace-flow__dot"></span>
                         <div>
-                            <strong>Recommendation</strong>
-                            <p>Technical action recommended</p>
+                            <strong>${LanguageManager.t("RecommendationWorkflowStepTitle")}</strong>
+                            <p>${LanguageManager.t("RecommendationWorkflowActionRecommended")}</p>
                         </div>
                     </div>
 
                     <div class="workspace-flow__step workspace-flow__step--${flowState.decision}">
                         <span class="workspace-flow__dot"></span>
                         <div>
-                            <strong>Decision</strong>
-                            <p>Governance decision derived</p>
+                            <strong>${LanguageManager.t("WorkflowStepDecision")}</strong>
+                            <p>${LanguageManager.t("RecommendationWorkflowDecisionDerived")}</p>
                         </div>
                     </div>
                 </div>
@@ -106,13 +128,13 @@ export default class RecommendationPage {
 
     static createHeader() {
         return SectionHeader.create({
-            eyebrow: "Recommendation Workspace",
-            title: "Recommendations",
-            description: "Develop technical recommendations, define priorities, estimate CAPEX, and prepare expert decision support.",
+            eyebrow: LanguageManager.t("RecommendationWorkspaceTitle"),
+            title: LanguageManager.t("RecommendationTitlePlural"),
+            description: LanguageManager.t("RecommendationHeaderDescription"),
             actions: [
                 {
                     id: "new-recommendation",
-                    label: "+ New Recommendation",
+                    label: LanguageManager.t("RecommendationNewAction"),
                     onClick: () => this.createSampleRecommendation()
                 }
             ]
@@ -127,10 +149,10 @@ export default class RecommendationPage {
         const grid = document.createElement("section");
         grid.className = "metrics-grid";
 
-        grid.appendChild(MetricCard.create("Recommendations", recommendations.length));
-        grid.appendChild(MetricCard.create("High Priority", highPriorityCount));
-        grid.appendChild(MetricCard.create("Immediate", immediateCount));
-        grid.appendChild(MetricCard.create("Linked Decisions", this.countDecisionsLinkedToRecommendation()));
+        grid.appendChild(MetricCard.create(LanguageManager.t("RecommendationTotalMetric"), recommendations.length));
+        grid.appendChild(MetricCard.create(LanguageManager.t("RecommendationHighPriorityMetric"), highPriorityCount));
+        grid.appendChild(MetricCard.create(LanguageManager.t("RecommendationImmediateMetric"), immediateCount));
+        grid.appendChild(MetricCard.create(LanguageManager.t("RecommendationLinkedDecisionsMetric"), this.countDecisionsLinkedToRecommendation()));
 
         return grid;
     }
@@ -142,12 +164,12 @@ export default class RecommendationPage {
         wrapper.appendChild(ActionBar.create([
             {
                 id: "refresh",
-                label: "Refresh",
+                label: LanguageManager.t("FindingRefreshAction"),
                 onClick: () => this.refresh()
             },
             {
                 id: "close-recommendation",
-                label: "Close Recommendation",
+                label: LanguageManager.t("RecommendationCloseAction"),
                 onClick: () => {
                     RecommendationManager.clear();
                     this.refresh();
@@ -155,12 +177,12 @@ export default class RecommendationPage {
             },
             {
                 id: "prioritize",
-                label: "Create Recommendation",
+                label: LanguageManager.t("RecommendationCreateAction"),
                 onClick: () => this.createSampleRecommendation()
             },
             {
                 id: "create-decision",
-                label: "Create Decision",
+                label: LanguageManager.t("RecommendationCreateDecisionAction"),
                 onClick: () => this.createDecisionFromSelectedRecommendation()
             }
         ]));
@@ -181,10 +203,10 @@ export default class RecommendationPage {
     static createContent(recommendations = this.getRecommendations()) {
         if (!recommendations.length) {
             return EmptyState.create({
-                eyebrow: "Recommendation Workspace",
-                title: "No recommendations available",
-                description: "Recommendations will translate assessment results into prioritized technical actions and decision support.",
-                actionLabel: "+ New Recommendation",
+                eyebrow: LanguageManager.t("RecommendationWorkspaceTitle"),
+                title: LanguageManager.t("RecommendationEmptyTitle"),
+                description: LanguageManager.t("RecommendationEmptyDescription"),
+                actionLabel: LanguageManager.t("RecommendationNewAction"),
                 onAction: () => this.createSampleRecommendation()
             });
         }
@@ -237,7 +259,7 @@ export default class RecommendationPage {
     static renderRecommendationStatusBadge(recommendation = {}) {
         recommendation = recommendation || {};
         const status = this.getRecommendationStatus(recommendation);
-        const label = this.statusLabels[status] || "Draft";
+        const label = this.statusLabels[status] || LanguageManager.t("RecommendationStatusDraft");
 
         return `
             <span class="evidence-status evidence-status--${status}">
@@ -270,8 +292,8 @@ export default class RecommendationPage {
 
         if (status === "decided") {
             return {
-                label: "Review linked decision",
-                description: "This recommendation is already connected to a decision. Check governance logic and completeness.",
+                label: LanguageManager.t("RecommendationReviewLinkedDecision"),
+                description: LanguageManager.t("RecommendationAlreadyLinkedDecisionDescription"),
                 tone: "linked"
             };
         }
@@ -298,7 +320,7 @@ export default class RecommendationPage {
         return `
             <section class="next-action next-action--${action.tone}" aria-label="Next action">
                 <div>
-                    <span class="next-action__eyebrow">Next Action</span>
+                    <span class="next-action__eyebrow">${LanguageManager.t("RecommendationNextActionHeading")}</span>
                     <strong>${action.label}</strong>
                     <p>${action.description}</p>
                 </div>
@@ -335,32 +357,32 @@ export default class RecommendationPage {
         const checks = [
             {
                 key: "identity",
-                label: "Recommendation identified",
+                label: LanguageManager.t("RecommendationIdentifiedCheck"),
                 complete: hasTitle
             },
             {
                 key: "action",
-                label: "Action defined",
+                label: LanguageManager.t("RecommendationActionDefinedCheck"),
                 complete: hasAction
             },
             {
                 key: "priority",
-                label: "Priority defined",
+                label: LanguageManager.t("RecommendationPriorityDefined"),
                 complete: hasPriority
             },
             {
                 key: "cost",
-                label: "Cost logic captured",
+                label: LanguageManager.t("RecommendationCostLogicCapturedCheck"),
                 complete: hasCost
             },
             {
                 key: "assessment",
-                label: "Assessment linked",
+                label: LanguageManager.t("RecommendationAssessmentLinked"),
                 complete: hasAssessmentLink
             },
             {
                 key: "decision",
-                label: "Decision connection",
+                label: LanguageManager.t("RecommendationDecisionConnection"),
                 complete: hasDecisionLink
             }
         ];
@@ -383,14 +405,14 @@ export default class RecommendationPage {
         const completion = this.getCompletionState(recommendation);
         const percent = Math.round(completion.ratio * 100);
         const readinessLabel = completion.isReadyForDecision
-            ? "Ready for Decision"
+            ? LanguageManager.t("RecommendationReadyForDecision")
             : "Needs more recommendation data";
 
         return `
             <section class="completion-panel" aria-label="Recommendation completion">
                 <div class="completion-panel__header">
                     <div>
-                        <span class="completion-panel__eyebrow">Completion</span>
+                        <span class="completion-panel__eyebrow">${LanguageManager.t("RecommendationCompletionLabel")}</span>
                         <strong>${readinessLabel}</strong>
                     </div>
                     <span class="completion-panel__score">${percent}%</span>
@@ -432,10 +454,10 @@ export default class RecommendationPage {
         content.className = "evidence-row__content";
 
         const title = document.createElement("strong");
-        title.textContent = recommendation.title || recommendation.id || "Recommendation Item";
+        title.textContent = recommendation.title || recommendation.id || LanguageManager.t("RecommendationItemFallback");
 
         const meta = document.createElement("span");
-        meta.textContent = `${recommendation.priority || "Medium"} · ${recommendation.timeframe || "Short Term"}`;
+        meta.textContent = `${this.formatRecommendationValue(recommendation.priority || "Medium")} · ${this.formatRecommendationValue(recommendation.timeframe || "Short Term")}`;
 
         const statusContainer = document.createElement("span");
         statusContainer.innerHTML = this.renderRecommendationStatusBadge(recommendation);
@@ -448,9 +470,9 @@ export default class RecommendationPage {
         actions.className = "evidence-row__actions";
 
         [
-            ["open", "Open"],
-            ["edit", "Edit"],
-            ["delete", "Delete"]
+            ["open", LanguageManager.t("ReportOpenAction")],
+            ["edit", LanguageManager.t("ReportEditAction")],
+            ["delete", LanguageManager.t("ReportDeleteAction")]
         ].forEach(([action, label]) => {
             const button = document.createElement("button");
             button.type = "button";
@@ -488,36 +510,36 @@ export default class RecommendationPage {
 
     static createDetailPanel(activeRecommendation = RecommendationManager.get(), recommendations = this.getRecommendations()) {
         if (!activeRecommendation) {
-            return DetailPanel.create("Recommendation Context", [
-                { label: "Recommendations", value: String(recommendations.length) },
-                { label: "Selected Recommendation", value: "Not selected" },
-                { label: "Workspace Status", value: "No selection" },
-                { label: "Decision Relevance", value: recommendations.length ? "In Review" : "Pending" },
+            return DetailPanel.create(LanguageManager.t("RecommendationContextTitle"), [
+                { label: LanguageManager.t("RecommendationTotalMetric"), value: String(recommendations.length) },
+                { label: LanguageManager.t("RecommendationSelectedLabel"), value: LanguageManager.t("RecommendationNotSelected") },
+                { label: LanguageManager.t("RecommendationWorkspaceStatusLabel"), value: LanguageManager.t("RecommendationNoSelection") },
+                { label: LanguageManager.t("RecommendationDecisionRelevanceLabel"), value: recommendations.length ? LanguageManager.t("RecommendationInReview") : LanguageManager.t("RecommendationPending") },
                 { label: "Next Step", value: "Create or select a recommendation" }
             ]);
         }
 
-        const statusLabel = this.statusLabels[this.getRecommendationStatus(activeRecommendation)] || "Draft";
+        const statusLabel = this.statusLabels[this.getRecommendationStatus(activeRecommendation)] || LanguageManager.t("RecommendationStatusDraft");
 
-        return DetailPanel.create("Recommendation Context", [
-            { label: "Selected Recommendation", value: activeRecommendation.title || activeRecommendation.id },
-            { label: "Workspace Status", value: statusLabel },
-            { label: "Safety Boundaries", value: DetailPanel.createBoundaryBadges(activeRecommendation) },
-            { label: "Source", value: activeRecommendation.source || "Assessment Review" },
-            { label: "Case ID", value: activeRecommendation.caseId || "Not linked" },
-            { label: "Building ID", value: activeRecommendation.buildingId || "Not linked" },
-            { label: "Inspection ID", value: activeRecommendation.inspectionId || "Not linked" },
-            { label: "Assessment IDs", value: (activeRecommendation.assessmentIds || []).join(", ") || "None" },
-            { label: "Finding IDs", value: (activeRecommendation.findingIds || []).join(", ") || "None" },
-            { label: "Evidence IDs", value: (activeRecommendation.evidenceIds || []).join(", ") || "None" },
-            { label: "Building System", value: activeRecommendation.buildingSystem || "Not linked" },
+        return DetailPanel.create(LanguageManager.t("RecommendationContextTitle"), [
+            { label: LanguageManager.t("RecommendationSelectedLabel"), value: activeRecommendation.title || activeRecommendation.id },
+            { label: LanguageManager.t("RecommendationWorkspaceStatusLabel"), value: statusLabel },
+            { label: LanguageManager.t("RecommendationSafetyBoundariesLabel"), value: DetailPanel.createBoundaryBadges(activeRecommendation) },
+            { label: LanguageManager.t("RecommendationSourceLabel"), value: activeRecommendation.source || LanguageManager.t("RecommendationAssessmentReviewSource") },
+            { label: LanguageManager.t("RecommendationCaseIdLabel"), value: activeRecommendation.caseId || LanguageManager.t("RecommendationNotLinked") },
+            { label: LanguageManager.t("RecommendationBuildingIdLabel"), value: activeRecommendation.buildingId || LanguageManager.t("RecommendationNotLinked") },
+            { label: LanguageManager.t("RecommendationInspectionIdLabel"), value: activeRecommendation.inspectionId || LanguageManager.t("RecommendationNotLinked") },
+            { label: LanguageManager.t("RecommendationAssessmentIdsLabel"), value: (activeRecommendation.assessmentIds || []).join(", ") || LanguageManager.t("RecommendationNone") },
+            { label: LanguageManager.t("RecommendationFindingIdsLabel"), value: (activeRecommendation.findingIds || []).join(", ") || LanguageManager.t("RecommendationNone") },
+            { label: LanguageManager.t("RecommendationEvidenceIdsLabel"), value: (activeRecommendation.evidenceIds || []).join(", ") || LanguageManager.t("RecommendationNone") },
+            { label: LanguageManager.t("RecommendationBuildingSystemLabel"), value: activeRecommendation.buildingSystem || LanguageManager.t("RecommendationNotLinked") },
             { label: "Risk Score", value: String(activeRecommendation.riskScore || 0) },
-            { label: "Priority", value: activeRecommendation.priority || "Medium" },
-            { label: "Timeframe", value: activeRecommendation.timeframe || "Short Term" },
-            { label: "Decision Impact", value: activeRecommendation.decisionImpact || "Medium" },
-            { label: "Description", value: activeRecommendation.description || "No description" },
-            { label: "Decision IDs", value: (activeRecommendation.decisionIds || []).join(", ") || "None" },
-            { label: "Linked Decisions", value: String(this.countDecisionsLinkedToRecommendation(activeRecommendation.id)) }
+            { label: LanguageManager.t("RecommendationPriorityLabel"), value: this.formatRecommendationValue(activeRecommendation.priority || "Medium") },
+            { label: LanguageManager.t("RecommendationTimeframeLabel"), value: this.formatRecommendationValue(activeRecommendation.timeframe || "Short Term") },
+            { label: LanguageManager.t("RecommendationDecisionImpactLabel"), value: this.formatRecommendationValue(activeRecommendation.decisionImpact || "Medium") },
+            { label: LanguageManager.t("RecommendationDescriptionField"), value: activeRecommendation.description || LanguageManager.t("RecommendationNoDescription") },
+            { label: LanguageManager.t("RecommendationDecisionIdsLabel"), value: (activeRecommendation.decisionIds || []).join(", ") || LanguageManager.t("RecommendationNone") },
+            { label: LanguageManager.t("RecommendationLinkedDecisionsMetric"), value: String(this.countDecisionsLinkedToRecommendation(activeRecommendation.id)) }
         ]);
     }
 
@@ -566,8 +588,8 @@ export default class RecommendationPage {
         const riskScore = recommendation.riskScore || 0;
 
         const decisionTitle = recommendation.title
-            ? `Decision Draft: ${recommendation.title}`
-            : `Decision Draft from ${recommendation.id}`;
+            ? `${LanguageManager.t("RecommendationDecisionDraftPrefix")}: ${recommendation.title}`
+            : `${LanguageManager.t("RecommendationDecisionDraftFrom")} ${recommendation.id}`;
 
         const decisionType = "Monitor";
         const riskLevel = isAvailabilityCheckOnly
@@ -577,20 +599,20 @@ export default class RecommendationPage {
         const rationale = [
             recommendation.action || recommendation.description || "",
             "",
-            "Decision boundary:",
-            "Decision support draft only.",
+            LanguageManager.t("RecommendationDecisionBoundaryLabel"),
+            LanguageManager.t("RecommendationDecisionSupportDraftOnly"),
             "No automatic Go/No-Go decision.",
             "No automatic purchase recommendation.",
             "Expert review required before any formal decision."
         ].filter(Boolean).join("\n");
 
         const descriptionParts = [
-            recommendation.description || "Decision draft prepared from selected recommendation.",
+            recommendation.description || LanguageManager.t("RecommendationDecisionPreparedFromSelected"),
             "",
-            "Decision status:",
-            "Draft decision support record created from selected recommendation.",
+            LanguageManager.t("RecommendationDecisionStatusLabel"),
+            LanguageManager.t("RecommendationDraftDecisionCreatedLine"),
             "Expert review required before approval, closure or report use.",
-            "No automatic decision, purchase recommendation or Go/No-Go result is created by this action."
+            LanguageManager.t("RecommendationNoAutomaticDecisionGoNoGoLine")
         ];
 
         if (isAvailabilityCheckOnly) {
@@ -609,17 +631,17 @@ export default class RecommendationPage {
         descriptionParts.push("");
         descriptionParts.push("Recommendation trace:");
         descriptionParts.push(`Recommendation ID: ${recommendation.id}`);
-        descriptionParts.push(`Recommendation source: ${recommendation.source || "Assessment Review"}`);
-        descriptionParts.push(`Assessment IDs: ${(recommendation.assessmentIds || []).join(", ") || "None"}`);
-        descriptionParts.push(`Finding IDs: ${([...new Set(resolvedFindingIds)]).join(", ") || "None"}`);
-        descriptionParts.push(`Evidence IDs: ${(recommendation.evidenceIds || []).join(", ") || "None"}`);
-        descriptionParts.push(`Source Assessment IDs: ${(recommendation.sourceAssessmentIds || []).join(", ") || "None"}`);
-        descriptionParts.push(`Source Finding IDs: ${(recommendation.sourceFindingIds || []).join(", ") || "None"}`);
-        descriptionParts.push(`Source Evidence IDs: ${(recommendation.sourceEvidenceIds || []).join(", ") || "None"}`);
-        descriptionParts.push(`Source policy: ${recommendation.sourcePolicy || "None"}`);
+        descriptionParts.push(`${LanguageManager.t("RecommendationSourceTraceLabel")}: ${recommendation.source || LanguageManager.t("RecommendationAssessmentReviewSource")}`);
+        descriptionParts.push(`${LanguageManager.t("RecommendationAssessmentIdsLabel")}: ${(recommendation.assessmentIds || []).join(", ") || LanguageManager.t("RecommendationNone")}`);
+        descriptionParts.push(`${LanguageManager.t("RecommendationFindingIdsLabel")}: ${([...new Set(resolvedFindingIds)]).join(", ") || LanguageManager.t("RecommendationNone")}`);
+        descriptionParts.push(`${LanguageManager.t("RecommendationEvidenceIdsLabel")}: ${(recommendation.evidenceIds || []).join(", ") || LanguageManager.t("RecommendationNone")}`);
+        descriptionParts.push(`${LanguageManager.t("RecommendationSourceAssessmentIdsTraceLabel")}: ${(recommendation.sourceAssessmentIds || []).join(", ") || LanguageManager.t("RecommendationNone")}`);
+        descriptionParts.push(`${LanguageManager.t("RecommendationSourceFindingIdsTraceLabel")}: ${(recommendation.sourceFindingIds || []).join(", ") || LanguageManager.t("RecommendationNone")}`);
+        descriptionParts.push(`${LanguageManager.t("RecommendationSourceEvidenceIdsTraceLabel")}: ${(recommendation.sourceEvidenceIds || []).join(", ") || LanguageManager.t("RecommendationNone")}`);
+        descriptionParts.push(`${LanguageManager.t("RecommendationSourcePolicyTraceLabel")}: ${recommendation.sourcePolicy || LanguageManager.t("RecommendationNone")}`);
         descriptionParts.push(`Risk score: ${riskScore}`);
-        descriptionParts.push(`Decision impact: ${recommendation.decisionImpact || "Medium"}`);
-        descriptionParts.push(`No automatic decision: ${recommendation.noAutomaticDecision === false ? "No" : "Yes"}`);
+        descriptionParts.push(`${LanguageManager.t("RecommendationDecisionImpactTraceLabel")}: ${this.formatRecommendationValue(recommendation.decisionImpact || "Medium")}`);
+        descriptionParts.push(`${LanguageManager.t("RecommendationNoAutomaticDecisionTraceLabel")}: ${recommendation.noAutomaticDecision === false ? LanguageManager.t("RecommendationNo") : LanguageManager.t("RecommendationYes")}`);
         descriptionParts.push(`Expert review required: ${recommendation.expertReviewRequired === false ? "No" : "Yes"}`);
 
         const decision = DecisionManager.create({
@@ -691,7 +713,7 @@ export default class RecommendationPage {
 
         RecommendationManager.set(updatedRecommendation);
 
-        Notification.success("Decision draft created. Expert review required. No automatic decision created.");
+        Notification.success(LanguageManager.t("RecommendationDecisionDraftCreated"));
         window.location.hash = "decisions";
     }
 
@@ -721,7 +743,7 @@ export default class RecommendationPage {
 
         if (!currentCase) {
 
-            Notification.info("Open a case before creating a recommendation.");
+            Notification.info(LanguageManager.t("RecommendationOpenCaseFirst"));
 
             return;
 
@@ -729,9 +751,9 @@ export default class RecommendationPage {
 
         FormDialog.open({
 
-            title: "New Recommendation",
+            title: LanguageManager.t("RecommendationNewTitle"),
 
-            submitLabel: "Create Recommendation",
+            submitLabel: LanguageManager.t("RecommendationCreateAction"),
 
             values: {
 
@@ -763,7 +785,7 @@ export default class RecommendationPage {
 
                     id: "title",
 
-                    label: "Recommendation title"
+                    label: LanguageManager.t("RecommendationTitleField")
 
                 },
 
@@ -771,7 +793,7 @@ export default class RecommendationPage {
 
                     id: "description",
 
-                    label: "Description"
+                    label: LanguageManager.t("RecommendationDescriptionField")
 
                 },
 
@@ -779,7 +801,7 @@ export default class RecommendationPage {
 
                     id: "action",
 
-                    label: "Recommended action"
+                    label: LanguageManager.t("RecommendationActionField")
 
                 },
 
@@ -787,11 +809,16 @@ export default class RecommendationPage {
 
                     id: "priority",
 
-                    label: "Priority",
+                    label: LanguageManager.t("RecommendationPriorityLabel"),
 
                     type: "select",
 
-                    options: ["Low", "Medium", "High", "Critical"]
+                    options: [
+                          { value: "Low", label: LanguageManager.t("AssessmentOptionLow") },
+                          { value: "Medium", label: LanguageManager.t("AssessmentOptionMedium") },
+                          { value: "High", label: LanguageManager.t("AssessmentOptionHigh") },
+                          { value: "Critical", label: LanguageManager.t("AssessmentOptionCritical") }
+                      ]
 
                 },
 
@@ -799,11 +826,16 @@ export default class RecommendationPage {
 
                     id: "timeframe",
 
-                    label: "Timeframe",
+                    label: LanguageManager.t("RecommendationTimeframeLabel"),
 
                     type: "select",
 
-                    options: ["Immediate", "Short Term", "Medium Term", "Long Term"]
+                    options: [
+                          { value: "Immediate", label: LanguageManager.t("RecommendationOptionImmediate") },
+                          { value: "Short Term", label: LanguageManager.t("RecommendationOptionShortTerm") },
+                          { value: "Medium Term", label: LanguageManager.t("RecommendationOptionMediumTerm") },
+                          { value: "Long Term", label: LanguageManager.t("RecommendationOptionLongTerm") }
+                      ]
 
                 },
 
@@ -811,7 +843,7 @@ export default class RecommendationPage {
 
                     id: "estimatedCost",
 
-                    label: "Estimated cost",
+                    label: LanguageManager.t("RecommendationEstimatedCostLabel"),
 
                     type: "number"
 
@@ -821,7 +853,7 @@ export default class RecommendationPage {
 
                     id: "currency",
 
-                    label: "Currency",
+                    label: LanguageManager.t("RecommendationCurrencyLabel"),
 
                     type: "select",
 
@@ -833,7 +865,7 @@ export default class RecommendationPage {
 
                     id: "responsible",
 
-                    label: "Responsible"
+                    label: LanguageManager.t("RecommendationResponsibleLabel")
 
                 },
 
@@ -841,11 +873,16 @@ export default class RecommendationPage {
 
                     id: "decisionImpact",
 
-                    label: "Decision impact",
+                    label: LanguageManager.t("RecommendationDecisionImpactLabel"),
 
                     type: "select",
 
-                    options: ["Low", "Medium", "High", "Critical"]
+                    options: [
+                          { value: "Low", label: LanguageManager.t("AssessmentOptionLow") },
+                          { value: "Medium", label: LanguageManager.t("AssessmentOptionMedium") },
+                          { value: "High", label: LanguageManager.t("AssessmentOptionHigh") },
+                          { value: "Critical", label: LanguageManager.t("AssessmentOptionCritical") }
+                      ]
 
                 },
 
@@ -853,11 +890,17 @@ export default class RecommendationPage {
 
                     id: "status",
 
-                    label: "Status",
+                    label: LanguageManager.t("CaseStatusLabel"),
 
                     type: "select",
 
-                    options: ["Draft", "Recommended", "Decided", "Reviewed", "Blocked"]
+                    options: [
+                          { value: "Draft", label: LanguageManager.t("RecommendationStatusDraft") },
+                          { value: "Recommended", label: LanguageManager.t("RecommendationStatusRecommended") },
+                          { value: "Decided", label: LanguageManager.t("RecommendationStatusDecided") },
+                          { value: "Reviewed", label: LanguageManager.t("RecommendationStatusReviewed") },
+                          { value: "Blocked", label: LanguageManager.t("RecommendationStatusBlocked") }
+                      ]
 
                 }
 
@@ -868,7 +911,7 @@ export default class RecommendationPage {
                 if (!values.title) return;
 
                 if (!activeAssessment) {
-            Notification.info("Select an assessment before creating a recommendation.");
+            Notification.info(LanguageManager.t("RecommendationSelectAssessmentBeforeCreating"));
             return;
         }
 
@@ -908,7 +951,7 @@ export default class RecommendationPage {
 
                 dialog.remove();
 
-                Notification.success("Recommendation created.");
+                Notification.success(LanguageManager.t("RecommendationCreatedNotification"));
 
                 this.refresh();
 
@@ -923,13 +966,13 @@ export default class RecommendationPage {
         const recommendation = RecommendationManager.get();
 
         if (!recommendation) {
-            Notification.info("Select a recommendation before editing.");
+            Notification.info(LanguageManager.t("RecommendationSelectBeforeEditing"));
             return;
         }
 
         FormDialog.open({
-            title: "Edit Recommendation",
-            submitLabel: "Save Recommendation",
+            title: LanguageManager.t("RecommendationEditTitle"),
+            submitLabel: LanguageManager.t("RecommendationSaveAction"),
             values: {
                 title: recommendation.title || "",
                 description: recommendation.description || "",
@@ -943,40 +986,61 @@ export default class RecommendationPage {
                 status: recommendation.status || "Draft"
             },
             fields: [
-                { id: "title", label: "Recommendation title" },
-                { id: "description", label: "Description" },
-                { id: "action", label: "Recommended action" },
+                { id: "title", label: LanguageManager.t("RecommendationTitleField") },
+                { id: "description", label: LanguageManager.t("RecommendationDescriptionField") },
+                { id: "action", label: LanguageManager.t("RecommendationActionField") },
                 {
                     id: "priority",
-                    label: "Priority",
+                    label: LanguageManager.t("RecommendationPriorityLabel"),
                     type: "select",
-                    options: ["Low", "Medium", "High", "Critical"]
+                    options: [
+                          { value: "Low", label: LanguageManager.t("AssessmentOptionLow") },
+                          { value: "Medium", label: LanguageManager.t("AssessmentOptionMedium") },
+                          { value: "High", label: LanguageManager.t("AssessmentOptionHigh") },
+                          { value: "Critical", label: LanguageManager.t("AssessmentOptionCritical") }
+                      ]
                 },
                 {
                     id: "timeframe",
-                    label: "Timeframe",
+                    label: LanguageManager.t("RecommendationTimeframeLabel"),
                     type: "select",
-                    options: ["Immediate", "Short Term", "Medium Term", "Long Term"]
+                    options: [
+                          { value: "Immediate", label: LanguageManager.t("RecommendationOptionImmediate") },
+                          { value: "Short Term", label: LanguageManager.t("RecommendationOptionShortTerm") },
+                          { value: "Medium Term", label: LanguageManager.t("RecommendationOptionMediumTerm") },
+                          { value: "Long Term", label: LanguageManager.t("RecommendationOptionLongTerm") }
+                      ]
                 },
-                { id: "estimatedCost", label: "Estimated cost", type: "number" },
+                { id: "estimatedCost", label: LanguageManager.t("RecommendationEstimatedCostLabel"), type: "number" },
                 {
                     id: "currency",
-                    label: "Currency",
+                    label: LanguageManager.t("RecommendationCurrencyLabel"),
                     type: "select",
                     options: ["EUR", "THB", "USD"]
                 },
-                { id: "responsible", label: "Responsible" },
+                { id: "responsible", label: LanguageManager.t("RecommendationResponsibleLabel") },
                 {
                     id: "decisionImpact",
-                    label: "Decision impact",
+                    label: LanguageManager.t("RecommendationDecisionImpactLabel"),
                     type: "select",
-                    options: ["Low", "Medium", "High", "Critical"]
+                    options: [
+                          { value: "Low", label: LanguageManager.t("AssessmentOptionLow") },
+                          { value: "Medium", label: LanguageManager.t("AssessmentOptionMedium") },
+                          { value: "High", label: LanguageManager.t("AssessmentOptionHigh") },
+                          { value: "Critical", label: LanguageManager.t("AssessmentOptionCritical") }
+                      ]
                 },
                 {
                     id: "status",
-                    label: "Status",
+                    label: LanguageManager.t("CaseStatusLabel"),
                     type: "select",
-                    options: ["Draft", "Recommended", "Decided", "Reviewed", "Blocked"]
+                    options: [
+                          { value: "Draft", label: LanguageManager.t("RecommendationStatusDraft") },
+                          { value: "Recommended", label: LanguageManager.t("RecommendationStatusRecommended") },
+                          { value: "Decided", label: LanguageManager.t("RecommendationStatusDecided") },
+                          { value: "Reviewed", label: LanguageManager.t("RecommendationStatusReviewed") },
+                          { value: "Blocked", label: LanguageManager.t("RecommendationStatusBlocked") }
+                      ]
                 }
             ],
             onSubmit: (values, dialog) => {
@@ -999,14 +1063,14 @@ export default class RecommendationPage {
 
                 RecommendationManager.set(updated);
                 dialog.remove();
-                Notification.success("Recommendation updated.");
+                Notification.success(LanguageManager.t("RecommendationUpdatedNotification"));
                 this.refresh();
             }
         });
     }
 
     static deleteRecommendation(item) {
-        if (!window.confirm(`Delete recommendation "${item.title || item.id}"?`)) {
+        if (!window.confirm(`${LanguageManager.t("RecommendationDeleteConfirmPrefix")} "${item.title || item.id}"?`)) {
             return;
         }
 
@@ -1016,7 +1080,7 @@ export default class RecommendationPage {
             RecommendationManager.clear();
         }
 
-        Notification.success("Recommendation deleted.");
+        Notification.success(LanguageManager.t("RecommendationDeletedNotification"));
         this.refresh();
     }
 
@@ -1030,7 +1094,7 @@ export default class RecommendationPage {
     }
 
     static showPendingFeature(feature = "This feature") {
-        Notification.info(`${feature} is reserved for a later workspace release.`);
+        Notification.info(`${feature} ${LanguageManager.t("RecommendationPendingFeatureSuffix")}`);
     }
 
     static getRecommendationIntelligence(recommendation = {}) {
@@ -1086,40 +1150,40 @@ export default class RecommendationPage {
         });
 
         let actionLogicSignal = {
-            label: "Low action logic",
-            description: "Recommendation logic is still incomplete. Define action, priority and assessment context.",
+            label: LanguageManager.t("RecommendationLowActionLogic"),
+            description: LanguageManager.t("RecommendationLowActionLogicDescription"),
             tone: "draft"
         };
 
         if (hasAction && hasPriority && hasAssessmentLink && hasDecisionLink) {
             actionLogicSignal = {
-                label: "Strong action logic",
-                description: "Recommendation has clear action logic and is connected to downstream decision workflow.",
+                label: LanguageManager.t("RecommendationStrongActionLogic"),
+                description: LanguageManager.t("RecommendationStrongActionLogicDescription"),
                 tone: "ready"
             };
         } else if (hasAction && hasPriority) {
             actionLogicSignal = {
-                label: "Developing action logic",
-                description: "Recommendation has usable action logic but may still need cost, assessment or decision linkage.",
+                label: LanguageManager.t("RecommendationDevelopingActionLogic"),
+                description: LanguageManager.t("RecommendationDevelopingActionLogicDescription"),
                 tone: "active"
             };
         }
 
         const nextAction = hasDecisionLink
             ? {
-                label: "Review linked decision",
-                description: "Recommendation is connected to a decision. Review whether governance logic reflects the recommendation.",
+                label: LanguageManager.t("RecommendationReviewLinkedDecision"),
+                description: LanguageManager.t("RecommendationReviewLinkedDecisionDescription"),
                 tone: "ready"
             }
             : hasAction && hasPriority
                 ? {
-                    label: "Create or link decision",
-                    description: "Recommendation is complete enough to move into decision review.",
+                    label: LanguageManager.t("RecommendationCreateOrLinkDecision"),
+                    description: LanguageManager.t("RecommendationCreateOrLinkDecisionDescription"),
                     tone: "active"
                 }
                 : {
-                    label: "Define recommended action",
-                    description: "Add a clear action and priority before moving toward decision.",
+                    label: LanguageManager.t("RecommendationDefineRecommendedAction"),
+                    description: LanguageManager.t("RecommendationDefineRecommendedActionDescription"),
                     tone: "draft"
                 };
 
@@ -1131,10 +1195,10 @@ export default class RecommendationPage {
             actionLogicSignal,
             nextAction,
             label: readinessPercent >= 100
-                ? "Recommendation intelligence complete"
+                ? LanguageManager.t("RecommendationIntelligenceComplete")
                 : readinessPercent >= 50
-                    ? "Recommendation intelligence developing"
-                    : "Recommendation intelligence early"
+                    ? LanguageManager.t("RecommendationIntelligenceDeveloping")
+                    : LanguageManager.t("RecommendationIntelligenceEarly")
         };
     }
 
@@ -1143,31 +1207,31 @@ export default class RecommendationPage {
         const intelligence = this.getRecommendationIntelligence(recommendation);
 
         return `
-            <section class="recommendation-intelligence intelligence-snapshot" aria-label="Recommendation intelligence snapshot">
+            <section class="recommendation-intelligence intelligence-snapshot" aria-label="${LanguageManager.t("RecommendationIntelligenceLabel")}">
                 <div class="recommendation-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="recommendation-intelligence__eyebrow intelligence-snapshot__eyebrow">Recommendation Intelligence</span>
+                        <span class="recommendation-intelligence__eyebrow intelligence-snapshot__eyebrow">${LanguageManager.t("RecommendationIntelligenceLabel")}</span>
                         <strong>${intelligence.label}</strong>
-                        <p>${intelligence.completed}/${intelligence.total} recommendation intelligence checks completed</p>
+                        <p>${intelligence.completed}/${intelligence.total} ${LanguageManager.t("RecommendationChecksCompleted")}</p>
                     </div>
                     <span class="recommendation-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
                 <div class="recommendation-intelligence__grid intelligence-snapshot__grid">
                     <article class="recommendation-intelligence__card intelligence-snapshot__card">
-                        <span>Decision Readiness</span>
+                        <span>${LanguageManager.t("RecommendationDecisionReadiness")}</span>
                         <strong>${intelligence.readinessPercent}%</strong>
-                        <p>Readiness based on identity, action, priority, cost logic, assessment link, decision link and review state.</p>
+                        <p>${LanguageManager.t("RecommendationDecisionReadinessCardDescription")}</p>
                     </article>
 
                     <article class="recommendation-intelligence__card intelligence-snapshot__card recommendation-intelligence__card--${intelligence.actionLogicSignal.tone} intelligence-snapshot__card--${intelligence.actionLogicSignal.tone}">
-                        <span>Action Logic Signal</span>
+                        <span>${LanguageManager.t("RecommendationActionLogicSignalLabel")}</span>
                         <strong>${intelligence.actionLogicSignal.label}</strong>
                         <p>${intelligence.actionLogicSignal.description}</p>
                     </article>
 
                     <article class="recommendation-intelligence__card intelligence-snapshot__card recommendation-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
-                        <span>Next Recommendation Action</span>
+                        <span>${LanguageManager.t("RecommendationNextActionLabel")}</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>
                     </article>

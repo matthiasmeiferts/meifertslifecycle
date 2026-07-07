@@ -2743,6 +2743,506 @@ export default class LanguageManager {
                 en: "Blocked",
                 de: "Blockiert"
             },
+            RecommendationWorkspaceTitle: {
+                en: "Recommendation Workspace",
+                de: "Recommendation Workspace"
+            },
+            RecommendationTitlePlural: {
+                en: "Recommendations",
+                de: "Recommendations"
+            },
+            RecommendationActivePrefix: {
+                en: "Active recommendation",
+                de: "Aktive Recommendation"
+            },
+            RecommendationNewAction: {
+                en: "+ New Recommendation",
+                de: "+ Neue Recommendation"
+            },
+            RecommendationEmptyTitle: {
+                en: "No recommendations available",
+                de: "Keine Recommendations verfügbar"
+            },
+            RecommendationEmptyDescription: {
+                en: "Recommendations will translate assessment results into prioritized technical actions and decision support.",
+                de: "Recommendations übersetzen Assessment-Ergebnisse in priorisierte technische Maßnahmen und Decision Support."
+            },
+            RecommendationWorkflowDecision: {
+                en: "Decision",
+                de: "Decision"
+            },
+            RecommendationToDecisionLabel: {
+                en: "Recommendation → Decision",
+                de: "Recommendation → Decision"
+            },
+            RecommendationTotalMetric: {
+                en: "Recommendations",
+                de: "Recommendations"
+            },
+            RecommendationHighPriorityMetric: {
+                en: "High Priority",
+                de: "Hohe Priorität"
+            },
+            RecommendationLinkedDecisionsMetric: {
+                en: "Linked Decisions",
+                de: "Verknüpfte Decisions"
+            },
+            RecommendationCloseAction: {
+                en: "Close Recommendation",
+                de: "Recommendation schließen"
+            },
+            RecommendationCreateAction: {
+                en: "Create Recommendation",
+                de: "Recommendation erstellen"
+            },
+            RecommendationCreateDecisionAction: {
+                en: "Create Decision",
+                de: "Decision erstellen"
+            },
+            RecommendationContextTitle: {
+                en: "Recommendation Context",
+                de: "Recommendation-Kontext"
+            },
+            RecommendationSelectedLabel: {
+                en: "Selected Recommendation",
+                de: "Ausgewählte Recommendation"
+            },
+            RecommendationNotSelected: {
+                en: "Not selected",
+                de: "Nicht ausgewählt"
+            },
+            RecommendationWorkspaceStatusLabel: {
+                en: "Workspace Status",
+                de: "Workspace-Status"
+            },
+            RecommendationNoSelection: {
+                en: "No selection",
+                de: "Keine Auswahl"
+            },
+            RecommendationDecisionRelevanceLabel: {
+                en: "Decision Relevance",
+                de: "Decision-Relevanz"
+            },
+            RecommendationInReview: {
+                en: "In Review",
+                de: "In Prüfung"
+            },
+            RecommendationPending: {
+                en: "Pending",
+                de: "Ausstehend"
+            },
+            RecommendationSafetyBoundariesLabel: {
+                en: "Safety Boundaries",
+                de: "Safety Boundaries"
+            },
+            RecommendationSourceLabel: {
+                en: "Source",
+                de: "Quelle"
+            },
+            RecommendationAssessmentReviewSource: {
+                en: "Assessment Review",
+                de: "Assessment Review"
+            },
+            RecommendationCaseIdLabel: {
+                en: "Case ID",
+                de: "Case-ID"
+            },
+            RecommendationBuildingIdLabel: {
+                en: "Building ID",
+                de: "Gebäude-ID"
+            },
+            RecommendationInspectionIdLabel: {
+                en: "Inspection ID",
+                de: "Inspection-ID"
+            },
+            RecommendationAssessmentIdsLabel: {
+                en: "Assessment IDs",
+                de: "Assessment-IDs"
+            },
+            RecommendationFindingIdsLabel: {
+                en: "Finding IDs",
+                de: "Finding-IDs"
+            },
+            RecommendationEvidenceIdsLabel: {
+                en: "Evidence IDs",
+                de: "Evidence-IDs"
+            },
+            RecommendationBuildingSystemLabel: {
+                en: "Building System",
+                de: "Gebäudesystem"
+            },
+            RecommendationPriorityLabel: {
+                en: "Priority",
+                de: "Priorität"
+            },
+            RecommendationTimeframeLabel: {
+                en: "Timeframe",
+                de: "Zeitrahmen"
+            },
+            RecommendationEstimatedCostLabel: {
+                en: "Estimated cost",
+                de: "Geschätzte Kosten"
+            },
+            RecommendationCurrencyLabel: {
+                en: "Currency",
+                de: "Währung"
+            },
+            RecommendationResponsibleLabel: {
+                en: "Responsible",
+                de: "Verantwortlich"
+            },
+            RecommendationDecisionImpactLabel: {
+                en: "Decision impact",
+                de: "Decision Impact"
+            },
+            RecommendationDecisionIdsLabel: {
+                en: "Decision IDs",
+                de: "Decision-IDs"
+            },
+            RecommendationNone: {
+                en: "None",
+                de: "Keine"
+            },
+            RecommendationNotLinked: {
+                en: "Not linked",
+                de: "Nicht verknüpft"
+            },
+            RecommendationTitleField: {
+                en: "Recommendation title",
+                de: "Recommendation-Titel"
+            },
+            RecommendationDescriptionField: {
+                en: "Description",
+                de: "Beschreibung"
+            },
+            RecommendationActionField: {
+                en: "Recommended action",
+                de: "Empfohlene Maßnahme"
+            },
+            RecommendationOpenCaseFirst: {
+                en: "Open a case before creating a recommendation.",
+                de: "Öffnen Sie zuerst einen Case, bevor eine Recommendation erstellt wird."
+            },
+            RecommendationNewTitle: {
+                en: "New Recommendation",
+                de: "Neue Recommendation"
+            },
+            RecommendationSelectAssessmentBeforeCreating: {
+                en: "Select an assessment before creating a recommendation.",
+                de: "Assessment auswählen, bevor eine Recommendation erstellt wird."
+            },
+            RecommendationCreatedNotification: {
+                en: "Recommendation created.",
+                de: "Recommendation erstellt."
+            },
+            RecommendationSelectBeforeEditing: {
+                en: "Select a recommendation before editing.",
+                de: "Recommendation vor dem Bearbeiten auswählen."
+            },
+            RecommendationEditTitle: {
+                en: "Edit Recommendation",
+                de: "Recommendation bearbeiten"
+            },
+            RecommendationSaveAction: {
+                en: "Save Recommendation",
+                de: "Recommendation speichern"
+            },
+            RecommendationUpdatedNotification: {
+                en: "Recommendation updated.",
+                de: "Recommendation aktualisiert."
+            },
+            RecommendationDeleteConfirmPrefix: {
+                en: "Delete recommendation",
+                de: "Recommendation löschen"
+            },
+            RecommendationDeletedNotification: {
+                en: "Recommendation deleted.",
+                de: "Recommendation gelöscht."
+            },
+            RecommendationPendingFeatureSuffix: {
+                en: "is reserved for a later workspace release.",
+                de: "ist für ein späteres Workspace-Release reserviert."
+            },
+            RecommendationPriorityDefined: {
+                en: "Priority defined",
+                de: "Priorität definiert"
+            },
+            RecommendationAssessmentLinked: {
+                en: "Assessment linked",
+                de: "Assessment verknüpft"
+            },
+            RecommendationDecisionConnection: {
+                en: "Decision connection",
+                de: "Decision-Verbindung"
+            },
+            RecommendationReadyForDecision: {
+                en: "Ready for Decision",
+                de: "Bereit für Decision"
+            },
+            RecommendationLowActionLogic: {
+                en: "Low action logic",
+                de: "Geringe Handlungslogik"
+            },
+            RecommendationLowActionLogicDescription: {
+                en: "Recommendation logic is still incomplete. Define action, priority and assessment context.",
+                de: "Die Recommendation-Logik ist noch unvollständig. Maßnahme, Priorität und Assessment-Kontext definieren."
+            },
+            RecommendationStrongActionLogic: {
+                en: "Strong action logic",
+                de: "Starke Handlungslogik"
+            },
+            RecommendationStrongActionLogicDescription: {
+                en: "Recommendation has clear action logic and is connected to downstream decision workflow.",
+                de: "Die Recommendation hat klare Handlungslogik und ist mit dem nachgelagerten Decision Workflow verknüpft."
+            },
+            RecommendationDevelopingActionLogic: {
+                en: "Developing action logic",
+                de: "Handlungslogik in Entwicklung"
+            },
+            RecommendationDevelopingActionLogicDescription: {
+                en: "Recommendation has usable action logic but may still need cost, assessment or decision linkage.",
+                de: "Die Recommendation hat nutzbare Handlungslogik, benötigt aber möglicherweise noch Kosten-, Assessment- oder Decision-Verknüpfung."
+            },
+            RecommendationReviewLinkedDecision: {
+                en: "Review linked decision",
+                de: "Verknüpfte Decision prüfen"
+            },
+            RecommendationReviewLinkedDecisionDescription: {
+                en: "Recommendation is connected to a decision. Review whether governance logic reflects the recommendation.",
+                de: "Die Recommendation ist mit einer Decision verknüpft. Prüfen, ob die Governance-Logik die Recommendation korrekt widerspiegelt."
+            },
+            RecommendationCreateOrLinkDecision: {
+                en: "Create or link decision",
+                de: "Decision erstellen oder verknüpfen"
+            },
+            RecommendationCreateOrLinkDecisionDescription: {
+                en: "Recommendation is complete enough to move into decision review.",
+                de: "Die Recommendation ist ausreichend vollständig, um in die Decision-Prüfung überführt zu werden."
+            },
+            RecommendationCompleteActionLogic: {
+                en: "Complete action logic",
+                de: "Handlungslogik vervollständigen"
+            },
+            RecommendationCompleteActionLogicDescription: {
+                en: "Define action, priority and assessment context before creating a decision.",
+                de: "Maßnahme, Priorität und Assessment-Kontext definieren, bevor eine Decision erstellt wird."
+            },
+            RecommendationIntelligenceComplete: {
+                en: "Recommendation intelligence complete",
+                de: "Recommendation Intelligence vollständig"
+            },
+            RecommendationIntelligenceDeveloping: {
+                en: "Recommendation intelligence developing",
+                de: "Recommendation Intelligence in Entwicklung"
+            },
+            RecommendationIntelligenceEarly: {
+                en: "Recommendation intelligence early",
+                de: "Recommendation Intelligence frühe Phase"
+            },
+            RecommendationIntelligenceLabel: {
+                en: "Recommendation Intelligence",
+                de: "Recommendation Intelligence"
+            },
+            RecommendationChecksCompleted: {
+                en: "recommendation intelligence checks completed",
+                de: "Recommendation-Intelligence-Prüfungen abgeschlossen"
+            },
+            RecommendationDecisionReadiness: {
+                en: "Decision Readiness",
+                de: "Decision-Bereitschaft"
+            },
+            RecommendationDecisionReadinessDescription: {
+                en: "Readiness based on identity, action logic, priority, cost, assessment link, decision link and review state.",
+                de: "Bereitschaft basierend auf Identität, Handlungslogik, Priorität, Kosten, Assessment-Link, Decision-Link und Review-Status."
+            },
+            RecommendationActionLogicSignalLabel: {
+                en: "Action Logic Signal",
+                de: "Handlungslogik-Signal"
+            },
+            RecommendationNextActionLabel: {
+                en: "Next Recommendation Action",
+                de: "Nächste Recommendation-Aktion"
+            },
+            RecommendationHeaderDescription: {
+                en: "Develop technical recommendations, define priorities, estimate CAPEX, and prepare expert decision support.",
+                de: "Technische Recommendations entwickeln, Prioritäten definieren, CAPEX abschätzen und fachlichen Decision Support vorbereiten."
+            },
+            RecommendationWorkflowStepTitle: {
+                en: "Recommendation",
+                de: "Recommendation"
+            },
+            RecommendationWorkflowActionRecommended: {
+                en: "Technical action recommended",
+                de: "Technische Maßnahme empfohlen"
+            },
+            RecommendationWorkflowDecisionDerived: {
+                en: "Decision prepared",
+                de: "Decision vorbereitet"
+            },
+            RecommendationItemFallback: {
+                en: "Recommendation Item",
+                de: "Recommendation-Eintrag"
+            },
+            RecommendationImmediateMetric: {
+                en: "Immediate",
+                de: "Sofort"
+            },
+            RecommendationActiveFlowLabel: {
+                en: "Active Flow",
+                de: "Aktiver Workflow"
+            },
+            RecommendationNextActionHeading: {
+                en: "Next Action",
+                de: "Nächste Aktion"
+            },
+            RecommendationCompletionLabel: {
+                en: "Completion",
+                de: "Vollständigkeit"
+            },
+            RecommendationIdentifiedCheck: {
+                en: "Recommendation identified",
+                de: "Recommendation identifiziert"
+            },
+            RecommendationActionDefinedCheck: {
+                en: "Action defined",
+                de: "Maßnahme definiert"
+            },
+            RecommendationCostLogicCapturedCheck: {
+                en: "Cost logic captured",
+                de: "Kostenlogik erfasst"
+            },
+            RecommendationDefineRecommendedAction: {
+                en: "Define recommended action",
+                de: "Empfohlene Maßnahme definieren"
+            },
+            RecommendationDefineRecommendedActionDescription: {
+                en: "Add a clear action and priority before moving toward decision.",
+                de: "Klare Maßnahme und Priorität ergänzen, bevor die Recommendation in Richtung Decision geführt wird."
+            },
+            RecommendationAlreadyLinkedDecisionDescription: {
+                en: "This recommendation is already connected to a decision. Check governance logic and completeness.",
+                de: "Diese Recommendation ist bereits mit einer Decision verknüpft. Governance-Logik und Vollständigkeit prüfen."
+            },
+            RecommendationDecisionReadinessCardDescription: {
+                en: "Readiness based on identity, action, priority, cost logic, assessment link, decision link and review state.",
+                de: "Bereitschaft basierend auf Identität, Maßnahme, Priorität, Kostenlogik, Assessment-Link, Decision-Link und Review-Status."
+            },
+            RecommendationOptionPlanned: {
+                en: "Planned",
+                de: "Geplant"
+            },
+            RecommendationNoDescription: {
+                en: "No description",
+                de: "Keine Beschreibung"
+            },
+            RecommendationNoAutomaticDecisionGoNoGoLine: {
+                en: "No automatic decision, purchase recommendation or Go/No-Go result is created by this action.",
+                de: "Durch diese Aktion wird keine automatische Decision, Kaufempfehlung oder Go/No-Go-Aussage erstellt."
+            },
+            RecommendationDecisionDraftCreated: {
+                en: "Decision draft created. Expert review required. No automatic decision created.",
+                de: "Decision Draft erstellt. Fachliche Prüfung erforderlich. Keine automatische Decision erstellt."
+            },
+            RecommendationDecisionDraftPrefix: {
+                en: "Decision Draft",
+                de: "Decision Draft"
+            },
+            RecommendationDecisionDraftFrom: {
+                en: "Decision Draft from",
+                de: "Decision Draft aus"
+            },
+            RecommendationDecisionBoundaryLabel: {
+                en: "Decision boundary:",
+                de: "Decision-Grenze:"
+            },
+            RecommendationDecisionSupportDraftOnly: {
+                en: "Decision support draft only.",
+                de: "Nur Decision-Support-Draft."
+            },
+            RecommendationDecisionPreparedFromSelected: {
+                en: "Decision draft prepared from selected recommendation.",
+                de: "Decision Draft aus ausgewählter Recommendation vorbereitet."
+            },
+            RecommendationDecisionStatusLabel: {
+                en: "Decision status:",
+                de: "Decision-Status:"
+            },
+            RecommendationDraftDecisionCreatedLine: {
+                en: "Draft decision support record created from selected recommendation.",
+                de: "Draft Decision-Support-Datensatz aus ausgewählter Recommendation erstellt."
+            },
+            RecommendationSourceTraceLabel: {
+                en: "Recommendation source",
+                de: "Recommendation-Quelle"
+            },
+            RecommendationSourceAssessmentIdsTraceLabel: {
+                en: "Source Assessment IDs",
+                de: "Source-Assessment-IDs"
+            },
+            RecommendationSourceFindingIdsTraceLabel: {
+                en: "Source Finding IDs",
+                de: "Source-Finding-IDs"
+            },
+            RecommendationSourceEvidenceIdsTraceLabel: {
+                en: "Source Evidence IDs",
+                de: "Source-Evidence-IDs"
+            },
+            RecommendationSourcePolicyTraceLabel: {
+                en: "Source policy",
+                de: "Source Policy"
+            },
+            RecommendationDecisionImpactTraceLabel: {
+                en: "Decision impact",
+                de: "Decision Impact"
+            },
+            RecommendationNoAutomaticDecisionTraceLabel: {
+                en: "No automatic decision",
+                de: "Keine automatische Decision"
+            },
+            RecommendationYes: {
+                en: "Yes",
+                de: "Ja"
+            },
+            RecommendationNo: {
+                en: "No",
+                de: "Nein"
+            },
+            RecommendationOptionImmediate: {
+                en: "Immediate",
+                de: "Sofort"
+            },
+            RecommendationOptionShortTerm: {
+                en: "Short Term",
+                de: "Kurzfristig"
+            },
+            RecommendationOptionMediumTerm: {
+                en: "Medium Term",
+                de: "Mittelfristig"
+            },
+            RecommendationOptionLongTerm: {
+                en: "Long Term",
+                de: "Langfristig"
+            },
+            RecommendationStatusDraft: {
+                en: "Draft",
+                de: "Entwurf"
+            },
+            RecommendationStatusRecommended: {
+                en: "Recommended",
+                de: "Empfohlen"
+            },
+            RecommendationStatusDecided: {
+                en: "Decided",
+                de: "Entschieden"
+            },
+            RecommendationStatusReviewed: {
+                en: "Reviewed",
+                de: "Geprüft"
+            },
+            RecommendationStatusBlocked: {
+                en: "Blocked",
+                de: "Blockiert"
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."
