@@ -706,6 +706,29 @@ export default class DashboardPage {
         };
     }
 
+    static formatValidationGateMessage(gate = {}) {
+        const blockingCount = gate.blockingItems?.length || 0;
+        const warningCount = gate.warningItems?.length || 0;
+
+        if (gate.status === "passed") {
+            return LanguageManager.t("DashboardValidationPassedMessage");
+        }
+
+        if (blockingCount) {
+            return `${blockingCount} ${blockingCount === 1
+                ? LanguageManager.t("DashboardValidationBlockingItemSingular")
+                : LanguageManager.t("DashboardValidationBlockingItemPlural")}`;
+        }
+
+        if (warningCount) {
+            return `${warningCount} ${warningCount === 1
+                ? LanguageManager.t("DashboardValidationWarningItemSingular")
+                : LanguageManager.t("DashboardValidationWarningItemPlural")}`;
+        }
+
+        return LanguageManager.t("DashboardValidationRequiresReview");
+    }
+
     static renderValidationGateSnapshot(data = {}) {
         const gateData = data.decisionGate ? data : this.getValidationGateData();
 
@@ -749,7 +772,7 @@ export default class DashboardPage {
                     <article class="platform-intelligence__card platform-intelligence__card--${tone}">
                         <span>${item.label}</span>
                         <strong>${statusLabel[gate.status] || gate.status}</strong>
-                        <p>${gate.message || LanguageManager.t("DashboardValidationRequiresReview")}</p>
+                        <p>${this.formatValidationGateMessage(gate)}</p>
                     </article>
                 `;
             })

@@ -903,6 +903,26 @@ export default class LanguageManager {
                 en: "Workflow validation requires review.",
                 de: "Workflow-Validierung erfordert Prüfung."
             },
+            DashboardValidationPassedMessage: {
+                en: "Workflow validation passed.",
+                de: "Workflow-Validierung freigegeben."
+            },
+            DashboardValidationBlockingItemSingular: {
+                en: "blocking review item must be resolved before workflow use.",
+                de: "blockierendes Review-Item muss vor Workflow-Nutzung gelöst werden."
+            },
+            DashboardValidationBlockingItemPlural: {
+                en: "blocking review items must be resolved before workflow use.",
+                de: "blockierende Review-Items müssen vor Workflow-Nutzung gelöst werden."
+            },
+            DashboardValidationWarningItemSingular: {
+                en: "review warning should be checked before workflow use.",
+                de: "Review-Warnung sollte vor Workflow-Nutzung geprüft werden."
+            },
+            DashboardValidationWarningItemPlural: {
+                en: "review warnings should be checked before workflow use.",
+                de: "Review-Warnungen sollten vor Workflow-Nutzung geprüft werden."
+            },
             DashboardWorkflowConfidence: {
                 en: "Workflow Confidence",
                 de: "Workflow-Vertrauen"
