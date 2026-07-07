@@ -272,7 +272,7 @@ export default class AssessmentPage {
         wrapper.appendChild(ActionBar.create([
             {
                 id: "refresh",
-                label: LanguageManager.t("FindingRefreshAction"),
+                label: LanguageManager.t("AssessmentRefreshAction"),
                 onClick: () => this.refresh()
             },
             {

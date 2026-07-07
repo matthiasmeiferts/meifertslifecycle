@@ -174,7 +174,7 @@ export default class RecommendationPage {
         wrapper.appendChild(ActionBar.create([
             {
                 id: "refresh",
-                label: LanguageManager.t("FindingRefreshAction"),
+                label: LanguageManager.t("RecommendationRefreshAction"),
                 onClick: () => this.refresh()
             },
             {

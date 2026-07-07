@@ -2575,6 +2575,10 @@ export default class LanguageManager {
                 en: "Linked Recommendations",
                 de: "Verknüpfte Recommendations"
             },
+            AssessmentRefreshAction: {
+                en: "Refresh",
+                de: "Aktualisieren"
+            },
             AssessmentCloseAction: {
                 en: "Close Assessment",
                 de: "Assessment schließen"
@@ -3182,6 +3186,10 @@ export default class LanguageManager {
             RecommendationLinkedDecisionsMetric: {
                 en: "Linked Decisions",
                 de: "Verknüpfte Decisions"
+            },
+            RecommendationRefreshAction: {
+                en: "Refresh",
+                de: "Aktualisieren"
             },
             RecommendationCloseAction: {
                 en: "Close Recommendation",
