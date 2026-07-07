@@ -12,6 +12,7 @@ import AssessmentManager from "../../core/AssessmentManager.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
 import DecisionManager from "../../core/DecisionManager.js";
 import ReviewQueueManager from "../../core/ReviewQueueManager.js";
+import WorkflowValidationGateManager from "../../core/WorkflowValidationGateManager.js";
 import LanguageManager from "../../core/LanguageManager.js";
 
 export default class DashboardPage {
@@ -60,6 +61,7 @@ export default class DashboardPage {
         const bottleneckIndicator = this.createWorkflowBottleneckIndicator();
         const qualitySummary = this.createWorkflowQualitySummary();
         const expertReviewQueue = this.createExpertReviewQueueSnapshot();
+        const validationGate = this.createValidationGateSnapshot();
         const platformIntelligence = this.createPlatformIntelligence();
         const workflow = WorkflowCard.create(
             WorkspaceController.getWorkflowState()
@@ -73,6 +75,7 @@ export default class DashboardPage {
         fragment.appendChild(bottleneckIndicator);
         fragment.appendChild(qualitySummary);
         fragment.appendChild(expertReviewQueue);
+        fragment.appendChild(validationGate);
         fragment.appendChild(platformIntelligence);
         fragment.appendChild(workflow);
 
@@ -688,6 +691,91 @@ export default class DashboardPage {
     static createExpertReviewQueueSnapshot(data = {}) {
         const container = document.createElement("section");
         container.innerHTML = this.renderExpertReviewQueueSnapshot(data);
+        return container;
+    }
+
+    static getValidationGateData() {
+        const currentCase = CaseManager.get();
+        const caseId = currentCase?.id || null;
+
+        return {
+            currentCase,
+            decisionGate: WorkflowValidationGateManager.validateForDecision(caseId, { allowWarnings: true }),
+            reportGate: WorkflowValidationGateManager.validateForReport(caseId),
+            externalGate: WorkflowValidationGateManager.validateForExternalUse(caseId)
+        };
+    }
+
+    static renderValidationGateSnapshot(data = {}) {
+        const gateData = data.decisionGate ? data : this.getValidationGateData();
+
+        const gateItems = [
+            {
+                label: LanguageManager.t("DashboardValidationDecisionUse"),
+                gate: gateData.decisionGate
+            },
+            {
+                label: LanguageManager.t("DashboardValidationReportUse"),
+                gate: gateData.reportGate
+            },
+            {
+                label: LanguageManager.t("DashboardValidationExternalUse"),
+                gate: gateData.externalGate
+            }
+        ];
+
+        const statusLabel = {
+            passed: LanguageManager.t("DashboardValidationPassed"),
+            warning: LanguageManager.t("DashboardValidationWarning"),
+            blocked: LanguageManager.t("DashboardValidationBlocked")
+        };
+
+        const toneByStatus = {
+            passed: "ready",
+            warning: "active",
+            blocked: "blocked"
+        };
+
+        const mostSevereGate = gateItems.find(item => item.gate.status === "blocked")
+            || gateItems.find(item => item.gate.status === "warning")
+            || gateItems[0];
+
+        const gateCards = gateItems
+            .map(item => {
+                const gate = item.gate || {};
+                const tone = toneByStatus[gate.status] || "draft";
+
+                return `
+                    <article class="platform-intelligence__card platform-intelligence__card--${tone}">
+                        <span>${item.label}</span>
+                        <strong>${statusLabel[gate.status] || gate.status}</strong>
+                        <p>${gate.message || LanguageManager.t("DashboardValidationRequiresReview")}</p>
+                    </article>
+                `;
+            })
+            .join("");
+
+        return `
+            <section class="platform-intelligence dashboard-validation-gate" aria-label="${LanguageManager.t("DashboardValidationGate")}">
+                <div class="platform-intelligence__header">
+                    <div>
+                        <span class="platform-intelligence__eyebrow">${LanguageManager.t("DashboardValidationGate")}</span>
+                        <strong>${statusLabel[mostSevereGate.gate.status] || LanguageManager.t("DashboardValidationRequiresReview")}</strong>
+                        <p>${LanguageManager.t("DashboardValidationGateDescription")}</p>
+                    </div>
+                    <span class="platform-intelligence__score">${mostSevereGate.gate.blockingItems?.length || 0}</span>
+                </div>
+
+                <div class="platform-intelligence__grid">
+                    ${gateCards}
+                </div>
+            </section>
+        `;
+    }
+
+    static createValidationGateSnapshot(data = {}) {
+        const container = document.createElement("section");
+        container.innerHTML = this.renderValidationGateSnapshot(data);
         return container;
     }
 

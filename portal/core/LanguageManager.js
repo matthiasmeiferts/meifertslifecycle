@@ -867,6 +867,42 @@ export default class LanguageManager {
                 en: "Blocked review items require attention before downstream decision or report use.",
                 de: "Blockierte Review-Items müssen vor nachgelagerter Decision- oder Report-Nutzung geprüft werden."
             },
+            DashboardValidationGate: {
+                en: "Workflow Validation Gate",
+                de: "Workflow Validation Gate"
+            },
+            DashboardValidationGateDescription: {
+                en: "Decision, report and external use are checked against open expert review items.",
+                de: "Decision-, Report- und externe Nutzung werden gegen offene Expert-Review-Items geprüft."
+            },
+            DashboardValidationDecisionUse: {
+                en: "Decision use",
+                de: "Decision-Nutzung"
+            },
+            DashboardValidationReportUse: {
+                en: "Report use",
+                de: "Report-Nutzung"
+            },
+            DashboardValidationExternalUse: {
+                en: "External use",
+                de: "Externe Nutzung"
+            },
+            DashboardValidationPassed: {
+                en: "Passed",
+                de: "Freigegeben"
+            },
+            DashboardValidationWarning: {
+                en: "Warning",
+                de: "Warnung"
+            },
+            DashboardValidationBlocked: {
+                en: "Blocked",
+                de: "Blockiert"
+            },
+            DashboardValidationRequiresReview: {
+                en: "Workflow validation requires review.",
+                de: "Workflow-Validierung erfordert Prüfung."
+            },
             DashboardWorkflowConfidence: {
                 en: "Workflow Confidence",
                 de: "Workflow-Vertrauen"
