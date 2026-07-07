@@ -188,12 +188,12 @@ export default class InspectionPage {
                     status: "Draft"
                 });
 
-                Notification.info("Inspection profile changed. Active scope was reset for the selected catalog.");
+                Notification.info(LanguageManager.t("InspectionProfileChangedScopeReset"));
                 this.refresh();
                 return;
             }
 
-            Notification.info("Inspection profile updated.");
+            Notification.info(LanguageManager.t("InspectionProfileUpdated"));
             this.refresh();
         });
 
@@ -739,12 +739,12 @@ export default class InspectionPage {
         const activeScope = this.getActiveScope(activeInspection);
 
         if (!activeScope || !question || !value) {
-            Notification.info("Start the adaptive scope before answering questions.");
+            Notification.info(LanguageManager.t("InspectionStartScopeBeforeAnswering"));
             return;
         }
 
         InspectionScopeManager.answerQuestion(activeScope.id, question, value);
-        Notification.success("Inspection answer saved.");
+        Notification.success(LanguageManager.t("InspectionAnswerSaved"));
         this.refresh();
     }
 
@@ -901,7 +901,7 @@ export default class InspectionPage {
         const question = InspectionQuestionCatalog.getById(requirement.questionId, catalogOptions);
 
         if (!question) {
-            Notification.warning("Inspection question could not be found.");
+            Notification.warning(LanguageManager.t("InspectionQuestionNotFound"));
             return;
         }
 
@@ -1213,13 +1213,13 @@ export default class InspectionPage {
             notes: "Initial inspection record created from the workspace."
         });
 
-        Notification.success("Inspection created.");
+        Notification.success(LanguageManager.t("InspectionCreatedNotification"));
         InspectionManager.set(inspection);
         this.refresh();
     }
 
     static showPendingFeature(feature = "This feature") {
-        Notification.info(`${feature} is reserved for a later workspace release.`);
+        Notification.info(`${feature} ${LanguageManager.t("InspectionPendingFeatureReserved")}`);
     }
 
 }
