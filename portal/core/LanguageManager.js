@@ -827,6 +827,46 @@ export default class LanguageManager {
                 en: "Workspace Intelligence",
                 de: "Workspace Intelligence"
             },
+            DashboardExpertReviewQueue: {
+                en: "Expert Review Queue",
+                de: "Expert Review Queue"
+            },
+            DashboardOpenReviewItems: {
+                en: "Open review items",
+                de: "Offene Review-Items"
+            },
+            DashboardNoOpenReviewItems: {
+                en: "No open review items",
+                de: "Keine offenen Review-Items"
+            },
+            DashboardReviewItemSingular: {
+                en: "item",
+                de: "Item"
+            },
+            DashboardReviewItemPlural: {
+                en: "items",
+                de: "Items"
+            },
+            DashboardRequireReview: {
+                en: "require review",
+                de: "benötigen Review"
+            },
+            DashboardHighestPriority: {
+                en: "Highest priority",
+                de: "Höchste Priorität"
+            },
+            DashboardNoOpenExpertReviewItems: {
+                en: "No open expert review items",
+                de: "Keine offenen Expert-Review-Items"
+            },
+            DashboardNoUnresolvedReviewBlockers: {
+                en: "The current workflow does not contain unresolved review blockers.",
+                de: "Der aktuelle Workflow enthält keine ungelösten Review-Blocker."
+            },
+            DashboardBlockedReviewItemsNotice: {
+                en: "Blocked review items require attention before downstream decision or report use.",
+                de: "Blockierte Review-Items müssen vor nachgelagerter Decision- oder Report-Nutzung geprüft werden."
+            },
             DashboardWorkflowConfidence: {
                 en: "Workflow Confidence",
                 de: "Workflow-Vertrauen"

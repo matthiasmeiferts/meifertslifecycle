@@ -627,12 +627,12 @@ export default class DashboardPage {
         const highestPriority = summary.highestPriority;
 
         const stageLabels = {
-            evidence: "Evidence",
-            finding: "Finding",
-            assessment: "Assessment",
-            recommendation: "Recommendation",
-            decision: "Decision",
-            report: "Report"
+            evidence: LanguageManager.t("NavEvidence"),
+            finding: LanguageManager.t("WorkflowStepFinding"),
+            assessment: LanguageManager.t("WorkflowStepAssessment"),
+            recommendation: LanguageManager.t("WorkflowStepRecommendation"),
+            decision: LanguageManager.t("WorkflowStepDecision"),
+            report: LanguageManager.t("WorkflowStepReport")
         };
 
         const stageItems = Object.entries(stageLabels)
@@ -642,7 +642,7 @@ export default class DashboardPage {
                     <article class="platform-intelligence__card platform-intelligence__card--${count ? "active" : "ready"}">
                         <span>${label}</span>
                         <strong>${count}</strong>
-                        <p>${count ? "Open review items" : "No open review items"}</p>
+                        <p>${count ? LanguageManager.t("DashboardOpenReviewItems") : LanguageManager.t("DashboardNoOpenReviewItems")}</p>
                     </article>
                 `;
             })
@@ -652,9 +652,9 @@ export default class DashboardPage {
             ? `
                 <div class="platform-intelligence__header">
                     <div>
-                        <span class="platform-intelligence__eyebrow">Expert Review Queue</span>
-                        <strong>${summary.total} item${summary.total === 1 ? "" : "s"} require review</strong>
-                        <p>Highest priority: ${highestPriority.stageLabel} · ${highestPriority.title} · ${highestPriority.reason}</p>
+                        <span class="platform-intelligence__eyebrow">${LanguageManager.t("DashboardExpertReviewQueue")}</span>
+                        <strong>${summary.total} ${summary.total === 1 ? LanguageManager.t("DashboardReviewItemSingular") : LanguageManager.t("DashboardReviewItemPlural")} ${LanguageManager.t("DashboardRequireReview")}</strong>
+                        <p>${LanguageManager.t("DashboardHighestPriority")}: ${highestPriority.stageLabel} · ${highestPriority.title} · ${highestPriority.reason}</p>
                     </div>
                     <span class="platform-intelligence__score">${summary.total}</span>
                 </div>
@@ -662,20 +662,20 @@ export default class DashboardPage {
             : `
                 <div class="platform-intelligence__header">
                     <div>
-                        <span class="platform-intelligence__eyebrow">Expert Review Queue</span>
-                        <strong>No open expert review items</strong>
-                        <p>The current workflow does not contain unresolved review blockers.</p>
+                        <span class="platform-intelligence__eyebrow">${LanguageManager.t("DashboardExpertReviewQueue")}</span>
+                        <strong>${LanguageManager.t("DashboardNoOpenExpertReviewItems")}</strong>
+                        <p>${LanguageManager.t("DashboardNoUnresolvedReviewBlockers")}</p>
                     </div>
                     <span class="platform-intelligence__score">0</span>
                 </div>
             `;
 
         const blockedNotice = summary.hasBlockedItems
-            ? `<p class="platform-intelligence__note">Blocked review items require attention before downstream decision or report use.</p>`
+            ? `<p class="platform-intelligence__note">${LanguageManager.t("DashboardBlockedReviewItemsNotice")}</p>`
             : "";
 
         return `
-            <section class="platform-intelligence dashboard-review-queue" aria-label="Expert Review Queue">
+            <section class="platform-intelligence dashboard-review-queue" aria-label="${LanguageManager.t("DashboardExpertReviewQueue")}">
                 ${topItem}
                 <div class="platform-intelligence__grid">
                     ${stageItems}
