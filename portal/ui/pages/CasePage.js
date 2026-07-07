@@ -12,6 +12,7 @@ import ActionBar from "../components/ActionBar.js";
 import WorkspaceTable from "../components/WorkspaceTable.js";
 import EmptyState from "../components/EmptyState.js";
 import StatusBadge from "../components/StatusBadge.js";
+import Notification from "../components/Notification.js";
 import FormDialog from "../components/FormDialog.js";
 import DetailPanel from "../components/DetailPanel.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
@@ -725,7 +726,7 @@ export default class CasePage {
         );
 
         if (!orphanRecords.length) {
-            window.alert(LanguageManager.t("CaseNoOrphanRecords"));
+            Notification.info(LanguageManager.t("CaseNoOrphanRecords"));
             return;
         }
 
@@ -743,7 +744,7 @@ export default class CasePage {
             record.manager.delete(record.item.id);
         });
 
-        window.alert(`${orphanRecords.length} ${LanguageManager.t("CaseOrphanRecordsDeleted")}`);
+        Notification.success(`${orphanRecords.length} ${LanguageManager.t("CaseOrphanRecordsDeleted")}`);
         this.refresh();
     }
 
@@ -751,7 +752,7 @@ export default class CasePage {
         const current = CaseManager.getCurrent();
 
         if (!current) {
-            window.alert(LanguageManager.t("CaseOpenBeforeRepairing"));
+            Notification.info(LanguageManager.t("CaseOpenBeforeRepairing"));
             return;
         }
 
@@ -893,7 +894,7 @@ export default class CasePage {
         });
         CaseManager.save();
 
-        window.alert(LanguageManager.t("CaseWorkflowLinksRepaired"));
+        Notification.success(LanguageManager.t("CaseWorkflowLinksRepaired"));
         this.refresh();
     }
 
@@ -901,7 +902,7 @@ export default class CasePage {
         const current = CaseManager.getCurrent();
 
         if (!current) {
-            window.alert(LanguageManager.t("CaseOpenBeforeCreatingChain"));
+            Notification.info(LanguageManager.t("CaseOpenBeforeCreatingChain"));
             return;
         }
 
