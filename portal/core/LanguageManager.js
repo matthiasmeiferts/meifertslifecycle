@@ -319,6 +319,62 @@ export default class LanguageManager {
                 en: "Standard Review",
                 de: "Standardprüfung"
             },
+            ReportDraftsMetric: {
+                en: "Drafts",
+                de: "Entwürfe"
+            },
+            ReportApprovedMetric: {
+                en: "Approved",
+                de: "Freigegeben"
+            },
+            ReportArchivedMetric: {
+                en: "Archived",
+                de: "Archiviert"
+            },
+            ReportWorkflowLinksValid: {
+                en: "Workflow links valid",
+                de: "Workflow-Verknüpfungen gültig"
+            },
+            ReportWorkflowLinksIncomplete: {
+                en: "Workflow links incomplete",
+                de: "Workflow-Verknüpfungen unvollständig"
+            },
+            ReportControlledDemoReportLabel: {
+                en: "Controlled Demo Report",
+                de: "Kontrollierter Demo-Report"
+            },
+            ReportReadyForProfessionalReview: {
+                en: "Ready for professional review",
+                de: "Bereit zur fachlichen Prüfung"
+            },
+            ReportDemoRecordsAvailableText: {
+                en: "{complete} of {total} demo records available. {integrityLabel}.",
+                de: "{complete} von {total} Demo-Datensätzen verfügbar. {integrityLabel}."
+            },
+            ReportFinalOutputStateAriaLabel: {
+                en: "Final output state",
+                de: "Finaler Ausgabezustand"
+            },
+            ReportDecisionToReportFlowLabel: {
+                en: "Decision → Report",
+                de: "Decision → Report"
+            },
+            ReportIntelligenceComplete: {
+                en: "Report intelligence complete",
+                de: "Report Intelligence vollständig"
+            },
+            ReportIntelligenceEarly: {
+                en: "Report intelligence early",
+                de: "Report Intelligence frühe Phase"
+            },
+            ReportIntelligenceSnapshotAriaLabel: {
+                en: "Report intelligence snapshot",
+                de: "Report Intelligence Snapshot"
+            },
+            ReportWorkspaceEyebrow: {
+                en: "Report Workspace",
+                de: "Report Workspace"
+            },
             ReportContextTitle: {
                 en: "Report Context",
                 de: "Berichtskontext"

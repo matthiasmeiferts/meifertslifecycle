@@ -92,7 +92,7 @@ export default class ReportPage {
 
     static createHeader(activeReport = null) {
         return SectionHeader.create({
-            eyebrow: "Report Workspace",
+            eyebrow: LanguageManager.t("ReportWorkspaceEyebrow"),
             title: LanguageManager.t("FinalReportsLabel"),
             description: activeReport
                 ? `Active report: ${this.getDisplayTitle(activeReport)}`
@@ -116,9 +116,9 @@ export default class ReportPage {
         grid.className = "metrics-grid";
 
         grid.appendChild(MetricCard.create(LanguageManager.t("FinalReportsLabel"), reports.length));
-        grid.appendChild(MetricCard.create("Drafts", draftCount));
-        grid.appendChild(MetricCard.create("Approved", approvedCount));
-        grid.appendChild(MetricCard.create("Archived", archivedCount));
+        grid.appendChild(MetricCard.create(LanguageManager.t("ReportDraftsMetric"), draftCount));
+        grid.appendChild(MetricCard.create(LanguageManager.t("ReportApprovedMetric"), approvedCount));
+        grid.appendChild(MetricCard.create(LanguageManager.t("ReportArchivedMetric"), archivedCount));
 
         return grid;
     }
@@ -131,21 +131,21 @@ export default class ReportPage {
         }
 
         const integrityLabel = status.integrity?.isValid
-            ? "Workflow links valid"
-            : "Workflow links incomplete";
+            ? LanguageManager.t("ReportWorkflowLinksValid")
+            : LanguageManager.t("ReportWorkflowLinksIncomplete");
 
         const container = document.createElement("section");
         container.className = "workflow-card report-demo-review";
         container.innerHTML = `
             <div>
-                <span class="report-demo-review__eyebrow">Controlled Demo Report</span>
-                <strong>Ready for professional review</strong>
-                <p>${status.completeRecords} of ${status.totalRecords} demo records available. ${integrityLabel}.</p>
+                <span class="report-demo-review__eyebrow">${LanguageManager.t("ReportControlledDemoReportLabel")}</span>
+                <strong>${LanguageManager.t("ReportReadyForProfessionalReview")}</strong>
+                <p>${LanguageManager.t("ReportDemoRecordsAvailableText").replace("{complete}", status.completeRecords).replace("{total}", status.totalRecords).replace("{integrityLabel}", integrityLabel)}</p>
             </div>
             <div class="report-demo-review__actions">
                 <span class="report-demo-review__status">${status.percent}%</span>
                 <button type="button" class="report-demo-review__print" data-demo-report-print>
-                    Print / Save PDF
+                    ${LanguageManager.t("ReportPrintSavePdfAction")}
                 </button>
             </div>
         `;
@@ -187,10 +187,10 @@ export default class ReportPage {
         const outputState = this.getOutputState(report);
 
         return `
-            <section class="workspace-flow" aria-label="Final output state">
+            <section class="workspace-flow" aria-label="${LanguageManager.t("ReportFinalOutputStateAriaLabel")}">
                 <div class="workspace-flow__header">
                     <span class="workspace-flow__eyebrow">${LanguageManager.t("ReportFinalOutputLabel")}</span>
-                    <strong>Decision → Report</strong>
+                    <strong>${LanguageManager.t("ReportDecisionToReportFlowLabel")}</strong>
                 </div>
 
                 <div class="workspace-flow__steps">
@@ -372,10 +372,10 @@ export default class ReportPage {
             outputQualitySignal,
             nextAction,
             label: readinessPercent >= 100
-                ? "Report intelligence complete"
+                ? LanguageManager.t("ReportIntelligenceComplete")
                 : readinessPercent >= 50
                     ? LanguageManager.t("ReportIntelligenceDeveloping")
-                    : "Report intelligence early"
+                    : LanguageManager.t("ReportIntelligenceEarly")
         };
     }
 
@@ -507,7 +507,7 @@ export default class ReportPage {
         const intelligence = this.getReportIntelligence(report);
 
         return `
-            <section class="report-intelligence intelligence-snapshot" aria-label="Report intelligence snapshot">
+            <section class="report-intelligence intelligence-snapshot" aria-label="${LanguageManager.t("ReportIntelligenceSnapshotAriaLabel")}">
                 <div class="report-intelligence__header intelligence-snapshot__header">
                     <div>
                         <span class="report-intelligence__eyebrow intelligence-snapshot__eyebrow">${LanguageManager.t("ReportIntelligenceLabel")}</span>
@@ -648,7 +648,7 @@ export default class ReportPage {
     static createContent(reports = this.getReports()) {
         if (!reports.length) {
             return EmptyState.create({
-                eyebrow: "Report Workspace",
+                eyebrow: LanguageManager.t("ReportWorkspaceEyebrow"),
                 title: LanguageManager.t("ReportEmptyTitle"),
                 description: LanguageManager.t("FoundationReportEmptyDescription"),
                 actionLabel: LanguageManager.t("ReportNewReportAction"),
@@ -1020,7 +1020,7 @@ export default class ReportPage {
                         ${sourceTitle ? `<p class="report-preview__source-title">${LanguageManager.t("ReportDecisionBasisLabel")}: ${this.escapeHtml(sourceTitle)}</p>` : ""}
                     </div>
                     <div class="report-preview__status">
-                        <span>Status</span>
+                        <span>${LanguageManager.t("ReportStatusLabel")}</span>
                         <strong>${this.escapeHtml(this.formatReportStatus(report))}</strong>
                     </div>
                 </header>
