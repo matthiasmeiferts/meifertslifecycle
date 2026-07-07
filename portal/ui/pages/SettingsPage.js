@@ -118,7 +118,7 @@ export default class SettingsPage {
         panel.querySelector("[data-action='set-language']")
             .addEventListener("change", event => {
                 LanguageManager.setLanguage(event.target.value);
-                Notification.success("Interface language preference saved.");
+                Notification.success(LanguageManager.t("InterfaceLanguageSaved"));
                 this.refresh();
             });
 
@@ -267,7 +267,7 @@ export default class SettingsPage {
 
         const dataset = DemoDatasetManager.rebuild();
 
-        Notification.success("Controlled demo dataset rebuilt.");
+        Notification.success(LanguageManager.t("SettingsControlledDemoDatasetRebuilt"));
         window.setTimeout(() => {
             window.location.hash = "reports";
             window.location.reload();
@@ -284,7 +284,7 @@ export default class SettingsPage {
         const status = DemoDatasetManager.getStatus();
 
         if (!status.isActive) {
-            Notification.info("No controlled demo dataset to reset.");
+            Notification.info(LanguageManager.t("SettingsNoControlledDemoDatasetToReset"));
             return;
         }
 
@@ -298,7 +298,7 @@ export default class SettingsPage {
 
         DemoDatasetManager.reset();
 
-        Notification.success("Controlled demo workflow data reset.");
+        Notification.success(LanguageManager.t("SettingsControlledDemoWorkflowDataReset"));
         window.setTimeout(() => window.location.reload(), 250);
     }
 
@@ -307,7 +307,7 @@ export default class SettingsPage {
             .reduce((sum, item) => sum + StorageManager.count(item.key), 0);
 
         if (!total) {
-            Notification.info("No workflow test data to clear.");
+            Notification.info(LanguageManager.t("SettingsNoWorkflowTestDataToClear"));
             return;
         }
 
@@ -321,7 +321,7 @@ export default class SettingsPage {
 
         DemoDatasetManager.clearWorkflowData();
 
-        Notification.success("Workflow test data cleared.");
+        Notification.success(LanguageManager.t("SettingsWorkflowTestDataCleared"));
         window.setTimeout(() => window.location.reload(), 250);
     }
 }

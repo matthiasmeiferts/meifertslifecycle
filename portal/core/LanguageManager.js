@@ -5335,6 +5335,26 @@ export default class LanguageManager {
                 en: "workflow records? Cases, buildings, and inspections will be preserved.",
                 de: "Workflow-Datensätzen? Cases, Gebäude und Inspections bleiben erhalten."
             },
+            SettingsControlledDemoDatasetRebuilt: {
+                en: "Controlled demo dataset rebuilt.",
+                de: "Kontrollierter Demo-Datensatz neu erstellt."
+            },
+            SettingsNoControlledDemoDatasetToReset: {
+                en: "No controlled demo dataset to reset.",
+                de: "Kein kontrollierter Demo-Datensatz zum Zurücksetzen vorhanden."
+            },
+            SettingsControlledDemoWorkflowDataReset: {
+                en: "Controlled demo workflow data reset.",
+                de: "Kontrollierte Demo-Workflow-Daten zurückgesetzt."
+            },
+            SettingsNoWorkflowTestDataToClear: {
+                en: "No workflow test data to clear.",
+                de: "Keine Workflow-Testdaten zum Löschen vorhanden."
+            },
+            SettingsWorkflowTestDataCleared: {
+                en: "Workflow test data cleared.",
+                de: "Workflow-Testdaten gelöscht."
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."
