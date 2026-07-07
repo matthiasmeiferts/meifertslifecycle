@@ -559,6 +559,14 @@ export default class LanguageManager {
                 en: "Select a report first.",
                 de: "Bitte zuerst einen Bericht auswählen."
             },
+            ReportOutputGovernanceDraftBlockedNotification: {
+                en: "Draft output is blocked by report output governance.",
+                de: "Draft Output wird durch Report Output Governance blockiert."
+            },
+            ReportOutputGovernanceExternalBlockedNotification: {
+                en: "External output is blocked by report output governance.",
+                de: "External Output wird durch Report Output Governance blockiert."
+            },
             ReportPrintDialogNotification: {
                 en: "Print dialog opened. Use Save as PDF in Safari.",
                 de: "Druckdialog geöffnet. In Safari „Als PDF sichern“ verwenden."
