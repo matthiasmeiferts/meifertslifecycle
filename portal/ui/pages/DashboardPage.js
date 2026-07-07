@@ -12,8 +12,10 @@ import AssessmentManager from "../../core/AssessmentManager.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
 import DecisionManager from "../../core/DecisionManager.js";
 import ReviewQueueManager from "../../core/ReviewQueueManager.js";
+import ReviewResolutionManager from "../../core/ReviewResolutionManager.js";
 import WorkflowValidationGateManager from "../../core/WorkflowValidationGateManager.js";
 import LanguageManager from "../../core/LanguageManager.js";
+import Notification from "../components/Notification.js";
 
 export default class DashboardPage {
 
@@ -82,6 +84,7 @@ export default class DashboardPage {
         // Bind navigation events after appending to DOM
         setTimeout(() => {
             this.bindReadinessCardActions();
+            this.bindReviewResolutionActions();
         }, 0);
 
         return fragment;
@@ -491,6 +494,51 @@ export default class DashboardPage {
         });
     }
 
+    static bindReviewResolutionActions() {
+        document.querySelectorAll("[data-review-resolution-action]").forEach((button) => {
+            button.addEventListener("click", (event) => {
+                const action = event.currentTarget.dataset.reviewResolutionAction;
+                const queueItemId = event.currentTarget.dataset.reviewQueueId;
+
+                if (!action || !queueItemId) {
+                    Notification.warning(LanguageManager.t("DashboardReviewActionMissingSelection"));
+                    return;
+                }
+
+                const result = this.handleReviewResolutionAction(action, queueItemId);
+
+                if (!result) {
+                    Notification.warning(LanguageManager.t("DashboardReviewActionFailed"));
+                    return;
+                }
+
+                Notification.success(LanguageManager.t("DashboardReviewActionCompleted"));
+                WorkspaceController.render("dashboard");
+            });
+        });
+    }
+
+    static handleReviewResolutionAction(action, queueItemId) {
+        const data = {
+            reviewedBy: "MEIFERTS Building Intelligence",
+            reviewNotes: LanguageManager.t("DashboardReviewActionDefaultNote")
+        };
+
+        if (action === "resolve") {
+            return ReviewResolutionManager.resolveQueueItem(queueItemId, data);
+        }
+
+        if (action === "in-review") {
+            return ReviewResolutionManager.markInReview(queueItemId, data);
+        }
+
+        if (action === "reopen") {
+            return ReviewResolutionManager.reopenQueueItem(queueItemId, data);
+        }
+
+        return null;
+    }
+
     static getPlatformIntelligence(data = {}) {
         const readiness = this.getWorkflowReadiness
             ? this.getWorkflowReadiness(data)
@@ -677,12 +725,29 @@ export default class DashboardPage {
             ? `<p class="platform-intelligence__note">${LanguageManager.t("DashboardBlockedReviewItemsNotice")}</p>`
             : "";
 
+        const actionPanel = highestPriority
+            ? `
+                <div class="platform-intelligence__actions" data-review-resolution-panel>
+                    <button type="button" class="button secondary" data-review-resolution-action="in-review" data-review-queue-id="${highestPriority.id}">
+                        ${LanguageManager.t("DashboardReviewMarkInReviewAction")}
+                    </button>
+                    <button type="button" class="button" data-review-resolution-action="resolve" data-review-queue-id="${highestPriority.id}">
+                        ${LanguageManager.t("DashboardReviewResolveAction")}
+                    </button>
+                    <button type="button" class="button secondary" data-review-resolution-action="reopen" data-review-queue-id="${highestPriority.id}">
+                        ${LanguageManager.t("DashboardReviewReopenAction")}
+                    </button>
+                </div>
+            `
+            : "";
+
         return `
             <section class="platform-intelligence dashboard-review-queue" aria-label="${LanguageManager.t("DashboardExpertReviewQueue")}">
                 ${topItem}
                 <div class="platform-intelligence__grid">
                     ${stageItems}
                 </div>
+                ${actionPanel}
                 ${blockedNotice}
             </section>
         `;

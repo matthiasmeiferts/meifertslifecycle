@@ -883,6 +883,34 @@ export default class LanguageManager {
                 en: "Blocked review items require attention before downstream decision or report use.",
                 de: "Blockierte Review-Items müssen vor nachgelagerter Decision- oder Report-Nutzung geprüft werden."
             },
+            DashboardReviewMarkInReviewAction: {
+                en: "Mark in review",
+                de: "In Review setzen"
+            },
+            DashboardReviewResolveAction: {
+                en: "Resolve",
+                de: "Lösen"
+            },
+            DashboardReviewReopenAction: {
+                en: "Reopen",
+                de: "Wieder öffnen"
+            },
+            DashboardReviewActionCompleted: {
+                en: "Review action completed.",
+                de: "Review-Aktion abgeschlossen."
+            },
+            DashboardReviewActionFailed: {
+                en: "Review action could not be completed.",
+                de: "Review-Aktion konnte nicht abgeschlossen werden."
+            },
+            DashboardReviewActionMissingSelection: {
+                en: "No review item selected.",
+                de: "Kein Review-Item ausgewählt."
+            },
+            DashboardReviewActionDefaultNote: {
+                en: "Dashboard review resolution action.",
+                de: "Dashboard Review Resolution Action."
+            },
             DashboardValidationGate: {
                 en: "Workflow Validation Gate",
                 de: "Workflow Validation Gate"
