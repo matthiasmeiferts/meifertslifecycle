@@ -654,7 +654,7 @@ export default class DashboardPage {
     }
 
     static getExpertReviewQueueData() {
-        const currentCase = CaseManager.get();
+        const currentCase = CaseManager.getCurrent();
 
         const queue = currentCase
             ? ReviewQueueManager.getByCase(currentCase.id)
@@ -824,7 +824,7 @@ export default class DashboardPage {
     }
 
     static getValidationGateData() {
-        const currentCase = CaseManager.get();
+        const currentCase = CaseManager.getCurrent();
         const caseId = currentCase?.id || null;
 
         return {
