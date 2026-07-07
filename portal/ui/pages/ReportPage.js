@@ -203,7 +203,43 @@ export default class ReportPage {
                         </div>
                     `).join("")}
                 </div>
+                            ${this.renderOutputGovernanceState(report)}
             </section>
+        `;
+    }
+
+    static renderOutputGovernanceState(report = {}) {
+        const draftOutput = ReportOutputGovernanceManager.validateDraftOutput(report);
+        const finalOutput = ReportOutputGovernanceManager.validateFinalOutput(report);
+        const externalOutput = ReportOutputGovernanceManager.validateExternalOutput(report);
+
+        const items = [
+            {
+                label: LanguageManager.t("ReportOutputGovernanceDraftStatusLabel"),
+                result: draftOutput
+            },
+            {
+                label: LanguageManager.t("ReportOutputGovernanceFinalStatusLabel"),
+                result: finalOutput
+            },
+            {
+                label: LanguageManager.t("ReportOutputGovernanceExternalStatusLabel"),
+                result: externalOutput
+            }
+        ];
+
+        return `
+            <div class="workflow-context__meta report-output-governance-state">
+                <strong>${LanguageManager.t("ReportOutputGovernanceStateLabel")}</strong>
+                ${items.map(item => `
+                    <span>
+                        ${item.label}: ${item.result.canProceed
+                            ? LanguageManager.t("ReportOutputGovernancePassedLabel")
+                            : LanguageManager.t("ReportOutputGovernanceBlockedLabel")}
+                    </span>
+                    <small>${LanguageManager.t("ReportOutputGovernanceReasonLabel")}: ${item.result.reason}</small>
+                `).join("")}
+            </div>
         `;
     }
 

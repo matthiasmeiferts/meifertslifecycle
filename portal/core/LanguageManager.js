@@ -559,6 +559,34 @@ export default class LanguageManager {
                 en: "Select a report first.",
                 de: "Bitte zuerst einen Bericht auswählen."
             },
+            ReportOutputGovernanceStateLabel: {
+                en: "Report output governance",
+                de: "Report Output Governance"
+            },
+            ReportOutputGovernanceDraftStatusLabel: {
+                en: "Draft output",
+                de: "Draft Output"
+            },
+            ReportOutputGovernanceFinalStatusLabel: {
+                en: "Final output",
+                de: "Final Output"
+            },
+            ReportOutputGovernanceExternalStatusLabel: {
+                en: "External output",
+                de: "External Output"
+            },
+            ReportOutputGovernancePassedLabel: {
+                en: "Passed",
+                de: "Freigegeben"
+            },
+            ReportOutputGovernanceBlockedLabel: {
+                en: "Blocked",
+                de: "Blockiert"
+            },
+            ReportOutputGovernanceReasonLabel: {
+                en: "Reason",
+                de: "Grund"
+            },
             ReportOutputGovernanceDraftBlockedNotification: {
                 en: "Draft output is blocked by report output governance.",
                 de: "Draft Output wird durch Report Output Governance blockiert."
