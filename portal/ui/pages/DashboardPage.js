@@ -11,6 +11,7 @@ import FindingManager from "../../core/FindingManager.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
 import RecommendationManager from "../../core/RecommendationManager.js";
 import DecisionManager from "../../core/DecisionManager.js";
+import ReviewQueueManager from "../../core/ReviewQueueManager.js";
 import LanguageManager from "../../core/LanguageManager.js";
 
 export default class DashboardPage {
@@ -58,6 +59,7 @@ export default class DashboardPage {
         const readinessCards = this.createWorkspaceReadinessCards();
         const bottleneckIndicator = this.createWorkflowBottleneckIndicator();
         const qualitySummary = this.createWorkflowQualitySummary();
+        const expertReviewQueue = this.createExpertReviewQueueSnapshot();
         const platformIntelligence = this.createPlatformIntelligence();
         const workflow = WorkflowCard.create(
             WorkspaceController.getWorkflowState()
@@ -70,6 +72,7 @@ export default class DashboardPage {
         fragment.appendChild(readinessCards);
         fragment.appendChild(bottleneckIndicator);
         fragment.appendChild(qualitySummary);
+        fragment.appendChild(expertReviewQueue);
         fragment.appendChild(platformIntelligence);
         fragment.appendChild(workflow);
 
@@ -597,6 +600,95 @@ export default class DashboardPage {
                     : LanguageManager.t("DashboardPlatformCoverageDeveloping")
             }
         };
+    }
+
+    static getExpertReviewQueueData() {
+        const currentCase = CaseManager.get();
+
+        const queue = currentCase
+            ? ReviewQueueManager.getByCase(currentCase.id)
+            : ReviewQueueManager.getQueue();
+
+        const summary = currentCase
+            ? ReviewQueueManager.getSummary({ caseId: currentCase.id })
+            : ReviewQueueManager.getSummary();
+
+        return {
+            queue,
+            summary,
+            currentCase
+        };
+    }
+
+    static renderExpertReviewQueueSnapshot(data = {}) {
+        const queueData = data.queue ? data : this.getExpertReviewQueueData();
+        const queue = queueData.queue || [];
+        const summary = queueData.summary || { total: 0, byStage: {}, highestPriority: null, hasBlockedItems: false };
+        const highestPriority = summary.highestPriority;
+
+        const stageLabels = {
+            evidence: "Evidence",
+            finding: "Finding",
+            assessment: "Assessment",
+            recommendation: "Recommendation",
+            decision: "Decision",
+            report: "Report"
+        };
+
+        const stageItems = Object.entries(stageLabels)
+            .map(([key, label]) => {
+                const count = summary.byStage?.[key] || 0;
+                return `
+                    <article class="platform-intelligence__card platform-intelligence__card--${count ? "active" : "ready"}">
+                        <span>${label}</span>
+                        <strong>${count}</strong>
+                        <p>${count ? "Open review items" : "No open review items"}</p>
+                    </article>
+                `;
+            })
+            .join("");
+
+        const topItem = highestPriority
+            ? `
+                <div class="platform-intelligence__header">
+                    <div>
+                        <span class="platform-intelligence__eyebrow">Expert Review Queue</span>
+                        <strong>${summary.total} item${summary.total === 1 ? "" : "s"} require review</strong>
+                        <p>Highest priority: ${highestPriority.stageLabel} · ${highestPriority.title} · ${highestPriority.reason}</p>
+                    </div>
+                    <span class="platform-intelligence__score">${summary.total}</span>
+                </div>
+            `
+            : `
+                <div class="platform-intelligence__header">
+                    <div>
+                        <span class="platform-intelligence__eyebrow">Expert Review Queue</span>
+                        <strong>No open expert review items</strong>
+                        <p>The current workflow does not contain unresolved review blockers.</p>
+                    </div>
+                    <span class="platform-intelligence__score">0</span>
+                </div>
+            `;
+
+        const blockedNotice = summary.hasBlockedItems
+            ? `<p class="platform-intelligence__note">Blocked review items require attention before downstream decision or report use.</p>`
+            : "";
+
+        return `
+            <section class="platform-intelligence dashboard-review-queue" aria-label="Expert Review Queue">
+                ${topItem}
+                <div class="platform-intelligence__grid">
+                    ${stageItems}
+                </div>
+                ${blockedNotice}
+            </section>
+        `;
+    }
+
+    static createExpertReviewQueueSnapshot(data = {}) {
+        const container = document.createElement("section");
+        container.innerHTML = this.renderExpertReviewQueueSnapshot(data);
+        return container;
     }
 
     static renderPlatformIntelligence(data = {}) {
