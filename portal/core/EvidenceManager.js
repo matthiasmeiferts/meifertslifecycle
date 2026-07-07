@@ -140,7 +140,26 @@ export default class EvidenceManager {
             sourceRequiredEvidenceRaw: data.sourceRequiredEvidenceRaw || "",
             sourcePolicy: data.sourcePolicy || "",
             scopeId: data.scopeId || null,
-            confidence: data.confidence || null,
+
+            // Foundation 1.1-A: Upload and capture metadata
+            fileName: data.fileName || "",
+            fileType: data.fileType || "",
+            fileSize: data.fileSize ?? null,
+            mimeType: data.mimeType || "",
+            fileReference: data.fileReference || "",
+            fileSource: data.fileSource || "",
+            captureMethod: data.captureMethod || "manual",
+            capturedAt: data.capturedAt || null,
+            locationLabel: data.locationLabel || data.location || "",
+            inspectionArea: data.inspectionArea || "",
+            measurementValue: data.measurementValue ?? null,
+            measurementUnit: data.measurementUnit || "",
+            reviewStatus: data.reviewStatus || "Needs review",
+            expertReviewRequired: data.expertReviewRequired !== undefined
+                ? data.expertReviewRequired
+                : true,
+
+            confidence: data.confidence ?? null,
             
             createdBy: data.createdBy || this.defaultCreator,
             createdAt: data.createdAt || new Date().toISOString(),
@@ -350,6 +369,16 @@ export default class EvidenceManager {
         if (data.confidence !== null && data.confidence !== undefined &&
             (typeof data.confidence !== 'number' || data.confidence < 0 || data.confidence > 100)) {
             errors.push("Confidence must be number between 0-100");
+        }
+
+        if (data.fileSize !== null && data.fileSize !== undefined &&
+            (typeof data.fileSize !== "number" || data.fileSize < 0)) {
+            errors.push("File size must be a positive number");
+        }
+
+        if (data.measurementValue !== null && data.measurementValue !== undefined &&
+            typeof data.measurementValue !== "number") {
+            errors.push("Measurement value must be a number");
         }
 
         return errors;
