@@ -4019,6 +4019,310 @@ export default class LanguageManager {
                 en: "inspection question(s) require evidence.",
                 de: "Inspection-Frage(n) benötigen Evidence."
             },
+            BuildingWorkspaceTitle: {
+                en: "Building Workspace",
+                de: "Building Workspace"
+            },
+            BuildingTitlePlural: {
+                en: "Buildings",
+                de: "Gebäude"
+            },
+            BuildingActivePrefix: {
+                en: "Active building",
+                de: "Aktives Gebäude"
+            },
+            BuildingHeaderDescription: {
+                en: "Create and manage building master data.",
+                de: "Gebäude-Stammdaten erstellen und verwalten."
+            },
+            BuildingNewAction: {
+                en: "+ New Building",
+                de: "+ Neues Gebäude"
+            },
+            BuildingSearchPlaceholder: {
+                en: "Search buildings...",
+                de: "Gebäude suchen..."
+            },
+            BuildingRefreshAction: {
+                en: "Refresh",
+                de: "Aktualisieren"
+            },
+            BuildingCloseAction: {
+                en: "Close Building",
+                de: "Gebäude schließen"
+            },
+            BuildingEmptyTitle: {
+                en: "No buildings available",
+                de: "Keine Gebäude verfügbar"
+            },
+            BuildingEmptyDescription: {
+                en: "Create your first building to begin building intelligence mapping.",
+                de: "Erstes Gebäude erstellen, um das Building-Intelligence-Mapping zu starten."
+            },
+            BuildingColumnName: {
+                en: "Building",
+                de: "Gebäude"
+            },
+            BuildingColumnAddress: {
+                en: "Address",
+                de: "Adresse"
+            },
+            BuildingColumnType: {
+                en: "Type",
+                de: "Typ"
+            },
+            BuildingColumnStatus: {
+                en: "Status",
+                de: "Status"
+            },
+            BuildingColumnYear: {
+                en: "Year",
+                de: "Baujahr"
+            },
+            BuildingColumnUpdated: {
+                en: "Updated",
+                de: "Aktualisiert"
+            },
+            BuildingColumnActions: {
+                en: "Actions",
+                de: "Aktionen"
+            },
+            BuildingNoSelectionTitle: {
+                en: "No Building Selected",
+                de: "Kein Gebäude ausgewählt"
+            },
+            BuildingNoActiveBuilding: {
+                en: "No active building",
+                de: "Kein aktives Gebäude"
+            },
+            BuildingNextStepLabel: {
+                en: "Next Step",
+                de: "Nächster Schritt"
+            },
+            BuildingCreateOrOpen: {
+                en: "Create or open a building",
+                de: "Gebäude erstellen oder öffnen"
+            },
+            BuildingOpenAction: {
+                en: "Open",
+                de: "Öffnen"
+            },
+            BuildingEditAction: {
+                en: "Edit",
+                de: "Bearbeiten"
+            },
+            BuildingDeleteAction: {
+                en: "Delete",
+                de: "Löschen"
+            },
+            BuildingNewTitle: {
+                en: "New Building",
+                de: "Neues Gebäude"
+            },
+            BuildingCreateAction: {
+                en: "Create Building",
+                de: "Gebäude erstellen"
+            },
+            BuildingEditTitle: {
+                en: "Edit Building",
+                de: "Gebäude bearbeiten"
+            },
+            BuildingSaveAction: {
+                en: "Save Building",
+                de: "Gebäude speichern"
+            },
+            BuildingNameRequired: {
+                en: "Building name is required.",
+                de: "Gebäudename ist erforderlich."
+            },
+            BuildingCreatedNotification: {
+                en: "Building created.",
+                de: "Gebäude erstellt."
+            },
+            BuildingUpdatedNotification: {
+                en: "Building updated.",
+                de: "Gebäude aktualisiert."
+            },
+            BuildingDeletedNotification: {
+                en: "Building deleted.",
+                de: "Gebäude gelöscht."
+            },
+            BuildingDeleteTitle: {
+                en: "Delete Building",
+                de: "Gebäude löschen"
+            },
+            BuildingDeleteConfirmPrefix: {
+                en: "Delete building",
+                de: "Gebäude löschen"
+            },
+            BuildingDeleteConfirmSuffix: {
+                en: "This action cannot be undone.",
+                de: "Diese Aktion kann nicht rückgängig gemacht werden."
+            },
+            BuildingCancelAction: {
+                en: "Cancel",
+                de: "Abbrechen"
+            },
+            BuildingNameField: {
+                en: "Building Name",
+                de: "Gebäudename"
+            },
+            BuildingNamePlaceholder: {
+                en: "Building name",
+                de: "Gebäudename"
+            },
+            BuildingAddressField: {
+                en: "Address",
+                de: "Adresse"
+            },
+            BuildingAddressPlaceholder: {
+                en: "Street, city, country",
+                de: "Straße, Stadt, Land"
+            },
+            BuildingTypeField: {
+                en: "Building Type",
+                de: "Gebäudetyp"
+            },
+            BuildingYearBuiltField: {
+                en: "Year Built",
+                de: "Baujahr"
+            },
+            BuildingYearBuiltPlaceholder: {
+                en: "e.g. 1920",
+                de: "z. B. 1920"
+            },
+            BuildingTypeResidential: {
+                en: "Residential",
+                de: "Wohnen"
+            },
+            BuildingTypeOffice: {
+                en: "Office",
+                de: "Büro"
+            },
+            BuildingTypeRetail: {
+                en: "Retail",
+                de: "Einzelhandel"
+            },
+            BuildingTypeMixedUse: {
+                en: "Mixed Use",
+                de: "Mischnutzung"
+            },
+            BuildingTypeIndustrial: {
+                en: "Industrial",
+                de: "Industrie"
+            },
+            BuildingTypeHotel: {
+                en: "Hotel",
+                de: "Hotel"
+            },
+            BuildingTypeOther: {
+                en: "Other",
+                de: "Sonstige"
+            },
+            BuildingStatusDraft: {
+                en: "Draft",
+                de: "Entwurf"
+            },
+            BuildingStatusActive: {
+                en: "Active",
+                de: "Aktiv"
+            },
+            BuildingStatusReview: {
+                en: "Review",
+                de: "Prüfung"
+            },
+            BuildingStatusArchived: {
+                en: "Archived",
+                de: "Archiviert"
+            },
+            BuildingIntelligenceLabel: {
+                en: "Building Intelligence",
+                de: "Building Intelligence"
+            },
+            BuildingLifecycleComplete: {
+                en: "Building lifecycle complete",
+                de: "Building Lifecycle vollständig"
+            },
+            BuildingLifecycleDeveloping: {
+                en: "Building lifecycle developing",
+                de: "Building Lifecycle in Entwicklung"
+            },
+            BuildingLifecycleEarly: {
+                en: "Building lifecycle early",
+                de: "Building Lifecycle frühe Phase"
+            },
+            BuildingLifecycleStagesRepresented: {
+                en: "lifecycle stages represented",
+                de: "Lifecycle-Stufen abgebildet"
+            },
+            BuildingLifecycleReadiness: {
+                en: "Lifecycle Readiness",
+                de: "Lifecycle-Bereitschaft"
+            },
+            BuildingLifecycleReadinessDescription: {
+                en: "Coverage across Inspection, Evidence, Finding, Assessment, Recommendation, Decision and Report.",
+                de: "Abdeckung über Inspection, Evidence, Finding, Assessment, Recommendation, Decision und Report."
+            },
+            BuildingTechnicalRiskSignalLabel: {
+                en: "Technical Risk Signal",
+                de: "Technisches Risikosignal"
+            },
+            BuildingNextActionLabel: {
+                en: "Next Building Action",
+                de: "Nächste Gebäude-Aktion"
+            },
+            BuildingLowTechnicalSignal: {
+                en: "Low technical signal",
+                de: "Geringes technisches Signal"
+            },
+            BuildingLowTechnicalSignalDescription: {
+                en: "Building risk logic is still light. More inspection evidence and findings are needed.",
+                de: "Die Gebäude-Risikologik ist noch schwach. Weitere Inspection Evidence und Findings sind erforderlich."
+            },
+            BuildingHighTechnicalSignal: {
+                en: "High technical signal",
+                de: "Starkes technisches Signal"
+            },
+            BuildingHighTechnicalSignalDescription: {
+                en: "Multiple technical signals are present. Review lifecycle impact before recommendation or decision.",
+                de: "Mehrere technische Signale liegen vor. Lifecycle-Auswirkung vor Recommendation oder Decision prüfen."
+            },
+            BuildingModerateTechnicalSignal: {
+                en: "Moderate technical signal",
+                de: "Mittleres technisches Signal"
+            },
+            BuildingModerateTechnicalSignalDescription: {
+                en: "The building contains usable technical signals, but validation may still be needed.",
+                de: "Das Gebäude enthält nutzbare technische Signale, benötigt aber möglicherweise noch Validierung."
+            },
+            BuildingStrengthenStagePrefix: {
+                en: "Strengthen",
+                de: "Stufe stärken"
+            },
+            BuildingMissingStageDescriptionSuffix: {
+                en: "data is missing for this building. Complete this stage before relying on final lifecycle output.",
+                de: "Daten fehlen für dieses Gebäude. Diese Stufe vervollständigen, bevor finaler Lifecycle Output verwendet wird."
+            },
+            BuildingReviewLifecycleOutput: {
+                en: "Review building lifecycle output",
+                de: "Building Lifecycle Output prüfen"
+            },
+            BuildingReviewLifecycleOutputDescription: {
+                en: "All building intelligence stages are represented. Review consistency and final decision confidence.",
+                de: "Alle Building-Intelligence-Stufen sind abgebildet. Konsistenz und finales Decision-Vertrauen prüfen."
+            },
+            BuildingRegisterTitle: {
+                en: "Building Register",
+                de: "Gebäuderegister"
+            },
+            BuildingTypeBuilding: {
+                en: "Building",
+                de: "Gebäude"
+            },
+            BuildingStatusActiveLower: {
+                en: "Active",
+                de: "Aktiv"
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."

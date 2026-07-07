@@ -10,10 +10,32 @@ import FormDialog from "../components/FormDialog.js";
 import ModalDialog from "../components/ModalDialog.js";
 import Notification from "../components/Notification.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import LanguageManager from "../../core/LanguageManager.js";
 
 export default class BuildingPage {
 
     static searchQuery = "";
+
+    static formatBuildingValue(value) {
+        const map = {
+            Draft: LanguageManager.t("BuildingStatusDraft"),
+            Active: LanguageManager.t("BuildingStatusActive"),
+            active: LanguageManager.t("BuildingStatusActiveLower"),
+            Review: LanguageManager.t("BuildingStatusReview"),
+            Archived: LanguageManager.t("BuildingStatusArchived"),
+            Residential: LanguageManager.t("BuildingTypeResidential"),
+            Office: LanguageManager.t("BuildingTypeOffice"),
+            Retail: LanguageManager.t("BuildingTypeRetail"),
+            "Mixed Use": LanguageManager.t("BuildingTypeMixedUse"),
+            Industrial: LanguageManager.t("BuildingTypeIndustrial"),
+            Hotel: LanguageManager.t("BuildingTypeHotel"),
+            Other: LanguageManager.t("BuildingTypeOther"),
+            building: LanguageManager.t("BuildingTypeBuilding")
+        };
+
+        return map[value] || value;
+    }
+
 
     static intelligenceStages = [
         {
@@ -62,15 +84,15 @@ export default class BuildingPage {
         const current = BuildingManager.get();
 
         return SectionHeader.create({
-            eyebrow: "Building Workspace",
-            title: "Buildings",
+            eyebrow: LanguageManager.t("BuildingWorkspaceTitle"),
+            title: LanguageManager.t("BuildingTitlePlural"),
             description: current
-                ? `Active building: ${current.name}`
-                : "Create and manage building master data.",
+                ? `${LanguageManager.t("BuildingActivePrefix")}: ${current.name}`
+                : LanguageManager.t("BuildingHeaderDescription"),
             actions: [
                 {
                     id: "new-building",
-                    label: "+ New Building",
+                    label: LanguageManager.t("BuildingNewAction"),
                     onClick: () => this.createBuilding()
                 }
             ]
@@ -82,7 +104,7 @@ export default class BuildingPage {
         wrapper.className = "workflow-card";
 
         wrapper.appendChild(SearchBar.create({
-            placeholder: "Search buildings...",
+            placeholder: LanguageManager.t("BuildingSearchPlaceholder"),
             onSearch: value => {
                 this.searchQuery = value.toLowerCase();
                 this.refresh();
@@ -92,12 +114,12 @@ export default class BuildingPage {
         wrapper.appendChild(ActionBar.create([
             {
                 id: "refresh",
-                label: "Refresh",
+                label: LanguageManager.t("BuildingRefreshAction"),
                 onClick: () => this.refresh()
             },
             {
                 id: "close-building",
-                label: "Close Building",
+                label: LanguageManager.t("BuildingCloseAction"),
                 onClick: () => {
                     BuildingManager.clear();
                     this.refresh();
@@ -137,37 +159,37 @@ export default class BuildingPage {
 
         if (!buildings.length) {
             return EmptyState.create({
-                eyebrow: "Building Workspace",
-                title: "No buildings available",
-                description: "Create your first building to begin building intelligence mapping.",
-                actionLabel: "+ New Building",
+                eyebrow: LanguageManager.t("BuildingWorkspaceTitle"),
+                title: LanguageManager.t("BuildingEmptyTitle"),
+                description: LanguageManager.t("BuildingEmptyDescription"),
+                actionLabel: LanguageManager.t("BuildingNewAction"),
                 onAction: () => this.createBuilding()
             });
         }
 
         return WorkspaceTable.create({
             columns: [
-                { key: "name", label: "Building" },
-                { key: "address", label: "Address" },
-                { key: "type", label: "Type" },
+                { key: "name", label: LanguageManager.t("BuildingColumnName") },
+                { key: "address", label: LanguageManager.t("BuildingColumnAddress") },
+                { key: "type", label: LanguageManager.t("BuildingColumnType"), render: row => this.formatBuildingValue(row.type || "Residential") },
                 {
                     key: "status",
-                    label: "Status",
-                    render: row => StatusBadge.create(row.status || "Draft", "warning")
+                    label: LanguageManager.t("BuildingColumnStatus"),
+                    render: row => StatusBadge.create(this.formatBuildingValue(row.status || "Draft"), "warning")
                 },
                 {
                     key: "yearBuilt",
-                    label: "Year",
+                    label: LanguageManager.t("BuildingColumnYear"),
                     render: row => row.yearBuilt || "—"
                 },
                 {
                     key: "updatedAt",
-                    label: "Updated",
+                    label: LanguageManager.t("BuildingColumnUpdated"),
                     render: row => this.formatDate(row.updatedAt)
                 },
                 {
                     key: "actions",
-                    label: "Actions",
+                    label: LanguageManager.t("BuildingColumnActions"),
                     render: row => this.createActionButtons(row)
                 }
             ],
@@ -180,18 +202,18 @@ export default class BuildingPage {
         const current = BuildingManager.get();
 
         if (!current) {
-            return DetailPanel.create("No Building Selected", [
-                { label: "Status", value: "No active building" },
-                { label: "Next Step", value: "Create or open a building" }
+            return DetailPanel.create(LanguageManager.t("BuildingNoSelectionTitle"), [
+                { label: LanguageManager.t("BuildingColumnStatus"), value: LanguageManager.t("BuildingNoActiveBuilding") },
+                { label: LanguageManager.t("BuildingNextStepLabel"), value: LanguageManager.t("BuildingCreateOrOpen") }
             ]);
         }
 
         return DetailPanel.create(current.name, [
-            { label: "Status", value: current.status || "Draft" },
-            { label: "Address", value: current.address || "—" },
-            { label: "Type", value: current.type || "Residential" },
-            { label: "Year Built", value: current.yearBuilt || "—" },
-            { label: "Updated", value: this.formatDate(current.updatedAt) }
+            { label: LanguageManager.t("BuildingColumnStatus"), value: this.formatBuildingValue(current.status || "Draft") },
+            { label: LanguageManager.t("BuildingColumnAddress"), value: current.address || "—" },
+            { label: LanguageManager.t("BuildingColumnType"), value: this.formatBuildingValue(current.type || "Residential") },
+            { label: LanguageManager.t("BuildingYearBuiltField"), value: current.yearBuilt || "—" },
+            { label: LanguageManager.t("BuildingColumnUpdated"), value: this.formatDate(current.updatedAt) }
         ]);
     }
 
@@ -200,9 +222,9 @@ export default class BuildingPage {
         wrapper.className = "table-actions";
 
         [
-            ["open", "Open"],
-            ["edit", "Edit"],
-            ["delete", "Delete"]
+            ["open", LanguageManager.t("BuildingOpenAction")],
+            ["edit", LanguageManager.t("BuildingEditAction")],
+            ["delete", LanguageManager.t("BuildingDeleteAction")]
         ].forEach(([action, label]) => {
             const button = document.createElement("button");
 
@@ -289,21 +311,21 @@ export default class BuildingPage {
         });
 
         let technicalRisk = {
-            label: "Low technical signal",
-            description: "Building risk logic is still light. More inspection evidence and findings are needed.",
+            label: LanguageManager.t("BuildingLowTechnicalSignal"),
+            description: LanguageManager.t("BuildingLowTechnicalSignalDescription"),
             tone: "draft"
         };
 
         if (technicalSignals >= 10) {
             technicalRisk = {
-                label: "High technical signal",
-                description: "Multiple technical signals are present. Review lifecycle impact before recommendation or decision.",
+                label: LanguageManager.t("BuildingHighTechnicalSignal"),
+                description: LanguageManager.t("BuildingHighTechnicalSignalDescription"),
                 tone: "ready"
             };
         } else if (technicalSignals >= 5) {
             technicalRisk = {
-                label: "Moderate technical signal",
-                description: "The building contains usable technical signals, but validation may still be needed.",
+                label: LanguageManager.t("BuildingModerateTechnicalSignal"),
+                description: LanguageManager.t("BuildingModerateTechnicalSignalDescription"),
                 tone: "active"
             };
         }
@@ -312,13 +334,13 @@ export default class BuildingPage {
 
         const nextAction = firstOpenStage
             ? {
-                label: `Strengthen ${firstOpenStage.label}`,
-                description: `${firstOpenStage.label} data is missing for this building. Complete this stage before relying on final lifecycle output.`,
+                label: `${LanguageManager.t("BuildingStrengthenStagePrefix")} ${firstOpenStage.label}`,
+                description: `${firstOpenStage.label} ${LanguageManager.t("BuildingMissingStageDescriptionSuffix")}`,
                 tone: "active"
             }
             : {
-                label: "Review building lifecycle output",
-                description: "All building intelligence stages are represented. Review consistency and final decision confidence.",
+                label: LanguageManager.t("BuildingReviewLifecycleOutput"),
+                description: LanguageManager.t("BuildingReviewLifecycleOutputDescription"),
                 tone: "ready"
             };
 
@@ -331,10 +353,10 @@ export default class BuildingPage {
             technicalRisk,
             nextAction,
             label: lifecycleReadiness >= 100
-                ? "Building lifecycle complete"
+                ? LanguageManager.t("BuildingLifecycleComplete")
                 : lifecycleReadiness >= 50
-                    ? "Building lifecycle developing"
-                    : "Building lifecycle early"
+                    ? LanguageManager.t("BuildingLifecycleDeveloping")
+                    : LanguageManager.t("BuildingLifecycleEarly")
         };
     }
 
@@ -342,31 +364,31 @@ export default class BuildingPage {
         const intelligence = this.getBuildingIntelligence(building, data);
 
         return `
-            <section class="building-intelligence intelligence-snapshot" aria-label="Building intelligence snapshot">
+            <section class="building-intelligence intelligence-snapshot" aria-label="${LanguageManager.t("BuildingIntelligenceLabel")}">
                 <div class="building-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="building-intelligence__eyebrow intelligence-snapshot__eyebrow">Building Intelligence</span>
+                        <span class="building-intelligence__eyebrow intelligence-snapshot__eyebrow">${LanguageManager.t("BuildingIntelligenceLabel")}</span>
                         <strong>${intelligence.label}</strong>
-                        <p>${intelligence.completedStages}/${intelligence.totalStages} lifecycle stages represented</p>
+                        <p>${intelligence.completedStages}/${intelligence.totalStages} ${LanguageManager.t("BuildingLifecycleStagesRepresented")}</p>
                     </div>
                     <span class="building-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
                 <div class="building-intelligence__grid intelligence-snapshot__grid">
                     <article class="building-intelligence__card intelligence-snapshot__card">
-                        <span>Lifecycle Readiness</span>
+                        <span>${LanguageManager.t("BuildingLifecycleReadiness")}</span>
                         <strong>${intelligence.lifecycleReadiness}%</strong>
-                        <p>Coverage across Inspection, Evidence, Finding, Assessment, Recommendation, Decision and Report.</p>
+                        <p>${LanguageManager.t("BuildingLifecycleReadinessDescription")}</p>
                     </article>
 
                     <article class="building-intelligence__card intelligence-snapshot__card building-intelligence__card--${intelligence.technicalRisk.tone} intelligence-snapshot__card--${intelligence.technicalRisk.tone}">
-                        <span>Technical Risk Signal</span>
+                        <span>${LanguageManager.t("BuildingTechnicalRiskSignalLabel")}</span>
                         <strong>${intelligence.technicalRisk.label}</strong>
                         <p>${intelligence.technicalRisk.description}</p>
                     </article>
 
                     <article class="building-intelligence__card intelligence-snapshot__card building-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
-                        <span>Next Building Action</span>
+                        <span>${LanguageManager.t("BuildingNextActionLabel")}</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>
                     </article>
@@ -425,18 +447,18 @@ export default class BuildingPage {
 
     static createBuilding() {
         FormDialog.open({
-            title: "New Building",
+            title: LanguageManager.t("BuildingNewTitle"),
             fields: this.getBuildingFields(),
             values: {
                 type: "Residential",
                 status: "Draft"
             },
-            submitLabel: "Create Building",
+            submitLabel: LanguageManager.t("BuildingCreateAction"),
             onSubmit: (values, dialog) => {
                 const name = String(values.name || "").trim();
 
                 if (!name) {
-                    Notification.warning("Building name is required.");
+                    Notification.warning(LanguageManager.t("BuildingNameRequired"));
                     return;
                 }
 
@@ -453,7 +475,7 @@ export default class BuildingPage {
                 }
 
                 dialog.remove();
-                Notification.success("Building created.");
+                Notification.success(LanguageManager.t("BuildingCreatedNotification"));
                 this.refresh();
             }
         });
@@ -468,15 +490,15 @@ export default class BuildingPage {
         if (!building) return;
 
         FormDialog.open({
-            title: "Edit Building",
+            title: LanguageManager.t("BuildingEditTitle"),
             fields: this.getBuildingFields(),
             values: building,
-            submitLabel: "Save Building",
+            submitLabel: LanguageManager.t("BuildingSaveAction"),
             onSubmit: (values, dialog) => {
                 const name = String(values.name || "").trim();
 
                 if (!name) {
-                    Notification.warning("Building name is required.");
+                    Notification.warning(LanguageManager.t("BuildingNameRequired"));
                     return;
                 }
 
@@ -490,7 +512,7 @@ export default class BuildingPage {
                 });
 
                 dialog.remove();
-                Notification.success("Building updated.");
+                Notification.success(LanguageManager.t("BuildingUpdatedNotification"));
                 this.refresh();
             }
         });
@@ -503,7 +525,7 @@ export default class BuildingPage {
         content.className = "modal-body";
 
         const message = document.createElement("p");
-        message.textContent = `Delete building "${building.name}"? This action cannot be undone.`;
+        message.textContent = `${LanguageManager.t("BuildingDeleteConfirmPrefix")} "${building.name}"? ${LanguageManager.t("BuildingDeleteConfirmSuffix")}`;
 
         const footer = document.createElement("div");
         footer.className = "modal-footer";
@@ -511,19 +533,19 @@ export default class BuildingPage {
         const cancelButton = document.createElement("button");
         cancelButton.className = "button";
         cancelButton.type = "button";
-        cancelButton.textContent = "Cancel";
+        cancelButton.textContent = LanguageManager.t("BuildingCancelAction");
 
         const deleteButton = document.createElement("button");
         deleteButton.className = "button";
         deleteButton.type = "button";
-        deleteButton.textContent = "Delete";
+        deleteButton.textContent = LanguageManager.t("BuildingDeleteAction");
 
         footer.appendChild(cancelButton);
         footer.appendChild(deleteButton);
         content.appendChild(message);
         content.appendChild(footer);
 
-        const dialog = ModalDialog.create("Delete Building", content);
+        const dialog = ModalDialog.create(LanguageManager.t("BuildingDeleteTitle"), content);
         document.body.appendChild(dialog);
 
         cancelButton.addEventListener("click", () => dialog.remove());
@@ -531,7 +553,7 @@ export default class BuildingPage {
         deleteButton.addEventListener("click", () => {
             BuildingManager.delete(building.id);
             dialog.remove();
-            Notification.success("Building deleted.");
+            Notification.success(LanguageManager.t("BuildingDeletedNotification"));
             this.refresh();
         });
     }
@@ -540,33 +562,46 @@ export default class BuildingPage {
         return [
             {
                 id: "name",
-                label: "Building Name",
+                label: LanguageManager.t("BuildingNameField"),
                 type: "text",
-                placeholder: "Building name"
+                placeholder: LanguageManager.t("BuildingNamePlaceholder")
             },
             {
                 id: "address",
-                label: "Address",
+                label: LanguageManager.t("BuildingAddressField"),
                 type: "text",
-                placeholder: "Street, city, country"
+                placeholder: LanguageManager.t("BuildingAddressPlaceholder")
             },
             {
                 id: "type",
-                label: "Building Type",
+                label: LanguageManager.t("BuildingTypeField"),
                 type: "select",
-                options: ["Residential", "Office", "Retail", "Mixed Use", "Industrial", "Hotel", "Other"]
+                options: [
+                    { value: "Residential", label: LanguageManager.t("BuildingTypeResidential") },
+                    { value: "Office", label: LanguageManager.t("BuildingTypeOffice") },
+                    { value: "Retail", label: LanguageManager.t("BuildingTypeRetail") },
+                    { value: "Mixed Use", label: LanguageManager.t("BuildingTypeMixedUse") },
+                    { value: "Industrial", label: LanguageManager.t("BuildingTypeIndustrial") },
+                    { value: "Hotel", label: LanguageManager.t("BuildingTypeHotel") },
+                    { value: "Other", label: LanguageManager.t("BuildingTypeOther") }
+                ]
             },
             {
                 id: "yearBuilt",
-                label: "Year Built",
+                label: LanguageManager.t("BuildingYearBuiltField"),
                 type: "text",
-                placeholder: "e.g. 1920"
+                placeholder: LanguageManager.t("BuildingYearBuiltPlaceholder")
             },
             {
                 id: "status",
-                label: "Status",
+                label: LanguageManager.t("BuildingColumnStatus"),
                 type: "select",
-                options: ["Draft", "Active", "Review", "Archived"]
+                options: [
+                    { value: "Draft", label: LanguageManager.t("BuildingStatusDraft") },
+                    { value: "Active", label: LanguageManager.t("BuildingStatusActive") },
+                    { value: "Review", label: LanguageManager.t("BuildingStatusReview") },
+                    { value: "Archived", label: LanguageManager.t("BuildingStatusArchived") }
+                ]
             }
         ];
     }
