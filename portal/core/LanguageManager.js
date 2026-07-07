@@ -559,6 +559,26 @@ export default class LanguageManager {
                 en: "Select a report first.",
                 de: "Bitte zuerst einen Bericht auswählen."
             },
+            ReportLockedActionLabel: {
+                en: "Locked",
+                de: "Gesperrt"
+            },
+            ReportLockedActionNotification: {
+                en: "This report is locked by finalization governance.",
+                de: "Dieser Report ist durch Finalization Governance gesperrt."
+            },
+            ReportLockedEditNotification: {
+                en: "Locked reports cannot be edited.",
+                de: "Gesperrte Reports können nicht bearbeitet werden."
+            },
+            ReportLockedDeleteNotification: {
+                en: "Locked reports cannot be deleted.",
+                de: "Gesperrte Reports können nicht gelöscht werden."
+            },
+            ReportLockedDraftOutputNotification: {
+                en: "Locked reports cannot be returned to draft output preparation.",
+                de: "Gesperrte Reports können nicht zurück in die Draft-Output-Vorbereitung geführt werden."
+            },
             ReportOutputGovernanceStateLabel: {
                 en: "Report output governance",
                 de: "Report Output Governance"
