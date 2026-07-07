@@ -1683,6 +1683,58 @@ export default class LanguageManager {
                 en: "Evidence type",
                 de: "Evidence-Typ"
             },
+            EvidenceFileNameField: {
+                en: "File name",
+                de: "Dateiname"
+            },
+            EvidenceFileTypeField: {
+                en: "File type",
+                de: "Dateityp"
+            },
+            EvidenceFileReferenceField: {
+                en: "File reference",
+                de: "Dateireferenz"
+            },
+            EvidenceCaptureMethodField: {
+                en: "Capture method",
+                de: "Erfassungsmethode"
+            },
+            EvidenceLocationLabelField: {
+                en: "Location label",
+                de: "Positionsangabe"
+            },
+            EvidenceInspectionAreaField: {
+                en: "Inspection area",
+                de: "Prüfbereich"
+            },
+            EvidenceMeasurementField: {
+                en: "Measurement",
+                de: "Messwert"
+            },
+            EvidenceMeasurementValueField: {
+                en: "Measurement value",
+                de: "Messwert"
+            },
+            EvidenceMeasurementUnitField: {
+                en: "Measurement unit",
+                de: "Messeinheit"
+            },
+            EvidenceReviewStatusField: {
+                en: "Review status",
+                de: "Review-Status"
+            },
+            EvidenceExpertReviewRequiredField: {
+                en: "Expert review required",
+                de: "Expertenprüfung erforderlich"
+            },
+            EvidenceYes: {
+                en: "Yes",
+                de: "Ja"
+            },
+            EvidenceNo: {
+                en: "No",
+                de: "Nein"
+            },
             EvidenceUpdatedNotification: {
                 en: "Evidence updated.",
                 de: "Evidence aktualisiert."

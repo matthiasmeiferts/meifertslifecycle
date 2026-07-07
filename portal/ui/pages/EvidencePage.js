@@ -500,6 +500,34 @@ export default class EvidencePage {
         return row;
     }
 
+    static normalizeEvidenceType(type = "Photo") {
+        const value = String(type || "").toLowerCase();
+
+        if (value.includes("document")) return "document";
+        if (value.includes("note")) return "note";
+        if (value.includes("measurement")) return "measurement";
+
+        return "photo";
+    }
+
+    static parseOptionalNumber(value) {
+        if (value === "" || value === null || value === undefined) {
+            return null;
+        }
+
+        const parsed = Number(value);
+
+        return Number.isFinite(parsed) ? parsed : null;
+    }
+
+    static formatMeasurement(evidence = {}) {
+        if (evidence.measurementValue === null || evidence.measurementValue === undefined || evidence.measurementValue === "") {
+            return LanguageManager.t("EvidenceNone");
+        }
+
+        return `${evidence.measurementValue}${evidence.measurementUnit ? " " + evidence.measurementUnit : ""}`;
+    }
+
     static deleteEvidence(item) {
         if (!window.confirm(`${LanguageManager.t("EvidenceDeleteConfirmPrefix")} "${item.title || item.id}"?`)) {
             return;
@@ -539,6 +567,15 @@ export default class EvidencePage {
             { label: LanguageManager.t("EvidenceQuestionIdLabel"), value: activeEvidence.sourceQuestionId || LanguageManager.t("EvidenceNotLinked") },
             { label: LanguageManager.t("EvidenceQuestionLabel"), value: activeEvidence.sourceQuestion || LanguageManager.t("EvidenceNotLinked") },
             { label: LanguageManager.t("EvidenceRequiredEvidenceLabel"), value: (activeEvidence.sourceRequiredEvidence || []).join(", ") || LanguageManager.t("EvidenceNone") },
+            { label: LanguageManager.t("EvidenceFileNameField"), value: activeEvidence.fileName || LanguageManager.t("EvidenceNone") },
+            { label: LanguageManager.t("EvidenceFileTypeField"), value: activeEvidence.fileType || LanguageManager.t("EvidenceNone") },
+            { label: LanguageManager.t("EvidenceFileReferenceField"), value: activeEvidence.fileReference || LanguageManager.t("EvidenceNone") },
+            { label: LanguageManager.t("EvidenceCaptureMethodField"), value: activeEvidence.captureMethod || LanguageManager.t("EvidenceNone") },
+            { label: LanguageManager.t("EvidenceLocationLabelField"), value: activeEvidence.locationLabel || LanguageManager.t("EvidenceNone") },
+            { label: LanguageManager.t("EvidenceInspectionAreaField"), value: activeEvidence.inspectionArea || LanguageManager.t("EvidenceNone") },
+            { label: LanguageManager.t("EvidenceMeasurementField"), value: this.formatMeasurement(activeEvidence) },
+            { label: LanguageManager.t("EvidenceReviewStatusField"), value: activeEvidence.reviewStatus || LanguageManager.t("EvidenceNone") },
+            { label: LanguageManager.t("EvidenceExpertReviewRequiredField"), value: activeEvidence.expertReviewRequired ? LanguageManager.t("EvidenceYes") : LanguageManager.t("EvidenceNo") },
             { label: LanguageManager.t("EvidenceScopeIdLabel"), value: activeEvidence.scopeId || LanguageManager.t("EvidenceNotLinked") },
             { label: LanguageManager.t("EvidenceFindingIdsLabel"), value: (activeEvidence.findingIds || []).join(", ") || LanguageManager.t("EvidenceNone") },
             { label: LanguageManager.t("EvidenceLinkedFindingsMetric"), value: String(this.countFindingsLinkedToEvidence(activeEvidence.id)) }
@@ -742,7 +779,25 @@ export default class EvidencePage {
 
                 evidenceType: evidence.evidenceType || evidence.type || "Photo",
 
-                status: evidence.status || "Open"
+                status: evidence.status || "Open",
+
+                fileName: evidence.fileName || "",
+
+                fileType: evidence.fileType || "",
+
+                fileReference: evidence.fileReference || "",
+
+                captureMethod: evidence.captureMethod || "manual",
+
+                locationLabel: evidence.locationLabel || evidence.location || "",
+
+                inspectionArea: evidence.inspectionArea || "",
+
+                measurementValue: evidence.measurementValue ?? "",
+
+                measurementUnit: evidence.measurementUnit || "",
+
+                reviewStatus: evidence.reviewStatus || "Needs review"
 
             },
 
@@ -786,6 +841,92 @@ export default class EvidencePage {
 
                     options: ["Open", "Captured", "Linked", "Reviewed", "Blocked"]
 
+                },
+
+                {
+
+                    id: "fileName",
+
+                    label: LanguageManager.t("EvidenceFileNameField")
+
+                },
+
+                {
+
+                    id: "fileType",
+
+                    label: LanguageManager.t("EvidenceFileTypeField"),
+
+                    type: "select",
+
+                    options: ["image", "document", "note", "measurement", "reference"]
+
+                },
+
+                {
+
+                    id: "fileReference",
+
+                    label: LanguageManager.t("EvidenceFileReferenceField")
+
+                },
+
+                {
+
+                    id: "captureMethod",
+
+                    label: LanguageManager.t("EvidenceCaptureMethodField"),
+
+                    type: "select",
+
+                    options: ["manual", "field-photo", "document-upload", "measurement-entry", "inspection-reference"]
+
+                },
+
+                {
+
+                    id: "locationLabel",
+
+                    label: LanguageManager.t("EvidenceLocationLabelField")
+
+                },
+
+                {
+
+                    id: "inspectionArea",
+
+                    label: LanguageManager.t("EvidenceInspectionAreaField")
+
+                },
+
+                {
+
+                    id: "measurementValue",
+
+                    label: LanguageManager.t("EvidenceMeasurementValueField"),
+
+                    type: "number"
+
+                },
+
+                {
+
+                    id: "measurementUnit",
+
+                    label: LanguageManager.t("EvidenceMeasurementUnitField")
+
+                },
+
+                {
+
+                    id: "reviewStatus",
+
+                    label: LanguageManager.t("EvidenceReviewStatusField"),
+
+                    type: "select",
+
+                    options: ["Needs review", "In review", "Reviewed", "Requires expert check"]
+
                 }
 
             ],
@@ -804,7 +945,31 @@ export default class EvidencePage {
 
                     evidenceType: values.evidenceType || "Photo",
 
+                    type: this.normalizeEvidenceType(values.evidenceType || "Photo"),
+
                     status: values.status || "Open",
+
+                    fileName: values.fileName || "",
+
+                    fileType: values.fileType || "",
+
+                    fileReference: values.fileReference || "",
+
+                    captureMethod: values.captureMethod || "manual",
+
+                    locationLabel: values.locationLabel || "",
+
+                    inspectionArea: values.inspectionArea || "",
+
+                    measurementValue: this.parseOptionalNumber(values.measurementValue),
+
+                    measurementUnit: values.measurementUnit || "",
+
+                    reviewStatus: values.reviewStatus || "Needs review",
+
+                    expertReviewRequired: evidence.expertReviewRequired !== undefined
+                        ? evidence.expertReviewRequired
+                        : true,
 
                     updatedAt: new Date().toISOString()
 
@@ -868,7 +1033,25 @@ export default class EvidencePage {
 
                 evidenceType: "Photo",
 
-                status: "Open"
+                status: "Open",
+
+                fileName: "",
+
+                fileType: "image",
+
+                fileReference: "",
+
+                captureMethod: "manual",
+
+                locationLabel: "",
+
+                inspectionArea: "",
+
+                measurementValue: "",
+
+                measurementUnit: "",
+
+                reviewStatus: "Needs review"
 
             },
 
@@ -912,6 +1095,92 @@ export default class EvidencePage {
 
                     options: ["Open", "Captured", "Linked", "Reviewed", "Blocked"]
 
+                },
+
+                {
+
+                    id: "fileName",
+
+                    label: LanguageManager.t("EvidenceFileNameField")
+
+                },
+
+                {
+
+                    id: "fileType",
+
+                    label: LanguageManager.t("EvidenceFileTypeField"),
+
+                    type: "select",
+
+                    options: ["image", "document", "note", "measurement", "reference"]
+
+                },
+
+                {
+
+                    id: "fileReference",
+
+                    label: LanguageManager.t("EvidenceFileReferenceField")
+
+                },
+
+                {
+
+                    id: "captureMethod",
+
+                    label: LanguageManager.t("EvidenceCaptureMethodField"),
+
+                    type: "select",
+
+                    options: ["manual", "field-photo", "document-upload", "measurement-entry", "inspection-reference"]
+
+                },
+
+                {
+
+                    id: "locationLabel",
+
+                    label: LanguageManager.t("EvidenceLocationLabelField")
+
+                },
+
+                {
+
+                    id: "inspectionArea",
+
+                    label: LanguageManager.t("EvidenceInspectionAreaField")
+
+                },
+
+                {
+
+                    id: "measurementValue",
+
+                    label: LanguageManager.t("EvidenceMeasurementValueField"),
+
+                    type: "number"
+
+                },
+
+                {
+
+                    id: "measurementUnit",
+
+                    label: LanguageManager.t("EvidenceMeasurementUnitField")
+
+                },
+
+                {
+
+                    id: "reviewStatus",
+
+                    label: LanguageManager.t("EvidenceReviewStatusField"),
+
+                    type: "select",
+
+                    options: ["Needs review", "In review", "Reviewed", "Requires expert check"]
+
                 }
 
             ],
@@ -934,7 +1203,29 @@ export default class EvidencePage {
 
                     evidenceType: values.evidenceType || "Photo",
 
-                    status: values.status || "Open"
+                    type: this.normalizeEvidenceType(values.evidenceType || "Photo"),
+
+                    status: values.status || "Open",
+
+                    fileName: values.fileName || "",
+
+                    fileType: values.fileType || "",
+
+                    fileReference: values.fileReference || "",
+
+                    captureMethod: values.captureMethod || "manual",
+
+                    locationLabel: values.locationLabel || "",
+
+                    inspectionArea: values.inspectionArea || "",
+
+                    measurementValue: this.parseOptionalNumber(values.measurementValue),
+
+                    measurementUnit: values.measurementUnit || "",
+
+                    reviewStatus: values.reviewStatus || "Needs review",
+
+                    expertReviewRequired: true
 
                 });
 
