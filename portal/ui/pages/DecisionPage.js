@@ -399,7 +399,7 @@ export default class DecisionPage {
             },
             {
                 id: "decision-log",
-                label: "Decision Log",
+                label: LanguageManager.t("DecisionLogAction"),
                 onClick: () => this.createSampleDecision()
             },
             {
@@ -531,7 +531,7 @@ export default class DecisionPage {
                 { label: LanguageManager.t("DecisionTotalMetric"), value: String(decisions.length) },
                 { label: LanguageManager.t("DecisionSelectedLabel"), value: LanguageManager.t("DecisionNotSelected") },
                 { label: LanguageManager.t("DecisionWorkspaceStatusLabel"), value: LanguageManager.t("DecisionNoSelection") },
-                { label: "Approval", value: decisions.length ? "In Review" : "Pending" },
+                { label: LanguageManager.t("DecisionApprovalLabel"), value: decisions.length ? LanguageManager.t("DecisionInReview") : LanguageManager.t("DecisionPending") },
                 { label: LanguageManager.t("FinalNextStepLabel"), value: LanguageManager.t("FinalCreateOrSelectDecision") }
             ]);
         }
@@ -542,7 +542,7 @@ export default class DecisionPage {
             { label: LanguageManager.t("DecisionSelectedLabel"), value: activeDecision.title || activeDecision.id },
             { label: LanguageManager.t("DecisionWorkspaceStatusLabel"), value: statusLabel },
             ...ReviewAuditTrailFields.create(activeDecision),
-            { label: "Safety Boundaries", value: DetailPanel.createBoundaryBadges(activeDecision) },
+            { label: LanguageManager.t("DecisionSafetyBoundariesLabel"), value: DetailPanel.createBoundaryBadges(activeDecision) },
             { label: LanguageManager.t("DecisionSourceLabel"), value: activeDecision.source || LanguageManager.t("DecisionRecommendationReviewSource") },
             { label: LanguageManager.t("DecisionCaseIdLabel"), value: activeDecision.caseId || LanguageManager.t("DecisionNotLinked") },
             { label: LanguageManager.t("DecisionBuildingIdLabel"), value: activeDecision.buildingId || LanguageManager.t("DecisionNotLinked") },
@@ -552,13 +552,13 @@ export default class DecisionPage {
             { label: LanguageManager.t("DecisionFindingIdsLabel"), value: (activeDecision.findingIds || []).join(", ") || LanguageManager.t("DecisionNone") },
             { label: LanguageManager.t("DecisionEvidenceIdsLabel"), value: (activeDecision.evidenceIds || []).join(", ") || LanguageManager.t("DecisionNone") },
             { label: LanguageManager.t("DecisionBuildingSystemLabel"), value: activeDecision.buildingSystem || LanguageManager.t("DecisionNotLinked") },
-            { label: "Risk Score", value: String(activeDecision.riskScore || 0) },
-            { label: "Decision Impact", value: activeDecision.decisionImpact || "Medium" },
-            { label: "Decision Type", value: activeDecision.decisionType || "Monitor" },
-            { label: "Risk Level", value: activeDecision.riskLevel || "Medium" },
-            { label: LanguageManager.t("DecisionConfidenceField"), value: activeDecision.confidence !== null && activeDecision.confidence !== undefined ? `${activeDecision.confidence}%` : "Not set" },
-            { label: "Rationale", value: activeDecision.rationale || "No rationale" },
-            { label: LanguageManager.t("DecisionDescriptionField"), value: activeDecision.description || "No description" },
+            { label: LanguageManager.t("DecisionRiskScoreLabel"), value: String(activeDecision.riskScore || 0) },
+            { label: LanguageManager.t("DecisionImpactLabel"), value: activeDecision.decisionImpact || LanguageManager.t("DecisionOptionMedium") },
+            { label: LanguageManager.t("DecisionTypeField"), value: activeDecision.decisionType || LanguageManager.t("DecisionOptionMonitor") },
+            { label: LanguageManager.t("DecisionRiskLevelField"), value: activeDecision.riskLevel || LanguageManager.t("DecisionOptionMedium") },
+            { label: LanguageManager.t("DecisionConfidenceField"), value: activeDecision.confidence !== null && activeDecision.confidence !== undefined ? `${activeDecision.confidence}%` : LanguageManager.t("DecisionNotSet") },
+            { label: LanguageManager.t("DecisionRationaleField"), value: activeDecision.rationale || LanguageManager.t("DecisionNoRationale") },
+            { label: LanguageManager.t("DecisionDescriptionField"), value: activeDecision.description || LanguageManager.t("DecisionNoDescription") },
             { label: LanguageManager.t("DecisionReportIdsLabel"), value: (activeDecision.reportIds || []).join(", ") || LanguageManager.t("DecisionNone") },
             { label: LanguageManager.t("DecisionLinkedReportsMetric"), value: String(this.countReportsLinkedToDecision(activeDecision.id)) }
         ]);
@@ -586,12 +586,12 @@ export default class DecisionPage {
         }
 
         if (!decision.caseId) {
-            Notification.warning("Selected decision is not linked to a case.");
+            Notification.warning(LanguageManager.t("DecisionNotLinkedToCaseWarning"));
             return;
         }
 
         if (currentCase && currentCase.id !== decision.caseId) {
-            Notification.warning("Selected decision belongs to another case.");
+            Notification.warning(LanguageManager.t("DecisionBelongsToAnotherCaseWarning"));
             return;
         }
 

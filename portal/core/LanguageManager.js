@@ -3771,6 +3771,54 @@ export default class LanguageManager {
                 en: "Create Report",
                 de: "Report erstellen"
             },
+            DecisionLogAction: {
+                en: "Decision Log",
+                de: "Decision-Protokoll"
+            },
+            DecisionApprovalLabel: {
+                en: "Approval",
+                de: "Freigabe"
+            },
+            DecisionInReview: {
+                en: "In Review",
+                de: "In Prüfung"
+            },
+            DecisionPending: {
+                en: "Pending",
+                de: "Ausstehend"
+            },
+            DecisionSafetyBoundariesLabel: {
+                en: "Safety Boundaries",
+                de: "Safety Boundaries"
+            },
+            DecisionRiskScoreLabel: {
+                en: "Risk Score",
+                de: "Risk Score"
+            },
+            DecisionImpactLabel: {
+                en: "Decision Impact",
+                de: "Decision Impact"
+            },
+            DecisionNotSet: {
+                en: "Not set",
+                de: "Nicht gesetzt"
+            },
+            DecisionNoRationale: {
+                en: "No rationale",
+                de: "Keine Begründung"
+            },
+            DecisionNoDescription: {
+                en: "No description",
+                de: "Keine Beschreibung"
+            },
+            DecisionNotLinkedToCaseWarning: {
+                en: "Selected decision is not linked to a case.",
+                de: "Die ausgewählte Decision ist nicht mit einem Case verknüpft."
+            },
+            DecisionBelongsToAnotherCaseWarning: {
+                en: "Selected decision belongs to another case.",
+                de: "Die ausgewählte Decision gehört zu einem anderen Case."
+            },
             DecisionContextTitle: {
                 en: "Decision Context",
                 de: "Decision-Kontext"
