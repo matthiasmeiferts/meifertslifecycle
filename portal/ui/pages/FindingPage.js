@@ -25,13 +25,13 @@ export default class FindingPage {
     static flowSteps = [
         {
             key: "finding",
-            label: "Finding",
-            description: "Technical finding identified"
+            label: LanguageManager.t("FindingWorkflowFindingLabel"),
+            description: LanguageManager.t("FindingWorkflowFindingDescription")
         },
         {
             key: "assessment",
             label: LanguageManager.t("WorkflowStepAssessment"),
-            description: "Risk assessment derived"
+            description: LanguageManager.t("FindingWorkflowAssessmentDescription")
         }
     ];
 
@@ -166,16 +166,16 @@ export default class FindingPage {
 
         if (status === "blocked") {
             return {
-                label: "Resolve blocker",
-                description: "This finding cannot move forward until the blocker is cleared.",
+                label: LanguageManager.t("FindingResolveBlockerAction"),
+                description: LanguageManager.t("FindingResolveBlockerDescription"),
                 tone: "blocked"
             };
         }
 
         if (status === "reviewed") {
             return {
-                label: "Create or confirm assessment",
-                description: "Finding is reviewed and ready to support a technical assessment.",
+                label: LanguageManager.t("FindingCreateConfirmAssessmentAction"),
+                description: LanguageManager.t("FindingCreateConfirmAssessmentDescription"),
                 tone: "ready"
             };
         }
@@ -183,22 +183,22 @@ export default class FindingPage {
         if (status === "assessed") {
             return {
                 label: LanguageManager.t("FindingReviewLinkedAssessment"),
-                description: "This finding is already connected to an assessment. Check risk logic and completeness.",
+                description: LanguageManager.t("FindingLinkedAssessmentDescription"),
                 tone: "linked"
             };
         }
 
         if (status === "identified") {
             return {
-                label: "Assess finding",
-                description: "The finding is identified and should now be assessed for severity, probability and risk impact.",
+                label: LanguageManager.t("FindingAssessFindingAction"),
+                description: LanguageManager.t("FindingAssessFindingDescription"),
                 tone: "active"
             };
         }
 
         return {
-            label: "Identify finding",
-            description: "Add a clear technical finding before moving into assessment.",
+            label: LanguageManager.t("FindingIdentifyFindingAction"),
+            description: LanguageManager.t("FindingIdentifyFindingDescription"),
             tone: "draft"
         };
     }
@@ -248,12 +248,12 @@ export default class FindingPage {
         const checks = [
             {
                 key: "identity",
-                label: "Finding identified",
+                label: LanguageManager.t("FindingIdentifiedCheck"),
                 complete: hasTitle
             },
             {
                 key: "classification",
-                label: "Finding classified",
+                label: LanguageManager.t("FindingClassifiedCheck"),
                 complete: hasCategory
             },
             {
@@ -263,7 +263,7 @@ export default class FindingPage {
             },
             {
                 key: "description",
-                label: "Description captured",
+                label: LanguageManager.t("FindingDescriptionCapturedCheck"),
                 complete: hasDescription
             },
             {
@@ -429,7 +429,7 @@ export default class FindingPage {
             return EmptyState.create({
                 eyebrow: LanguageManager.t("FindingWorkspaceTitle"),
                 title: LanguageManager.t("FindingEmptyTitle"),
-                description: "Select verified evidence and document the technical observation to begin the finding chain.",
+                description: LanguageManager.t("FindingEmptyGuidanceDescription"),
                 actionLabel: LanguageManager.t("FindingNewAction"),
                 onAction: () => this.createSampleFinding()
             });
@@ -945,7 +945,7 @@ export default class FindingPage {
 
                     id: "description",
 
-                    label: "Description"
+                    label: LanguageManager.t("FindingDescriptionFieldLabel")
 
                 },
 

@@ -2199,6 +2199,74 @@ export default class LanguageManager {
                 en: "Finding → Assessment",
                 de: "Finding → Assessment"
             },
+            FindingWorkflowFindingLabel: {
+                en: "Finding",
+                de: "Finding"
+            },
+            FindingWorkflowFindingDescription: {
+                en: "Technical finding identified",
+                de: "Technisches Finding identifiziert"
+            },
+            FindingWorkflowAssessmentDescription: {
+                en: "Risk assessment derived",
+                de: "Risiko-Assessment abgeleitet"
+            },
+            FindingResolveBlockerAction: {
+                en: "Resolve blocker",
+                de: "Blocker lösen"
+            },
+            FindingResolveBlockerDescription: {
+                en: "This finding cannot move forward until the blocker is cleared.",
+                de: "Dieses Finding kann erst fortgeführt werden, wenn der Blocker gelöst ist."
+            },
+            FindingCreateConfirmAssessmentAction: {
+                en: "Create or confirm assessment",
+                de: "Assessment erstellen oder bestätigen"
+            },
+            FindingCreateConfirmAssessmentDescription: {
+                en: "Finding is reviewed and ready to support a technical assessment.",
+                de: "Das Finding ist geprüft und bereit, ein technisches Assessment zu unterstützen."
+            },
+            FindingLinkedAssessmentDescription: {
+                en: "This finding is already connected to an assessment. Check risk logic and completeness.",
+                de: "Dieses Finding ist bereits mit einem Assessment verknüpft. Prüfen Sie Risikologik und Vollständigkeit."
+            },
+            FindingAssessFindingAction: {
+                en: "Assess finding",
+                de: "Finding bewerten"
+            },
+            FindingAssessFindingDescription: {
+                en: "The finding is identified and should now be assessed for severity, probability and risk impact.",
+                de: "Das Finding ist identifiziert und sollte nun nach Schweregrad, Eintrittswahrscheinlichkeit und Risikoauswirkung bewertet werden."
+            },
+            FindingIdentifyFindingAction: {
+                en: "Identify finding",
+                de: "Finding identifizieren"
+            },
+            FindingIdentifyFindingDescription: {
+                en: "Add a clear technical finding before moving into assessment.",
+                de: "Erfassen Sie ein klares technisches Finding, bevor das Assessment beginnt."
+            },
+            FindingIdentifiedCheck: {
+                en: "Finding identified",
+                de: "Finding identifiziert"
+            },
+            FindingClassifiedCheck: {
+                en: "Finding classified",
+                de: "Finding klassifiziert"
+            },
+            FindingDescriptionCapturedCheck: {
+                en: "Description captured",
+                de: "Beschreibung erfasst"
+            },
+            FindingEmptyGuidanceDescription: {
+                en: "Select verified evidence and document the technical observation to begin the finding chain.",
+                de: "Wählen Sie geprüfte Evidence aus und dokumentieren Sie die technische Beobachtung, um die Finding-Kette zu starten."
+            },
+            FindingDescriptionFieldLabel: {
+                en: "Description",
+                de: "Beschreibung"
+            },
             FindingSeverityDefined: {
                 en: "Severity defined",
                 de: "Schweregrad definiert"
