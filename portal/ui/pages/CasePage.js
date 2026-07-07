@@ -89,7 +89,7 @@ export default class CasePage {
 
         wrapper.appendChild(
             SearchBar.create({
-                placeholder: "Search cases...",
+                placeholder: LanguageManager.t("FoundationCaseSearchPlaceholder"),
                 value: this.getSearchQuery(),
                 buttonLabel: "Suchen",
                 onSearch: value => {
@@ -154,7 +154,7 @@ export default class CasePage {
         if (!cases.length && query) {
             return EmptyState.create({
                 eyebrow: "Case Search",
-                title: "No matching cases found",
+                title: LanguageManager.t("FoundationCaseNoMatchingTitle"),
                 description: 'No case matches "' + query + '". Clear the search or try another term.',
                 actionLabel: "Clear Search",
                 onAction: () => {
@@ -226,7 +226,7 @@ export default class CasePage {
             return DetailPanel.create("No Case Selected", [
                 {
                     label: LanguageManager.t("CaseStatusLabel"),
-                    value: "No active case"
+                    value: LanguageManager.t("FoundationNoActiveCase")
                 },
                 {
                     label: LanguageManager.t("CaseNextStepLabel"),
@@ -909,9 +909,9 @@ export default class CasePage {
             title: LanguageManager.t("CaseCreateWorkflowChain"),
             submitLabel: LanguageManager.t("CaseCreateWorkflowChain"),
             values: {
-                evidenceTitle: "Evidence input",
-                evidenceDescription: "Initial evidence input.",
-                evidenceType: "Photo / Document",
+                evidenceTitle: LanguageManager.t("FoundationEvidenceInputTitle"),
+                evidenceDescription: LanguageManager.t("FoundationEvidenceInputDescription"),
+                evidenceType: LanguageManager.t("FoundationPhotoDocument"),
                 findingTitle: "Technical finding",
                 findingDescription: "Finding prepared from evidence.",
                 findingSeverity: "Medium",
@@ -953,9 +953,9 @@ export default class CasePage {
                     caseId: current.id,
                     buildingId: current.buildingId || null,
                     inspectionId: current.inspectionId || null,
-                    title: values.evidenceTitle || "Evidence input",
+                    title: values.evidenceTitle || LanguageManager.t("FoundationEvidenceInputTitle"),
                     description: values.evidenceDescription || "",
-                    evidenceType: values.evidenceType || "Photo / Document",
+                    evidenceType: values.evidenceType || LanguageManager.t("FoundationPhotoDocument"),
                     status: "Draft"
                 });
                 EvidenceManager.set(evidence);

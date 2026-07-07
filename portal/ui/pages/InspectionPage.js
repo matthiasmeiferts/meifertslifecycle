@@ -287,7 +287,7 @@ export default class InspectionPage {
             }
             : {
                 label: LanguageManager.t("FinalReviewInspectionOutput"),
-                description: "Inspection evidence, findings and assessments are represented. Review consistency before recommendations.",
+                description: LanguageManager.t("FoundationInspectionReviewConsistency"),
                 tone: "ready"
             };
 
@@ -396,7 +396,7 @@ export default class InspectionPage {
             title: LanguageManager.t("InspectionTitlePlural"),
             description: activeInspection
                 ? `${LanguageManager.t("InspectionActivePrefix")}: ${activeInspection.title || activeInspection.id}`
-                : "Plan, document, and manage technical inspections linked to buildings, cases, and evidence.",
+                : LanguageManager.t("FoundationInspectionPlanDescription"),
             actions: [
                 {
                     id: "new-inspection",
@@ -501,7 +501,7 @@ export default class InspectionPage {
         const description = document.createElement("p");
         description.textContent = activeScope
             ? LanguageManager.t("InspectionAdaptiveScopeActiveDescription")
-            : "Define what must be inspected before evidence is collected. The scope engine turns answers into required evidence, risk signals and limitations.";
+            : LanguageManager.t("FoundationInspectionScopeDescription");
 
         const status = document.createElement("span");
         status.className = activeScope
@@ -594,7 +594,7 @@ export default class InspectionPage {
         questionHint.className = "inspection-scope-editorial__hint";
         questionHint.textContent = activeScope
             ? LanguageManager.t("InspectionChooseAnswerDescription")
-            : "Start the adaptive scope to connect this question set to the active case and inspection.";
+            : LanguageManager.t("FoundationInspectionScopeStartDescription");
 
         questionCard.appendChild(questionText);
         questionCard.appendChild(questionMeta);
@@ -773,7 +773,7 @@ export default class InspectionPage {
                 value: evidenceRequirements.length,
                 detail: evidenceRequirements.length
                     ? `${evidenceRequirements.length} ${LanguageManager.t("InspectionEvidenceRequiredSummary")}`
-                    : "No evidence requirements triggered yet."
+                    : LanguageManager.t("FoundationNoEvidenceRequirements")
             },
             {
                 label: "Risk Flags",
@@ -825,7 +825,7 @@ export default class InspectionPage {
         eyebrow.textContent = LanguageManager.t("InspectionEvidenceActions");
 
         const title = document.createElement("strong");
-        title.textContent = "Required evidence by inspection answer";
+        title.textContent = LanguageManager.t("FoundationRequiredEvidenceByAnswer");
 
         header.appendChild(eyebrow);
         header.appendChild(title);
@@ -890,7 +890,7 @@ export default class InspectionPage {
 
     static createEvidenceFromRequirement(activeScope = null, requirement = null) {
         if (!activeScope || !requirement || !requirement.questionId) {
-            Notification.info("Select an evidence requirement first.");
+            Notification.info(LanguageManager.t("FoundationSelectEvidenceRequirement"));
             return;
         }
 
@@ -927,7 +927,7 @@ export default class InspectionPage {
             category: isDocumentAvailabilityCheck ? "Document Availability Check" : (question.category || "Inspection Scope"),
             title: isDocumentAvailabilityCheck
                 ? `Document availability check · ${question.question}`
-                : `${this.formatEvidenceType(evidenceType)} required · ${question.question}`,
+                : `${this.formatEvidenceType(evidenceType)} ${LanguageManager.t("FoundationEvidenceRequiredSuffix")} · ${question.question}`,
             description: [
                 LanguageManager.t("InspectionEvidenceRequirementGenerated"),
                 isDocumentAvailabilityCheck ? availabilityOnlyNotice : "",

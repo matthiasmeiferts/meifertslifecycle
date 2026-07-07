@@ -1,3 +1,4 @@
+import LanguageManager from "../../core/LanguageManager.js";
 export default class CaseWorkspace {
 
     static create(caseSummary = {}) {
@@ -8,7 +9,7 @@ export default class CaseWorkspace {
         section.innerHTML = `
             <p class="eyebrow">Case Workspace</p>
 
-            <h2>${caseSummary.title || "No active case"}</h2>
+            <h2>${caseSummary.title || LanguageManager.t("FoundationNoActiveCase")}</h2>
 
             <p>${caseSummary.subtitle || "Create or open a case to begin."}</p>
 

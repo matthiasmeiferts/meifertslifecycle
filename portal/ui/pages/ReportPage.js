@@ -611,7 +611,7 @@ export default class ReportPage {
             return EmptyState.create({
                 eyebrow: "Report Workspace",
                 title: LanguageManager.t("ReportEmptyTitle"),
-                description: "Reports will compile evidence, findings, assessments, recommendations, and decisions into a professional output.",
+                description: LanguageManager.t("FoundationReportEmptyDescription"),
                 actionLabel: LanguageManager.t("ReportNewReportAction"),
                 onAction: () => this.createSampleReport()
             });

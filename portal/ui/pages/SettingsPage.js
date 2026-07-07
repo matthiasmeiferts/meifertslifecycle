@@ -36,7 +36,7 @@ export default class SettingsPage {
         fragment.appendChild(SectionHeader.create({
             eyebrow: "Workspace Settings",
             title: "Settings",
-            description: "Control local workspace data without deleting the active case, building, or inspection context."
+            description: LanguageManager.t("FoundationSettingsDataDescription")
         }));
 
         fragment.appendChild(this.createMetrics());
@@ -139,7 +139,7 @@ export default class SettingsPage {
                 <div>
                     <p class="eyebrow">Workflow Test Data</p>
                     <h3>Clear generated workflow records</h3>
-                    <p>This removes generated inspection scope, evidence, findings, assessments, recommendations, decisions, and reports. Cases, buildings, and inspections stay available.</p>
+                    <p>${LanguageManager.t("FoundationSettingsClearWorkflowText")}</p>
                 </div>
                 <button type="button" class="button settings-cleanup__danger" data-action="clear-workflow">
                     Clear Workflow Test Data
@@ -188,7 +188,7 @@ export default class SettingsPage {
                 <div>
                     <p class="eyebrow">Controlled Demo Dataset</p>
                     <h3>Create a clean end-to-end demo case</h3>
-                    <p>This creates one controlled demo chain from inspection scope to report. Existing workflow test data will be replaced, while cases, buildings, and inspections remain available.</p>
+                    <p>${LanguageManager.t("FoundationSettingsDemoText")}</p>
                 </div>
                 <div class="settings-demo-actions">
                     <button type="button" class="button" data-action="create-demo-dataset">
@@ -258,7 +258,7 @@ export default class SettingsPage {
 
     static rebuildControlledDemoDataset() {
         const confirmed = window.confirm(
-            "Rebuild the controlled demo dataset? Existing workflow demo data will be replaced. Preserved cases, buildings, and inspections will remain available."
+            LanguageManager.t("FoundationSettingsRebuildConfirm")
         );
 
         if (!confirmed) {
@@ -289,7 +289,7 @@ export default class SettingsPage {
         }
 
         const confirmed = window.confirm(
-            "Reset controlled demo workflow data? Cases, buildings, and inspections will be preserved."
+            LanguageManager.t("FoundationSettingsResetConfirm")
         );
 
         if (!confirmed) {
@@ -312,7 +312,7 @@ export default class SettingsPage {
         }
 
         const confirmed = window.confirm(
-            `Clear ${total} workflow records? Cases, buildings, and inspections will be preserved.`
+            `${LanguageManager.t("FoundationSettingsClearConfirmPrefix")} ${total} ${LanguageManager.t("FoundationSettingsClearConfirmSuffix")}`
         );
 
         if (!confirmed) {

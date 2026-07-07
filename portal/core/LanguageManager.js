@@ -4391,6 +4391,106 @@ export default class LanguageManager {
                 en: "Inspections",
                 de: "Inspections"
             },
+            FoundationCaseSearchPlaceholder: {
+                en: "Search cases...",
+                de: "Cases suchen..."
+            },
+            FoundationCaseNoMatchingTitle: {
+                en: "No matching cases found",
+                de: "Keine passenden Cases gefunden"
+            },
+            FoundationNoActiveCase: {
+                en: "No active case",
+                de: "Kein aktiver Case"
+            },
+            FoundationEvidenceInputTitle: {
+                en: "Evidence input",
+                de: "Evidence Input"
+            },
+            FoundationEvidenceInputDescription: {
+                en: "Initial evidence input.",
+                de: "Erster Evidence Input."
+            },
+            FoundationPhotoDocument: {
+                en: "Photo / Document",
+                de: "Foto / Dokument"
+            },
+            FoundationFindingPreparedFromEvidence: {
+                en: "Finding prepared from evidence.",
+                de: "Finding aus Evidence vorbereitet."
+            },
+            FoundationInspectionScopeStartDescription: {
+                en: "Start the adaptive scope to connect this question set to the active case and inspection.",
+                de: "Adaptiven Scope starten, um diesen Fragenkatalog mit aktivem Case und aktiver Inspection zu verbinden."
+            },
+            FoundationInspectionPlanDescription: {
+                en: "Plan, document, and manage technical inspections linked to buildings, cases, and evidence.",
+                de: "Technische Inspections planen, dokumentieren und mit Gebäuden, Cases und Evidence verknüpfen."
+            },
+            FoundationInspectionScopeDescription: {
+                en: "Define what must be inspected before evidence is collected. The scope engine turns answers into required evidence, risk signals and limitations.",
+                de: "Festlegen, was vor der Evidence-Erfassung geprüft werden muss. Die Scope Engine übersetzt Antworten in erforderliche Evidence, Risikosignale und Limitierungen."
+            },
+            FoundationInspectionLightOutput: {
+                en: "Inspection output is still light. More evidence and findings are needed.",
+                de: "Inspection Output ist noch schwach. Weitere Evidence und Findings sind erforderlich."
+            },
+            FoundationInspectionReviewConsistency: {
+                en: "Inspection evidence, findings and assessments are represented. Review consistency before recommendations.",
+                de: "Inspection Evidence, Findings und Assessments sind abgebildet. Konsistenz vor Recommendations prüfen."
+            },
+            FoundationNoEvidenceRequirements: {
+                en: "No evidence requirements triggered yet.",
+                de: "Noch keine Evidence-Anforderungen ausgelöst."
+            },
+            FoundationRequiredEvidenceByAnswer: {
+                en: "Required evidence by inspection answer",
+                de: "Erforderliche Evidence nach Inspection-Antwort"
+            },
+            FoundationSelectEvidenceRequirement: {
+                en: "Select an evidence requirement first.",
+                de: "Zuerst eine Evidence-Anforderung auswählen."
+            },
+            FoundationEvidenceRequiredSuffix: {
+                en: "required",
+                de: "erforderlich"
+            },
+            FoundationNotLinkedLower: {
+                en: "not linked",
+                de: "nicht verknüpft"
+            },
+            FoundationReportEmptyDescription: {
+                en: "Reports will compile evidence, findings, assessments, recommendations, and decisions into a professional output.",
+                de: "Reports bündeln Evidence, Findings, Assessments, Recommendations und Decisions zu einem professionellen Output."
+            },
+            FoundationSettingsDataDescription: {
+                en: "Control local workspace data without deleting the active case, building, or inspection context.",
+                de: "Lokale Workspace-Daten steuern, ohne aktiven Case-, Gebäude- oder Inspection-Kontext zu löschen."
+            },
+            FoundationSettingsClearWorkflowText: {
+                en: "This removes generated inspection scope, evidence, findings, assessments, recommendations, decisions, and reports. Cases, buildings, and inspections stay available.",
+                de: "Entfernt generierten Inspection Scope, Evidence, Findings, Assessments, Recommendations, Decisions und Reports. Cases, Gebäude und Inspections bleiben erhalten."
+            },
+            FoundationSettingsDemoText: {
+                en: "This creates one controlled demo chain from inspection scope to report. Existing workflow test data will be replaced, while cases, buildings, and inspections remain available.",
+                de: "Erstellt eine kontrollierte Demo-Kette vom Inspection Scope bis zum Report. Bestehende Workflow-Testdaten werden ersetzt, während Cases, Gebäude und Inspections erhalten bleiben."
+            },
+            FoundationSettingsRebuildConfirm: {
+                en: "Rebuild the controlled demo dataset? Existing workflow demo data will be replaced. Preserved cases, buildings, and inspections will remain available.",
+                de: "Kontrollierten Demo-Datensatz neu aufbauen? Bestehende Workflow-Demo-Daten werden ersetzt. Erhaltene Cases, Gebäude und Inspections bleiben verfügbar."
+            },
+            FoundationSettingsResetConfirm: {
+                en: "Reset controlled demo workflow data? Cases, buildings, and inspections will be preserved.",
+                de: "Kontrollierte Demo-Workflow-Daten zurücksetzen? Cases, Gebäude und Inspections bleiben erhalten."
+            },
+            FoundationSettingsClearConfirmPrefix: {
+                en: "Clear",
+                de: "Löschen von"
+            },
+            FoundationSettingsClearConfirmSuffix: {
+                en: "workflow records? Cases, buildings, and inspections will be preserved.",
+                de: "Workflow-Datensätzen? Cases, Gebäude und Inspections bleiben erhalten."
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."
