@@ -3819,6 +3819,38 @@ export default class LanguageManager {
                 en: "Selected decision belongs to another case.",
                 de: "Die ausgewählte Decision gehört zu einem anderen Case."
             },
+            DecisionResolveBlockerAction: {
+                en: "Resolve blocker",
+                de: "Blocker lösen"
+            },
+            DecisionResolveBlockerDescription: {
+                en: "This decision cannot move forward until the blocker is cleared.",
+                de: "Diese Decision kann erst fortgeführt werden, wenn der Blocker gelöst ist."
+            },
+            DecisionCreateConfirmReportAction: {
+                en: "Create or confirm report",
+                de: "Report erstellen oder bestätigen"
+            },
+            DecisionCreateConfirmReportDescription: {
+                en: "Decision is reviewed and ready to support the final report output.",
+                de: "Die Decision ist geprüft und bereit, den finalen Report zu unterstützen."
+            },
+            DecisionPrepareReportAction: {
+                en: "Prepare report",
+                de: "Report vorbereiten"
+            },
+            DecisionPrepareReportDescription: {
+                en: "The decision is complete enough to move into report preparation.",
+                de: "Die Decision ist ausreichend vollständig für die Report-Vorbereitung."
+            },
+            DecisionConfirmDecisionAction: {
+                en: "Confirm decision",
+                de: "Decision bestätigen"
+            },
+            DecisionConfirmDecisionDescription: {
+                en: "Add a clear decision, outcome or approval state before preparing the report.",
+                de: "Erfassen Sie eine klare Decision, ein Ergebnis oder einen Freigabestatus, bevor der Report vorbereitet wird."
+            },
             DecisionContextTitle: {
                 en: "Decision Context",
                 de: "Decision-Kontext"

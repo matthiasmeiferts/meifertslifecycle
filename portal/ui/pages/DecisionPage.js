@@ -206,16 +206,16 @@ export default class DecisionPage {
 
         if (status === "blocked") {
             return {
-                label: "Resolve blocker",
-                description: "This decision cannot move forward until the blocker is cleared.",
+                label: LanguageManager.t("DecisionResolveBlockerAction"),
+                description: LanguageManager.t("DecisionResolveBlockerDescription"),
                 tone: "blocked"
             };
         }
 
         if (status === "reviewed") {
             return {
-                label: "Create or confirm report",
-                description: "Decision is reviewed and ready to support the final report output.",
+                label: LanguageManager.t("DecisionCreateConfirmReportAction"),
+                description: LanguageManager.t("DecisionCreateConfirmReportDescription"),
                 tone: "ready"
             };
         }
@@ -230,15 +230,15 @@ export default class DecisionPage {
 
         if (status === "decided") {
             return {
-                label: "Prepare report",
-                description: "The decision is complete enough to move into report preparation.",
+                label: LanguageManager.t("DecisionPrepareReportAction"),
+                description: LanguageManager.t("DecisionPrepareReportDescription"),
                 tone: "active"
             };
         }
 
         return {
-            label: "Confirm decision",
-            description: "Add a clear decision, outcome or approval state before preparing the report.",
+            label: LanguageManager.t("DecisionConfirmDecisionAction"),
+            description: LanguageManager.t("DecisionConfirmDecisionDescription"),
             tone: "draft"
         };
     }
