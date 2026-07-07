@@ -2703,6 +2703,46 @@ export default class LanguageManager {
                 en: "Risk",
                 de: "Risiko"
             },
+            AssessmentOpenAction: {
+                en: "Open",
+                de: "Öffnen"
+            },
+            AssessmentEditAction: {
+                en: "Edit",
+                de: "Bearbeiten"
+            },
+            AssessmentDeleteAction: {
+                en: "Delete",
+                de: "Löschen"
+            },
+            AssessmentActionLockedLabel: {
+                en: "Locked",
+                de: "Gesperrt"
+            },
+            AssessmentActionBlockedNotification: {
+                en: "This assessment action is blocked by workspace governance.",
+                de: "Diese Assessment-Aktion wird durch Workspace Governance blockiert."
+            },
+            AssessmentEditBlockedNotification: {
+                en: "This assessment record cannot be edited.",
+                de: "Dieser Assessment-Datensatz kann nicht bearbeitet werden."
+            },
+            AssessmentDeleteBlockedNotification: {
+                en: "This assessment record cannot be deleted.",
+                de: "Dieser Assessment-Datensatz kann nicht gelöscht werden."
+            },
+            AssessmentDownstreamActionBlockedNotification: {
+                en: "A recommendation cannot be created from this assessment yet.",
+                de: "Aus diesem Assessment kann noch keine Recommendation erstellt werden."
+            },
+            AssessmentBlockedActionReason: {
+                en: "Assessment is blocked by workspace governance.",
+                de: "Assessment wird durch Workspace Governance blockiert."
+            },
+            AssessmentContentRequiredBeforeRecommendationReason: {
+                en: "Assessment content is required before creating a recommendation.",
+                de: "Assessment-Inhalt ist erforderlich, bevor eine Recommendation erstellt werden kann."
+            },
             AssessmentRecommendationDraftCreated: {
                 en: "Recommendation draft created. Expert review required. No automatic decision created.",
                 de: "Recommendation Draft erstellt. Fachliche Prüfung erforderlich. Keine automatische Decision erstellt."
