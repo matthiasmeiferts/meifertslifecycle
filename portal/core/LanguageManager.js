@@ -891,6 +891,22 @@ export default class LanguageManager {
                 en: "Open",
                 de: "Offen"
             },
+            DashboardReviewReviewedByLabel: {
+                en: "Reviewed by",
+                de: "Geprüft von"
+            },
+            DashboardReviewReviewedAtLabel: {
+                en: "Reviewed at",
+                de: "Geprüft am"
+            },
+            DashboardReviewResolutionLabel: {
+                en: "Resolution",
+                de: "Lösung"
+            },
+            DashboardReviewNotesLabel: {
+                en: "Notes",
+                de: "Notizen"
+            },
             DashboardReviewMarkInReviewAction: {
                 en: "Mark in review",
                 de: "In Review setzen"

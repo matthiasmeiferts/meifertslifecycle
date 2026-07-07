@@ -739,6 +739,7 @@ export default class DashboardPage {
                                 <span>${item.stageLabel} · ${item.reviewStatus || item.status || LanguageManager.t("DashboardReviewStatusOpen")}</span>
                                 <strong>${item.title}</strong>
                                 <p>${item.reason}</p>
+                                ${this.renderReviewAuditTrail(item)}
                             </div>
 
                             <div class="platform-intelligence__actions">
@@ -768,6 +769,52 @@ export default class DashboardPage {
                 ${blockedNotice}
             </section>
         `;
+    }
+
+    static renderReviewAuditTrail(item = {}) {
+        const record = item.record || {};
+        const reviewedBy = record.reviewedBy || record.reviewResolvedBy || "";
+        const reviewedAt = record.reviewedAt || record.reviewResolvedAt || "";
+        const reviewResolution = record.reviewResolution || "";
+        const reviewNotes = record.reviewNotes || "";
+
+        if (!reviewedBy && !reviewedAt && !reviewResolution && !reviewNotes) {
+            return "";
+        }
+
+        const parts = [];
+
+        if (reviewedBy) {
+            parts.push(`${LanguageManager.t("DashboardReviewReviewedByLabel")}: ${reviewedBy}`);
+        }
+
+        if (reviewedAt) {
+            parts.push(`${LanguageManager.t("DashboardReviewReviewedAtLabel")}: ${this.formatReviewAuditDate(reviewedAt)}`);
+        }
+
+        if (reviewResolution) {
+            parts.push(`${LanguageManager.t("DashboardReviewResolutionLabel")}: ${reviewResolution}`);
+        }
+
+        if (reviewNotes) {
+            parts.push(`${LanguageManager.t("DashboardReviewNotesLabel")}: ${reviewNotes}`);
+        }
+
+        return `<p class="platform-intelligence__review-audit">${parts.join(" · ")}</p>`;
+    }
+
+    static formatReviewAuditDate(value = "") {
+        if (!value) {
+            return "";
+        }
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return value;
+        }
+
+        return date.toLocaleString();
     }
 
     static createExpertReviewQueueSnapshot(data = {}) {
