@@ -1767,6 +1767,46 @@ export default class LanguageManager {
                 en: "Create Finding",
                 de: "Finding erstellen"
             },
+            EvidenceWorkflowFindingLabel: {
+                en: "Finding",
+                de: "Finding"
+            },
+            EvidenceWorkflowFindingDescription: {
+                en: "Technical finding derived",
+                de: "Technisches Finding abgeleitet"
+            },
+            EvidenceResolveBlockerAction: {
+                en: "Resolve blocker",
+                de: "Blocker lösen"
+            },
+            EvidenceResolveBlockerDescription: {
+                en: "This evidence cannot move forward until the blocker is cleared.",
+                de: "Diese Evidence kann erst fortgeführt werden, wenn der Blocker gelöst ist."
+            },
+            EvidenceLinkedFindingDescription: {
+                en: "This evidence is already connected to a finding. Check completeness before assessment.",
+                de: "Diese Evidence ist bereits mit einem Finding verknüpft. Prüfen Sie die Vollständigkeit vor dem Assessment."
+            },
+            EvidenceReviewBeforeFindingDescription: {
+                en: "Captured evidence should be checked before it is linked to a finding.",
+                de: "Erfasste Evidence sollte geprüft werden, bevor sie mit einem Finding verknüpft wird."
+            },
+            EvidenceCaptureEvidenceAction: {
+                en: "Capture evidence",
+                de: "Evidence erfassen"
+            },
+            EvidenceCaptureEvidenceDescription: {
+                en: "Add a photo, document, note or inspection reference to start the workflow.",
+                de: "Fügen Sie ein Foto, Dokument, eine Notiz oder eine Inspection-Referenz hinzu, um den Workflow zu starten."
+            },
+            EvidenceContentCapturedCheck: {
+                en: "Content captured",
+                de: "Inhalt erfasst"
+            },
+            EvidenceFindingConnectionCheck: {
+                en: "Finding connection",
+                de: "Finding-Verknüpfung"
+            },
             EvidenceOpenAction: {
                 en: "Open",
                 de: "Öffnen"

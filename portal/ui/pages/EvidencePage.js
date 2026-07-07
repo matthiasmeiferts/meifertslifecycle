@@ -29,8 +29,8 @@ export default class EvidencePage {
         },
         {
             key: "finding",
-            label: "Finding",
-            description: "Technical finding derived"
+            label: LanguageManager.t("EvidenceWorkflowFindingLabel"),
+            description: LanguageManager.t("EvidenceWorkflowFindingDescription")
         }
     ];
 
@@ -109,8 +109,8 @@ export default class EvidencePage {
 
         if (status === "blocked") {
             return {
-                label: "Resolve blocker",
-                description: "This evidence cannot move forward until the blocker is cleared.",
+                label: LanguageManager.t("EvidenceResolveBlockerAction"),
+                description: LanguageManager.t("EvidenceResolveBlockerDescription"),
                 tone: "blocked"
             };
         }
@@ -126,7 +126,7 @@ export default class EvidencePage {
         if (status === "linked") {
             return {
                 label: LanguageManager.t("EvidenceReviewLinkedFindingAction"),
-                description: "This evidence is already connected to a finding. Check completeness before assessment.",
+                description: LanguageManager.t("EvidenceLinkedFindingDescription"),
                 tone: "linked"
             };
         }
@@ -134,14 +134,14 @@ export default class EvidencePage {
         if (status === "captured") {
             return {
                 label: LanguageManager.t("EvidenceReviewEvidence"),
-                description: "Captured evidence should be checked before it is linked to a finding.",
+                description: LanguageManager.t("EvidenceReviewBeforeFindingDescription"),
                 tone: "active"
             };
         }
 
         return {
-            label: "Capture evidence",
-            description: "Add a photo, document, note or inspection reference to start the workflow.",
+            label: LanguageManager.t("EvidenceCaptureEvidenceAction"),
+            description: LanguageManager.t("EvidenceCaptureEvidenceDescription"),
             tone: "draft"
         };
     }
@@ -189,12 +189,12 @@ export default class EvidencePage {
             },
             {
                 key: "content",
-                label: "Content captured",
+                label: LanguageManager.t("EvidenceContentCapturedCheck"),
                 complete: hasContent
             },
             {
                 key: "finding",
-                label: "Finding connection",
+                label: LanguageManager.t("EvidenceFindingConnectionCheck"),
                 complete: hasFindingLink
             }
         ];
