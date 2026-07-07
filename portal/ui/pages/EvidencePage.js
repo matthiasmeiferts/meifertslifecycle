@@ -686,6 +686,32 @@ export default class EvidencePage {
             descriptionParts.push(`${LanguageManager.t("FinalScopeIdLabel")}: ${evidence.scopeId || LanguageManager.t("FinalNotLinked")}`);
         }
 
+        const hasEvidenceMetadataTrace = Boolean(
+            evidence.fileName ||
+            evidence.fileType ||
+            evidence.fileReference ||
+            evidence.captureMethod ||
+            evidence.locationLabel ||
+            evidence.inspectionArea ||
+            evidence.measurementValue !== null && evidence.measurementValue !== undefined ||
+            evidence.measurementUnit ||
+            evidence.reviewStatus
+        );
+
+        if (hasEvidenceMetadataTrace) {
+            descriptionParts.push("");
+            descriptionParts.push("Evidence metadata trace:");
+            descriptionParts.push(`File name: ${evidence.fileName || "None"}`);
+            descriptionParts.push(`File type: ${evidence.fileType || "None"}`);
+            descriptionParts.push(`File reference: ${evidence.fileReference || "None"}`);
+            descriptionParts.push(`Capture method: ${evidence.captureMethod || "None"}`);
+            descriptionParts.push(`Location label: ${evidence.locationLabel || "None"}`);
+            descriptionParts.push(`Inspection area: ${evidence.inspectionArea || "None"}`);
+            descriptionParts.push(`Measurement: ${this.formatMeasurement(evidence)}`);
+            descriptionParts.push(`Evidence review status: ${evidence.reviewStatus || "None"}`);
+            descriptionParts.push(`Expert review required: ${evidence.expertReviewRequired === false ? "No" : "Yes"}`);
+        }
+
         const finding = FindingManager.create({
             caseId: evidence.caseId,
             buildingId: evidence.buildingId || currentCase?.buildingId || null,
@@ -698,7 +724,21 @@ export default class EvidencePage {
             description: descriptionParts.join("\n"),
             category: evidence.sourceCategory || evidence.category || evidence.evidenceType || evidence.type || "General",
             buildingSystem: evidence.sourceModule || evidence.buildingSystem || "",
-            location: evidence.location || "",
+            location: evidence.locationLabel || evidence.location || "",
+            inspectionArea: evidence.inspectionArea || "",
+
+            sourceFileName: evidence.fileName || "",
+            sourceFileType: evidence.fileType || "",
+            sourceFileReference: evidence.fileReference || "",
+            sourceCaptureMethod: evidence.captureMethod || "",
+            sourceLocationLabel: evidence.locationLabel || "",
+            sourceInspectionArea: evidence.inspectionArea || "",
+            sourceMeasurementValue: evidence.measurementValue ?? null,
+            sourceMeasurementUnit: evidence.measurementUnit || "",
+            sourceReviewStatus: evidence.reviewStatus || "",
+            sourceExpertReviewRequired: evidence.expertReviewRequired !== undefined
+                ? evidence.expertReviewRequired
+                : true,
 
             severity: isAvailabilityCheckOnly ? "Unrated" : "Medium",
             priority: isAvailabilityCheckOnly ? "Medium" : "High",
