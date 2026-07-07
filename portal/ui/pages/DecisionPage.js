@@ -6,6 +6,7 @@ import BuildingManager from "../../core/BuildingManager.js";
 import InspectionManager from "../../core/InspectionManager.js";
 import ReportManager from "../../core/ReportManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import LanguageManager from "../../core/LanguageManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
 import WorkflowProgressPanel from "../components/WorkflowProgressPanel.js";
@@ -22,22 +23,22 @@ export default class DecisionPage {
     static flowSteps = [
         {
             key: "decision",
-            label: "Decision",
-            description: "Governance decision confirmed"
+            label: LanguageManager.t("DecisionWorkflowStepTitle"),
+            description: LanguageManager.t("DecisionWorkflowConfirmed")
         },
         {
             key: "report",
-            label: "Report",
-            description: "Report output prepared"
+            label: LanguageManager.t("DecisionWorkflowReportTitle"),
+            description: LanguageManager.t("DecisionWorkflowReportPrepared")
         }
     ];
 
     static statusLabels = {
-        draft: "Draft",
-        decided: "Decided",
-        reported: "Reported",
-        reviewed: "Reviewed",
-        blocked: "Blocked"
+        draft: LanguageManager.t("DecisionStatusDraft"),
+        decided: LanguageManager.t("DecisionStatusDecided"),
+        reported: LanguageManager.t("DecisionStatusReported"),
+        reviewed: LanguageManager.t("DecisionStatusReviewed"),
+        blocked: LanguageManager.t("DecisionStatusBlocked")
     };
 
     static render() {
@@ -70,13 +71,13 @@ export default class DecisionPage {
 
     static createHeader() {
         return SectionHeader.create({
-            eyebrow: "Decision Workspace",
-            title: "Decisions",
-            description: "Record expert decisions, document reasoning, confidence, approval status, and traceability.",
+            eyebrow: LanguageManager.t("DecisionWorkspaceTitle"),
+            title: LanguageManager.t("DecisionTitlePlural"),
+            description: LanguageManager.t("DecisionHeaderDescription"),
             actions: [
                 {
                     id: "new-decision",
-                    label: "+ New Decision",
+                    label: LanguageManager.t("DecisionNewAction"),
                     onClick: () => this.createSampleDecision()
                 }
             ]
@@ -93,10 +94,10 @@ export default class DecisionPage {
         const grid = document.createElement("section");
         grid.className = "metrics-grid";
 
-        grid.appendChild(MetricCard.create("Decisions", decisions.length));
-        grid.appendChild(MetricCard.create("Pending", pendingCount));
-        grid.appendChild(MetricCard.create("Approved", approvedCount));
-        grid.appendChild(MetricCard.create("Linked Reports", this.countReportsLinkedToDecision()));
+        grid.appendChild(MetricCard.create(LanguageManager.t("DecisionTotalMetric"), decisions.length));
+        grid.appendChild(MetricCard.create(LanguageManager.t("DecisionPendingMetric"), pendingCount));
+        grid.appendChild(MetricCard.create(LanguageManager.t("DecisionApprovedMetric"), approvedCount));
+        grid.appendChild(MetricCard.create(LanguageManager.t("DecisionLinkedReportsMetric"), this.countReportsLinkedToDecision()));
 
         return grid;
     }
@@ -122,8 +123,8 @@ export default class DecisionPage {
         return `
             <section class="workspace-flow" aria-label="Active workflow state">
                 <div class="workspace-flow__header">
-                    <span class="workspace-flow__eyebrow">Active Flow</span>
-                    <strong>Decision → Report</strong>
+                    <span class="workspace-flow__eyebrow">${LanguageManager.t("DecisionActiveFlowLabel")}</span>
+                    <strong>${LanguageManager.t("DecisionToReportLabel")}</strong>
                 </div>
 
                 <div class="workspace-flow__steps">
@@ -185,7 +186,7 @@ export default class DecisionPage {
     static renderDecisionStatusBadge(decision = {}) {
         decision = decision || {};
         const status = this.getDecisionStatus(decision);
-        const label = this.statusLabels[status] || "Draft";
+        const label = this.statusLabels[status] || LanguageManager.t("DecisionStatusDraft");
 
         return `
             <span class="evidence-status evidence-status--${status}">
@@ -218,8 +219,8 @@ export default class DecisionPage {
 
         if (status === "reported") {
             return {
-                label: "Review linked report",
-                description: "This decision is already connected to a report. Check final output completeness.",
+                label: LanguageManager.t("DecisionReviewLinkedReport"),
+                description: LanguageManager.t("DecisionAlreadyLinkedReportDescription"),
                 tone: "linked"
             };
         }
@@ -246,7 +247,7 @@ export default class DecisionPage {
         return `
             <section class="next-action next-action--${action.tone}" aria-label="Next action">
                 <div>
-                    <span class="next-action__eyebrow">Next Action</span>
+                    <span class="next-action__eyebrow">${LanguageManager.t("DecisionNextActionHeading")}</span>
                     <strong>${action.label}</strong>
                     <p>${action.description}</p>
                 </div>
@@ -283,32 +284,32 @@ export default class DecisionPage {
         const checks = [
             {
                 key: "identity",
-                label: "Decision identified",
+                label: LanguageManager.t("DecisionIdentifiedCheck"),
                 complete: hasTitle
             },
             {
                 key: "decision",
-                label: "Decision outcome defined",
+                label: LanguageManager.t("DecisionOutcomeDefinedCheck"),
                 complete: hasDecision
             },
             {
                 key: "owner",
-                label: "Decision owner defined",
+                label: LanguageManager.t("DecisionOwnerDefinedCheck"),
                 complete: hasDecisionMaker
             },
             {
                 key: "date",
-                label: "Decision date captured",
+                label: LanguageManager.t("DecisionDateCapturedCheck"),
                 complete: hasDate
             },
             {
                 key: "recommendation",
-                label: "Recommendation linked",
+                label: LanguageManager.t("DecisionRecommendationLinked"),
                 complete: hasRecommendationLink
             },
             {
                 key: "report",
-                label: "Report connection",
+                label: LanguageManager.t("DecisionReportConnection"),
                 complete: hasReportLink
             }
         ];
@@ -331,14 +332,14 @@ export default class DecisionPage {
         const completion = this.getCompletionState(decision);
         const percent = Math.round(completion.ratio * 100);
         const readinessLabel = completion.isReadyForReport
-            ? "Ready for Report"
-            : "Needs more decision data";
+            ? LanguageManager.t("DecisionReadyForReport")
+            : LanguageManager.t("DecisionNeedsMoreData");
 
         return `
             <section class="completion-panel" aria-label="Decision completion">
                 <div class="completion-panel__header">
                     <div>
-                        <span class="completion-panel__eyebrow">Completion</span>
+                        <span class="completion-panel__eyebrow">${LanguageManager.t("DecisionCompletionLabel")}</span>
                         <strong>${readinessLabel}</strong>
                     </div>
                     <span class="completion-panel__score">${percent}%</span>
@@ -379,7 +380,7 @@ export default class DecisionPage {
             },
             {
                 id: "close-decision",
-                label: "Close Decision",
+                label: LanguageManager.t("DecisionCloseAction"),
                 onClick: () => {
                     DecisionManager.clear();
                     this.refresh();
@@ -392,7 +393,7 @@ export default class DecisionPage {
             },
             {
                 id: "create-report",
-                label: "Create Report",
+                label: LanguageManager.t("DecisionCreateReportAction"),
                 onClick: () => this.createReportFromSelectedDecision()
             }
         ]));
@@ -413,10 +414,10 @@ export default class DecisionPage {
     static createContent(decisions = this.getDecisions()) {
         if (!decisions.length) {
             return EmptyState.create({
-                eyebrow: "Decision Workspace",
-                title: "No decisions available",
-                description: "Decisions will connect recommendations, expert reasoning, confidence, approval, and report traceability.",
-                actionLabel: "+ New Decision",
+                eyebrow: LanguageManager.t("DecisionWorkspaceTitle"),
+                title: LanguageManager.t("DecisionEmptyTitle"),
+                description: LanguageManager.t("DecisionEmptyDescription"),
+                actionLabel: LanguageManager.t("DecisionNewAction"),
                 onAction: () => this.createSampleDecision()
             });
         }
@@ -448,8 +449,8 @@ export default class DecisionPage {
 
         const meta = document.createElement("span");
         meta.textContent = [
-            decision.decisionType || "Monitor",
-            decision.riskLevel || "Medium",
+            LanguageManager.t("DecisionOptionMonitor"),
+            LanguageManager.t("DecisionOptionMedium"),
             decision.source || ""
         ].filter(Boolean).join(" · ");
 
@@ -464,9 +465,9 @@ export default class DecisionPage {
         actions.className = "evidence-row__actions";
 
         [
-            ["open", "Open"],
-            ["edit", "Edit"],
-            ["delete", "Delete"]
+            ["open", LanguageManager.t("ReportOpenAction")],
+            ["edit", LanguageManager.t("ReportEditAction")],
+            ["delete", LanguageManager.t("ReportDeleteAction")]
         ].forEach(([action, label]) => {
             const button = document.createElement("button");
             button.type = "button";
@@ -504,39 +505,39 @@ export default class DecisionPage {
 
     static createDetailPanel(activeDecision = DecisionManager.get(), decisions = this.getDecisions()) {
         if (!activeDecision) {
-            return DetailPanel.create("Decision Context", [
-                { label: "Decisions", value: String(decisions.length) },
-                { label: "Selected Decision", value: "Not selected" },
-                { label: "Workspace Status", value: "No selection" },
+            return DetailPanel.create(LanguageManager.t("DecisionContextTitle"), [
+                { label: LanguageManager.t("DecisionTotalMetric"), value: String(decisions.length) },
+                { label: LanguageManager.t("DecisionSelectedLabel"), value: LanguageManager.t("DecisionNotSelected") },
+                { label: LanguageManager.t("DecisionWorkspaceStatusLabel"), value: LanguageManager.t("DecisionNoSelection") },
                 { label: "Approval", value: decisions.length ? "In Review" : "Pending" },
                 { label: "Next Step", value: "Create or select a decision" }
             ]);
         }
 
-        const statusLabel = this.statusLabels[this.getDecisionStatus(activeDecision)] || "Draft";
+        const statusLabel = this.statusLabels[this.getDecisionStatus(activeDecision)] || LanguageManager.t("DecisionStatusDraft");
 
-        return DetailPanel.create("Decision Context", [
-            { label: "Selected Decision", value: activeDecision.title || activeDecision.id },
-            { label: "Workspace Status", value: statusLabel },
+        return DetailPanel.create(LanguageManager.t("DecisionContextTitle"), [
+            { label: LanguageManager.t("DecisionSelectedLabel"), value: activeDecision.title || activeDecision.id },
+            { label: LanguageManager.t("DecisionWorkspaceStatusLabel"), value: statusLabel },
             { label: "Safety Boundaries", value: DetailPanel.createBoundaryBadges(activeDecision) },
-            { label: "Source", value: activeDecision.source || "Recommendation Review" },
-            { label: "Case ID", value: activeDecision.caseId || "Not linked" },
-            { label: "Building ID", value: activeDecision.buildingId || "Not linked" },
-            { label: "Inspection ID", value: activeDecision.inspectionId || "Not linked" },
-            { label: "Recommendation IDs", value: (activeDecision.recommendationIds || []).join(", ") || "None" },
-            { label: "Assessment IDs", value: (activeDecision.assessmentIds || []).join(", ") || "None" },
-            { label: "Finding IDs", value: (activeDecision.findingIds || []).join(", ") || "None" },
-            { label: "Evidence IDs", value: (activeDecision.evidenceIds || []).join(", ") || "None" },
-            { label: "Building System", value: activeDecision.buildingSystem || "Not linked" },
+            { label: LanguageManager.t("DecisionSourceLabel"), value: activeDecision.source || LanguageManager.t("DecisionRecommendationReviewSource") },
+            { label: LanguageManager.t("DecisionCaseIdLabel"), value: activeDecision.caseId || LanguageManager.t("DecisionNotLinked") },
+            { label: LanguageManager.t("DecisionBuildingIdLabel"), value: activeDecision.buildingId || LanguageManager.t("DecisionNotLinked") },
+            { label: LanguageManager.t("DecisionInspectionIdLabel"), value: activeDecision.inspectionId || LanguageManager.t("DecisionNotLinked") },
+            { label: LanguageManager.t("DecisionRecommendationIdsLabel"), value: (activeDecision.recommendationIds || []).join(", ") || LanguageManager.t("DecisionNone") },
+            { label: LanguageManager.t("DecisionAssessmentIdsLabel"), value: (activeDecision.assessmentIds || []).join(", ") || LanguageManager.t("DecisionNone") },
+            { label: LanguageManager.t("DecisionFindingIdsLabel"), value: (activeDecision.findingIds || []).join(", ") || LanguageManager.t("DecisionNone") },
+            { label: LanguageManager.t("DecisionEvidenceIdsLabel"), value: (activeDecision.evidenceIds || []).join(", ") || LanguageManager.t("DecisionNone") },
+            { label: LanguageManager.t("DecisionBuildingSystemLabel"), value: activeDecision.buildingSystem || LanguageManager.t("DecisionNotLinked") },
             { label: "Risk Score", value: String(activeDecision.riskScore || 0) },
             { label: "Decision Impact", value: activeDecision.decisionImpact || "Medium" },
             { label: "Decision Type", value: activeDecision.decisionType || "Monitor" },
             { label: "Risk Level", value: activeDecision.riskLevel || "Medium" },
-            { label: "Confidence", value: activeDecision.confidence !== null && activeDecision.confidence !== undefined ? `${activeDecision.confidence}%` : "Not set" },
+            { label: LanguageManager.t("DecisionConfidenceField"), value: activeDecision.confidence !== null && activeDecision.confidence !== undefined ? `${activeDecision.confidence}%` : "Not set" },
             { label: "Rationale", value: activeDecision.rationale || "No rationale" },
-            { label: "Description", value: activeDecision.description || "No description" },
-            { label: "Report IDs", value: (activeDecision.reportIds || []).join(", ") || "None" },
-            { label: "Linked Reports", value: String(this.countReportsLinkedToDecision(activeDecision.id)) }
+            { label: LanguageManager.t("DecisionDescriptionField"), value: activeDecision.description || "No description" },
+            { label: LanguageManager.t("DecisionReportIdsLabel"), value: (activeDecision.reportIds || []).join(", ") || LanguageManager.t("DecisionNone") },
+            { label: LanguageManager.t("DecisionLinkedReportsMetric"), value: String(this.countReportsLinkedToDecision(activeDecision.id)) }
         ]);
     }
 
@@ -557,7 +558,7 @@ export default class DecisionPage {
         const currentCase = CaseManager.getCurrent();
 
         if (!decision) {
-            Notification.warning("Select a decision first.");
+            Notification.warning(LanguageManager.t("DecisionSelectFirstWarning"));
             return;
         }
 
@@ -585,16 +586,16 @@ export default class DecisionPage {
         const riskScore = decision.riskScore || 0;
 
         const reportTitle = decision.title
-            ? `Report Draft: ${decision.title}`
-            : `Report Draft from ${decision.id}`;
+            ? `${LanguageManager.t("DecisionReportDraftPrefix")}: ${decision.title}`
+            : `${LanguageManager.t("DecisionReportDraftFrom")} ${decision.id}`;
 
         const executiveSummaryParts = [
-            decision.description || "Report draft prepared from selected decision.",
+            decision.description || LanguageManager.t("DecisionReportPreparedFromSelected"),
             "",
-            "Report status:",
-            "Draft report preparation record created from selected decision.",
+            LanguageManager.t("DecisionReportStatusLabel"),
+            LanguageManager.t("DecisionDraftReportCreatedLine"),
             "Expert review required before final report, opinion, issue or delivery.",
-            "No automatic final report, expert opinion, purchase recommendation or Go/No-Go result is created by this action."
+            LanguageManager.t("DecisionNoAutomaticFinalReportLine")
         ];
 
         if (isAvailabilityCheckOnly) {
@@ -613,20 +614,20 @@ export default class DecisionPage {
         executiveSummaryParts.push("");
         executiveSummaryParts.push("Decision trace:");
         executiveSummaryParts.push(`Decision ID: ${decision.id}`);
-        executiveSummaryParts.push(`Decision source: ${decision.source || "Recommendation Review"}`);
-        executiveSummaryParts.push(`Recommendation IDs: ${(decision.recommendationIds || []).join(", ") || "None"}`);
-        executiveSummaryParts.push(`Assessment IDs: ${(decision.assessmentIds || []).join(", ") || "None"}`);
-        executiveSummaryParts.push(`Finding IDs: ${([...new Set(resolvedFindingIds)]).join(", ") || "None"}`);
-        executiveSummaryParts.push(`Evidence IDs: ${(decision.evidenceIds || []).join(", ") || "None"}`);
-        executiveSummaryParts.push(`Source Recommendation IDs: ${(decision.sourceRecommendationIds || []).join(", ") || "None"}`);
-        executiveSummaryParts.push(`Source Assessment IDs: ${(decision.sourceAssessmentIds || []).join(", ") || "None"}`);
-        executiveSummaryParts.push(`Source Finding IDs: ${(decision.sourceFindingIds || []).join(", ") || "None"}`);
-        executiveSummaryParts.push(`Source Evidence IDs: ${(decision.sourceEvidenceIds || []).join(", ") || "None"}`);
-        executiveSummaryParts.push(`Source policy: ${decision.sourcePolicy || "None"}`);
+        executiveSummaryParts.push(`${LanguageManager.t("DecisionSourceTraceLabel")}: ${decision.source || LanguageManager.t("DecisionRecommendationReviewSource")}`);
+        executiveSummaryParts.push(`${LanguageManager.t("DecisionRecommendationIdsLabel")}: ${(decision.recommendationIds || []).join(", ") || LanguageManager.t("DecisionNone")}`);
+        executiveSummaryParts.push(`${LanguageManager.t("DecisionAssessmentIdsLabel")}: ${(decision.assessmentIds || []).join(", ") || LanguageManager.t("DecisionNone")}`);
+        executiveSummaryParts.push(`${LanguageManager.t("DecisionFindingIdsLabel")}: ${([...new Set(resolvedFindingIds)]).join(", ") || LanguageManager.t("DecisionNone")}`);
+        executiveSummaryParts.push(`${LanguageManager.t("DecisionEvidenceIdsLabel")}: ${(decision.evidenceIds || []).join(", ") || LanguageManager.t("DecisionNone")}`);
+        executiveSummaryParts.push(`${LanguageManager.t("DecisionSourceRecommendationIdsTraceLabel")}: ${(decision.sourceRecommendationIds || []).join(", ") || LanguageManager.t("DecisionNone")}`);
+        executiveSummaryParts.push(`${LanguageManager.t("DecisionSourceAssessmentIdsTraceLabel")}: ${(decision.sourceAssessmentIds || []).join(", ") || LanguageManager.t("DecisionNone")}`);
+        executiveSummaryParts.push(`${LanguageManager.t("DecisionSourceFindingIdsTraceLabel")}: ${(decision.sourceFindingIds || []).join(", ") || LanguageManager.t("DecisionNone")}`);
+        executiveSummaryParts.push(`${LanguageManager.t("DecisionSourceEvidenceIdsTraceLabel")}: ${(decision.sourceEvidenceIds || []).join(", ") || LanguageManager.t("DecisionNone")}`);
+        executiveSummaryParts.push(`${LanguageManager.t("DecisionSourcePolicyTraceLabel")}: ${decision.sourcePolicy || LanguageManager.t("DecisionNone")}`);
         executiveSummaryParts.push(`Risk score: ${riskScore}`);
         executiveSummaryParts.push(`Decision impact: ${decision.decisionImpact || "Medium"}`);
         executiveSummaryParts.push(`Decision support only: ${decision.decisionSupportOnly === false ? "No" : "Yes"}`);
-        executiveSummaryParts.push(`No automatic decision: ${decision.noAutomaticDecision === false ? "No" : "Yes"}`);
+        executiveSummaryParts.push(`${LanguageManager.t("DecisionNoAutomaticDecisionTraceLabel")}: ${decision.noAutomaticDecision === false ? LanguageManager.t("DecisionNo") : LanguageManager.t("DecisionYes")}`);
         executiveSummaryParts.push(`Expert review required: ${decision.expertReviewRequired === false ? "No" : "Yes"}`);
         executiveSummaryParts.push(`Rationale: ${decision.rationale || "No rationale"}`);
 
@@ -671,7 +672,7 @@ export default class DecisionPage {
 
             executiveSummary: executiveSummaryParts.join("\n"),
             scope: isAvailabilityCheckOnly
-                ? "Report preparation based on document availability context only."
+                ? LanguageManager.t("DecisionReportPreparationDocumentAvailabilityOnly")
                 : "Decision-based technical due diligence report preparation.",
             methodology: "Evidence-first workflow chain review. Expert review required before final report use.",
 
@@ -708,7 +709,7 @@ export default class DecisionPage {
 
         DecisionManager.set(updatedDecision);
 
-        Notification.success("Report draft created. Expert review required. No final report created.");
+        Notification.success(LanguageManager.t("DecisionReportDraftCreated"));
         window.location.hash = "reports";
     }
 
@@ -733,13 +734,13 @@ export default class DecisionPage {
             : InspectionManager.get();
 
         if (!activeRecommendation && !currentCase) {
-            Notification.info("Open a case or recommendation before creating a decision.");
+            Notification.info(LanguageManager.t("DecisionOpenCaseOrRecommendationFirst"));
             return;
         }
 
         FormDialog.open({
-            title: "New Decision",
-            submitLabel: "Create Decision",
+            title: LanguageManager.t("DecisionNewTitle"),
+            submitLabel: LanguageManager.t("DecisionCreateAction"),
             values: {
                 title: activeRecommendation?.title || "",
                 description: activeRecommendation?.description || "",
@@ -752,45 +753,58 @@ export default class DecisionPage {
             fields: [
                 {
                     id: "title",
-                    label: "Decision title"
+                    label: LanguageManager.t("DecisionTitleField")
                 },
                 {
                     id: "description",
-                    label: "Description"
+                    label: LanguageManager.t("DecisionDescriptionField")
                 },
                 {
                     id: "decisionType",
-                    label: "Decision type",
+                    label: LanguageManager.t("DecisionTypeField"),
                     type: "select",
-                    options: ["Monitor"]
+                    options: [
+                          { value: "Monitor", label: LanguageManager.t("DecisionOptionMonitor") }
+                      ]
                 },
                 {
                     id: "rationale",
-                    label: "Decision rationale"
+                    label: LanguageManager.t("DecisionRationaleField")
                 },
                 {
                     id: "riskLevel",
-                    label: "Risk level",
+                    label: LanguageManager.t("DecisionRiskLevelField"),
                     type: "select",
-                    options: ["Low", "Medium", "High", "Critical"]
+                    options: [
+                          { value: "Low", label: LanguageManager.t("AssessmentOptionLow") },
+                          { value: "Medium", label: LanguageManager.t("AssessmentOptionMedium") },
+                          { value: "High", label: LanguageManager.t("AssessmentOptionHigh") },
+                          { value: "Critical", label: LanguageManager.t("AssessmentOptionCritical") }
+                      ]
                 },
                 {
                     id: "confidence",
-                    label: "Confidence",
+                    label: LanguageManager.t("DecisionConfidenceField"),
                     type: "number"
                 },
                 {
                     id: "status",
-                    label: "Status",
+                    label: LanguageManager.t("CaseStatusLabel"),
                     type: "select",
-                    options: ["Draft", "Approved", "Rejected", "Deferred", "Blocked"]
+                    options: [
+                          { value: "Draft", label: LanguageManager.t("DecisionStatusDraft") },
+                          { value: "Approved", label: LanguageManager.t("DecisionStatusApproved") },
+                          { value: "Rejected", label: LanguageManager.t("DecisionStatusRejected") },
+                          { value: "Deferred", label: LanguageManager.t("DecisionStatusDeferred") },
+                          { value: "Blocked", label: LanguageManager.t("DecisionStatusBlocked") }
+                      ]
                 }
             ],
             onSubmit: (values, dialog) => {
                 if (!values.title) return;
 
                 if (!activeRecommendation) {
-            Notification.info("Select a recommendation before creating a decision.");
+            Notification.info(LanguageManager.t("DecisionSelectRecommendationBeforeCreating"));
             return;
         }
 
@@ -813,7 +827,7 @@ export default class DecisionPage {
 
                 DecisionManager.set(decision);
                 dialog.remove();
-                Notification.success("Decision created.");
+                Notification.success(LanguageManager.t("DecisionCreatedNotification"));
                 this.refresh();
             }
         });
@@ -823,44 +837,57 @@ export default class DecisionPage {
         const decision = DecisionManager.get();
 
         if (!decision) {
-            Notification.info("Select a decision before editing.");
+            Notification.info(LanguageManager.t("DecisionSelectBeforeEditing"));
             return;
         }
 
         FormDialog.open({
-            title: "Edit Decision",
-            submitLabel: "Save Decision",
+            title: LanguageManager.t("DecisionEditTitle"),
+            submitLabel: LanguageManager.t("DecisionSaveAction"),
             values: {
                 title: decision.title || "",
                 description: decision.description || "",
-                decisionType: decision.decisionType || "Monitor",
+                decisionType: LanguageManager.t("DecisionOptionMonitor"),
                 rationale: decision.rationale || "",
-                riskLevel: decision.riskLevel || "Medium",
+                riskLevel: LanguageManager.t("DecisionOptionMedium"),
                 confidence: decision.confidence || 0,
                 status: decision.status || "Draft"
             },
             fields: [
-                { id: "title", label: "Decision title" },
-                { id: "description", label: "Description" },
+                { id: "title", label: LanguageManager.t("DecisionTitleField") },
+                { id: "description", label: LanguageManager.t("DecisionDescriptionField") },
                 {
                     id: "decisionType",
-                    label: "Decision type",
+                    label: LanguageManager.t("DecisionTypeField"),
                     type: "select",
-                    options: ["Monitor"]
+                    options: [
+                          { value: "Monitor", label: LanguageManager.t("DecisionOptionMonitor") }
+                      ]
                 },
-                { id: "rationale", label: "Decision rationale" },
+                { id: "rationale", label: LanguageManager.t("DecisionRationaleField") },
                 {
                     id: "riskLevel",
-                    label: "Risk level",
+                    label: LanguageManager.t("DecisionRiskLevelField"),
                     type: "select",
-                    options: ["Low", "Medium", "High", "Critical"]
+                    options: [
+                          { value: "Low", label: LanguageManager.t("AssessmentOptionLow") },
+                          { value: "Medium", label: LanguageManager.t("AssessmentOptionMedium") },
+                          { value: "High", label: LanguageManager.t("AssessmentOptionHigh") },
+                          { value: "Critical", label: LanguageManager.t("AssessmentOptionCritical") }
+                      ]
                 },
-                { id: "confidence", label: "Confidence", type: "number" },
+                { id: "confidence", label: LanguageManager.t("DecisionConfidenceField"), type: "number" },
                 {
                     id: "status",
-                    label: "Status",
+                    label: LanguageManager.t("CaseStatusLabel"),
                     type: "select",
-                    options: ["Draft", "Approved", "Rejected", "Deferred", "Blocked"]
+                    options: [
+                          { value: "Draft", label: LanguageManager.t("DecisionStatusDraft") },
+                          { value: "Approved", label: LanguageManager.t("DecisionStatusApproved") },
+                          { value: "Rejected", label: LanguageManager.t("DecisionStatusRejected") },
+                          { value: "Deferred", label: LanguageManager.t("DecisionStatusDeferred") },
+                          { value: "Blocked", label: LanguageManager.t("DecisionStatusBlocked") }
+                      ]
                 }
             ],
             onSubmit: (values, dialog) => {
@@ -880,14 +907,14 @@ export default class DecisionPage {
 
                 DecisionManager.set(updated);
                 dialog.remove();
-                Notification.success("Decision updated.");
+                Notification.success(LanguageManager.t("DecisionUpdatedNotification"));
                 this.refresh();
             }
         });
     }
 
     static deleteDecision(item) {
-        if (!window.confirm(`Delete decision "${item.title || item.id}"?`)) {
+        if (!window.confirm(`${LanguageManager.t("DecisionDeleteConfirmPrefix")} "${item.title || item.id}"?`)) {
             return;
         }
 
@@ -897,7 +924,7 @@ export default class DecisionPage {
             DecisionManager.clear();
         }
 
-        Notification.success("Decision deleted.");
+        Notification.success(LanguageManager.t("DecisionDeletedNotification"));
         this.refresh();
     }
 
@@ -911,7 +938,7 @@ export default class DecisionPage {
     }
 
     static showPendingFeature(feature = "This feature") {
-        Notification.info(`${feature} is reserved for a later workspace release.`);
+        Notification.info(`${feature} ${LanguageManager.t("DecisionPendingFeatureSuffix")}`);
     }
 
     static getDecisionIntelligence(decision = {}) {
@@ -967,40 +994,40 @@ export default class DecisionPage {
         });
 
         let governanceSignal = {
-            label: "Low governance signal",
-            description: "Decision logic is still incomplete. Define outcome, owner and recommendation context.",
+            label: LanguageManager.t("DecisionLowGovernanceSignal"),
+            description: LanguageManager.t("DecisionLowGovernanceSignalDescription"),
             tone: "draft"
         };
 
         if (hasDecision && hasDecisionMaker && hasRecommendationLink && hasReportLink) {
             governanceSignal = {
-                label: "Strong governance signal",
-                description: "Decision has clear governance context and is connected to final report output.",
+                label: LanguageManager.t("DecisionStrongGovernanceSignal"),
+                description: LanguageManager.t("DecisionStrongGovernanceSignalDescription"),
                 tone: "ready"
             };
         } else if (hasDecision && hasDecisionMaker) {
             governanceSignal = {
-                label: "Developing governance signal",
-                description: "Decision has usable governance context but may still need recommendation or report linkage.",
+                label: LanguageManager.t("DecisionDevelopingGovernanceSignal"),
+                description: LanguageManager.t("DecisionDevelopingGovernanceSignalDescription"),
                 tone: "active"
             };
         }
 
         const nextAction = hasReportLink
             ? {
-                label: "Review linked report",
-                description: "Decision is connected to a report. Review whether the final output reflects the decision accurately.",
+                label: LanguageManager.t("DecisionReviewLinkedReport"),
+                description: LanguageManager.t("DecisionReviewLinkedReportDescription"),
                 tone: "ready"
             }
             : hasDecision && hasDecisionMaker
                 ? {
-                    label: "Create or link report",
-                    description: "Decision is complete enough to move into report preparation.",
+                    label: LanguageManager.t("DecisionCreateOrLinkReport"),
+                    description: LanguageManager.t("DecisionCreateOrLinkReportDescription"),
                     tone: "active"
                 }
                 : {
-                    label: "Confirm decision logic",
-                    description: "Add decision outcome and decision owner before moving toward report output.",
+                    label: LanguageManager.t("DecisionConfirmDecisionLogic"),
+                    description: LanguageManager.t("DecisionConfirmDecisionLogicDescription"),
                     tone: "draft"
                 };
 
@@ -1012,10 +1039,10 @@ export default class DecisionPage {
             governanceSignal,
             nextAction,
             label: readinessPercent >= 100
-                ? "Decision intelligence complete"
+                ? LanguageManager.t("DecisionIntelligenceComplete")
                 : readinessPercent >= 50
-                    ? "Decision intelligence developing"
-                    : "Decision intelligence early"
+                    ? LanguageManager.t("DecisionIntelligenceDeveloping")
+                    : LanguageManager.t("DecisionIntelligenceEarly")
         };
     }
 
@@ -1024,31 +1051,31 @@ export default class DecisionPage {
         const intelligence = this.getDecisionIntelligence(decision);
 
         return `
-            <section class="decision-intelligence intelligence-snapshot" aria-label="Decision intelligence snapshot">
+            <section class="decision-intelligence intelligence-snapshot" aria-label="${LanguageManager.t("DecisionIntelligenceLabel")}">
                 <div class="decision-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="decision-intelligence__eyebrow intelligence-snapshot__eyebrow">Decision Intelligence</span>
+                        <span class="decision-intelligence__eyebrow intelligence-snapshot__eyebrow">${LanguageManager.t("DecisionIntelligenceLabel")}</span>
                         <strong>${intelligence.label}</strong>
-                        <p>${intelligence.completed}/${intelligence.total} decision intelligence checks completed</p>
+                        <p>${intelligence.completed}/${intelligence.total} ${LanguageManager.t("DecisionChecksCompleted")}</p>
                     </div>
                     <span class="decision-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
                 <div class="decision-intelligence__grid intelligence-snapshot__grid">
                     <article class="decision-intelligence__card intelligence-snapshot__card">
-                        <span>Report Readiness</span>
+                        <span>${LanguageManager.t("DecisionReportReadiness")}</span>
                         <strong>${intelligence.readinessPercent}%</strong>
-                        <p>Readiness based on identity, decision outcome, owner, date, recommendation link, report link and review state.</p>
+                        <p>${LanguageManager.t("DecisionReportReadinessDescription")}</p>
                     </article>
 
                     <article class="decision-intelligence__card intelligence-snapshot__card decision-intelligence__card--${intelligence.governanceSignal.tone} intelligence-snapshot__card--${intelligence.governanceSignal.tone}">
-                        <span>Governance Signal</span>
+                        <span>${LanguageManager.t("DecisionGovernanceSignalLabel")}</span>
                         <strong>${intelligence.governanceSignal.label}</strong>
                         <p>${intelligence.governanceSignal.description}</p>
                     </article>
 
                     <article class="decision-intelligence__card intelligence-snapshot__card decision-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
-                        <span>Next Decision Action</span>
+                        <span>${LanguageManager.t("DecisionNextActionLabel")}</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>
                     </article>

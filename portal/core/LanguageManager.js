@@ -3243,6 +3243,462 @@ export default class LanguageManager {
                 en: "Blocked",
                 de: "Blockiert"
             },
+            DecisionWorkspaceTitle: {
+                en: "Decision Workspace",
+                de: "Decision Workspace"
+            },
+            DecisionTitlePlural: {
+                en: "Decisions",
+                de: "Decisions"
+            },
+            DecisionHeaderDescription: {
+                en: "Prepare controlled decision records from recommendations and preserve traceability into report output.",
+                de: "Kontrollierte Decision-Datensätze aus Recommendations vorbereiten und die Nachvollziehbarkeit bis zum Report sichern."
+            },
+            DecisionNewAction: {
+                en: "+ New Decision",
+                de: "+ Neue Decision"
+            },
+            DecisionWorkflowStepTitle: {
+                en: "Decision",
+                de: "Decision"
+            },
+            DecisionWorkflowConfirmed: {
+                en: "Decision prepared",
+                de: "Decision vorbereitet"
+            },
+            DecisionWorkflowReportTitle: {
+                en: "Report",
+                de: "Report"
+            },
+            DecisionWorkflowReportPrepared: {
+                en: "Report output prepared",
+                de: "Report-Ausgabe vorbereitet"
+            },
+            DecisionToReportLabel: {
+                en: "Decision → Report",
+                de: "Decision → Report"
+            },
+            DecisionTotalMetric: {
+                en: "Decisions",
+                de: "Decisions"
+            },
+            DecisionPendingMetric: {
+                en: "Pending",
+                de: "Ausstehend"
+            },
+            DecisionApprovedMetric: {
+                en: "Approved",
+                de: "Freigegeben"
+            },
+            DecisionLinkedReportsMetric: {
+                en: "Linked Reports",
+                de: "Verknüpfte Reports"
+            },
+            DecisionStatusDraft: {
+                en: "Draft",
+                de: "Entwurf"
+            },
+            DecisionStatusDecided: {
+                en: "Decided",
+                de: "Entschieden"
+            },
+            DecisionStatusReported: {
+                en: "Reported",
+                de: "Report verknüpft"
+            },
+            DecisionStatusReviewed: {
+                en: "Reviewed",
+                de: "Geprüft"
+            },
+            DecisionStatusBlocked: {
+                en: "Blocked",
+                de: "Blockiert"
+            },
+            DecisionEmptyTitle: {
+                en: "No decisions available",
+                de: "Keine Decisions verfügbar"
+            },
+            DecisionEmptyDescription: {
+                en: "Decisions will connect recommendations, expert reasoning, confidence, approval, and report traceability.",
+                de: "Decisions verbinden Recommendations, fachliche Begründung, Confidence, Freigabe und Report-Nachverfolgung."
+            },
+            DecisionCloseAction: {
+                en: "Close Decision",
+                de: "Decision schließen"
+            },
+            DecisionCreateAction: {
+                en: "Create Decision",
+                de: "Decision erstellen"
+            },
+            DecisionCreateReportAction: {
+                en: "Create Report",
+                de: "Report erstellen"
+            },
+            DecisionContextTitle: {
+                en: "Decision Context",
+                de: "Decision-Kontext"
+            },
+            DecisionSelectedLabel: {
+                en: "Selected Decision",
+                de: "Ausgewählte Decision"
+            },
+            DecisionNotSelected: {
+                en: "Not selected",
+                de: "Nicht ausgewählt"
+            },
+            DecisionWorkspaceStatusLabel: {
+                en: "Workspace Status",
+                de: "Workspace-Status"
+            },
+            DecisionNoSelection: {
+                en: "No selection",
+                de: "Keine Auswahl"
+            },
+            DecisionSourceLabel: {
+                en: "Source",
+                de: "Quelle"
+            },
+            DecisionRecommendationReviewSource: {
+                en: "Recommendation Review",
+                de: "Recommendation Review"
+            },
+            DecisionCaseIdLabel: {
+                en: "Case ID",
+                de: "Case-ID"
+            },
+            DecisionBuildingIdLabel: {
+                en: "Building ID",
+                de: "Gebäude-ID"
+            },
+            DecisionInspectionIdLabel: {
+                en: "Inspection ID",
+                de: "Inspection-ID"
+            },
+            DecisionRecommendationIdsLabel: {
+                en: "Recommendation IDs",
+                de: "Recommendation-IDs"
+            },
+            DecisionAssessmentIdsLabel: {
+                en: "Assessment IDs",
+                de: "Assessment-IDs"
+            },
+            DecisionFindingIdsLabel: {
+                en: "Finding IDs",
+                de: "Finding-IDs"
+            },
+            DecisionEvidenceIdsLabel: {
+                en: "Evidence IDs",
+                de: "Evidence-IDs"
+            },
+            DecisionBuildingSystemLabel: {
+                en: "Building System",
+                de: "Gebäudesystem"
+            },
+            DecisionReportIdsLabel: {
+                en: "Report IDs",
+                de: "Report-IDs"
+            },
+            DecisionNone: {
+                en: "None",
+                de: "Keine"
+            },
+            DecisionNotLinked: {
+                en: "Not linked",
+                de: "Nicht verknüpft"
+            },
+            DecisionTitleField: {
+                en: "Decision title",
+                de: "Decision-Titel"
+            },
+            DecisionDescriptionField: {
+                en: "Description",
+                de: "Beschreibung"
+            },
+            DecisionTypeField: {
+                en: "Decision type",
+                de: "Decision-Typ"
+            },
+            DecisionRationaleField: {
+                en: "Decision rationale",
+                de: "Decision-Begründung"
+            },
+            DecisionRiskLevelField: {
+                en: "Risk level",
+                de: "Risikostufe"
+            },
+            DecisionConfidenceField: {
+                en: "Confidence",
+                de: "Confidence"
+            },
+            DecisionOpenCaseOrRecommendationFirst: {
+                en: "Open a case or recommendation before creating a decision.",
+                de: "Öffnen Sie zuerst einen Case oder eine Recommendation, bevor eine Decision erstellt wird."
+            },
+            DecisionSelectRecommendationBeforeCreating: {
+                en: "Select a recommendation before creating a decision.",
+                de: "Recommendation auswählen, bevor eine Decision erstellt wird."
+            },
+            DecisionSelectBeforeEditing: {
+                en: "Select a decision before editing.",
+                de: "Decision vor dem Bearbeiten auswählen."
+            },
+            DecisionSelectFirstWarning: {
+                en: "Select a decision first.",
+                de: "Zuerst eine Decision auswählen."
+            },
+            DecisionNewTitle: {
+                en: "New Decision",
+                de: "Neue Decision"
+            },
+            DecisionEditTitle: {
+                en: "Edit Decision",
+                de: "Decision bearbeiten"
+            },
+            DecisionSaveAction: {
+                en: "Save Decision",
+                de: "Decision speichern"
+            },
+            DecisionCreatedNotification: {
+                en: "Decision created.",
+                de: "Decision erstellt."
+            },
+            DecisionUpdatedNotification: {
+                en: "Decision updated.",
+                de: "Decision aktualisiert."
+            },
+            DecisionDeletedNotification: {
+                en: "Decision deleted.",
+                de: "Decision gelöscht."
+            },
+            DecisionDeleteConfirmPrefix: {
+                en: "Delete decision",
+                de: "Decision löschen"
+            },
+            DecisionPendingFeatureSuffix: {
+                en: "is reserved for a later workspace release.",
+                de: "ist für ein späteres Workspace-Release reserviert."
+            },
+            DecisionOptionMonitor: {
+                en: "Monitor",
+                de: "Beobachten"
+            },
+            DecisionStatusApproved: {
+                en: "Approved",
+                de: "Freigegeben"
+            },
+            DecisionStatusRejected: {
+                en: "Rejected",
+                de: "Abgelehnt"
+            },
+            DecisionStatusDeferred: {
+                en: "Deferred",
+                de: "Zurückgestellt"
+            },
+            DecisionReportDraftPrefix: {
+                en: "Report Draft",
+                de: "Report Draft"
+            },
+            DecisionReportDraftFrom: {
+                en: "Report Draft from",
+                de: "Report Draft aus"
+            },
+            DecisionReportPreparedFromSelected: {
+                en: "Report draft prepared from selected decision.",
+                de: "Report Draft aus ausgewählter Decision vorbereitet."
+            },
+            DecisionReportStatusLabel: {
+                en: "Report status:",
+                de: "Report-Status:"
+            },
+            DecisionDraftReportCreatedLine: {
+                en: "Draft report preparation record created from selected decision.",
+                de: "Draft Report-Vorbereitungsdatensatz aus ausgewählter Decision erstellt."
+            },
+            DecisionNoAutomaticFinalReportLine: {
+                en: "No automatic final report, expert opinion, purchase recommendation or Go/No-Go result is created by this action.",
+                de: "Durch diese Aktion wird kein automatischer finaler Report, kein Gutachten, keine Kaufempfehlung und keine Go/No-Go-Aussage erstellt."
+            },
+            DecisionSourceTraceLabel: {
+                en: "Decision source",
+                de: "Decision-Quelle"
+            },
+            DecisionSourceRecommendationIdsTraceLabel: {
+                en: "Source Recommendation IDs",
+                de: "Source-Recommendation-IDs"
+            },
+            DecisionSourceAssessmentIdsTraceLabel: {
+                en: "Source Assessment IDs",
+                de: "Source-Assessment-IDs"
+            },
+            DecisionSourceFindingIdsTraceLabel: {
+                en: "Source Finding IDs",
+                de: "Source-Finding-IDs"
+            },
+            DecisionSourceEvidenceIdsTraceLabel: {
+                en: "Source Evidence IDs",
+                de: "Source-Evidence-IDs"
+            },
+            DecisionSourcePolicyTraceLabel: {
+                en: "Source policy",
+                de: "Source Policy"
+            },
+            DecisionNoAutomaticDecisionTraceLabel: {
+                en: "No automatic decision",
+                de: "Keine automatische Decision"
+            },
+            DecisionReportPreparationDocumentAvailabilityOnly: {
+                en: "Report preparation based on document availability context only.",
+                de: "Report-Vorbereitung nur auf Basis des Dokumentenverfügbarkeits-Kontexts."
+            },
+            DecisionReportDraftCreated: {
+                en: "Report draft created. Expert review required. No final report created.",
+                de: "Report Draft erstellt. Fachliche Prüfung erforderlich. Kein finaler Report erstellt."
+            },
+            DecisionYes: {
+                en: "Yes",
+                de: "Ja"
+            },
+            DecisionNo: {
+                en: "No",
+                de: "Nein"
+            },
+            DecisionRecommendationLinked: {
+                en: "Recommendation linked",
+                de: "Recommendation verknüpft"
+            },
+            DecisionReportConnection: {
+                en: "Report connection",
+                de: "Report-Verbindung"
+            },
+            DecisionReadyForReport: {
+                en: "Ready for Report",
+                de: "Bereit für Report"
+            },
+            DecisionIntelligenceComplete: {
+                en: "Decision intelligence complete",
+                de: "Decision Intelligence vollständig"
+            },
+            DecisionIntelligenceDeveloping: {
+                en: "Decision intelligence developing",
+                de: "Decision Intelligence in Entwicklung"
+            },
+            DecisionIntelligenceEarly: {
+                en: "Decision intelligence early",
+                de: "Decision Intelligence frühe Phase"
+            },
+            DecisionIntelligenceLabel: {
+                en: "Decision Intelligence",
+                de: "Decision Intelligence"
+            },
+            DecisionChecksCompleted: {
+                en: "decision intelligence checks completed",
+                de: "Decision-Intelligence-Prüfungen abgeschlossen"
+            },
+            DecisionReportReadiness: {
+                en: "Report Readiness",
+                de: "Report-Bereitschaft"
+            },
+            DecisionReportReadinessDescription: {
+                en: "Readiness based on identity, decision outcome, owner, date, recommendation link, report link and review state.",
+                de: "Bereitschaft basierend auf Identität, Decision Outcome, Owner, Datum, Recommendation-Link, Report-Link und Review-Status."
+            },
+            DecisionGovernanceSignalLabel: {
+                en: "Governance Signal",
+                de: "Decision-Logik-Signal"
+            },
+            DecisionNextActionLabel: {
+                en: "Next Decision Action",
+                de: "Nächste Decision-Aktion"
+            },
+            DecisionLowGovernanceSignal: {
+                en: "Low governance signal",
+                de: "Geringes Decision-Logik-Signal"
+            },
+            DecisionLowGovernanceSignalDescription: {
+                en: "Decision logic is still incomplete. Define outcome, owner and recommendation context.",
+                de: "Die Decision-Logik ist noch unvollständig. Outcome, Owner und Recommendation-Kontext definieren."
+            },
+            DecisionStrongGovernanceSignal: {
+                en: "Strong governance signal",
+                de: "Starkes Decision-Logik-Signal"
+            },
+            DecisionStrongGovernanceSignalDescription: {
+                en: "Decision has clear governance context and is connected to final report output.",
+                de: "Die Decision hat klaren Entscheidungskontext und ist mit der finalen Report-Ausgabe verknüpft."
+            },
+            DecisionDevelopingGovernanceSignal: {
+                en: "Developing governance signal",
+                de: "Decision-Logik in Entwicklung"
+            },
+            DecisionDevelopingGovernanceSignalDescription: {
+                en: "Decision has usable governance context but may still need recommendation or report linkage.",
+                de: "Die Decision hat nutzbaren Entscheidungskontext, benötigt aber möglicherweise noch Recommendation- oder Report-Verknüpfung."
+            },
+            DecisionReviewLinkedReport: {
+                en: "Review linked report",
+                de: "Verknüpften Report prüfen"
+            },
+            DecisionReviewLinkedReportDescription: {
+                en: "Decision is connected to a report. Review whether the final output reflects the decision accurately.",
+                de: "Die Decision ist mit einem Report verknüpft. Prüfen, ob die finale Ausgabe die Decision korrekt abbildet."
+            },
+            DecisionCreateOrLinkReport: {
+                en: "Create or link report",
+                de: "Report erstellen oder verknüpfen"
+            },
+            DecisionCreateOrLinkReportDescription: {
+                en: "Decision is complete enough to move into report preparation.",
+                de: "Die Decision ist ausreichend vollständig, um in die Report-Vorbereitung überführt zu werden."
+            },
+            DecisionConfirmDecisionLogic: {
+                en: "Confirm decision logic",
+                de: "Decision-Logik bestätigen"
+            },
+            DecisionConfirmDecisionLogicDescription: {
+                en: "Add decision outcome and decision owner before moving toward report output.",
+                de: "Decision Outcome und Decision Owner ergänzen, bevor die Report-Ausgabe vorbereitet wird."
+            },
+            DecisionActiveFlowLabel: {
+                en: "Active Flow",
+                de: "Aktiver Workflow"
+            },
+            DecisionNextActionHeading: {
+                en: "Next Action",
+                de: "Nächste Aktion"
+            },
+            DecisionCompletionLabel: {
+                en: "Completion",
+                de: "Vollständigkeit"
+            },
+            DecisionNeedsMoreData: {
+                en: "Needs more decision data",
+                de: "Benötigt weitere Decision-Daten"
+            },
+            DecisionAlreadyLinkedReportDescription: {
+                en: "This decision is already connected to a report. Check final output completeness.",
+                de: "Diese Decision ist bereits mit einem Report verknüpft. Finale Ausgabe und Vollständigkeit prüfen."
+            },
+            DecisionIdentifiedCheck: {
+                en: "Decision identified",
+                de: "Decision identifiziert"
+            },
+            DecisionOutcomeDefinedCheck: {
+                en: "Decision outcome defined",
+                de: "Decision Outcome definiert"
+            },
+            DecisionOwnerDefinedCheck: {
+                en: "Decision owner defined",
+                de: "Decision Owner definiert"
+            },
+            DecisionDateCapturedCheck: {
+                en: "Decision date captured",
+                de: "Decision-Datum erfasst"
+            },
+            DecisionOptionMedium: {
+                en: "Medium",
+                de: "Mittel"
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."
