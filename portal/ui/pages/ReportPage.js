@@ -26,13 +26,13 @@ export default class ReportPage {
     static outputSteps = [
         {
             key: "decision",
-            label: "Decision",
-            description: "Governance decision confirmed"
+            label: LanguageManager.t("ReportWorkflowDecisionLabel"),
+            description: LanguageManager.t("ReportWorkflowDecisionDescription")
         },
         {
             key: "report",
-            label: "Report",
-            description: "Draft report output prepared"
+            label: LanguageManager.t("ReportWorkflowReportLabel"),
+            description: LanguageManager.t("ReportWorkflowReportDescription")
         }
     ];
 
@@ -321,35 +321,35 @@ export default class ReportPage {
         });
 
         let outputQualitySignal = {
-            label: "Low output quality",
-            description: "Report output is still incomplete. Prepare content, link decision and generate output.",
+            label: LanguageManager.t("ReportLowOutputQualityLabel"),
+            description: LanguageManager.t("ReportLowOutputQualityDescription"),
             tone: "draft"
         };
 
         if (hasContent && hasDecisionLink && hasOutput && isFinalized) {
             outputQualitySignal = {
-                label: "Strong output quality",
-                description: "Report contains decision context, prepared content, draft output and final approval.",
+                label: LanguageManager.t("ReportStrongOutputQualityLabel"),
+                description: LanguageManager.t("ReportStrongOutputQualityDescription"),
                 tone: "ready"
             };
         } else if (hasContent && hasDecisionLink) {
             outputQualitySignal = {
-                label: "Developing output quality",
-                description: "Report has meaningful content and decision context. Draft output or expert finalization may still be pending.",
+                label: LanguageManager.t("ReportDevelopingOutputQualityLabel"),
+                description: LanguageManager.t("ReportDevelopingOutputQualityDescription"),
                 tone: "active"
             };
         }
 
         const nextAction = isFinalized
             ? {
-                label: "Archive approved report",
-                description: "Report is finalized. Confirm approved export or archive workflow.",
+                label: LanguageManager.t("ReportArchiveApprovedReportAction"),
+                description: LanguageManager.t("ReportArchiveApprovedReportDescription"),
                 tone: "ready"
             }
             : hasOutput
                 ? {
-                    label: "Review draft report",
-                    description: "Draft output exists. Complete expert review before final use.",
+                    label: LanguageManager.t("ReportReviewDraftReportAction"),
+                    description: LanguageManager.t("ReportReviewDraftReportDescription"),
                     tone: "active"
                 }
                 : hasContent && hasDecisionLink
@@ -359,8 +359,8 @@ export default class ReportPage {
                         tone: "active"
                     }
                     : {
-                        label: "Prepare report content",
-                        description: "Add report content, type and decision context before generating output.",
+                        label: LanguageManager.t("ReportPrepareReportContentAction"),
+                        description: LanguageManager.t("ReportPrepareReportContentDescription"),
                         tone: "draft"
                     };
 
@@ -921,7 +921,7 @@ export default class ReportPage {
         const title = String(report?.title || "").trim();
 
         if (!title || title.startsWith("Report from ")) {
-            return "Technical Due Diligence Report";
+            return LanguageManager.t("ReportDefaultTechnicalDueDiligenceTitle");
         }
 
         if (this.isWorkflowDraftTitle(title)) {
@@ -1285,7 +1285,7 @@ export default class ReportPage {
                 sourceExpertReviewRequired: activeDecision?.sourceExpertReviewRequired !== undefined
                     ? activeDecision.sourceExpertReviewRequired
                     : true,
-                title: values.title || "Building Intelligence Report",
+                title: values.title || LanguageManager.t("ReportDefaultBuildingIntelligenceTitle"),
                 sourceTitle: activeDecision?.title || "",
                 reportType: values.reportType || "Technical Due Diligence",
                 version: values.version || "1.0.0",
@@ -1306,7 +1306,7 @@ export default class ReportPage {
 
         if (options.silent) {
             createReport({
-                title: "Building Intelligence Report",
+                title: LanguageManager.t("ReportDefaultBuildingIntelligenceTitle"),
                 reportType: "Technical Due Diligence",
                 version: "1.0.0",
                 executiveSummary: LanguageManager.t("ReportInitialOutputPrepared"),
@@ -1321,7 +1321,7 @@ export default class ReportPage {
             title: LanguageManager.t("ReportNewReportTitle"),
             submitLabel: LanguageManager.t("ReportCreateReportAction"),
             values: {
-                title: "Technical Due Diligence Report",
+                title: LanguageManager.t("ReportDefaultTechnicalDueDiligenceTitle"),
                 reportType: "Technical Due Diligence",
                 version: "1.0.0",
                 executiveSummary: activeDecision?.description || "",
@@ -1335,9 +1335,9 @@ export default class ReportPage {
                     id: "reportType",
                     label: LanguageManager.t("ReportTypeFieldLabel"),
                     type: "select",
-                    options: ["Technical Due Diligence", "Building Intelligence Report", "Condition Assessment", "CAPEX Review"]
+                    options: [LanguageManager.t("ReportTypeTechnicalDueDiligence"), LanguageManager.t("ReportTypeBuildingIntelligence"), LanguageManager.t("ReportTypeConditionAssessment"), LanguageManager.t("ReportTypeCapexReview")]
                 },
-                { id: "version", label: "Version" },
+                { id: "version", label: LanguageManager.t("ReportVersionFieldLabel") },
                 { id: "executiveSummary", label: LanguageManager.t("ReportExecutiveSummaryFieldLabel") },
                 { id: "scope", label: LanguageManager.t("ReportScopeLabel") },
                 { id: "methodology", label: LanguageManager.t("ReportMethodologyLabel") },
@@ -1390,9 +1390,9 @@ export default class ReportPage {
                     id: "reportType",
                     label: LanguageManager.t("ReportTypeFieldLabel"),
                     type: "select",
-                    options: ["Technical Due Diligence", "Building Intelligence Report", "Condition Assessment", "CAPEX Review"]
+                    options: [LanguageManager.t("ReportTypeTechnicalDueDiligence"), LanguageManager.t("ReportTypeBuildingIntelligence"), LanguageManager.t("ReportTypeConditionAssessment"), LanguageManager.t("ReportTypeCapexReview")]
                 },
-                { id: "version", label: "Version" },
+                { id: "version", label: LanguageManager.t("ReportVersionFieldLabel") },
                 { id: "executiveSummary", label: LanguageManager.t("ReportExecutiveSummaryFieldLabel") },
                 { id: "scope", label: LanguageManager.t("ReportScopeLabel") },
                 { id: "methodology", label: LanguageManager.t("ReportMethodologyLabel") },

@@ -479,6 +479,70 @@ export default class LanguageManager {
                 en: "Output Quality Signal",
                 de: "Qualitätssignal der Ausgabe"
             },
+            ReportWorkflowDecisionLabel: {
+                en: "Decision",
+                de: "Decision"
+            },
+            ReportWorkflowDecisionDescription: {
+                en: "Governance decision confirmed",
+                de: "Governance Decision bestätigt"
+            },
+            ReportWorkflowReportLabel: {
+                en: "Report",
+                de: "Report"
+            },
+            ReportWorkflowReportDescription: {
+                en: "Draft report output prepared",
+                de: "Berichtsentwurf vorbereitet"
+            },
+            ReportLowOutputQualityLabel: {
+                en: "Low output quality",
+                de: "Niedrige Ausgabequalität"
+            },
+            ReportLowOutputQualityDescription: {
+                en: "Report output is still incomplete. Prepare content, link decision and generate output.",
+                de: "Die Berichtsausgabe ist noch unvollständig. Bereiten Sie Inhalte vor, verknüpfen Sie die Decision und erzeugen Sie die Ausgabe."
+            },
+            ReportStrongOutputQualityLabel: {
+                en: "Strong output quality",
+                de: "Starke Ausgabequalität"
+            },
+            ReportStrongOutputQualityDescription: {
+                en: "Report contains decision context, prepared content, draft output and final approval.",
+                de: "Der Report enthält Decision-Kontext, vorbereitete Inhalte, Entwurfsausgabe und finale Freigabe."
+            },
+            ReportDevelopingOutputQualityLabel: {
+                en: "Developing output quality",
+                de: "Ausgabequalität in Entwicklung"
+            },
+            ReportDevelopingOutputQualityDescription: {
+                en: "Report has meaningful content and decision context. Draft output or expert finalization may still be pending.",
+                de: "Der Report enthält relevante Inhalte und Decision-Kontext. Entwurfsausgabe oder fachliche Finalisierung können noch offen sein."
+            },
+            ReportArchiveApprovedReportAction: {
+                en: "Archive approved report",
+                de: "Freigegebenen Report archivieren"
+            },
+            ReportArchiveApprovedReportDescription: {
+                en: "Report is finalized. Confirm approved export or archive workflow.",
+                de: "Der Report ist finalisiert. Bestätigen Sie den freigegebenen Export oder den Archivierungsworkflow."
+            },
+            ReportReviewDraftReportAction: {
+                en: "Review draft report",
+                de: "Berichtsentwurf prüfen"
+            },
+            ReportReviewDraftReportDescription: {
+                en: "Draft output exists. Complete expert review before final use.",
+                de: "Eine Entwurfsausgabe liegt vor. Schließen Sie die fachliche Prüfung vor der finalen Nutzung ab."
+            },
+            ReportPrepareReportContentAction: {
+                en: "Prepare report content",
+                de: "Report-Inhalte vorbereiten"
+            },
+            ReportPrepareReportContentDescription: {
+                en: "Add report content, type and decision context before generating output.",
+                de: "Ergänzen Sie Report-Inhalte, Typ und Decision-Kontext, bevor die Ausgabe erzeugt wird."
+            },
             ReportNextReportActionLabel: {
                 en: "Next Report Action",
                 de: "Nächste Berichtsaktion"
@@ -514,6 +578,34 @@ export default class LanguageManager {
             ReportTitleFieldLabel: {
                 en: "Report title",
                 de: "Berichtstitel"
+            },
+            ReportDefaultBuildingIntelligenceTitle: {
+                en: "Building Intelligence Report",
+                de: "Building Intelligence Report"
+            },
+            ReportDefaultTechnicalDueDiligenceTitle: {
+                en: "Technical Due Diligence Report",
+                de: "Technical Due Diligence Report"
+            },
+            ReportTypeTechnicalDueDiligence: {
+                en: "Technical Due Diligence",
+                de: "Technical Due Diligence"
+            },
+            ReportTypeBuildingIntelligence: {
+                en: "Building Intelligence Report",
+                de: "Building Intelligence Report"
+            },
+            ReportTypeConditionAssessment: {
+                en: "Condition Assessment",
+                de: "Condition Assessment"
+            },
+            ReportTypeCapexReview: {
+                en: "CAPEX Review",
+                de: "CAPEX Review"
+            },
+            ReportVersionFieldLabel: {
+                en: "Version",
+                de: "Version"
             },
             ReportTypeFieldLabel: {
                 en: "Report type",
