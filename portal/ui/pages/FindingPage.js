@@ -563,6 +563,18 @@ export default class FindingPage {
             .length;
     }
 
+    static formatSourceMeasurement(finding = {}) {
+        if (
+            finding.sourceMeasurementValue === null ||
+            finding.sourceMeasurementValue === undefined ||
+            finding.sourceMeasurementValue === ""
+        ) {
+            return "None";
+        }
+
+        return `${finding.sourceMeasurementValue}${finding.sourceMeasurementUnit ? " " + finding.sourceMeasurementUnit : ""}`;
+    }
+
     static createAssessmentFromSelectedFinding() {
         const finding = FindingManager.get();
         const currentCase = CaseManager.getCurrent();
@@ -634,6 +646,32 @@ export default class FindingPage {
         descriptionParts.push(`Source policy: ${finding.sourcePolicy || "None"}`);
         descriptionParts.push(`Expert review required: ${finding.expertReviewRequired === false ? "No" : "Yes"}`);
 
+        const hasEvidenceMetadataTrace = Boolean(
+            finding.sourceFileName ||
+            finding.sourceFileType ||
+            finding.sourceFileReference ||
+            finding.sourceCaptureMethod ||
+            finding.sourceLocationLabel ||
+            finding.sourceInspectionArea ||
+            finding.sourceMeasurementValue !== null && finding.sourceMeasurementValue !== undefined ||
+            finding.sourceMeasurementUnit ||
+            finding.sourceReviewStatus
+        );
+
+        if (hasEvidenceMetadataTrace) {
+            descriptionParts.push("");
+            descriptionParts.push("Evidence metadata trace:");
+            descriptionParts.push(`File name: ${finding.sourceFileName || "None"}`);
+            descriptionParts.push(`File type: ${finding.sourceFileType || "None"}`);
+            descriptionParts.push(`File reference: ${finding.sourceFileReference || "None"}`);
+            descriptionParts.push(`Capture method: ${finding.sourceCaptureMethod || "None"}`);
+            descriptionParts.push(`Location label: ${finding.sourceLocationLabel || "None"}`);
+            descriptionParts.push(`Inspection area: ${finding.sourceInspectionArea || "None"}`);
+            descriptionParts.push(`Measurement: ${this.formatSourceMeasurement(finding)}`);
+            descriptionParts.push(`Evidence review status: ${finding.sourceReviewStatus || "None"}`);
+            descriptionParts.push(`Expert review required: ${finding.sourceExpertReviewRequired === false ? "No" : "Yes"}`);
+        }
+
         const riskScore = isAvailabilityCheckOnly
             ? 0
             : AssessmentManager.calculateRiskScore(severity, probability, consequence);
@@ -671,6 +709,19 @@ export default class FindingPage {
             sourceCategory: finding.sourceCategory || "",
             sourcePolicy: finding.sourcePolicy || "",
             sourceRequiredEvidenceRaw: finding.sourceRequiredEvidenceRaw || "",
+
+            sourceFileName: finding.sourceFileName || "",
+            sourceFileType: finding.sourceFileType || "",
+            sourceFileReference: finding.sourceFileReference || "",
+            sourceCaptureMethod: finding.sourceCaptureMethod || "",
+            sourceLocationLabel: finding.sourceLocationLabel || "",
+            sourceInspectionArea: finding.sourceInspectionArea || "",
+            sourceMeasurementValue: finding.sourceMeasurementValue ?? null,
+            sourceMeasurementUnit: finding.sourceMeasurementUnit || "",
+            sourceReviewStatus: finding.sourceReviewStatus || "",
+            sourceExpertReviewRequired: finding.sourceExpertReviewRequired !== undefined
+                ? finding.sourceExpertReviewRequired
+                : true,
 
             profile: isPattayaFinding ? "pattaya" : "",
             country: isPattayaFinding ? "TH" : "",
