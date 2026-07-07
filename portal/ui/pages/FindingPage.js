@@ -6,6 +6,7 @@ import BuildingManager from "../../core/BuildingManager.js";
 import InspectionManager from "../../core/InspectionManager.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import WorkspaceActionGovernanceManager from "../../core/WorkspaceActionGovernanceManager.js";
 import LanguageManager from "../../core/LanguageManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
@@ -466,18 +467,27 @@ export default class FindingPage {
         const actions = document.createElement("div");
         actions.className = "evidence-row__actions";
 
+        const actionState = WorkspaceActionGovernanceManager.getActionState(finding);
+
         [
-            ["open", LanguageManager.t("ReportOpenAction")],
-            ["edit", LanguageManager.t("ReportEditAction")],
-            ["delete", LanguageManager.t("ReportDeleteAction")]
-        ].forEach(([action, label]) => {
+            ["open", LanguageManager.t("FindingOpenAction"), actionState.openAllowed],
+            ["edit", LanguageManager.t("FindingEditAction"), actionState.editAllowed],
+            ["delete", LanguageManager.t("FindingDeleteAction"), actionState.deleteAllowed]
+        ].forEach(([action, label, isAllowed]) => {
             const button = document.createElement("button");
             button.type = "button";
-            button.className = "button";
-            button.textContent = label;
+            button.className = isAllowed ? "button" : "button secondary";
+            button.textContent = isAllowed ? label : `${label} · ${LanguageManager.t("FindingActionLockedLabel")}`;
+            button.disabled = !isAllowed;
+            button.title = isAllowed ? "" : actionState.reason;
 
             button.addEventListener("click", event => {
                 event.stopPropagation();
+
+                if (!isAllowed) {
+                    Notification.warning(LanguageManager.t("FindingActionBlockedNotification"));
+                    return;
+                }
 
                 if (action === "open") {
                     FindingManager.set(finding);
@@ -593,6 +603,17 @@ export default class FindingPage {
 
         if (currentCase && currentCase.id !== finding.caseId) {
             Notification.warning(LanguageManager.t("FindingBelongsOtherCaseWarning"));
+            return;
+        }
+
+        const actionState = WorkspaceActionGovernanceManager.getActionState(finding, {
+            requireContent: true,
+            blockedReason: LanguageManager.t("FindingBlockedActionReason"),
+            contentRequiredReason: LanguageManager.t("FindingContentRequiredBeforeAssessmentReason")
+        });
+
+        if (!actionState.downstreamAllowed) {
+            Notification.warning(LanguageManager.t("FindingDownstreamActionBlockedNotification"));
             return;
         }
 
@@ -767,6 +788,13 @@ export default class FindingPage {
             return;
         }
 
+        const actionState = WorkspaceActionGovernanceManager.getActionState(finding);
+
+        if (!actionState.editAllowed) {
+            Notification.warning(LanguageManager.t("FindingEditBlockedNotification"));
+            return;
+        }
+
         FormDialog.open({
             title: LanguageManager.t("FindingEditTitle"),
             submitLabel: LanguageManager.t("FindingSaveAction"),
@@ -821,6 +849,13 @@ export default class FindingPage {
     }
 
     static deleteFinding(item) {
+        const actionState = WorkspaceActionGovernanceManager.getActionState(item);
+
+        if (!actionState.deleteAllowed) {
+            Notification.warning(LanguageManager.t("FindingDeleteBlockedNotification"));
+            return;
+        }
+
         if (!window.confirm(`${LanguageManager.t("FindingDeleteConfirmPrefix")} "${item.title || item.id}"?`)) {
             return;
         }

@@ -2311,6 +2311,46 @@ export default class LanguageManager {
                 en: "Not linked",
                 de: "Nicht verknüpft"
             },
+            FindingOpenAction: {
+                en: "Open",
+                de: "Öffnen"
+            },
+            FindingEditAction: {
+                en: "Edit",
+                de: "Bearbeiten"
+            },
+            FindingDeleteAction: {
+                en: "Delete",
+                de: "Löschen"
+            },
+            FindingActionLockedLabel: {
+                en: "Locked",
+                de: "Gesperrt"
+            },
+            FindingActionBlockedNotification: {
+                en: "This finding action is blocked by workspace governance.",
+                de: "Diese Finding-Aktion wird durch Workspace Governance blockiert."
+            },
+            FindingEditBlockedNotification: {
+                en: "This finding record cannot be edited.",
+                de: "Dieser Finding-Datensatz kann nicht bearbeitet werden."
+            },
+            FindingDeleteBlockedNotification: {
+                en: "This finding record cannot be deleted.",
+                de: "Dieser Finding-Datensatz kann nicht gelöscht werden."
+            },
+            FindingDownstreamActionBlockedNotification: {
+                en: "An assessment cannot be created from this finding yet.",
+                de: "Aus diesem Finding kann noch kein Assessment erstellt werden."
+            },
+            FindingBlockedActionReason: {
+                en: "Finding is blocked by workspace governance.",
+                de: "Finding wird durch Workspace Governance blockiert."
+            },
+            FindingContentRequiredBeforeAssessmentReason: {
+                en: "Finding content is required before creating an assessment.",
+                de: "Finding-Inhalt ist erforderlich, bevor ein Assessment erstellt werden kann."
+            },
             FindingSelectFirstWarning: {
                 en: "Select a finding first.",
                 de: "Zuerst ein Finding auswählen."
