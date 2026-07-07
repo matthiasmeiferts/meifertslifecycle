@@ -6,7 +6,7 @@ import DecisionManager from "../../core/DecisionManager.js";
 import AssessmentManager from "../../core/AssessmentManager.js";
 import DemoDatasetManager from "../../core/DemoDatasetManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
-import WorkflowValidationGateManager from "../../core/WorkflowValidationGateManager.js";
+import ReportOutputGovernanceManager from "../../core/ReportOutputGovernanceManager.js";
 import LanguageManager from "../../core/LanguageManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
@@ -1094,14 +1094,14 @@ export default class ReportPage {
             return;
         }
 
-        const reportGate = WorkflowValidationGateManager.validateForReport(sourceReport.caseId);
+        const draftOutputGate = ReportOutputGovernanceManager.validateDraftOutput(sourceReport);
 
-        if (!reportGate.canProceed && reportGate.status === "blocked") {
-            Notification.warning(LanguageManager.t("ReportValidationGateBlockedNotification"));
+        if (!draftOutputGate.canProceed) {
+            Notification.warning(LanguageManager.t("ReportOutputGovernanceDraftBlockedNotification"));
             return;
         }
 
-        if (!reportGate.canProceed && reportGate.status === "warning") {
+        if (draftOutputGate.gate?.status === "warning") {
             Notification.info(LanguageManager.t("ReportValidationGateWarningNotification"));
         }
 
@@ -1128,14 +1128,14 @@ export default class ReportPage {
             return;
         }
 
-        const externalGate = WorkflowValidationGateManager.validateForExternalUse(activeReport.caseId);
+        const externalOutputGate = ReportOutputGovernanceManager.validateExternalOutput(activeReport);
 
-        if (!externalGate.canProceed && externalGate.status === "blocked") {
-            Notification.warning(LanguageManager.t("ReportValidationGateExternalBlockedNotification"));
+        if (!externalOutputGate.canProceed) {
+            Notification.warning(LanguageManager.t("ReportOutputGovernanceExternalBlockedNotification"));
             return;
         }
 
-        if (!externalGate.canProceed && externalGate.status === "warning") {
+        if (externalOutputGate.gate?.status === "warning") {
             Notification.info(LanguageManager.t("ReportValidationGateExternalWarningNotification"));
         }
 
