@@ -7,6 +7,7 @@ import InspectionManager from "../../core/InspectionManager.js";
 import ReportManager from "../../core/ReportManager.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
 import WorkflowValidationGateManager from "../../core/WorkflowValidationGateManager.js";
+import WorkspaceActionGovernanceManager from "../../core/WorkspaceActionGovernanceManager.js";
 import LanguageManager from "../../core/LanguageManager.js";
 import SectionHeader from "../components/SectionHeader.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
@@ -466,18 +467,27 @@ export default class DecisionPage {
         const actions = document.createElement("div");
         actions.className = "evidence-row__actions";
 
+        const actionState = WorkspaceActionGovernanceManager.getActionState(decision);
+
         [
-            ["open", LanguageManager.t("ReportOpenAction")],
-            ["edit", LanguageManager.t("ReportEditAction")],
-            ["delete", LanguageManager.t("ReportDeleteAction")]
-        ].forEach(([action, label]) => {
+            ["open", LanguageManager.t("DecisionOpenAction"), actionState.openAllowed],
+            ["edit", LanguageManager.t("DecisionEditAction"), actionState.editAllowed],
+            ["delete", LanguageManager.t("DecisionDeleteAction"), actionState.deleteAllowed]
+        ].forEach(([action, label, isAllowed]) => {
             const button = document.createElement("button");
             button.type = "button";
-            button.className = "button";
-            button.textContent = label;
+            button.className = isAllowed ? "button" : "button secondary";
+            button.textContent = isAllowed ? label : `${label} · ${LanguageManager.t("DecisionActionLockedLabel")}`;
+            button.disabled = !isAllowed;
+            button.title = isAllowed ? "" : actionState.reason;
 
             button.addEventListener("click", event => {
                 event.stopPropagation();
+
+                if (!isAllowed) {
+                    Notification.warning(LanguageManager.t("DecisionActionBlockedNotification"));
+                    return;
+                }
 
                 if (action === "open") {
                     DecisionManager.set(decision);
@@ -572,6 +582,17 @@ export default class DecisionPage {
 
         if (currentCase && currentCase.id !== decision.caseId) {
             Notification.warning("Selected decision belongs to another case.");
+            return;
+        }
+
+        const actionState = WorkspaceActionGovernanceManager.getActionState(decision, {
+            requireContent: true,
+            blockedReason: LanguageManager.t("DecisionBlockedActionReason"),
+            contentRequiredReason: LanguageManager.t("DecisionContentRequiredBeforeReportReason")
+        });
+
+        if (!actionState.downstreamAllowed) {
+            Notification.warning(LanguageManager.t("DecisionDownstreamActionBlockedNotification"));
             return;
         }
 
@@ -852,6 +873,13 @@ export default class DecisionPage {
             return;
         }
 
+        const actionState = WorkspaceActionGovernanceManager.getActionState(decision);
+
+        if (!actionState.editAllowed) {
+            Notification.warning(LanguageManager.t("DecisionEditBlockedNotification"));
+            return;
+        }
+
         FormDialog.open({
             title: LanguageManager.t("DecisionEditTitle"),
             submitLabel: LanguageManager.t("DecisionSaveAction"),
@@ -925,6 +953,13 @@ export default class DecisionPage {
     }
 
     static deleteDecision(item) {
+        const actionState = WorkspaceActionGovernanceManager.getActionState(item);
+
+        if (!actionState.deleteAllowed) {
+            Notification.warning(LanguageManager.t("DecisionDeleteBlockedNotification"));
+            return;
+        }
+
         if (!window.confirm(`${LanguageManager.t("DecisionDeleteConfirmPrefix")} "${item.title || item.id}"?`)) {
             return;
         }

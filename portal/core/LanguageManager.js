@@ -3895,6 +3895,46 @@ export default class LanguageManager {
                 en: "Save Decision",
                 de: "Decision speichern"
             },
+            DecisionOpenAction: {
+                en: "Open",
+                de: "Öffnen"
+            },
+            DecisionEditAction: {
+                en: "Edit",
+                de: "Bearbeiten"
+            },
+            DecisionDeleteAction: {
+                en: "Delete",
+                de: "Löschen"
+            },
+            DecisionActionLockedLabel: {
+                en: "Locked",
+                de: "Gesperrt"
+            },
+            DecisionActionBlockedNotification: {
+                en: "This decision action is blocked by workspace governance.",
+                de: "Diese Decision-Aktion wird durch Workspace Governance blockiert."
+            },
+            DecisionEditBlockedNotification: {
+                en: "This decision record cannot be edited.",
+                de: "Dieser Decision-Datensatz kann nicht bearbeitet werden."
+            },
+            DecisionDeleteBlockedNotification: {
+                en: "This decision record cannot be deleted.",
+                de: "Dieser Decision-Datensatz kann nicht gelöscht werden."
+            },
+            DecisionDownstreamActionBlockedNotification: {
+                en: "A report cannot be created from this decision yet.",
+                de: "Aus dieser Decision kann noch kein Report erstellt werden."
+            },
+            DecisionBlockedActionReason: {
+                en: "Decision is blocked by workspace governance.",
+                de: "Decision wird durch Workspace Governance blockiert."
+            },
+            DecisionContentRequiredBeforeReportReason: {
+                en: "Decision content is required before creating a report.",
+                de: "Decision-Inhalt ist erforderlich, bevor ein Report erstellt werden kann."
+            },
             DecisionCreatedNotification: {
                 en: "Decision created.",
                 de: "Decision erstellt."
