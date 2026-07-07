@@ -117,9 +117,15 @@ export default class SettingsPage {
 
         panel.querySelector("[data-action='set-language']")
             .addEventListener("change", event => {
-                LanguageManager.setLanguage(event.target.value);
-                Notification.success(LanguageManager.t("InterfaceLanguageSaved"));
-                this.refresh();
+                const selectedLanguage = LanguageManager.setLanguage(event.target.value);
+
+                window.dispatchEvent(new CustomEvent("mbi:language-changed", {
+                    detail: {
+                        language: selectedLanguage
+                    }
+                }));
+
+                Notification.success(LanguageManager.t("InterfaceLanguageSaved", selectedLanguage));
             });
 
         return panel;

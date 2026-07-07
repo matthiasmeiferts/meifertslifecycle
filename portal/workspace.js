@@ -50,6 +50,10 @@ function initWorkspace() {
     window.addEventListener("hashchange", () => {
         renderWorkspace();
     });
+
+    window.addEventListener("mbi:language-changed", () => {
+        renderWorkspace();
+    });
 }
 
 initWorkspace();
