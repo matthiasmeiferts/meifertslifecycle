@@ -12,6 +12,7 @@ import EmptyState from "../components/EmptyState.js";
 import DetailPanel from "../components/DetailPanel.js";
 import Notification from "../components/Notification.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import LanguageManager from "../../core/LanguageManager.js";
 
 export default class InspectionPage {
 
@@ -149,13 +150,13 @@ export default class InspectionPage {
             "box-shadow:0 10px 28px rgba(27,43,69,0.12)"
         ].join(";");
         panel.innerHTML = `
-            <span>Inspection Profile</span>
+            <span>${LanguageManager.t("InspectionProfileLabel")}</span>
             <select aria-label="Inspection profile" style="display:block;width:100%;margin-top:8px;padding:10px;border-radius:10px;border:1px solid rgba(27,43,69,0.25);background:white;color:#1b2b45;">
                 <option value="default"${currentProfile === "default" ? " selected" : ""}>Default / Germany</option>
                 <option value="pattaya"${currentProfile === "pattaya" ? " selected" : ""}>Thailand / Pattaya</option>
             </select>
             <p>${currentProfile === "pattaya"
-                ? "Thailand profile active. Documents are handled as availability checks only."
+                ? LanguageManager.t("InspectionThailandProfileActive")
                 : "Default starter catalog active."}</p>
         `;
 
@@ -280,8 +281,8 @@ export default class InspectionPage {
 
         const nextAction = firstOpenStage
             ? {
-                label: `Strengthen ${firstOpenStage.label}`,
-                description: `${firstOpenStage.label} data is missing for this inspection. Complete this stage before relying on downstream assessment.`,
+                label: `${LanguageManager.t("InspectionStrengthenStagePrefix")} ${firstOpenStage.label}`,
+                description: `${firstOpenStage.label} ${LanguageManager.t("InspectionMissingStageDescriptionSuffix")}`,
                 tone: "active"
             }
             : {
@@ -310,21 +311,21 @@ export default class InspectionPage {
         const intelligence = this.getInspectionIntelligence(inspection, data);
 
         return `
-            <section class="inspection-intelligence intelligence-snapshot" aria-label="Inspection intelligence snapshot">
+            <section class="inspection-intelligence intelligence-snapshot" aria-label="${LanguageManager.t("InspectionIntelligenceLabel")}">
                 <div class="inspection-intelligence__header intelligence-snapshot__header">
                     <div>
-                        <span class="inspection-intelligence__eyebrow intelligence-snapshot__eyebrow">Inspection Intelligence</span>
+                        <span class="inspection-intelligence__eyebrow intelligence-snapshot__eyebrow">${LanguageManager.t("InspectionIntelligenceLabel")}</span>
                         <strong>${intelligence.label}</strong>
-                        <p>${intelligence.completedStages}/${intelligence.totalStages} inspection stages represented</p>
+                        <p>${intelligence.completedStages}/${intelligence.totalStages} ${LanguageManager.t("InspectionChecksCompleted")}</p>
                     </div>
                     <span class="inspection-intelligence__score intelligence-snapshot__score">${intelligence.confidenceScore}%</span>
                 </div>
 
                 <div class="inspection-intelligence__grid intelligence-snapshot__grid">
                     <article class="inspection-intelligence__card intelligence-snapshot__card">
-                        <span>Evidence Coverage</span>
+                        <span>${LanguageManager.t("InspectionEvidenceCoverage")}</span>
                         <strong>${intelligence.evidenceCoverage}%</strong>
-                        <p>Coverage across Inspection, Evidence, Finding and Assessment.</p>
+                        <p>${LanguageManager.t("InspectionEvidenceCoverageDescription")}</p>
                     </article>
 
                     <article class="inspection-intelligence__card intelligence-snapshot__card inspection-intelligence__card--${intelligence.signalDensity.tone} intelligence-snapshot__card--${intelligence.signalDensity.tone}">
@@ -334,7 +335,7 @@ export default class InspectionPage {
                     </article>
 
                     <article class="inspection-intelligence__card intelligence-snapshot__card inspection-intelligence__card--${intelligence.nextAction.tone} intelligence-snapshot__card--${intelligence.nextAction.tone}">
-                        <span>Next Inspection Action</span>
+                        <span>${LanguageManager.t("InspectionNextActionLabel")}</span>
                         <strong>${intelligence.nextAction.label}</strong>
                         <p>${intelligence.nextAction.description}</p>
                     </article>
@@ -391,15 +392,15 @@ export default class InspectionPage {
 
     static createHeader(activeInspection = null) {
         return SectionHeader.create({
-            eyebrow: "Inspection Workspace",
-            title: "Inspections",
+            eyebrow: LanguageManager.t("InspectionWorkspaceTitle"),
+            title: LanguageManager.t("InspectionTitlePlural"),
             description: activeInspection
-                ? `Active inspection: ${activeInspection.title || activeInspection.id}`
+                ? `${LanguageManager.t("InspectionActivePrefix")}: ${activeInspection.title || activeInspection.id}`
                 : "Plan, document, and manage technical inspections linked to buildings, cases, and evidence.",
             actions: [
                 {
                     id: "new-inspection",
-                    label: "+ New Inspection",
+                    label: LanguageManager.t("InspectionNewAction"),
                     onClick: () => this.createSampleInspection()
                 }
             ]
@@ -414,10 +415,10 @@ export default class InspectionPage {
         const progressCount = inspections.filter(inspection => inspection.status === "in_progress").length;
         const completedCount = inspections.filter(inspection => inspection.status === "completed").length;
 
-        grid.appendChild(this.createMetricCard("Inspections", inspections.length));
-        grid.appendChild(this.createMetricCard("Draft", draftCount));
+        grid.appendChild(this.createMetricCard(LanguageManager.t("InspectionTitlePlural"), inspections.length));
+        grid.appendChild(this.createMetricCard(LanguageManager.t("InspectionMetricDraft"), draftCount));
         grid.appendChild(this.createMetricCard("In Progress", progressCount));
-        grid.appendChild(this.createMetricCard("Completed", completedCount));
+        grid.appendChild(this.createMetricCard(LanguageManager.t("InspectionMetricCompleted"), completedCount));
 
         return grid;
     }
@@ -495,18 +496,18 @@ export default class InspectionPage {
         eyebrow.textContent = "Object Inspection Scope";
 
         const title = document.createElement("strong");
-        title.textContent = activeScope ? "Adaptive Scope Active." : "Adaptive Scope Review.";
+        title.textContent = activeScope ? LanguageManager.t("InspectionAdaptiveScopeActiveTitle") : "Adaptive Scope Review.";
 
         const description = document.createElement("p");
         description.textContent = activeScope
-            ? "The inspection scope is connected to this case and inspection. Answers now drive evidence requirements, skipped questions, risk flags and report limitations."
+            ? LanguageManager.t("InspectionAdaptiveScopeActiveDescription")
             : "Define what must be inspected before evidence is collected. The scope engine turns answers into required evidence, risk signals and limitations.";
 
         const status = document.createElement("span");
         status.className = activeScope
             ? "inspection-scope-editorial__status inspection-scope-editorial__status--active"
             : "inspection-scope-editorial__status";
-        status.textContent = activeScope ? "Scope Active" : "Not Started";
+        status.textContent = activeScope ? LanguageManager.t("InspectionScopeActiveBadge") : "Not Started";
 
         heroCopy.appendChild(eyebrow);
         heroCopy.appendChild(title);
@@ -523,12 +524,12 @@ export default class InspectionPage {
         const actionButton = document.createElement("button");
         actionButton.type = "button";
         actionButton.className = "button inspection-scope-editorial__action";
-        actionButton.textContent = activeScope ? "Scope Active" : "Start Scope";
+        actionButton.textContent = activeScope ? LanguageManager.t("InspectionScopeActiveBadge") : "Start Scope";
         actionButton.onclick = () => this.startAdaptiveScope(activeInspection);
 
         const actionMeta = document.createElement("p");
         actionMeta.textContent = activeScope
-            ? `${coverage.inspected}/${coverage.total} inspected · ${coverage.riskFlagged} risk flags`
+            ? `${coverage.inspected}/${coverage.total} ${LanguageManager.t("InspectionInspectedLabel")} · ${coverage.riskFlagged} ${LanguageManager.t("InspectionRiskFlagsLabel")}`
             : `${coverage.total} adaptive questions ready`;
 
         actionPanel.appendChild(actionLabel);
@@ -546,7 +547,7 @@ export default class InspectionPage {
 
         const moduleHeader = document.createElement("div");
         moduleHeader.className = "inspection-scope-editorial__section-header";
-        moduleHeader.innerHTML = "<span>Inspection Modules</span><strong>Building systems review</strong>";
+        moduleHeader.innerHTML = `<span>${LanguageManager.t("InspectionModulesLabel")}</span><strong>${LanguageManager.t("InspectionBuildingSystemsReview")}</strong>`;
         modulePanel.appendChild(moduleHeader);
 
         modules.forEach((module, index) => {
@@ -576,7 +577,7 @@ export default class InspectionPage {
 
         const workHeader = document.createElement("div");
         workHeader.className = "inspection-scope-editorial__section-header";
-        workHeader.innerHTML = "<span>Current Question</span><strong>Inspection decision path</strong>";
+        workHeader.innerHTML = `<span>${LanguageManager.t("InspectionCurrentQuestionLabel")}</span><strong>${LanguageManager.t("InspectionDecisionPathTitle")}</strong>`;
 
         const questionCard = document.createElement("article");
         questionCard.className = "inspection-scope-editorial__question";
@@ -592,7 +593,7 @@ export default class InspectionPage {
         const questionHint = document.createElement("div");
         questionHint.className = "inspection-scope-editorial__hint";
         questionHint.textContent = activeScope
-            ? "Choose an answer. The scope engine will update coverage, evidence requirements, risk flags and limitations."
+            ? LanguageManager.t("InspectionChooseAnswerDescription")
             : "Start the adaptive scope to connect this question set to the active case and inspection.";
 
         questionCard.appendChild(questionText);
@@ -605,9 +606,9 @@ export default class InspectionPage {
 
         [
             ["Questions", coverage.total],
-            ["Open", coverage.open],
+            [LanguageManager.t("InspectionOpenLabel"), coverage.open],
             ["Inspected", coverage.inspected],
-            ["Evidence", coverage.evidenceRequired],
+            [LanguageManager.t("InspectionCoverageEvidenceLabel"), coverage.evidenceRequired],
             ["Risk", coverage.riskFlagged],
             ["Limits", coverage.limitations]
         ].forEach(([label, value]) => {
@@ -768,10 +769,10 @@ export default class InspectionPage {
 
         [
             {
-                label: "Evidence Required",
+                label: LanguageManager.t("InspectionEvidenceRequired"),
                 value: evidenceRequirements.length,
                 detail: evidenceRequirements.length
-                    ? `${evidenceRequirements.length} inspection question(s) require evidence.`
+                    ? `${evidenceRequirements.length} ${LanguageManager.t("InspectionEvidenceRequiredSummary")}`
                     : "No evidence requirements triggered yet."
             },
             {
@@ -779,14 +780,14 @@ export default class InspectionPage {
                 value: riskFlags.length,
                 detail: riskFlags.length
                     ? riskFlags.map(item => item.reason).slice(0, 2).join(" · ")
-                    : "No risk flags triggered yet."
+                    : LanguageManager.t("InspectionNoRiskFlagsYet")
             },
             {
-                label: "Limitations",
+                label: LanguageManager.t("InspectionLimitationsUpper"),
                 value: limitations.length,
                 detail: limitations.length
                     ? limitations.map(item => item.reason).slice(0, 2).join(" · ")
-                    : "No limitations recorded yet."
+                    : LanguageManager.t("InspectionNoLimitationsYet")
             }
         ].forEach(signal => {
             const item = document.createElement("article");
@@ -821,7 +822,7 @@ export default class InspectionPage {
         header.className = "inspection-scope-editorial__requirements-header";
 
         const eyebrow = document.createElement("span");
-        eyebrow.textContent = "Evidence Actions";
+        eyebrow.textContent = LanguageManager.t("InspectionEvidenceActions");
 
         const title = document.createElement("strong");
         title.textContent = "Required evidence by inspection answer";
@@ -873,7 +874,7 @@ export default class InspectionPage {
             const action = document.createElement("button");
             action.type = "button";
             action.className = "button inspection-scope-editorial__requirement-action";
-            action.textContent = "Create Evidence";
+            action.textContent = LanguageManager.t("InspectionCreateEvidence");
             action.addEventListener("click", () => {
                 this.createEvidenceFromRequirement(activeScope, requirement);
             });
@@ -928,7 +929,7 @@ export default class InspectionPage {
                 ? `Document availability check · ${question.question}`
                 : `${this.formatEvidenceType(evidenceType)} required · ${question.question}`,
             description: [
-                "Evidence requirement generated from adaptive inspection scope.",
+                LanguageManager.t("InspectionEvidenceRequirementGenerated"),
                 isDocumentAvailabilityCheck ? availabilityOnlyNotice : "",
                 `Question: ${question.id}`,
                 `Module: ${question.module}`,
@@ -987,7 +988,7 @@ export default class InspectionPage {
 
         InspectionScopeManager.update(updatedScope);
 
-        Notification.success("Evidence created from inspection scope.");
+        Notification.success(LanguageManager.t("InspectionEvidenceCreatedFromScope"));
         sessionStorage.setItem("workspaceScrollTarget", "evidence-list");
         window.location.hash = "evidence";
     }
@@ -1026,12 +1027,12 @@ export default class InspectionPage {
                 : BuildingManager.get();
 
             if (!currentCase) {
-                Notification.info("Open a case before starting an inspection scope.");
+                Notification.info(LanguageManager.t("InspectionOpenCaseBeforeScope"));
                 return;
             }
 
             if (!inspection) {
-                Notification.info("Create or select an inspection before starting the adaptive scope.");
+                Notification.info(LanguageManager.t("InspectionCreateOrSelectBeforeScope"));
                 return;
             }
 
@@ -1039,7 +1040,7 @@ export default class InspectionPage {
 
             if (existing) {
                 InspectionScopeManager.set(existing);
-                Notification.info("Adaptive inspection scope is already active.");
+                Notification.info(LanguageManager.t("InspectionAdaptiveScopeAlreadyActive"));
                 this.refresh();
                 return;
             }
@@ -1053,16 +1054,16 @@ export default class InspectionPage {
                 profile: this.getInspectionProfile(),
                 country: catalogOptions.country || null,
                 region: catalogOptions.region || null,
-                title: `Inspection Scope · ${inspection.title || inspection.id}`,
+                title: `${LanguageManager.t("InspectionScopeTitlePrefix")} · ${inspection.title || inspection.id}`,
                 status: "Draft"
             });
 
             InspectionScopeManager.set(scope);
-            Notification.success("Adaptive inspection scope started.");
+            Notification.success(LanguageManager.t("InspectionAdaptiveScopeStarted"));
             this.refresh();
         } catch (error) {
-            console.error("Inspection scope start failed:", error);
-            Notification.warning("Inspection scope could not be started.");
+            console.error(LanguageManager.t("InspectionScopeStartFailedLog"), error);
+            Notification.warning(LanguageManager.t("InspectionScopeCouldNotStart"));
         }
     }
 
@@ -1073,12 +1074,12 @@ export default class InspectionPage {
         wrapper.appendChild(ActionBar.create([
             {
                 id: "refresh",
-                label: "Refresh",
+                label: LanguageManager.t("InspectionRefreshAction"),
                 onClick: () => this.refresh()
             },
             {
                 id: "close-inspection",
-                label: "Close Inspection",
+                label: LanguageManager.t("InspectionCloseAction"),
                 onClick: () => {
                     InspectionManager.clear();
                     this.refresh();
@@ -1116,10 +1117,10 @@ export default class InspectionPage {
     static createContent(inspections = []) {
         if (!inspections.length) {
             return EmptyState.create({
-                eyebrow: "Inspection Workspace",
-                title: "No inspections available",
-                description: "Inspection records will connect buildings, technical observations, evidence, and follow-up findings.",
-                actionLabel: "+ New Inspection",
+                eyebrow: LanguageManager.t("InspectionWorkspaceTitle"),
+                title: LanguageManager.t("InspectionEmptyTitle"),
+                description: LanguageManager.t("InspectionEmptyDescription"),
+                actionLabel: LanguageManager.t("InspectionNewAction"),
                 onAction: () => this.createSampleInspection()
             });
         }
@@ -1146,18 +1147,18 @@ export default class InspectionPage {
         const content = document.createElement("div");
 
         const title = document.createElement("strong");
-        title.textContent = inspection.title || "Technical Property Review";
+        title.textContent = inspection.title || LanguageManager.t("InspectionTechnicalPropertyReviewFallback");
 
         const meta = document.createElement("p");
         meta.textContent = [
-            inspection.location || "Location pending",
-            inspection.inspector || "Inspector pending",
-            inspection.status || "draft"
+            inspection.location || LanguageManager.t("InspectionLocationPending"),
+            inspection.inspector || LanguageManager.t("InspectionInspectorPending"),
+            inspection.status || LanguageManager.t("InspectionStatusDraftLower")
         ].join(" · ");
 
         const badge = document.createElement("span");
         badge.className = "tag";
-        badge.textContent = inspection.status || "draft";
+        badge.textContent = inspection.status || LanguageManager.t("InspectionStatusDraftLower");
 
         content.appendChild(title);
         content.appendChild(meta);
@@ -1169,17 +1170,17 @@ export default class InspectionPage {
 
     static createDetailPanel(activeInspection = null) {
         if (!activeInspection) {
-            return DetailPanel.create("Inspection Context", [
-                { label: "Current Inspection", value: "Not selected" },
-                { label: "Inspection Status", value: "Not started" },
-                { label: "Next Step", value: "Create or select an inspection" }
+            return DetailPanel.create(LanguageManager.t("InspectionContextTitle"), [
+                { label: LanguageManager.t("InspectionCurrentLabel"), value: LanguageManager.t("InspectionNotSelected") },
+                { label: LanguageManager.t("InspectionStatusLabel"), value: LanguageManager.t("InspectionNotStarted") },
+                { label: LanguageManager.t("InspectionNextStepLabel"), value: LanguageManager.t("InspectionCreateOrSelect") }
             ]);
         }
 
-        return DetailPanel.create("Inspection Context", [
-            { label: "Current Inspection", value: activeInspection.title || activeInspection.id },
+        return DetailPanel.create(LanguageManager.t("InspectionContextTitle"), [
+            { label: LanguageManager.t("InspectionCurrentLabel"), value: activeInspection.title || activeInspection.id },
             { label: "Inspection Status", value: activeInspection.status || "draft" },
-            { label: "Building ID", value: activeInspection.buildingId || "Not linked" },
+            { label: LanguageManager.t("InspectionBuildingIdLabel"), value: activeInspection.buildingId || LanguageManager.t("InspectionNotLinked") },
             { label: "Inspector", value: activeInspection.inspector || "Not assigned" }
         ]);
     }
@@ -1200,14 +1201,14 @@ export default class InspectionPage {
             : BuildingManager.get();
 
         if (!currentCase) {
-            Notification.info("Open a case before creating an inspection.");
+            Notification.info(LanguageManager.t("InspectionOpenCaseBeforeCreating"));
             return;
         }
 
         const inspection = InspectionManager.create({
             buildingId: currentBuilding?.id || currentCase.buildingId || null,
             caseId: currentCase.id,
-            title: "Technical Property Review",
+            title: LanguageManager.t("InspectionTechnicalPropertyReviewFallback"),
             location: "Demo Property",
             notes: "Initial inspection record created from the workspace."
         });

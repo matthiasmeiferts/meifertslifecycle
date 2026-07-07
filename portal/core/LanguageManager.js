@@ -3699,6 +3699,326 @@ export default class LanguageManager {
                 en: "Medium",
                 de: "Mittel"
             },
+            InspectionWorkspaceTitle: {
+                en: "Inspection Workspace",
+                de: "Inspection Workspace"
+            },
+            InspectionTitlePlural: {
+                en: "Inspections",
+                de: "Inspections"
+            },
+            InspectionNewAction: {
+                en: "+ New Inspection",
+                de: "+ Neue Inspection"
+            },
+            InspectionRefreshAction: {
+                en: "Refresh",
+                de: "Aktualisieren"
+            },
+            InspectionCloseAction: {
+                en: "Close Inspection",
+                de: "Inspection schließen"
+            },
+            InspectionEmptyTitle: {
+                en: "No inspections available",
+                de: "Keine Inspections verfügbar"
+            },
+            InspectionEmptyDescription: {
+                en: "Inspection records will connect buildings, technical observations, evidence, and follow-up findings.",
+                de: "Inspection-Datensätze verbinden Gebäude, technische Beobachtungen, Evidence und nachgelagerte Findings."
+            },
+            InspectionContextTitle: {
+                en: "Inspection Context",
+                de: "Inspection-Kontext"
+            },
+            InspectionCurrentLabel: {
+                en: "Current Inspection",
+                de: "Aktuelle Inspection"
+            },
+            InspectionStatusLabel: {
+                en: "Inspection Status",
+                de: "Inspection-Status"
+            },
+            InspectionNextStepLabel: {
+                en: "Next Step",
+                de: "Nächster Schritt"
+            },
+            InspectionNotSelected: {
+                en: "Not selected",
+                de: "Nicht ausgewählt"
+            },
+            InspectionNotStarted: {
+                en: "Not started",
+                de: "Nicht gestartet"
+            },
+            InspectionCreateOrSelect: {
+                en: "Create or select an inspection",
+                de: "Inspection erstellen oder auswählen"
+            },
+            InspectionBuildingIdLabel: {
+                en: "Building ID",
+                de: "Gebäude-ID"
+            },
+            InspectionNotLinked: {
+                en: "Not linked",
+                de: "Nicht verknüpft"
+            },
+            InspectionTechnicalPropertyReviewFallback: {
+                en: "Technical Property Review",
+                de: "Technical Property Review"
+            },
+            InspectionLocationPending: {
+                en: "Location pending",
+                de: "Standort offen"
+            },
+            InspectionInspectorPending: {
+                en: "Inspector pending",
+                de: "Inspector offen"
+            },
+            InspectionStatusDraft: {
+                en: "Draft",
+                de: "Entwurf"
+            },
+            InspectionStatusDraftLower: {
+                en: "draft",
+                de: "Entwurf"
+            },
+            InspectionMetricDraft: {
+                en: "Draft",
+                de: "Entwurf"
+            },
+            InspectionMetricCompleted: {
+                en: "Completed",
+                de: "Abgeschlossen"
+            },
+            InspectionOpenCaseBeforeScope: {
+                en: "Open a case before starting an inspection scope.",
+                de: "Öffnen Sie zuerst einen Case, bevor ein Inspection Scope gestartet wird."
+            },
+            InspectionCreateOrSelectBeforeScope: {
+                en: "Create or select an inspection before starting the adaptive scope.",
+                de: "Inspection erstellen oder auswählen, bevor der adaptive Scope gestartet wird."
+            },
+            InspectionAdaptiveScopeAlreadyActive: {
+                en: "Adaptive inspection scope is already active.",
+                de: "Adaptiver Inspection Scope ist bereits aktiv."
+            },
+            InspectionAdaptiveScopeStarted: {
+                en: "Adaptive inspection scope started.",
+                de: "Adaptiver Inspection Scope gestartet."
+            },
+            InspectionScopeStartFailedLog: {
+                en: "Inspection scope start failed:",
+                de: "Inspection Scope Start fehlgeschlagen:"
+            },
+            InspectionScopeCouldNotStart: {
+                en: "Inspection scope could not be started.",
+                de: "Inspection Scope konnte nicht gestartet werden."
+            },
+            InspectionEvidenceActions: {
+                en: "Evidence Actions",
+                de: "Evidence-Aktionen"
+            },
+            InspectionEvidenceRequired: {
+                en: "Evidence Required",
+                de: "Evidence erforderlich"
+            },
+            InspectionCreateEvidence: {
+                en: "Create Evidence",
+                de: "Evidence erstellen"
+            },
+            InspectionEvidenceCreatedFromScope: {
+                en: "Evidence created from inspection scope.",
+                de: "Evidence aus Inspection Scope erstellt."
+            },
+            InspectionEvidenceRequirementGenerated: {
+                en: "Evidence requirement generated from adaptive inspection scope.",
+                de: "Evidence-Anforderung aus adaptivem Inspection Scope erzeugt."
+            },
+            InspectionScopeTitlePrefix: {
+                en: "Inspection Scope",
+                de: "Inspection Scope"
+            },
+            InspectionOpenCaseBeforeCreating: {
+                en: "Open a case before creating an inspection.",
+                de: "Öffnen Sie zuerst einen Case, bevor eine Inspection erstellt wird."
+            },
+            InspectionOpenLabel: {
+                en: "Open",
+                de: "Offen"
+            },
+            InspectionCoverageEvidenceLabel: {
+                en: "Evidence",
+                de: "Evidence"
+            },
+            InspectionIntelligenceLabel: {
+                en: "Inspection Intelligence",
+                de: "Inspection Intelligence"
+            },
+            InspectionIntelligenceComplete: {
+                en: "Inspection intelligence complete",
+                de: "Inspection Intelligence vollständig"
+            },
+            InspectionIntelligenceDeveloping: {
+                en: "Inspection intelligence developing",
+                de: "Inspection Intelligence in Entwicklung"
+            },
+            InspectionIntelligenceEarly: {
+                en: "Inspection intelligence early",
+                de: "Inspection Intelligence frühe Phase"
+            },
+            InspectionChecksCompleted: {
+                en: "inspection intelligence checks completed",
+                de: "Inspection-Intelligence-Prüfungen abgeschlossen"
+            },
+            InspectionEvidenceCoverage: {
+                en: "Evidence Coverage",
+                de: "Evidence-Abdeckung"
+            },
+            InspectionEvidenceCoverageDescription: {
+                en: "Coverage across Inspection, Evidence, Finding and Assessment.",
+                de: "Abdeckung über Inspection, Evidence, Finding und Assessment."
+            },
+            InspectionLowTechnicalSignal: {
+                en: "Low technical signal",
+                de: "Geringes technisches Signal"
+            },
+            InspectionLowTechnicalSignalDescription: {
+                en: "Inspection risk logic is still light. More evidence and findings are needed.",
+                de: "Die Inspection-Risikologik ist noch schwach. Weitere Evidence und Findings sind erforderlich."
+            },
+            InspectionHighTechnicalSignal: {
+                en: "High technical signal",
+                de: "Starkes technisches Signal"
+            },
+            InspectionHighTechnicalSignalDescription: {
+                en: "Multiple technical signals are present. Review lifecycle impact before downstream assessment.",
+                de: "Mehrere technische Signale liegen vor. Lifecycle-Auswirkung vor nachgelagertem Assessment prüfen."
+            },
+            InspectionModerateTechnicalSignal: {
+                en: "Moderate technical signal",
+                de: "Mittleres technisches Signal"
+            },
+            InspectionModerateTechnicalSignalDescription: {
+                en: "The inspection contains usable technical signals, but validation may still be needed.",
+                de: "Die Inspection enthält nutzbare technische Signale, benötigt aber möglicherweise noch Validierung."
+            },
+            InspectionTechnicalRiskSignal: {
+                en: "Technical Risk Signal",
+                de: "Technisches Risikosignal"
+            },
+            InspectionNextActionLabel: {
+                en: "Next Inspection Action",
+                de: "Nächste Inspection-Aktion"
+            },
+            InspectionStrengthenStagePrefix: {
+                en: "Strengthen",
+                de: "Stufe stärken"
+            },
+            InspectionMissingStageDescriptionSuffix: {
+                en: "data is missing for this inspection. Complete this stage before relying on downstream assessment.",
+                de: "Daten fehlen für diese Inspection. Diese Stufe vervollständigen, bevor nachgelagerte Assessments verwendet werden."
+            },
+            InspectionReviewLifecycleOutput: {
+                en: "Review inspection lifecycle output",
+                de: "Inspection Lifecycle Output prüfen"
+            },
+            InspectionReviewLifecycleOutputDescription: {
+                en: "All inspection intelligence stages are represented. Review consistency and downstream confidence.",
+                de: "Alle Inspection-Intelligence-Stufen sind abgebildet. Konsistenz und nachgelagertes Vertrauen prüfen."
+            },
+            InspectionActivePrefix: {
+                en: "Active inspection",
+                de: "Aktive Inspection"
+            },
+            InspectionObjectScopeEyebrow: {
+                en: "Object Inspection Scope",
+                de: "Object Inspection Scope"
+            },
+            InspectionAdaptiveScopeActiveTitle: {
+                en: "Adaptive Scope Active.",
+                de: "Adaptiver Scope aktiv."
+            },
+            InspectionAdaptiveScopeActiveDescription: {
+                en: "The inspection scope is connected to this case and inspection. Answers now drive evidence requirements, skipped questions, risk flags and report limitations.",
+                de: "Der Inspection Scope ist mit diesem Case und dieser Inspection verknüpft. Antworten steuern Evidence-Anforderungen, übersprungene Fragen sowie Risikosignale und Report-Limitierungen."
+            },
+            InspectionScopeActiveBadge: {
+                en: "Scope Active",
+                de: "Scope aktiv"
+            },
+            InspectionScopeControl: {
+                en: "Scope Control",
+                de: "Scope Control"
+            },
+            InspectionProfileLabel: {
+                en: "Inspection Profile",
+                de: "Inspection-Profil"
+            },
+            InspectionThailandProfileActive: {
+                en: "Thailand profile active. Documents are handled as availability checks only.",
+                de: "Thailand-Profil aktiv. Dokumente werden nur als Verfügbarkeitsprüfung behandelt."
+            },
+            InspectionModulesLabel: {
+                en: "Inspection Modules",
+                de: "Inspection-Module"
+            },
+            InspectionBuildingSystemsReview: {
+                en: "Building systems review",
+                de: "Gebäudesysteme prüfen"
+            },
+            InspectionCurrentQuestionLabel: {
+                en: "Current Question",
+                de: "Aktuelle Frage"
+            },
+            InspectionDecisionPathTitle: {
+                en: "Inspection decision path",
+                de: "Inspection-Entscheidungspfad"
+            },
+            InspectionChooseAnswerDescription: {
+                en: "Choose an answer. The scope engine will update coverage, evidence requirements, risk flags and limitations.",
+                de: "Antwort auswählen. Die Scope Engine aktualisiert Abdeckung, Evidence-Anforderungen, Risikosignale und Limitierungen."
+            },
+            InspectionInspectedLabel: {
+                en: "inspected",
+                de: "geprüft"
+            },
+            InspectionRiskFlagsLabel: {
+                en: "risk flags",
+                de: "Risikosignale"
+            },
+            InspectionRiskFlagsUpper: {
+                en: "Risk Flags",
+                de: "Risikosignale"
+            },
+            InspectionLimitationsUpper: {
+                en: "Limitations",
+                de: "Limitierungen"
+            },
+            InspectionNoLimitationsYet: {
+                en: "No limitations recorded yet.",
+                de: "Noch keine Limitierungen erfasst."
+            },
+            InspectionQuestionsLabel: {
+                en: "questions",
+                de: "Fragen"
+            },
+            InspectionQuestionLabel: {
+                en: "question",
+                de: "Frage"
+            },
+            InspectionRequireEvidenceLine: {
+                en: "inspection question(s) require evidence.",
+                de: "Inspection-Frage(n) benötigen Evidence."
+            },
+            InspectionNoRiskFlagsYet: {
+                en: "No risk flags triggered yet.",
+                de: "Noch keine Risikosignale ausgelöst."
+            },
+            InspectionEvidenceRequiredSummary: {
+                en: "inspection question(s) require evidence.",
+                de: "Inspection-Frage(n) benötigen Evidence."
+            },
             InterfaceLanguageSaved: {
                 en: "Interface language preference saved.",
                 de: "Arbeitssprache gespeichert."
