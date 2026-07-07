@@ -288,16 +288,16 @@ export default class RecommendationPage {
 
         if (status === "blocked") {
             return {
-                label: "Resolve blocker",
-                description: "This recommendation cannot move forward until the blocker is cleared.",
+                label: LanguageManager.t("RecommendationResolveBlockerAction"),
+                description: LanguageManager.t("RecommendationResolveBlockerDescription"),
                 tone: "blocked"
             };
         }
 
         if (status === "reviewed") {
             return {
-                label: "Create or confirm decision",
-                description: "Recommendation is reviewed and ready to support a governance decision.",
+                label: LanguageManager.t("RecommendationCreateConfirmDecisionAction"),
+                description: LanguageManager.t("RecommendationCreateConfirmDecisionDescription"),
                 tone: "ready"
             };
         }
@@ -312,15 +312,15 @@ export default class RecommendationPage {
 
         if (status === "recommended") {
             return {
-                label: "Prepare decision",
-                description: "The recommendation is complete enough to move into decision review.",
+                label: LanguageManager.t("RecommendationPrepareDecisionAction"),
+                description: LanguageManager.t("RecommendationPrepareDecisionDescription"),
                 tone: "active"
             };
         }
 
         return {
-            label: "Define recommendation",
-            description: "Add a clear action, priority or recommendation before moving into decision.",
+            label: LanguageManager.t("RecommendationDefineRecommendationAction"),
+            description: LanguageManager.t("RecommendationDefineRecommendationDescription"),
             tone: "draft"
         };
     }
@@ -555,7 +555,7 @@ export default class RecommendationPage {
             { label: LanguageManager.t("RecommendationFindingIdsLabel"), value: (activeRecommendation.findingIds || []).join(", ") || LanguageManager.t("RecommendationNone") },
             { label: LanguageManager.t("RecommendationEvidenceIdsLabel"), value: (activeRecommendation.evidenceIds || []).join(", ") || LanguageManager.t("RecommendationNone") },
             { label: LanguageManager.t("RecommendationBuildingSystemLabel"), value: activeRecommendation.buildingSystem || LanguageManager.t("RecommendationNotLinked") },
-            { label: "Risk Score", value: String(activeRecommendation.riskScore || 0) },
+            { label: LanguageManager.t("RecommendationRiskScoreLabel"), value: String(activeRecommendation.riskScore || 0) },
             { label: LanguageManager.t("RecommendationPriorityLabel"), value: this.formatRecommendationValue(activeRecommendation.priority || "Medium") },
             { label: LanguageManager.t("RecommendationTimeframeLabel"), value: this.formatRecommendationValue(activeRecommendation.timeframe || "Short Term") },
             { label: LanguageManager.t("RecommendationDecisionImpactLabel"), value: this.formatRecommendationValue(activeRecommendation.decisionImpact || "Medium") },
@@ -594,17 +594,17 @@ export default class RecommendationPage {
         const currentCase = CaseManager.getCurrent();
 
         if (!recommendation) {
-            Notification.warning("Select a recommendation first.");
+            Notification.warning(LanguageManager.t("RecommendationSelectRecommendationFirstWarning"));
             return;
         }
 
         if (!recommendation.caseId) {
-            Notification.warning("Selected recommendation is not linked to a case.");
+            Notification.warning(LanguageManager.t("RecommendationNotLinkedToCaseWarning"));
             return;
         }
 
         if (currentCase && currentCase.id !== recommendation.caseId) {
-            Notification.warning("Selected recommendation belongs to another case.");
+            Notification.warning(LanguageManager.t("RecommendationBelongsToAnotherCaseWarning"));
             return;
         }
 

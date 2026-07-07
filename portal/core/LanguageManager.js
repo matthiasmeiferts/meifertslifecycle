@@ -3267,6 +3267,54 @@ export default class LanguageManager {
                 en: "+ New Recommendation",
                 de: "+ Neue Recommendation"
             },
+            RecommendationResolveBlockerAction: {
+                en: "Resolve blocker",
+                de: "Blocker lösen"
+            },
+            RecommendationResolveBlockerDescription: {
+                en: "This recommendation cannot move forward until the blocker is cleared.",
+                de: "Diese Recommendation kann erst fortgeführt werden, wenn der Blocker gelöst ist."
+            },
+            RecommendationCreateConfirmDecisionAction: {
+                en: "Create or confirm decision",
+                de: "Decision erstellen oder bestätigen"
+            },
+            RecommendationCreateConfirmDecisionDescription: {
+                en: "Recommendation is reviewed and ready to support a governance decision.",
+                de: "Die Recommendation ist geprüft und bereit, eine Governance Decision zu unterstützen."
+            },
+            RecommendationPrepareDecisionAction: {
+                en: "Prepare decision",
+                de: "Decision vorbereiten"
+            },
+            RecommendationPrepareDecisionDescription: {
+                en: "The recommendation is complete enough to move into decision review.",
+                de: "Die Recommendation ist ausreichend vollständig für die Decision-Prüfung."
+            },
+            RecommendationDefineRecommendationAction: {
+                en: "Define recommendation",
+                de: "Recommendation definieren"
+            },
+            RecommendationDefineRecommendationDescription: {
+                en: "Add a clear action, priority or recommendation before moving into decision.",
+                de: "Erfassen Sie eine klare Maßnahme, Priorität oder Recommendation, bevor die Decision vorbereitet wird."
+            },
+            RecommendationRiskScoreLabel: {
+                en: "Risk Score",
+                de: "Risk Score"
+            },
+            RecommendationSelectRecommendationFirstWarning: {
+                en: "Select a recommendation first.",
+                de: "Wählen Sie zuerst eine Recommendation aus."
+            },
+            RecommendationNotLinkedToCaseWarning: {
+                en: "Selected recommendation is not linked to a case.",
+                de: "Die ausgewählte Recommendation ist nicht mit einem Case verknüpft."
+            },
+            RecommendationBelongsToAnotherCaseWarning: {
+                en: "Selected recommendation belongs to another case.",
+                de: "Die ausgewählte Recommendation gehört zu einem anderen Case."
+            },
             RecommendationEmptyTitle: {
                 en: "No recommendations available",
                 de: "Keine Recommendations verfügbar"
