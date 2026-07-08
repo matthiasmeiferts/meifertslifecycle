@@ -6,6 +6,7 @@ import fs from "node:fs";
 import QuestionCatalogManager from "../portal/core/QuestionCatalogManager.js";
 
 import QuestionCatalogPage from "../portal/ui/pages/QuestionCatalogPage.js";
+import WorkspaceRouter from "../portal/router/WorkspaceRouter.js";
 
 const catalogPath = new URL("../portal/data/question-catalog/meiferts-question-catalog-import-ready.v2.7.json", import.meta.url);
 
@@ -14,6 +15,8 @@ const catalog = JSON.parse(fs.readFileSync(catalogPath, "utf8"));
 QuestionCatalogManager.clear();
 
 QuestionCatalogManager.loadFromData(catalog);
+
+assert.equal(WorkspaceRouter.routes.catalog, QuestionCatalogPage);
 
 QuestionCatalogPage.selectedChapter = "20";
 
