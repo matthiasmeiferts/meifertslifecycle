@@ -36,6 +36,7 @@ export default class QuestionCatalogPage {
         }
 
         const summary = QuestionCatalogManager.getSummary();
+        this.ensureSelectedChapter();
 
         fragment.appendChild(this.createMetrics(summary));
 
@@ -321,6 +322,22 @@ export default class QuestionCatalogPage {
 
         return row;
 
+    }
+
+    static ensureSelectedChapter() {
+        const chapters = QuestionCatalogManager.getChapters();
+
+        if (!chapters.length) {
+            return;
+        }
+
+        const currentExists = chapters.some(chapter => {
+            return chapter.chapterNumber === this.selectedChapter;
+        });
+
+        if (!currentExists) {
+            this.selectedChapter = chapters[0].chapterNumber;
+        }
     }
 
     static getVisibleQuestions() {

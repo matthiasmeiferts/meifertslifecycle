@@ -15,6 +15,13 @@ assert.ok(routerSource.includes("catalog: QuestionCatalogPage"));
 QuestionCatalogManager.clear();
 QuestionCatalogManager.loadFromData(catalog);
 
+QuestionCatalogPage.selectedChapter = "01";
+QuestionCatalogPage.searchTerm = "";
+QuestionCatalogPage.ensureSelectedChapter();
+
+const defaultChapterItems = QuestionCatalogPage.getVisibleQuestions();
+assert.ok(defaultChapterItems.length > 0);
+
 QuestionCatalogPage.selectedChapter = "20";
 QuestionCatalogPage.searchTerm = "";
 
