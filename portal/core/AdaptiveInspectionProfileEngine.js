@@ -81,7 +81,7 @@ export default class AdaptiveInspectionProfileEngine {
         this.addRule(rules, "inspectionPurpose", profile.inspectionPurpose, 7);
 
         if (profile.country === "thailand") {
-            this.addKeywordRule(rules, "countryContext", ["thailand", "thai", "tropical", "condominium", "chanote", "leasehold"], 8);
+            this.addKeywordRule(rules, "countryContext", ["thailand", "thai", "bangkok", "pattaya", "phuket", "chanote", "leasehold"], 8);
         }
 
         if (profile.country === "germany") {
@@ -132,8 +132,16 @@ export default class AdaptiveInspectionProfileEngine {
             signals.push("chapterPriority");
         }
 
+        const countryAdjustment = this.getCountryCompatibilityAdjustment(item, profile, searchableText);
+
+        if (countryAdjustment.adjustment !== 0) {
+            score += countryAdjustment.adjustment;
+            reasons.push(countryAdjustment.reason);
+            signals.push(countryAdjustment.signal);
+        }
+
         return {
-            score,
+            score: Math.max(score, 0),
             reasons,
             signals: [...new Set(signals)]
         };
@@ -192,6 +200,62 @@ export default class AdaptiveInspectionProfileEngine {
         return 0;
     }
 
+    static getCountryCompatibilityAdjustment(item, profile, searchableText) {
+        const countryProfile = this.normalizeToken(item.countryProfile || "");
+        const normReference = this.normalizeToken(item.normReference || "");
+        const germanLegalTerms = [
+            "weg",
+            "bvi",
+            "teilungserklärung",
+            "sondereigentum",
+            "sondernutzungsrecht",
+            "miteigentumsanteile",
+            "wirtschaftsplan",
+            "sonderumlage",
+            "zertifizierter verwalter",
+            "verwalter"
+        ];
+
+        if (profile.country === "thailand") {
+            let penalty = 0;
+            const matchedTerms = [];
+
+            if (countryProfile.includes("germany")) {
+                penalty -= 28;
+                matchedTerms.push("countryProfile:germany");
+            }
+
+            germanLegalTerms.forEach((term) => {
+                if (searchableText.includes(term) || normReference.includes(term)) {
+                    penalty -= 8;
+                    matchedTerms.push(term);
+                }
+            });
+
+            if (penalty < 0) {
+                return {
+                    adjustment: penalty,
+                    reason: `Country compatibility penalty ${penalty}: ${matchedTerms.join(", ")}`,
+                    signal: "countryCompatibilityPenalty"
+                };
+            }
+        }
+
+        if (profile.country === "germany" && countryProfile.includes("germany")) {
+            return {
+                adjustment: 12,
+                reason: "Country compatibility boost +12: countryProfile:germany",
+                signal: "countryCompatibilityBoost"
+            };
+        }
+
+        return {
+            adjustment: 0,
+            reason: "",
+            signal: ""
+        };
+    }
+
     static addRule(rules, name, value, weight) {
         if (!value) {
             return;
@@ -237,11 +301,25 @@ export default class AdaptiveInspectionProfileEngine {
     }
 
     static createSearchableText(item) {
-        const values = [];
+        const searchableFields = [
+            item.id,
+            item.questionId,
+            item.language,
+            item.countryProfile,
+            item.chapterNumber,
+            item.chapterTitle,
+            item.sectionTitle,
+            item.questionText,
+            item.buildingSystem,
+            item.component,
+            item.inspectionArea,
+            item.answerType,
+            item.normReference,
+            item.sourceDocument,
+            ...(Array.isArray(item.defaultEvidenceTypes) ? item.defaultEvidenceTypes : [])
+        ];
 
-        this.collectValues(item, values);
-
-        return this.normalizeToken(values.join(" "));
+        return this.normalizeToken(searchableFields.filter(Boolean).join(" "));
     }
 
     static collectValues(value, values) {
