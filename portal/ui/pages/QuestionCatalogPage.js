@@ -1,6 +1,8 @@
 
 import QuestionCatalogManager from "../../core/QuestionCatalogManager.js";
 
+import AdaptiveInspectionProfileEngine from "../../core/AdaptiveInspectionProfileEngine.js";
+
 import LanguageManager from "../../core/LanguageManager.js";
 
 import SectionHeader from "../components/SectionHeader.js";
@@ -41,6 +43,8 @@ export default class QuestionCatalogPage {
         fragment.appendChild(this.createMetrics(summary));
 
         fragment.appendChild(this.createControls());
+
+        fragment.appendChild(this.createAdaptiveProfileDiagnostic());
 
         fragment.appendChild(this.createCatalogContent());
 
@@ -213,6 +217,126 @@ export default class QuestionCatalogPage {
         });
 
         return wrapper;
+
+    }
+
+    static createAdaptiveProfileDiagnostic() {
+
+        const section = document.createElement("section");
+
+        section.className = "workflow-card";
+
+        const profile = {
+            country: "Thailand",
+            buildingType: "Condominium",
+            useType: "Residential",
+            ageBand: "Existing",
+            climateZone: "Tropical",
+            locationContext: "Coastal",
+            legalContext: "Ownership",
+            inspectionPurpose: "Acquisition"
+        };
+
+        const result = AdaptiveInspectionProfileEngine.createStartQuestionSet(
+            profile,
+            QuestionCatalogManager.getAll(),
+            { limit: 25 }
+        );
+
+        section.innerHTML = `
+
+            <div class="settings-cleanup__header">
+
+                <div>
+
+                    <p class="eyebrow">Adaptive Profile Diagnostic</p>
+
+                    <h3>${result.selectedCount} suggested start questions</h3>
+
+                    <p>Profile: Thailand · Condominium · Residential · Existing · Tropical · Coastal · Ownership · Acquisition. Diagnostic only. No answers, evidence, findings or reports are created.</p>
+
+                </div>
+
+                <span class="tag">Rule Engine</span>
+
+            </div>
+
+        `;
+
+        if (!result.questions.length) {
+
+            const empty = document.createElement("p");
+
+            empty.textContent = "No adaptive questions were selected for the current diagnostic profile.";
+
+            section.appendChild(empty);
+
+            return section;
+
+        }
+
+        const list = document.createElement("div");
+
+        list.className = "question-catalog-list";
+
+        result.questions.slice(0, 10).forEach(question => {
+
+            list.appendChild(this.createAdaptiveQuestionRow(question));
+
+        });
+
+        section.appendChild(list);
+
+        return section;
+
+    }
+
+    static createAdaptiveQuestionRow(question) {
+
+        const row = document.createElement("article");
+
+        row.className = "task-row question-catalog-row";
+
+        const penaltyReasons = (question.adaptiveReasons || [])
+            .filter(reason => this.normalize(reason).includes("penalty"));
+
+        const primaryReasons = (question.adaptiveReasons || [])
+            .filter(reason => !this.normalize(reason).includes("penalty"))
+            .slice(0, 2);
+
+        const signals = (question.adaptiveSignals || []).join(" / ") || "n/a";
+
+        row.innerHTML = `
+
+            <div>
+
+                <strong>${this.escapeHtml(question.questionId)} · Score ${this.escapeHtml(question.adaptiveScore)}</strong>
+
+                <p>${this.escapeHtml(question.questionText)}</p>
+
+                <small>
+
+                    ${this.escapeHtml(question.chapterNumber)} ·
+
+                    ${this.escapeHtml(question.chapterTitle)} ·
+
+                    ${this.escapeHtml(question.sectionTitle)} ·
+
+                    signals: ${this.escapeHtml(signals)}
+
+                </small>
+
+                ${primaryReasons.length ? `<small>Reasons: ${this.escapeHtml(primaryReasons.join(" | "))}</small>` : ""}
+
+                ${penaltyReasons.length ? `<small>Penalty: ${this.escapeHtml(penaltyReasons.join(" | "))}</small>` : ""}
+
+            </div>
+
+            <span class="tag">Adaptive</span>
+
+        `;
+
+        return row;
 
     }
 
