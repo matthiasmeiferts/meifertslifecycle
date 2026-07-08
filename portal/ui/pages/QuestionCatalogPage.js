@@ -345,9 +345,7 @@ export default class QuestionCatalogPage {
 
             <div class="adaptive-inspection-preview__boundary">
 
-                ${Object.entries(preview.safetyBoundary).map(([key, value]) => `
-                    <span>${this.escapeHtml(key)}: ${this.escapeHtml(String(value))}</span>
-                `).join("")}
+                ${this.createSafetyBoundaryBadges(preview.safetyBoundary)}
 
             </div>
 
@@ -366,6 +364,28 @@ export default class QuestionCatalogPage {
         section.appendChild(list);
 
         return section;
+
+    }
+
+    static createSafetyBoundaryBadges(boundary = {}) {
+
+        const labels = {
+            answersPersisted: "Answers persisted",
+            evidenceCreated: "Evidence created",
+            findingsCreated: "Findings created",
+            assessmentsCreated: "Assessments created",
+            reportsCreated: "Reports created"
+        };
+
+        return Object.entries(boundary)
+            .map(([key, value]) => {
+                const label = labels[key] || key;
+                const status = value ? "Yes" : "No";
+                const tone = value ? "is-active" : "is-safe";
+
+                return `<span class="${tone}">${this.escapeHtml(label)}: ${this.escapeHtml(status)}</span>`;
+            })
+            .join("");
 
     }
 

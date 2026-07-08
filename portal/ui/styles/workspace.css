@@ -5325,3 +5325,28 @@ button.dashboard-readiness-card__action:focus-visible {
         display: grid;
     }
 }
+
+/* Foundation 2.2-F.4 Adaptive Inspection Preview Polish */
+.adaptive-inspection-preview__boundary span.is-safe {
+    background: rgba(184, 153, 104, 0.14);
+    border: 1px solid rgba(184, 153, 104, 0.2);
+}
+
+.adaptive-inspection-preview__boundary span.is-active {
+    background: rgba(120, 60, 60, 0.12);
+    border: 1px solid rgba(120, 60, 60, 0.18);
+}
+
+.adaptive-inspection-preview .settings-cleanup__header > .tag,
+.adaptive-follow-up-diagnostic .settings-cleanup__header > .tag {
+    min-width: max-content;
+    text-align: center;
+}
+
+.adaptive-inspection-preview__row {
+    box-shadow: 0 12px 28px rgba(27, 43, 69, 0.04);
+}
+
+.adaptive-inspection-preview__simulation-grid .adaptive-follow-up-diagnostic__card {
+    background: rgba(255, 255, 255, 0.48);
+}
