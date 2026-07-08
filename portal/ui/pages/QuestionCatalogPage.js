@@ -7,6 +7,7 @@ import AdaptiveFollowUpQuestionEngine from "../../core/AdaptiveFollowUpQuestionE
 
 import AdaptiveInspectionPreviewBridge from "../../core/AdaptiveInspectionPreviewBridge.js";
 import AdaptiveScopeDraftEngine from "../../core/AdaptiveScopeDraftEngine.js";
+import AdaptiveInspectionSessionSandbox from "../../core/AdaptiveInspectionSessionSandbox.js";
 
 import LanguageManager from "../../core/LanguageManager.js";
 
@@ -56,6 +57,8 @@ export default class QuestionCatalogPage {
         fragment.appendChild(this.createAdaptiveInspectionPreviewDiagnostic());
 
         fragment.appendChild(this.createAdaptiveScopeDraftDiagnostic());
+
+        fragment.appendChild(this.createAdaptiveInspectionSandboxDiagnostic());
 
         fragment.appendChild(this.createCatalogContent());
 
@@ -534,6 +537,173 @@ export default class QuestionCatalogPage {
                     <div>
                         <span>${this.escapeHtml(question.questionId)}</span>
                         <p>${this.escapeHtml(question.questionText)}</p>
+                    </div>
+                `).join("")}
+
+            </div>
+
+        `;
+
+        return row;
+
+    }
+
+    static createAdaptiveInspectionSandboxDiagnostic() {
+
+        const section = document.createElement("section");
+
+        section.className = "workflow-card adaptive-inspection-sandbox";
+
+        const profile = {
+            country: "Thailand",
+            buildingType: "Condominium",
+            useType: "Residential",
+            ageBand: "Existing",
+            climateZone: "Tropical",
+            locationContext: "Coastal",
+            legalContext: "Ownership",
+            inspectionPurpose: "Acquisition"
+        };
+
+        const preview = AdaptiveInspectionPreviewBridge.createPreview(
+            profile,
+            QuestionCatalogManager.getAll(),
+            {
+                startLimit: 5,
+                followUpLimit: 5
+            }
+        );
+
+        const draft = AdaptiveScopeDraftEngine.createScopeDraft(preview);
+
+        const sandbox = AdaptiveInspectionSessionSandbox.createSandboxSession(draft, {
+            sandboxId: "sandbox-browser-diagnostic"
+        });
+
+        section.innerHTML = `
+
+            <div class="settings-cleanup__header">
+
+                <div>
+
+                    <p class="eyebrow">Adaptive Inspection Sandbox</p>
+
+                    <h3>${sandbox.questionCount} sandbox questions · ${sandbox.moduleCount} sandbox modules</h3>
+
+                    <p>Read-only sandbox session prepared from the adaptive scope draft. Diagnostic only. No real inspection, answers, evidence, findings, assessments or reports are created.</p>
+
+                </div>
+
+                <span class="tag">Sandbox Session</span>
+
+            </div>
+
+            <div class="adaptive-inspection-preview__boundary">
+
+                ${this.createSafetyBoundaryBadges(sandbox.safetyBoundary)}
+
+            </div>
+
+            <div class="adaptive-inspection-sandbox__summary">
+
+                <div>
+                    <span>Session mode</span>
+                    <strong>${this.escapeHtml(this.formatSessionMode(sandbox.sessionMode))}</strong>
+                </div>
+
+                <div>
+                    <span>Progress</span>
+                    <strong>${this.escapeHtml(sandbox.progress.completionRate)}%</strong>
+                </div>
+
+                <div>
+                    <span>Answered</span>
+                    <strong>${this.escapeHtml(sandbox.progress.answeredQuestions)}</strong>
+                </div>
+
+                <div>
+                    <span>Unanswered</span>
+                    <strong>${this.escapeHtml(sandbox.progress.unansweredQuestions)}</strong>
+                </div>
+
+            </div>
+
+            <div class="adaptive-inspection-sandbox__meta">
+
+                <span>Sandbox ID · ${this.escapeHtml(sandbox.sandboxId)}</span>
+
+                <span>Total catalog items · ${this.escapeHtml(sandbox.totalCatalogItems)}</span>
+
+                <span>Evidence types · ${this.escapeHtml(sandbox.evidenceRequirements.length)}</span>
+
+                <span>Prepared signals · ${this.escapeHtml(sandbox.signalSummary.length)}</span>
+
+            </div>
+
+        `;
+
+        const list = document.createElement("div");
+
+        list.className = "adaptive-inspection-sandbox__modules";
+
+        sandbox.modules.forEach((module, index) => {
+
+            list.appendChild(this.createAdaptiveInspectionSandboxModuleRow(module, index));
+
+        });
+
+        section.appendChild(list);
+
+        return section;
+
+    }
+
+    static formatSessionMode(mode = "") {
+
+        const labels = {
+            sandbox_read_only: "Read-only sandbox"
+        };
+
+        return labels[mode] || String(mode).replaceAll("_", " ");
+
+    }
+
+    static createAdaptiveInspectionSandboxModuleRow(module, index = 0) {
+
+        const row = document.createElement("article");
+
+        row.className = "adaptive-inspection-sandbox__module";
+
+        row.innerHTML = `
+
+            <div class="adaptive-inspection-sandbox__module-header">
+
+                <div>
+
+                    <span class="adaptive-diagnostic-row__eyebrow">Sandbox module ${index + 1}</span>
+
+                    <strong>${this.escapeHtml(module.chapterNumber)} ${this.escapeHtml(module.chapterTitle)}</strong>
+
+                    <p>${this.escapeHtml(module.buildingSystem || "n/a")}</p>
+
+                </div>
+
+                <span class="adaptive-diagnostic-row__score">${this.escapeHtml(module.questionCount)} questions</span>
+
+            </div>
+
+            <div class="adaptive-inspection-sandbox__question-list">
+
+                ${module.questions.map(question => `
+                    <div>
+                        <span>${this.escapeHtml(question.questionId)}</span>
+                        <p>${this.escapeHtml(question.questionText)}</p>
+                        <small>
+                            Answer: ${this.escapeHtml(question.answerState.isAnswered ? "answered" : "not answered")}
+                            · Persisted: ${this.escapeHtml(String(question.answerState.persisted))}
+                            · Evidence created: ${this.escapeHtml(String(question.evidenceState.created))}
+                            · Finding created: ${this.escapeHtml(String(question.findingState.created))}
+                        </small>
                     </div>
                 `).join("")}
 
