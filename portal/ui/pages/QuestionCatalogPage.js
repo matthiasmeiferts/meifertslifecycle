@@ -11,6 +11,7 @@ import AdaptiveInspectionSessionSandbox from "../../core/AdaptiveInspectionSessi
 import InspectionHumanWorkLayer from "../../core/InspectionHumanWorkLayer.js";
 import AnswerInteractionSandbox from "../../core/AnswerInteractionSandbox.js";
 import SandboxAnswerStateEngine from "../../core/SandboxAnswerStateEngine.js";
+import EvidenceRequirementPreviewEngine from "../../core/EvidenceRequirementPreviewEngine.js";
 
 import LanguageManager from "../../core/LanguageManager.js";
 
@@ -853,6 +854,82 @@ export default class QuestionCatalogPage {
 
     }
 
+    static createEvidenceRequirementPreviewCard(evidencePreview = {}) {
+
+        if (!evidencePreview || evidencePreview.previewMode !== "evidence_requirement_preview_read_only") {
+            return `
+
+                <span>Evidence requirement</span>
+
+                <p>No evidence preview available yet.</p>
+
+            `;
+        }
+
+        const requiredInputs = Array.isArray(evidencePreview.requiredInputs)
+            ? evidencePreview.requiredInputs
+            : [];
+
+        if (!evidencePreview.evidenceRequired) {
+            return `
+
+                <span>Evidence requirement</span>
+
+                <div class="evidence-requirement-preview__empty">
+                    <strong>${this.escapeHtml(evidencePreview.guidance?.title || "No evidence required")}</strong>
+                    <p>${this.escapeHtml(evidencePreview.guidance?.primary || "Continue to the next question.")}</p>
+                </div>
+
+                <small>
+                    evidencePersisted: ${this.escapeHtml(String(evidencePreview.safetyBoundary?.evidencePersisted))}
+                    · evidenceCreated: ${this.escapeHtml(String(evidencePreview.safetyBoundary?.evidenceCreated))}
+                    · findingCreated: ${this.escapeHtml(String(evidencePreview.safetyBoundary?.findingCreated))}
+                </small>
+
+            `;
+        }
+
+        return `
+
+            <span>Evidence requirement preview</span>
+
+            <div class="evidence-requirement-preview__header">
+                <div>
+                    <small>Triggered by</small>
+                    <strong>${this.escapeHtml(evidencePreview.answerLabel || "Auffällig")}</strong>
+                </div>
+                <div>
+                    <small>Question</small>
+                    <strong>${this.escapeHtml(evidencePreview.question?.questionId || "n/a")}</strong>
+                </div>
+                <div>
+                    <small>Next step</small>
+                    <strong>${this.escapeHtml(evidencePreview.nextStep || "Prepare evidence capture")}</strong>
+                </div>
+            </div>
+
+            <p>${this.escapeHtml(evidencePreview.guidance?.detail || "Sandbox-only evidence capture preview.")}</p>
+
+            <div class="evidence-requirement-preview__inputs">
+                ${requiredInputs.map(input => `
+                    <div class="evidence-requirement-preview__input">
+                        <small>${this.escapeHtml(input.required ? "Required" : "Optional")}</small>
+                        <strong>${this.escapeHtml(input.label)}</strong>
+                        <p>${this.escapeHtml(input.description)}</p>
+                    </div>
+                `).join("")}
+            </div>
+
+            <small>
+                evidencePersisted: ${this.escapeHtml(String(evidencePreview.safetyBoundary?.evidencePersisted))}
+                · evidenceCreated: ${this.escapeHtml(String(evidencePreview.safetyBoundary?.evidenceCreated))}
+                · findingCreated: ${this.escapeHtml(String(evidencePreview.safetyBoundary?.findingCreated))}
+            </small>
+
+        `;
+
+    }
+
     static updateInspectionHumanWorkLayerView(section, answerState = {}) {
 
         const currentQuestion = answerState.currentQuestion || {};
@@ -1045,6 +1122,14 @@ export default class QuestionCatalogPage {
 
             </div>
 
+            <div class="evidence-requirement-preview" data-evidence-requirement-preview>
+
+                <span>Evidence requirement</span>
+
+                <p>Evidence capture preview appears here when an issue is marked auffällig.</p>
+
+            </div>
+
         `;
 
         section.querySelectorAll("[data-answer-value]").forEach((button) => {
@@ -1073,10 +1158,28 @@ export default class QuestionCatalogPage {
                     button.classList.remove("is-selected");
                 }, 360);
 
+                const evidencePreview = EvidenceRequirementPreviewEngine.createPreview(answerState);
+
                 const previewNode = section.querySelector("[data-answer-interaction-preview]");
 
                 if (previewNode) {
                     previewNode.innerHTML = this.createAnswerInteractionSandboxPreview(interaction, answerState);
+                }
+
+                const evidencePreviewNode = section.querySelector("[data-evidence-requirement-preview]");
+
+                if (evidencePreviewNode) {
+                    evidencePreviewNode.innerHTML = this.createEvidenceRequirementPreviewCard(evidencePreview);
+                    evidencePreviewNode.classList.toggle("has-evidence-required", Boolean(evidencePreview.evidenceRequired));
+
+                    if (evidencePreview.evidenceRequired) {
+                        window.setTimeout(() => {
+                            evidencePreviewNode.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center"
+                            });
+                        }, 120);
+                    }
                 }
 
             });
