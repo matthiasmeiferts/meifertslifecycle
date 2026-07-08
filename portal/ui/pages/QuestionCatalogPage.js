@@ -295,7 +295,7 @@ export default class QuestionCatalogPage {
 
         const row = document.createElement("article");
 
-        row.className = "task-row question-catalog-row";
+        row.className = "task-row question-catalog-row adaptive-diagnostic-row";
 
         const penaltyReasons = (question.adaptiveReasons || [])
             .filter(reason => this.normalize(reason).includes("penalty"));
@@ -304,35 +304,64 @@ export default class QuestionCatalogPage {
             .filter(reason => !this.normalize(reason).includes("penalty"))
             .slice(0, 2);
 
-        const signals = (question.adaptiveSignals || []).join(" / ") || "n/a";
+        const signalBadges = (question.adaptiveSignals || [])
+            .slice(0, 7)
+            .map(signal => `<span>${this.escapeHtml(signal)}</span>`)
+            .join("");
+
+        const reasonItems = primaryReasons
+            .map(reason => `<li>${this.escapeHtml(reason)}</li>`)
+            .join("");
+
+        const penaltyItems = penaltyReasons
+            .map(reason => `<li>${this.escapeHtml(reason)}</li>`)
+            .join("");
 
         row.innerHTML = `
 
-            <div>
+            <div class="adaptive-diagnostic-row__content">
 
-                <strong>${this.escapeHtml(question.questionId)} · Score ${this.escapeHtml(question.adaptiveScore)}</strong>
+                <div class="adaptive-diagnostic-row__header">
 
-                <p>${this.escapeHtml(question.questionText)}</p>
+                    <div>
 
-                <small>
+                        <span class="adaptive-diagnostic-row__eyebrow">Adaptive question</span>
 
-                    ${this.escapeHtml(question.chapterNumber)} ·
+                        <strong>${this.escapeHtml(question.questionId)}</strong>
 
-                    ${this.escapeHtml(question.chapterTitle)} ·
+                        <p>${this.escapeHtml(question.questionText)}</p>
 
-                    ${this.escapeHtml(question.sectionTitle)} ·
+                    </div>
 
-                    signals: ${this.escapeHtml(signals)}
+                    <span class="adaptive-diagnostic-row__score">Score ${this.escapeHtml(question.adaptiveScore)}</span>
 
-                </small>
+                </div>
 
-                ${primaryReasons.length ? `<small>Reasons: ${this.escapeHtml(primaryReasons.join(" | "))}</small>` : ""}
+                <div class="adaptive-diagnostic-row__meta">
 
-                ${penaltyReasons.length ? `<small>Penalty: ${this.escapeHtml(penaltyReasons.join(" | "))}</small>` : ""}
+                    <span>${this.escapeHtml(question.chapterNumber)}</span>
+
+                    <span>${this.escapeHtml(question.chapterTitle)}</span>
+
+                    <span>${this.escapeHtml(question.sectionTitle)}</span>
+
+                </div>
+
+                <div class="adaptive-diagnostic-row__signals" aria-label="Adaptive signals">
+
+                    ${signalBadges || `<span>No signals</span>`}
+
+                </div>
+
+                <div class="adaptive-diagnostic-row__reason-grid">
+
+                    ${reasonItems ? `<div class="adaptive-diagnostic-row__reason-box"><small>Reasons</small><ul>${reasonItems}</ul></div>` : ""}
+
+                    ${penaltyItems ? `<div class="adaptive-diagnostic-row__reason-box adaptive-diagnostic-row__reason-box--penalty"><small>Country / context adjustment</small><ul>${penaltyItems}</ul></div>` : ""}
+
+                </div>
 
             </div>
-
-            <span class="tag">Adaptive</span>
 
         `;
 
@@ -398,7 +427,7 @@ export default class QuestionCatalogPage {
 
         const row = document.createElement("article");
 
-        row.className = "task-row question-catalog-row";
+        row.className = "task-row question-catalog-row adaptive-diagnostic-row";
 
         const flags = [
 

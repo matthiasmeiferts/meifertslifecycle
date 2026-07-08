@@ -5110,3 +5110,123 @@ button.dashboard-readiness-card__action:focus-visible {
     }
 }
 
+
+/* Foundation 2.2-D Adaptive Profile Diagnostic */
+.adaptive-diagnostic-row {
+    align-items: stretch;
+    border: 1px solid rgba(27, 43, 69, 0.1);
+    border-radius: 18px;
+    display: block;
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+.adaptive-diagnostic-row__content {
+    display: grid;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.adaptive-diagnostic-row__header {
+    align-items: flex-start;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+}
+
+.adaptive-diagnostic-row__eyebrow {
+    color: var(--color-gold, #b89968);
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+}
+
+.adaptive-diagnostic-row__header strong {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.adaptive-diagnostic-row__header p {
+    margin: 0;
+}
+
+.adaptive-diagnostic-row__score {
+    border: 1px solid rgba(184, 153, 104, 0.45);
+    border-radius: 999px;
+    color: var(--color-navy, #1b2b45);
+    flex: 0 0 auto;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 0.35rem 0.65rem;
+    white-space: nowrap;
+}
+
+.adaptive-diagnostic-row__meta,
+.adaptive-diagnostic-row__signals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.adaptive-diagnostic-row__meta span,
+.adaptive-diagnostic-row__signals span {
+    background: rgba(27, 43, 69, 0.06);
+    border-radius: 999px;
+    color: var(--color-navy, #1b2b45);
+    font-size: 0.78rem;
+    padding: 0.28rem 0.55rem;
+}
+
+.adaptive-diagnostic-row__signals span {
+    background: rgba(184, 153, 104, 0.14);
+}
+
+.adaptive-diagnostic-row__reason-grid {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.adaptive-diagnostic-row__reason-box {
+    background: rgba(255, 255, 255, 0.42);
+    border: 1px solid rgba(27, 43, 69, 0.08);
+    border-radius: 14px;
+    padding: 0.75rem 0.9rem;
+}
+
+.adaptive-diagnostic-row__reason-box small {
+    color: var(--color-gold, #b89968);
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+}
+
+.adaptive-diagnostic-row__reason-box ul {
+    margin: 0;
+    padding-left: 1.1rem;
+}
+
+.adaptive-diagnostic-row__reason-box li {
+    margin-bottom: 0.25rem;
+}
+
+.adaptive-diagnostic-row__reason-box--penalty {
+    background: rgba(27, 43, 69, 0.04);
+}
+
+@media (max-width: 760px) {
+    .adaptive-diagnostic-row__header {
+        display: grid;
+    }
+
+    .adaptive-diagnostic-row__score {
+        justify-self: start;
+    }
+}
