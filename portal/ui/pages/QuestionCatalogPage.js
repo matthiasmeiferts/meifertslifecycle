@@ -9,6 +9,7 @@ import AdaptiveInspectionPreviewBridge from "../../core/AdaptiveInspectionPrevie
 import AdaptiveScopeDraftEngine from "../../core/AdaptiveScopeDraftEngine.js";
 import AdaptiveInspectionSessionSandbox from "../../core/AdaptiveInspectionSessionSandbox.js";
 import InspectionHumanWorkLayer from "../../core/InspectionHumanWorkLayer.js";
+import AnswerInteractionSandbox from "../../core/AnswerInteractionSandbox.js";
 
 import LanguageManager from "../../core/LanguageManager.js";
 
@@ -794,6 +795,53 @@ export default class QuestionCatalogPage {
 
     }
 
+    static createAnswerInteractionSandboxPreview(interaction = {}) {
+
+        if (interaction.interactionMode === "answer_sandbox_rejected") {
+            return `
+
+                <span>Sandbox interaction rejected</span>
+
+                <p>${this.escapeHtml(interaction.reason || "Unknown answer option.")}</p>
+
+            `;
+        }
+
+        return `
+
+            <span>Sandbox interaction preview</span>
+
+            <div class="inspection-human-work-layer__interaction-grid">
+
+                <div>
+                    <small>Selected answer</small>
+                    <strong>${this.escapeHtml(interaction.selectedAnswer?.label || "n/a")}</strong>
+                </div>
+
+                <div>
+                    <small>Progress preview</small>
+                    <strong>${this.escapeHtml(interaction.progressPreview?.completionRate || 0)}%</strong>
+                </div>
+
+                <div>
+                    <small>Next step</small>
+                    <strong>${this.escapeHtml(interaction.guidance?.nextStep || "Preview only")}</strong>
+                </div>
+
+            </div>
+
+            <p>${this.escapeHtml(interaction.guidance?.evidenceHint || "No action created.")}</p>
+
+            <small>
+                answerPersisted: ${this.escapeHtml(String(interaction.safetyBoundary?.answerPersisted))}
+                · evidenceCreated: ${this.escapeHtml(String(interaction.safetyBoundary?.evidenceCreated))}
+                · findingCreated: ${this.escapeHtml(String(interaction.safetyBoundary?.findingCreated))}
+            </small>
+
+        `;
+
+    }
+
     static createInspectionHumanWorkLayerView() {
 
         const section = document.createElement("section");
@@ -876,7 +924,7 @@ export default class QuestionCatalogPage {
             <div class="inspection-human-work-layer__answers">
 
                 ${workView.answerOptions.map(option => `
-                    <button type="button" class="inspection-human-work-layer__answer is-${this.escapeHtml(option.tone)}">
+                    <button type="button" class="inspection-human-work-layer__answer is-${this.escapeHtml(option.tone)}" data-answer-value="${this.escapeHtml(option.value)}">
                         <strong>${this.escapeHtml(option.label)}</strong>
                         <span>${this.escapeHtml(option.description)}</span>
                     </button>
@@ -902,7 +950,41 @@ export default class QuestionCatalogPage {
 
             </div>
 
+            <div class="inspection-human-work-layer__interaction-preview" data-answer-interaction-preview>
+
+                <span>Sandbox interaction</span>
+
+                <p>Select an answer to preview the next step. Nothing will be saved.</p>
+
+            </div>
+
         `;
+
+        section.querySelectorAll("[data-answer-value]").forEach((button) => {
+
+            button.addEventListener("click", () => {
+
+                const answerValue = button.getAttribute("data-answer-value");
+
+                const interaction = AnswerInteractionSandbox.applyAnswer(workView, answerValue, {
+                    interactionId: `answer-browser-${Date.now()}`
+                });
+
+                section.querySelectorAll("[data-answer-value]").forEach((item) => {
+                    item.classList.remove("is-selected");
+                });
+
+                button.classList.add("is-selected");
+
+                const previewNode = section.querySelector("[data-answer-interaction-preview]");
+
+                if (previewNode) {
+                    previewNode.innerHTML = this.createAnswerInteractionSandboxPreview(interaction);
+                }
+
+            });
+
+        });
 
         return section;
 
