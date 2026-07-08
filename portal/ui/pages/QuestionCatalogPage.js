@@ -6,6 +6,7 @@ import AdaptiveInspectionProfileEngine from "../../core/AdaptiveInspectionProfil
 import AdaptiveFollowUpQuestionEngine from "../../core/AdaptiveFollowUpQuestionEngine.js";
 
 import AdaptiveInspectionPreviewBridge from "../../core/AdaptiveInspectionPreviewBridge.js";
+import AdaptiveScopeDraftEngine from "../../core/AdaptiveScopeDraftEngine.js";
 
 import LanguageManager from "../../core/LanguageManager.js";
 
@@ -53,6 +54,8 @@ export default class QuestionCatalogPage {
         fragment.appendChild(this.createAdaptiveFollowUpDiagnostic());
 
         fragment.appendChild(this.createAdaptiveInspectionPreviewDiagnostic());
+
+        fragment.appendChild(this.createAdaptiveScopeDraftDiagnostic());
 
         fragment.appendChild(this.createCatalogContent());
 
@@ -364,6 +367,181 @@ export default class QuestionCatalogPage {
         section.appendChild(list);
 
         return section;
+
+    }
+
+    static createAdaptiveScopeDraftDiagnostic() {
+
+        const section = document.createElement("section");
+
+        section.className = "workflow-card adaptive-scope-draft";
+
+        const profile = {
+            country: "Thailand",
+            buildingType: "Condominium",
+            useType: "Residential",
+            ageBand: "Existing",
+            climateZone: "Tropical",
+            locationContext: "Coastal",
+            legalContext: "Ownership",
+            inspectionPurpose: "Acquisition"
+        };
+
+        const preview = AdaptiveInspectionPreviewBridge.createPreview(
+            profile,
+            QuestionCatalogManager.getAll(),
+            {
+                startLimit: 5,
+                followUpLimit: 5
+            }
+        );
+
+        const draft = AdaptiveScopeDraftEngine.createScopeDraft(preview);
+
+        section.innerHTML = `
+
+            <div class="settings-cleanup__header">
+
+                <div>
+
+                    <p class="eyebrow">Adaptive Scope Draft</p>
+
+                    <h3>${draft.questionCount} draft questions · ${draft.moduleCount} draft modules</h3>
+
+                    <p>Read-only scope draft derived from the adaptive inspection preview. Diagnostic only. No inspection, answers, evidence, findings, assessments or reports are created.</p>
+
+                </div>
+
+                <span class="tag">Scope Draft Engine</span>
+
+            </div>
+
+            <div class="adaptive-inspection-preview__boundary">
+
+                ${this.createSafetyBoundaryBadges(draft.safetyBoundary)}
+
+            </div>
+
+            <div class="adaptive-scope-draft__summary">
+
+                <div>
+                    <span>Catalog items</span>
+                    <strong>${this.escapeHtml(draft.totalCatalogItems)}</strong>
+                </div>
+
+                <div>
+                    <span>Draft questions</span>
+                    <strong>${this.escapeHtml(draft.questionCount)}</strong>
+                </div>
+
+                <div>
+                    <span>Draft modules</span>
+                    <strong>${this.escapeHtml(draft.moduleCount)}</strong>
+                </div>
+
+                <div>
+                    <span>Evidence types</span>
+                    <strong>${this.escapeHtml(draft.evidenceRequirements.length)}</strong>
+                </div>
+
+            </div>
+
+            <div class="adaptive-scope-draft__chips">
+
+                ${draft.evidenceRequirements.map(requirement => `
+                    <span>${this.escapeHtml(requirement)}</span>
+                `).join("")}
+
+            </div>
+
+            <div class="adaptive-scope-draft__signals">
+
+                ${draft.signalSummary.map(item => `
+                    <span>${this.escapeHtml(item.signal)} · ${this.escapeHtml(item.count)}</span>
+                `).join("")}
+
+            </div>
+
+        `;
+
+        const list = document.createElement("div");
+
+        list.className = "adaptive-scope-draft__modules";
+
+        draft.modules.forEach((module, index) => {
+
+            list.appendChild(this.createAdaptiveScopeDraftModuleRow(module, index));
+
+        });
+
+        section.appendChild(list);
+
+        return section;
+
+    }
+
+    static createAdaptiveScopeDraftModuleRow(module, index = 0) {
+
+        const row = document.createElement("article");
+
+        row.className = "adaptive-scope-draft__module";
+
+        row.innerHTML = `
+
+            <div class="adaptive-scope-draft__module-header">
+
+                <div>
+
+                    <span class="adaptive-diagnostic-row__eyebrow">Draft module ${index + 1}</span>
+
+                    <strong>${this.escapeHtml(module.chapterNumber)} ${this.escapeHtml(module.chapterTitle)}</strong>
+
+                    <p>${this.escapeHtml(module.buildingSystem || "n/a")}</p>
+
+                </div>
+
+                <span class="adaptive-diagnostic-row__score">${this.escapeHtml(module.questionCount)} questions</span>
+
+            </div>
+
+            <div class="adaptive-scope-draft__module-grid">
+
+                <div>
+                    <span>Candidate follow-ups</span>
+                    <strong>${this.escapeHtml(module.candidateFollowUpCount)}</strong>
+                </div>
+
+                <div>
+                    <span>Finding route</span>
+                    <strong>${this.escapeHtml(module.findingFollowUpCount)}</strong>
+                </div>
+
+                <div>
+                    <span>OK skip route</span>
+                    <strong>${this.escapeHtml(module.okSkipCount)}</strong>
+                </div>
+
+                <div>
+                    <span>Evidence</span>
+                    <strong>${this.escapeHtml(module.evidenceRequirements.length)}</strong>
+                </div>
+
+            </div>
+
+            <div class="adaptive-scope-draft__question-list">
+
+                ${module.questions.map(question => `
+                    <div>
+                        <span>${this.escapeHtml(question.questionId)}</span>
+                        <p>${this.escapeHtml(question.questionText)}</p>
+                    </div>
+                `).join("")}
+
+            </div>
+
+        `;
+
+        return row;
 
     }
 

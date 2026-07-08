@@ -5350,3 +5350,149 @@ button.dashboard-readiness-card__action:focus-visible {
 .adaptive-inspection-preview__simulation-grid .adaptive-follow-up-diagnostic__card {
     background: rgba(255, 255, 255, 0.48);
 }
+
+/* Foundation 2.2-G.3 Adaptive Scope Draft Diagnostic View */
+.adaptive-scope-draft {
+    border: 1px solid rgba(27, 43, 69, 0.1);
+}
+
+.adaptive-scope-draft__summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.adaptive-scope-draft__summary div,
+.adaptive-scope-draft__module-grid div {
+    padding: 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.52);
+    border: 1px solid rgba(27, 43, 69, 0.08);
+}
+
+.adaptive-scope-draft__summary span,
+.adaptive-scope-draft__module-grid span {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(27, 43, 69, 0.56);
+    margin-bottom: 6px;
+}
+
+.adaptive-scope-draft__summary strong,
+.adaptive-scope-draft__module-grid strong {
+    font-size: 1.2rem;
+    color: var(--color-navy);
+}
+
+.adaptive-scope-draft__chips,
+.adaptive-scope-draft__signals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.adaptive-scope-draft__chips span,
+.adaptive-scope-draft__signals span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(184, 153, 104, 0.12);
+    border: 1px solid rgba(184, 153, 104, 0.18);
+    font-size: 0.74rem;
+    color: rgba(27, 43, 69, 0.78);
+}
+
+.adaptive-scope-draft__signals span {
+    background: rgba(27, 43, 69, 0.06);
+    border-color: rgba(27, 43, 69, 0.1);
+}
+
+.adaptive-scope-draft__modules {
+    display: grid;
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.adaptive-scope-draft__module {
+    padding: 18px;
+    border-radius: 20px;
+    background: rgba(243, 238, 226, 0.58);
+    border: 1px solid rgba(27, 43, 69, 0.08);
+    box-shadow: 0 12px 28px rgba(27, 43, 69, 0.04);
+}
+
+.adaptive-scope-draft__module-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: flex-start;
+}
+
+.adaptive-scope-draft__module-header strong {
+    display: block;
+    color: var(--color-navy);
+    font-size: 1rem;
+    margin-top: 4px;
+}
+
+.adaptive-scope-draft__module-header p {
+    margin: 6px 0 0;
+    color: rgba(27, 43, 69, 0.62);
+}
+
+.adaptive-scope-draft__module-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.adaptive-scope-draft__question-list {
+    display: grid;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.adaptive-scope-draft__question-list div {
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.42);
+    border: 1px solid rgba(27, 43, 69, 0.06);
+}
+
+.adaptive-scope-draft__question-list span {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(27, 43, 69, 0.52);
+}
+
+.adaptive-scope-draft__question-list p {
+    margin: 4px 0 0;
+    color: rgba(27, 43, 69, 0.78);
+}
+
+@media (max-width: 980px) {
+    .adaptive-scope-draft__summary,
+    .adaptive-scope-draft__module-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .adaptive-scope-draft__module-header {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 640px) {
+    .adaptive-scope-draft__summary,
+    .adaptive-scope-draft__module-grid {
+        grid-template-columns: 1fr;
+    }
+}
