@@ -8,6 +8,7 @@ import AdaptiveFollowUpQuestionEngine from "../../core/AdaptiveFollowUpQuestionE
 import AdaptiveInspectionPreviewBridge from "../../core/AdaptiveInspectionPreviewBridge.js";
 import AdaptiveScopeDraftEngine from "../../core/AdaptiveScopeDraftEngine.js";
 import AdaptiveInspectionSessionSandbox from "../../core/AdaptiveInspectionSessionSandbox.js";
+import InspectionHumanWorkLayer from "../../core/InspectionHumanWorkLayer.js";
 
 import LanguageManager from "../../core/LanguageManager.js";
 
@@ -46,21 +47,9 @@ export default class QuestionCatalogPage {
         const summary = QuestionCatalogManager.getSummary();
         this.ensureSelectedChapter();
 
-        fragment.appendChild(this.createMetrics(summary));
+        fragment.appendChild(this.createInspectionHumanWorkLayerView());
 
-        fragment.appendChild(this.createControls());
-
-        fragment.appendChild(this.createAdaptiveProfileDiagnostic());
-
-        fragment.appendChild(this.createAdaptiveFollowUpDiagnostic());
-
-        fragment.appendChild(this.createAdaptiveInspectionPreviewDiagnostic());
-
-        fragment.appendChild(this.createAdaptiveScopeDraftDiagnostic());
-
-        fragment.appendChild(this.createAdaptiveInspectionSandboxDiagnostic());
-
-        fragment.appendChild(this.createCatalogContent());
+        fragment.appendChild(this.createWorkModeSupportPanel(summary));
 
         return fragment;
 
@@ -229,6 +218,96 @@ export default class QuestionCatalogPage {
             this.renderIntoWorkspace();
 
         });
+
+        return wrapper;
+
+    }
+
+    static createWorkModeSupportPanel(summary = {}) {
+
+        const wrapper = document.createElement("div");
+
+        wrapper.className = "work-mode-support-panel";
+
+        const catalogDetails = document.createElement("details");
+
+        catalogDetails.className = "workflow-card work-mode-support-panel__details";
+
+        catalogDetails.innerHTML = `
+
+            <summary>
+
+                <div>
+
+                    <p class="eyebrow">Catalog Reference</p>
+
+                    <h3>Question catalog and filters</h3>
+
+                    <p>Open only when you need to inspect the imported catalog, validation status or visible question list.</p>
+
+                </div>
+
+                <span class="tag">${this.escapeHtml(summary.totalQuestions || 0)} items</span>
+
+            </summary>
+
+        `;
+
+        const catalogContent = document.createElement("div");
+
+        catalogContent.className = "work-mode-support-panel__content";
+
+        catalogContent.appendChild(this.createMetrics(summary));
+
+        catalogContent.appendChild(this.createControls());
+
+        catalogContent.appendChild(this.createCatalogContent());
+
+        catalogDetails.appendChild(catalogContent);
+
+        const diagnosticsDetails = document.createElement("details");
+
+        diagnosticsDetails.className = "workflow-card work-mode-support-panel__details";
+
+        diagnosticsDetails.innerHTML = `
+
+            <summary>
+
+                <div>
+
+                    <p class="eyebrow">Developer Diagnostics</p>
+
+                    <h3>Adaptive engine details</h3>
+
+                    <p>Profile selection, follow-up simulation, scope draft and sandbox diagnostics. Hidden during normal inspection work.</p>
+
+                </div>
+
+                <span class="tag">Engine</span>
+
+            </summary>
+
+        `;
+
+        const diagnosticsContent = document.createElement("div");
+
+        diagnosticsContent.className = "work-mode-support-panel__content";
+
+        diagnosticsContent.appendChild(this.createAdaptiveProfileDiagnostic());
+
+        diagnosticsContent.appendChild(this.createAdaptiveFollowUpDiagnostic());
+
+        diagnosticsContent.appendChild(this.createAdaptiveInspectionPreviewDiagnostic());
+
+        diagnosticsContent.appendChild(this.createAdaptiveScopeDraftDiagnostic());
+
+        diagnosticsContent.appendChild(this.createAdaptiveInspectionSandboxDiagnostic());
+
+        diagnosticsDetails.appendChild(diagnosticsContent);
+
+        wrapper.appendChild(catalogDetails);
+
+        wrapper.appendChild(diagnosticsDetails);
 
         return wrapper;
 
@@ -712,6 +791,120 @@ export default class QuestionCatalogPage {
         `;
 
         return row;
+
+    }
+
+    static createInspectionHumanWorkLayerView() {
+
+        const section = document.createElement("section");
+
+        section.className = "workflow-card inspection-human-work-layer";
+
+        const profile = {
+            country: "Thailand",
+            buildingType: "Condominium",
+            useType: "Residential",
+            ageBand: "Existing",
+            climateZone: "Tropical",
+            locationContext: "Coastal",
+            legalContext: "Ownership",
+            inspectionPurpose: "Acquisition"
+        };
+
+        const preview = AdaptiveInspectionPreviewBridge.createPreview(
+            profile,
+            QuestionCatalogManager.getAll(),
+            {
+                startLimit: 5,
+                followUpLimit: 5
+            }
+        );
+
+        const draft = AdaptiveScopeDraftEngine.createScopeDraft(preview);
+
+        const sandbox = AdaptiveInspectionSessionSandbox.createSandboxSession(draft, {
+            sandboxId: "sandbox-human-work-layer-browser"
+        });
+
+        const workView = InspectionHumanWorkLayer.createWorkView(sandbox, {
+            currentModuleIndex: 0,
+            currentQuestionIndex: 0
+        });
+
+        section.innerHTML = `
+
+            <div class="inspection-human-work-layer__topline">
+
+                <span>Inspection Work Mode</span>
+
+                <strong>${this.escapeHtml(workView.progress.completionRate)}% complete</strong>
+
+            </div>
+
+            <div class="inspection-human-work-layer__hero">
+
+                <div>
+
+                    <p class="eyebrow">${this.escapeHtml(workView.currentModule.chapterNumber)} ${this.escapeHtml(workView.currentModule.chapterTitle)}</p>
+
+                    <h3>${this.escapeHtml(workView.currentQuestion.questionText)}</h3>
+
+                    <p>${this.escapeHtml(workView.guidance.primary)}</p>
+
+                </div>
+
+                <div class="inspection-human-work-layer__counter">
+
+                    <span>Question</span>
+
+                    <strong>${this.escapeHtml(workView.currentQuestion.questionIndex)} / ${this.escapeHtml(workView.progress.totalQuestions)}</strong>
+
+                </div>
+
+            </div>
+
+            <div class="inspection-human-work-layer__context">
+
+                <span>${this.escapeHtml(workView.currentQuestion.questionId)}</span>
+
+                <span>${this.escapeHtml(workView.currentQuestion.sectionTitle || "No section")}</span>
+
+                <span>${this.escapeHtml(workView.currentModule.buildingSystem)}</span>
+
+            </div>
+
+            <div class="inspection-human-work-layer__answers">
+
+                ${workView.answerOptions.map(option => `
+                    <button type="button" class="inspection-human-work-layer__answer is-${this.escapeHtml(option.tone)}">
+                        <strong>${this.escapeHtml(option.label)}</strong>
+                        <span>${this.escapeHtml(option.description)}</span>
+                    </button>
+                `).join("")}
+
+            </div>
+
+            <div class="inspection-human-work-layer__hint">
+
+                <span>Evidence hint</span>
+
+                <p>${this.escapeHtml(workView.guidance.evidenceHint)}</p>
+
+            </div>
+
+            <div class="inspection-human-work-layer__progress">
+
+                <div>
+                    <span style="width: ${this.escapeHtml(workView.progress.completionRate)}%;"></span>
+                </div>
+
+                <p>${this.escapeHtml(workView.progress.answeredQuestions)} answered · ${this.escapeHtml(workView.progress.unansweredQuestions)} open</p>
+
+            </div>
+
+        `;
+
+        return section;
 
     }
 

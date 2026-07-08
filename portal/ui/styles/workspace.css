@@ -5882,3 +5882,326 @@ button.dashboard-readiness-card__action:focus-visible {
     padding-top: 2px;
     line-height: 1.35;
 }
+
+/* Foundation 2.3-A.3 Inspection Human Work Layer Browser View */
+.inspection-human-work-layer {
+    padding: 28px;
+    border: 1px solid rgba(27, 43, 69, 0.1);
+    background:
+        radial-gradient(circle at top right, rgba(184, 153, 104, 0.12), transparent 34%),
+        rgba(243, 238, 226, 0.72);
+}
+
+.inspection-human-work-layer__topline {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.inspection-human-work-layer__topline span {
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(27, 43, 69, 0.58);
+}
+
+.inspection-human-work-layer__topline strong {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.58);
+    border: 1px solid rgba(27, 43, 69, 0.08);
+    color: var(--color-navy);
+    font-size: 0.78rem;
+}
+
+.inspection-human-work-layer__hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 140px;
+    gap: 24px;
+    align-items: start;
+}
+
+.inspection-human-work-layer__hero h3 {
+    margin: 6px 0 10px;
+    max-width: 880px;
+    color: var(--color-navy);
+    font-size: clamp(1.5rem, 3vw, 2.45rem);
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+}
+
+.inspection-human-work-layer__hero p:not(.eyebrow) {
+    max-width: 680px;
+    margin: 0;
+    color: rgba(27, 43, 69, 0.68);
+}
+
+.inspection-human-work-layer__counter {
+    padding: 18px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.58);
+    border: 1px solid rgba(27, 43, 69, 0.08);
+    text-align: center;
+}
+
+.inspection-human-work-layer__counter span {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(27, 43, 69, 0.52);
+    margin-bottom: 8px;
+}
+
+.inspection-human-work-layer__counter strong {
+    color: var(--color-navy);
+    font-size: 1.35rem;
+}
+
+.inspection-human-work-layer__context {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.inspection-human-work-layer__context span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(27, 43, 69, 0.06);
+    border: 1px solid rgba(27, 43, 69, 0.08);
+    color: rgba(27, 43, 69, 0.64);
+    font-size: 0.74rem;
+    font-weight: 600;
+}
+
+.inspection-human-work-layer__answers {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.inspection-human-work-layer__answer {
+    appearance: none;
+    border: 1px solid rgba(27, 43, 69, 0.1);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.58);
+    padding: 16px;
+    text-align: left;
+    cursor: default;
+    transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.inspection-human-work-layer__answer:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.74);
+    border-color: rgba(184, 153, 104, 0.22);
+}
+
+.inspection-human-work-layer__answer strong {
+    display: block;
+    color: var(--color-navy);
+    font-size: 0.98rem;
+    margin-bottom: 8px;
+}
+
+.inspection-human-work-layer__answer span {
+    display: block;
+    color: rgba(27, 43, 69, 0.58);
+    font-size: 0.78rem;
+    line-height: 1.36;
+}
+
+.inspection-human-work-layer__hint {
+    margin-top: 20px;
+    padding: 16px 18px;
+    border-radius: 20px;
+    background: rgba(184, 153, 104, 0.12);
+    border: 1px solid rgba(184, 153, 104, 0.18);
+}
+
+.inspection-human-work-layer__hint span {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(27, 43, 69, 0.52);
+    margin-bottom: 6px;
+}
+
+.inspection-human-work-layer__hint p {
+    margin: 0;
+    color: rgba(27, 43, 69, 0.72);
+}
+
+.inspection-human-work-layer__progress {
+    margin-top: 18px;
+}
+
+.inspection-human-work-layer__progress div {
+    height: 8px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(27, 43, 69, 0.08);
+}
+
+.inspection-human-work-layer__progress div span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: rgba(184, 153, 104, 0.68);
+}
+
+.inspection-human-work-layer__progress p {
+    margin: 8px 0 0;
+    color: rgba(27, 43, 69, 0.56);
+    font-size: 0.78rem;
+}
+
+@media (max-width: 980px) {
+    .inspection-human-work-layer__hero {
+        grid-template-columns: 1fr;
+    }
+
+    .inspection-human-work-layer__counter {
+        text-align: left;
+    }
+
+    .inspection-human-work-layer__answers {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .inspection-human-work-layer {
+        padding: 20px;
+    }
+
+    .inspection-human-work-layer__answers {
+        grid-template-columns: 1fr;
+    }
+
+    .inspection-human-work-layer__topline {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Foundation 2.3-A.3b Human Work Layer Focus View */
+.adaptive-diagnostics-panel {
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid rgba(27, 43, 69, 0.08);
+    background: rgba(243, 238, 226, 0.42);
+}
+
+.adaptive-diagnostics-panel summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: center;
+    padding: 20px 24px;
+}
+
+.adaptive-diagnostics-panel summary::-webkit-details-marker {
+    display: none;
+}
+
+.adaptive-diagnostics-panel summary h3 {
+    margin: 3px 0 6px;
+    color: var(--color-navy);
+    font-size: 1.1rem;
+}
+
+.adaptive-diagnostics-panel summary p:not(.eyebrow) {
+    margin: 0;
+    color: rgba(27, 43, 69, 0.58);
+    max-width: 760px;
+}
+
+.adaptive-diagnostics-panel[open] summary {
+    border-bottom: 1px solid rgba(27, 43, 69, 0.08);
+}
+
+.adaptive-diagnostics-panel__content {
+    display: grid;
+    gap: 16px;
+    padding: 18px;
+}
+
+.adaptive-diagnostics-panel__content > .workflow-card {
+    margin: 0;
+}
+
+.inspection-human-work-layer {
+    order: -1;
+}
+
+/* Foundation 2.3-A.3c Work Mode Focus Correction */
+.work-mode-support-panel {
+    display: grid;
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.work-mode-support-panel__details {
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid rgba(27, 43, 69, 0.08);
+    background: rgba(243, 238, 226, 0.4);
+}
+
+.work-mode-support-panel__details summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: center;
+    padding: 20px 24px;
+}
+
+.work-mode-support-panel__details summary::-webkit-details-marker {
+    display: none;
+}
+
+.work-mode-support-panel__details summary h3 {
+    margin: 3px 0 6px;
+    color: var(--color-navy);
+    font-size: 1.08rem;
+}
+
+.work-mode-support-panel__details summary p:not(.eyebrow) {
+    margin: 0;
+    color: rgba(27, 43, 69, 0.58);
+    max-width: 760px;
+}
+
+.work-mode-support-panel__details[open] summary {
+    border-bottom: 1px solid rgba(27, 43, 69, 0.08);
+}
+
+.work-mode-support-panel__content {
+    display: grid;
+    gap: 16px;
+    padding: 18px;
+}
+
+.work-mode-support-panel__content > .workflow-card {
+    margin: 0;
+}
+
+.work-mode-support-panel__content > .catalog-metrics {
+    margin: 0;
+}
