@@ -6416,3 +6416,151 @@ button.dashboard-readiness-card__action:focus-visible {
         grid-template-columns: 1fr;
     }
 }
+
+/* Foundation 2.3-B.4 Answer Interaction Browser Polish */
+.inspection-human-work-layer__answer {
+    cursor: pointer;
+    position: relative;
+}
+
+.inspection-human-work-layer__answer::after {
+    content: "Select";
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(27, 43, 69, 0.34);
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.inspection-human-work-layer__answer:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.inspection-human-work-layer__answer.is-selected::after {
+    content: "Selected";
+    opacity: 1;
+    transform: translateY(0);
+    color: rgba(184, 153, 104, 0.92);
+}
+
+.inspection-human-work-layer__answer.is-selected {
+    transform: translateY(-2px);
+}
+
+.inspection-human-work-layer__answer.is-selected strong {
+    color: var(--color-navy);
+}
+
+.inspection-human-work-layer__interaction-preview {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.54));
+    border-color: rgba(184, 153, 104, 0.2);
+    box-shadow: 0 14px 34px rgba(27, 43, 69, 0.055);
+}
+
+.inspection-human-work-layer__interaction-preview > span {
+    color: rgba(184, 153, 104, 0.92);
+}
+
+.inspection-human-work-layer__interaction-grid {
+    gap: 12px;
+}
+
+.inspection-human-work-layer__interaction-grid div {
+    background: rgba(243, 238, 226, 0.42);
+}
+
+.inspection-human-work-layer__interaction-grid strong {
+    font-size: 1rem;
+}
+
+.inspection-human-work-layer__interaction-preview small {
+    padding-top: 8px;
+    border-top: 1px solid rgba(27, 43, 69, 0.06);
+}
+
+.inspection-human-work-layer__interaction-preview small::before {
+    content: "Sandbox only · ";
+    color: rgba(184, 153, 104, 0.9);
+    font-weight: 700;
+}
+
+/* Foundation 2.3-B.4 Answer Interaction Browser Polish */
+.inspection-human-work-layer__answer {
+    cursor: pointer;
+    position: relative;
+}
+
+.inspection-human-work-layer__answer::after {
+    content: "Select";
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(27, 43, 69, 0.34);
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.inspection-human-work-layer__answer:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.inspection-human-work-layer__answer.is-selected::after {
+    content: "Selected";
+    opacity: 1;
+    transform: translateY(0);
+    color: rgba(184, 153, 104, 0.92);
+}
+
+.inspection-human-work-layer__answer.is-selected {
+    transform: translateY(-2px);
+}
+
+.inspection-human-work-layer__answer.is-selected strong {
+    color: var(--color-navy);
+}
+
+.inspection-human-work-layer__interaction-preview {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.54));
+    border-color: rgba(184, 153, 104, 0.2);
+    box-shadow: 0 14px 34px rgba(27, 43, 69, 0.055);
+}
+
+.inspection-human-work-layer__interaction-preview > span {
+    color: rgba(184, 153, 104, 0.92);
+}
+
+.inspection-human-work-layer__interaction-grid {
+    gap: 12px;
+}
+
+.inspection-human-work-layer__interaction-grid div {
+    background: rgba(243, 238, 226, 0.42);
+}
+
+.inspection-human-work-layer__interaction-grid strong {
+    font-size: 1rem;
+}
+
+.inspection-human-work-layer__interaction-preview small {
+    padding-top: 8px;
+    border-top: 1px solid rgba(27, 43, 69, 0.06);
+}
+
+.inspection-human-work-layer__interaction-preview small::before {
+    content: "Sandbox only · ";
+    color: rgba(184, 153, 104, 0.9);
+    font-weight: 700;
+}
