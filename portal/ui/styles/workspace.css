@@ -5272,3 +5272,56 @@ button.dashboard-readiness-card__action:focus-visible {
 .adaptive-follow-up-diagnostic__card--ok {
     border-color: rgba(27, 43, 69, 0.12);
 }
+
+/* Foundation 2.2-F Adaptive Inspection Preview */
+.adaptive-inspection-preview__boundary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-bottom: 1rem;
+}
+
+.adaptive-inspection-preview__boundary span {
+    background: rgba(27, 43, 69, 0.06);
+    border-radius: 999px;
+    color: var(--color-navy, #1b2b45);
+    font-size: 0.78rem;
+    padding: 0.3rem 0.6rem;
+}
+
+.adaptive-inspection-preview__list {
+    display: grid;
+    gap: 1rem;
+}
+
+.adaptive-inspection-preview__row {
+    background: rgba(255, 255, 255, 0.34);
+    border: 1px solid rgba(27, 43, 69, 0.08);
+    border-radius: 20px;
+    display: grid;
+    gap: 0.8rem;
+    padding: 1rem;
+}
+
+.adaptive-inspection-preview__row-header {
+    align-items: flex-start;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+}
+
+.adaptive-inspection-preview__row-header p {
+    margin: 0;
+}
+
+.adaptive-inspection-preview__simulation-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+@media (max-width: 760px) {
+    .adaptive-inspection-preview__row-header {
+        display: grid;
+    }
+}

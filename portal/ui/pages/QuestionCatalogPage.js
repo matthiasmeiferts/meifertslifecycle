@@ -5,6 +5,8 @@ import AdaptiveInspectionProfileEngine from "../../core/AdaptiveInspectionProfil
 
 import AdaptiveFollowUpQuestionEngine from "../../core/AdaptiveFollowUpQuestionEngine.js";
 
+import AdaptiveInspectionPreviewBridge from "../../core/AdaptiveInspectionPreviewBridge.js";
+
 import LanguageManager from "../../core/LanguageManager.js";
 
 import SectionHeader from "../components/SectionHeader.js";
@@ -49,6 +51,8 @@ export default class QuestionCatalogPage {
         fragment.appendChild(this.createAdaptiveProfileDiagnostic());
 
         fragment.appendChild(this.createAdaptiveFollowUpDiagnostic());
+
+        fragment.appendChild(this.createAdaptiveInspectionPreviewDiagnostic());
 
         fragment.appendChild(this.createCatalogContent());
 
@@ -292,6 +296,184 @@ export default class QuestionCatalogPage {
         section.appendChild(list);
 
         return section;
+
+    }
+
+    static createAdaptiveInspectionPreviewDiagnostic() {
+
+        const section = document.createElement("section");
+
+        section.className = "workflow-card adaptive-inspection-preview";
+
+        const profile = {
+            country: "Thailand",
+            buildingType: "Condominium",
+            useType: "Residential",
+            ageBand: "Existing",
+            climateZone: "Tropical",
+            locationContext: "Coastal",
+            legalContext: "Ownership",
+            inspectionPurpose: "Acquisition"
+        };
+
+        const preview = AdaptiveInspectionPreviewBridge.createPreview(
+            profile,
+            QuestionCatalogManager.getAll(),
+            {
+                startLimit: 5,
+                followUpLimit: 5
+            }
+        );
+
+        section.innerHTML = `
+
+            <div class="settings-cleanup__header">
+
+                <div>
+
+                    <p class="eyebrow">Adaptive Inspection Preview</p>
+
+                    <h3>${preview.startQuestionCount} read-only preview questions</h3>
+
+                    <p>Combines adaptive profile selection with follow-up simulation. Diagnostic only. No answers, evidence, findings, assessments or reports are created.</p>
+
+                </div>
+
+                <span class="tag">Preview Bridge</span>
+
+            </div>
+
+            <div class="adaptive-inspection-preview__boundary">
+
+                ${Object.entries(preview.safetyBoundary).map(([key, value]) => `
+                    <span>${this.escapeHtml(key)}: ${this.escapeHtml(String(value))}</span>
+                `).join("")}
+
+            </div>
+
+        `;
+
+        const list = document.createElement("div");
+
+        list.className = "adaptive-inspection-preview__list";
+
+        preview.previewQuestions.forEach((previewQuestion, index) => {
+
+            list.appendChild(this.createAdaptiveInspectionPreviewRow(previewQuestion, index));
+
+        });
+
+        section.appendChild(list);
+
+        return section;
+
+    }
+
+    static createAdaptiveInspectionPreviewRow(previewQuestion, index = 0) {
+
+        const row = document.createElement("article");
+
+        row.className = "adaptive-inspection-preview__row";
+
+        const question = previewQuestion.question;
+
+        row.innerHTML = `
+
+            <div class="adaptive-inspection-preview__row-header">
+
+                <div>
+
+                    <span class="adaptive-diagnostic-row__eyebrow">Preview question ${index + 1}</span>
+
+                    <strong>${this.escapeHtml(question.questionId)}</strong>
+
+                    <p>${this.escapeHtml(question.questionText)}</p>
+
+                </div>
+
+                <span class="adaptive-diagnostic-row__score">Candidates ${this.escapeHtml(previewQuestion.candidateFollowUpCount)}</span>
+
+            </div>
+
+            <div class="adaptive-diagnostic-row__meta">
+
+                <span>${this.escapeHtml(question.chapterNumber)}</span>
+
+                <span>${this.escapeHtml(question.chapterTitle)}</span>
+
+                <span>${this.escapeHtml(question.sectionTitle)}</span>
+
+                <span>${this.escapeHtml(question.buildingSystem || "n/a")}</span>
+
+            </div>
+
+            <div class="adaptive-inspection-preview__simulation-grid">
+
+                <div class="adaptive-follow-up-diagnostic__card adaptive-follow-up-diagnostic__card--finding">
+
+                    <small>Simulated answer: finding</small>
+
+                    <strong>Follow-up route</strong>
+
+                    <p>Activates focused follow-up questions and prepares evidence / decision signals.</p>
+
+                    <small>Activated follow-ups</small>
+
+                    <div class="adaptive-diagnostic-row__signals">
+
+                        ${this.createInlineBadges(previewQuestion.negativeSimulation.followUpQuestionIds)}
+
+                    </div>
+
+                    <small>Evidence requirements</small>
+
+                    <div class="adaptive-diagnostic-row__signals">
+
+                        ${this.createInlineBadges(previewQuestion.negativeSimulation.evidenceRequirements)}
+
+                    </div>
+
+                    <small>Signals</small>
+
+                    <div class="adaptive-diagnostic-row__signals">
+
+                        ${this.createInlineBadges(previewQuestion.negativeSimulation.signals)}
+
+                    </div>
+
+                </div>
+
+                <div class="adaptive-follow-up-diagnostic__card adaptive-follow-up-diagnostic__card--ok">
+
+                    <small>Simulated answer: ok</small>
+
+                    <strong>Skip route</strong>
+
+                    <p>Skips likely defect-detail questions after a positive answer.</p>
+
+                    <small>Skipped questions</small>
+
+                    <div class="adaptive-diagnostic-row__signals">
+
+                        ${this.createInlineBadges(previewQuestion.positiveSimulation.skippedQuestionIds)}
+
+                    </div>
+
+                    <small>Signals</small>
+
+                    <div class="adaptive-diagnostic-row__signals">
+
+                        ${this.createInlineBadges(previewQuestion.positiveSimulation.signals)}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
+
+        return row;
 
     }
 
