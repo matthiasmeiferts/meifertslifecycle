@@ -37,9 +37,9 @@ export default class AdaptiveFollowUpQuestionEngine {
             evidenceRequirements: actions
                 .filter(action => action.type === "increase_evidence_requirement")
                 .map(action => action.requirement),
-            signals: actions
+            signals: [...new Set(actions
                 .filter(action => action.signal)
-                .map(action => action.signal)
+                .map(action => action.signal))]
         };
     }
 
@@ -158,7 +158,8 @@ export default class AdaptiveFollowUpQuestionEngine {
 
         rules.forEach(rule => {
             if (rule.type === "activate_follow_up") {
-                const matches = this.selectFollowUps(context, rule.selector);
+                const matches = this.selectFollowUps(context, rule.selector)
+                    .slice(0, 5);
 
                 matches.forEach(question => {
                     actions.push({
@@ -173,7 +174,8 @@ export default class AdaptiveFollowUpQuestionEngine {
             }
 
             if (rule.type === "skip_question") {
-                const matches = this.selectFollowUps(context, rule.selector);
+                const matches = this.selectFollowUps(context, rule.selector)
+                    .slice(0, 5);
 
                 matches.forEach(question => {
                     actions.push({
