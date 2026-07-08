@@ -10,6 +10,7 @@ import AdaptiveScopeDraftEngine from "../../core/AdaptiveScopeDraftEngine.js";
 import AdaptiveInspectionSessionSandbox from "../../core/AdaptiveInspectionSessionSandbox.js";
 import InspectionHumanWorkLayer from "../../core/InspectionHumanWorkLayer.js";
 import AnswerInteractionSandbox from "../../core/AnswerInteractionSandbox.js";
+import SandboxAnswerStateEngine from "../../core/SandboxAnswerStateEngine.js";
 
 import LanguageManager from "../../core/LanguageManager.js";
 
@@ -795,17 +796,27 @@ export default class QuestionCatalogPage {
 
     }
 
-    static createAnswerInteractionSandboxPreview(interaction = {}) {
+    static createAnswerInteractionSandboxPreview(interaction = {}, answerState = {}) {
 
-        if (interaction.interactionMode === "answer_sandbox_rejected") {
+        if (
+            interaction.interactionMode === "answer_sandbox_rejected"
+            || answerState.stateMode === "sandbox_answer_state_rejected"
+        ) {
             return `
 
                 <span>Sandbox interaction rejected</span>
 
-                <p>${this.escapeHtml(interaction.reason || "Unknown answer option.")}</p>
+                <p>${this.escapeHtml(interaction.reason || answerState.reason || "Unknown answer option.")}</p>
 
             `;
         }
+
+        const progress = answerState.progress || interaction.progressPreview || {};
+        const currentQuestion = answerState.currentQuestion || {};
+        const selectedAnswer = answerState.lastInteraction?.selectedAnswer || interaction.selectedAnswer || {};
+        const nextStep = currentQuestion.questionId
+            ? `Next question prepared: ${currentQuestion.questionId}`
+            : interaction.guidance?.nextStep || "Preview only";
 
         return `
 
@@ -815,30 +826,85 @@ export default class QuestionCatalogPage {
 
                 <div>
                     <small>Selected answer</small>
-                    <strong>${this.escapeHtml(interaction.selectedAnswer?.label || "n/a")}</strong>
+                    <strong>${this.escapeHtml(selectedAnswer.label || "n/a")}</strong>
                 </div>
 
                 <div>
                     <small>Progress preview</small>
-                    <strong>${this.escapeHtml(interaction.progressPreview?.completionRate || 0)}%</strong>
+                    <strong>${this.escapeHtml(progress.completionRate || 0)}%</strong>
                 </div>
 
                 <div>
                     <small>Next step</small>
-                    <strong>${this.escapeHtml(interaction.guidance?.nextStep || "Preview only")}</strong>
+                    <strong>${this.escapeHtml(nextStep)}</strong>
                 </div>
 
             </div>
 
-            <p>${this.escapeHtml(interaction.guidance?.evidenceHint || "No action created.")}</p>
+            <p>${this.escapeHtml(interaction.guidance?.evidenceHint || "Sandbox state moved to the next question. No action created.")}</p>
 
             <small>
-                answerPersisted: ${this.escapeHtml(String(interaction.safetyBoundary?.answerPersisted))}
-                · evidenceCreated: ${this.escapeHtml(String(interaction.safetyBoundary?.evidenceCreated))}
-                · findingCreated: ${this.escapeHtml(String(interaction.safetyBoundary?.findingCreated))}
+                answerPersisted: ${this.escapeHtml(String(answerState.safetyBoundary?.answerPersisted ?? interaction.safetyBoundary?.answerPersisted))}
+                · evidenceCreated: ${this.escapeHtml(String(answerState.safetyBoundary?.evidenceCreated ?? interaction.safetyBoundary?.evidenceCreated))}
+                · findingCreated: ${this.escapeHtml(String(answerState.safetyBoundary?.findingCreated ?? interaction.safetyBoundary?.findingCreated))}
             </small>
 
         `;
+
+    }
+
+    static updateInspectionHumanWorkLayerView(section, answerState = {}) {
+
+        const currentQuestion = answerState.currentQuestion || {};
+        const progress = answerState.progress || {};
+        const totalQuestions = progress.totalQuestions || answerState.totalQuestions || 0;
+        const currentQuestionNumber = Math.min((answerState.currentQuestionIndex || 0) + 1, totalQuestions || 1);
+
+        const progressLabel = section.querySelector("[data-work-progress-label]");
+        const moduleLabel = section.querySelector("[data-current-module-label]");
+        const questionText = section.querySelector("[data-current-question-text]");
+        const questionCounter = section.querySelector("[data-current-counter]");
+        const questionId = section.querySelector("[data-current-question-id]");
+        const questionSection = section.querySelector("[data-current-section-title]");
+        const questionSystem = section.querySelector("[data-current-building-system]");
+        const progressBar = section.querySelector("[data-work-progress-bar]");
+        const progressText = section.querySelector("[data-work-progress-text]");
+
+        if (progressLabel) {
+            progressLabel.textContent = `${progress.completionRate || 0}% complete`;
+        }
+
+        if (moduleLabel) {
+            moduleLabel.textContent = `${currentQuestion.moduleNumber || ""} ${currentQuestion.moduleTitle || ""}`.trim();
+        }
+
+        if (questionText) {
+            questionText.textContent = currentQuestion.questionText || "No question available";
+        }
+
+        if (questionCounter) {
+            questionCounter.textContent = `${currentQuestionNumber} / ${totalQuestions}`;
+        }
+
+        if (questionId) {
+            questionId.textContent = currentQuestion.questionId || "No question";
+        }
+
+        if (questionSection) {
+            questionSection.textContent = currentQuestion.sectionTitle || "No section";
+        }
+
+        if (questionSystem) {
+            questionSystem.textContent = currentQuestion.buildingSystem || currentQuestion.moduleTitle || "No system";
+        }
+
+        if (progressBar) {
+            progressBar.style.width = `${progress.completionRate || 0}%`;
+        }
+
+        if (progressText) {
+            progressText.textContent = `${progress.answeredQuestions || 0} answered · ${progress.unansweredQuestions || 0} open`;
+        }
 
     }
 
@@ -879,13 +945,17 @@ export default class QuestionCatalogPage {
             currentQuestionIndex: 0
         });
 
+        let answerState = SandboxAnswerStateEngine.createInitialState(sandbox, {
+            sandboxId: "sandbox-human-work-layer-browser-state"
+        });
+
         section.innerHTML = `
 
             <div class="inspection-human-work-layer__topline">
 
                 <span>Inspection Work Mode</span>
 
-                <strong>${this.escapeHtml(workView.progress.completionRate)}% complete</strong>
+                <strong data-work-progress-label>${this.escapeHtml(workView.progress.completionRate)}% complete</strong>
 
             </div>
 
@@ -893,9 +963,9 @@ export default class QuestionCatalogPage {
 
                 <div>
 
-                    <p class="eyebrow">${this.escapeHtml(workView.currentModule.chapterNumber)} ${this.escapeHtml(workView.currentModule.chapterTitle)}</p>
+                    <p class="eyebrow" data-current-module-label>${this.escapeHtml(workView.currentModule.chapterNumber)} ${this.escapeHtml(workView.currentModule.chapterTitle)}</p>
 
-                    <h3>${this.escapeHtml(workView.currentQuestion.questionText)}</h3>
+                    <h3 data-current-question-text>${this.escapeHtml(workView.currentQuestion.questionText)}</h3>
 
                     <p>${this.escapeHtml(workView.guidance.primary)}</p>
 
@@ -905,7 +975,7 @@ export default class QuestionCatalogPage {
 
                     <span>Question</span>
 
-                    <strong>${this.escapeHtml(workView.currentQuestion.questionIndex)} / ${this.escapeHtml(workView.progress.totalQuestions)}</strong>
+                    <strong data-current-counter>${this.escapeHtml(workView.currentQuestion.questionIndex)} / ${this.escapeHtml(workView.progress.totalQuestions)}</strong>
 
                 </div>
 
@@ -913,11 +983,11 @@ export default class QuestionCatalogPage {
 
             <div class="inspection-human-work-layer__context">
 
-                <span>${this.escapeHtml(workView.currentQuestion.questionId)}</span>
+                <span data-current-question-id>${this.escapeHtml(workView.currentQuestion.questionId)}</span>
 
-                <span>${this.escapeHtml(workView.currentQuestion.sectionTitle || "No section")}</span>
+                <span data-current-section-title>${this.escapeHtml(workView.currentQuestion.sectionTitle || "No section")}</span>
 
-                <span>${this.escapeHtml(workView.currentModule.buildingSystem)}</span>
+                <span data-current-building-system>${this.escapeHtml(workView.currentModule.buildingSystem)}</span>
 
             </div>
 
@@ -943,10 +1013,10 @@ export default class QuestionCatalogPage {
             <div class="inspection-human-work-layer__progress">
 
                 <div>
-                    <span style="width: ${this.escapeHtml(workView.progress.completionRate)}%;"></span>
+                    <span data-work-progress-bar style="width: ${this.escapeHtml(workView.progress.completionRate)}%;"></span>
                 </div>
 
-                <p>${this.escapeHtml(workView.progress.answeredQuestions)} answered · ${this.escapeHtml(workView.progress.unansweredQuestions)} open</p>
+                <p data-work-progress-text>${this.escapeHtml(workView.progress.answeredQuestions)} answered · ${this.escapeHtml(workView.progress.unansweredQuestions)} open</p>
 
             </div>
 
@@ -970,6 +1040,12 @@ export default class QuestionCatalogPage {
                     interactionId: `answer-browser-${Date.now()}`
                 });
 
+                answerState = SandboxAnswerStateEngine.applyAnswer(answerState, answerValue, {
+                    timestamp: new Date().toISOString()
+                });
+
+                this.updateInspectionHumanWorkLayerView(section, answerState);
+
                 section.querySelectorAll("[data-answer-value]").forEach((item) => {
                     item.classList.remove("is-selected");
                 });
@@ -979,7 +1055,7 @@ export default class QuestionCatalogPage {
                 const previewNode = section.querySelector("[data-answer-interaction-preview]");
 
                 if (previewNode) {
-                    previewNode.innerHTML = this.createAnswerInteractionSandboxPreview(interaction);
+                    previewNode.innerHTML = this.createAnswerInteractionSandboxPreview(interaction, answerState);
                 }
 
             });
