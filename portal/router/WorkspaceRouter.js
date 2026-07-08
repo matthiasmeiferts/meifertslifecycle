@@ -24,6 +24,7 @@ export default class WorkspaceRouter {
         recommendations: RecommendationPage,
         decisions: DecisionPage,
         reports: ReportPage,
+        catalog: QuestionCatalogPage,
         settings: SettingsPage
     };
 
