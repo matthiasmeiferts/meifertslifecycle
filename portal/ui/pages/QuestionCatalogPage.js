@@ -3,6 +3,8 @@ import QuestionCatalogManager from "../../core/QuestionCatalogManager.js";
 
 import AdaptiveInspectionProfileEngine from "../../core/AdaptiveInspectionProfileEngine.js";
 
+import AdaptiveFollowUpQuestionEngine from "../../core/AdaptiveFollowUpQuestionEngine.js";
+
 import LanguageManager from "../../core/LanguageManager.js";
 
 import SectionHeader from "../components/SectionHeader.js";
@@ -45,6 +47,8 @@ export default class QuestionCatalogPage {
         fragment.appendChild(this.createControls());
 
         fragment.appendChild(this.createAdaptiveProfileDiagnostic());
+
+        fragment.appendChild(this.createAdaptiveFollowUpDiagnostic());
 
         fragment.appendChild(this.createCatalogContent());
 
@@ -288,6 +292,201 @@ export default class QuestionCatalogPage {
         section.appendChild(list);
 
         return section;
+
+    }
+
+    static createAdaptiveFollowUpDiagnostic() {
+
+        const section = document.createElement("section");
+
+        section.className = "workflow-card adaptive-follow-up-diagnostic";
+
+        const profile = {
+            country: "Thailand",
+            buildingType: "Condominium",
+            useType: "Residential",
+            ageBand: "Existing",
+            climateZone: "Tropical",
+            locationContext: "Coastal",
+            legalContext: "Ownership",
+            inspectionPurpose: "Acquisition"
+        };
+
+        const catalogItems = QuestionCatalogManager.getAll();
+
+        const startQuestionSet = AdaptiveInspectionProfileEngine.createStartQuestionSet(
+            profile,
+            catalogItems,
+            { limit: 25 }
+        );
+
+        const mainQuestion = startQuestionSet.questions[0];
+
+        section.innerHTML = `
+
+            <div class="settings-cleanup__header">
+
+                <div>
+
+                    <p class="eyebrow">Adaptive Follow-up Diagnostic</p>
+
+                    <h3>Simulated answer routing</h3>
+
+                    <p>Diagnostic simulation only. No answers, evidence, findings, assessments or reports are created.</p>
+
+                </div>
+
+                <span class="tag">Follow-up Engine</span>
+
+            </div>
+
+        `;
+
+        if (!mainQuestion) {
+
+            const empty = document.createElement("p");
+
+            empty.textContent = "No start question is available for follow-up simulation.";
+
+            section.appendChild(empty);
+
+            return section;
+
+        }
+
+        const candidateFollowUps = catalogItems.filter(question => {
+            return question.questionId !== mainQuestion.questionId &&
+                (
+                    question.buildingSystem === mainQuestion.buildingSystem ||
+                    question.inspectionArea === mainQuestion.inspectionArea ||
+                    question.component === mainQuestion.component ||
+                    question.chapterNumber === mainQuestion.chapterNumber
+                );
+        });
+
+        const negativeResult = AdaptiveFollowUpQuestionEngine.evaluateAnswer({
+            ...mainQuestion,
+            answerValue: "finding",
+            profile,
+            candidateFollowUps
+        });
+
+        const positiveResult = AdaptiveFollowUpQuestionEngine.evaluateAnswer({
+            ...mainQuestion,
+            answerValue: "ok",
+            profile,
+            candidateFollowUps
+        });
+
+        const diagnostic = document.createElement("div");
+
+        diagnostic.className = "adaptive-follow-up-diagnostic__grid";
+
+        diagnostic.innerHTML = `
+
+            <article class="adaptive-follow-up-diagnostic__card">
+
+                <span class="adaptive-diagnostic-row__eyebrow">Main question</span>
+
+                <strong>${this.escapeHtml(mainQuestion.questionId)}</strong>
+
+                <p>${this.escapeHtml(mainQuestion.questionText)}</p>
+
+                <div class="adaptive-diagnostic-row__meta">
+
+                    <span>${this.escapeHtml(mainQuestion.chapterNumber)}</span>
+
+                    <span>${this.escapeHtml(mainQuestion.chapterTitle)}</span>
+
+                    <span>${this.escapeHtml(mainQuestion.sectionTitle)}</span>
+
+                    <span>${this.escapeHtml(mainQuestion.buildingSystem || "n/a")}</span>
+
+                </div>
+
+                <small>Candidate follow-ups: ${this.escapeHtml(candidateFollowUps.length)}</small>
+
+            </article>
+
+            <article class="adaptive-follow-up-diagnostic__card adaptive-follow-up-diagnostic__card--finding">
+
+                <span class="adaptive-diagnostic-row__eyebrow">Simulated answer</span>
+
+                <strong>finding</strong>
+
+                <p>Activates the most relevant follow-up questions and increases evidence requirements.</p>
+
+                <small>Activated follow-ups</small>
+
+                <div class="adaptive-diagnostic-row__signals">
+
+                    ${this.createInlineBadges(negativeResult.followUpQuestionIds)}
+
+                </div>
+
+                <small>Evidence requirements</small>
+
+                <div class="adaptive-diagnostic-row__signals">
+
+                    ${this.createInlineBadges(negativeResult.evidenceRequirements)}
+
+                </div>
+
+                <small>Signals</small>
+
+                <div class="adaptive-diagnostic-row__signals">
+
+                    ${this.createInlineBadges(negativeResult.signals)}
+
+                </div>
+
+            </article>
+
+            <article class="adaptive-follow-up-diagnostic__card adaptive-follow-up-diagnostic__card--ok">
+
+                <span class="adaptive-diagnostic-row__eyebrow">Simulated answer</span>
+
+                <strong>ok</strong>
+
+                <p>Skips likely defect-detail questions that are not needed after a positive answer.</p>
+
+                <small>Skipped questions</small>
+
+                <div class="adaptive-diagnostic-row__signals">
+
+                    ${this.createInlineBadges(positiveResult.skippedQuestionIds)}
+
+                </div>
+
+                <small>Signals</small>
+
+                <div class="adaptive-diagnostic-row__signals">
+
+                    ${this.createInlineBadges(positiveResult.signals)}
+
+                </div>
+
+            </article>
+
+        `;
+
+        section.appendChild(diagnostic);
+
+        return section;
+
+    }
+
+    static createInlineBadges(items = []) {
+
+        if (!items.length) {
+
+            return `<span>None</span>`;
+
+        }
+
+        return items
+            .map(item => `<span>${this.escapeHtml(item)}</span>`)
+            .join("");
 
     }
 

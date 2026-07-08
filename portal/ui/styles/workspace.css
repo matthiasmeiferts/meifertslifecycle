@@ -5230,3 +5230,45 @@ button.dashboard-readiness-card__action:focus-visible {
         justify-self: start;
     }
 }
+
+/* Foundation 2.2-E Adaptive Follow-up Diagnostic */
+.adaptive-follow-up-diagnostic__grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.adaptive-follow-up-diagnostic__card {
+    background: rgba(255, 255, 255, 0.38);
+    border: 1px solid rgba(27, 43, 69, 0.08);
+    border-radius: 18px;
+    display: grid;
+    gap: 0.65rem;
+    padding: 1rem;
+}
+
+.adaptive-follow-up-diagnostic__card strong {
+    color: var(--color-navy, #1b2b45);
+    display: block;
+    font-size: 1rem;
+}
+
+.adaptive-follow-up-diagnostic__card p {
+    margin: 0;
+}
+
+.adaptive-follow-up-diagnostic__card small {
+    color: var(--color-gold, #b89968);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.adaptive-follow-up-diagnostic__card--finding {
+    border-color: rgba(184, 153, 104, 0.28);
+}
+
+.adaptive-follow-up-diagnostic__card--ok {
+    border-color: rgba(27, 43, 69, 0.12);
+}
