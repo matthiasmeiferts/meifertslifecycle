@@ -869,6 +869,7 @@ export default class QuestionCatalogPage {
         const questionSystem = section.querySelector("[data-current-building-system]");
         const progressBar = section.querySelector("[data-work-progress-bar]");
         const progressText = section.querySelector("[data-work-progress-text]");
+        const transitionStatus = section.querySelector("[data-question-transition-status]");
 
         if (progressLabel) {
             progressLabel.textContent = `${progress.completionRate || 0}% complete`;
@@ -905,6 +906,18 @@ export default class QuestionCatalogPage {
         if (progressText) {
             progressText.textContent = `${progress.answeredQuestions || 0} answered · ${progress.unansweredQuestions || 0} open`;
         }
+
+        if (transitionStatus) {
+            transitionStatus.textContent = currentQuestion.questionId
+                ? `Sandbox state advanced · Next question ready: ${currentQuestion.questionId}`
+                : "Sandbox state advanced · No next question available";
+        }
+
+        section.classList.add("has-question-transition");
+
+        window.setTimeout(() => {
+            section.classList.remove("has-question-transition");
+        }, 420);
 
     }
 
@@ -991,6 +1004,10 @@ export default class QuestionCatalogPage {
 
             </div>
 
+            <div class="inspection-human-work-layer__transition-status" data-question-transition-status>
+                Sandbox state ready · No answer saved
+            </div>
+
             <div class="inspection-human-work-layer__answers">
 
                 ${workView.answerOptions.map(option => `
@@ -1051,6 +1068,10 @@ export default class QuestionCatalogPage {
                 });
 
                 button.classList.add("is-selected");
+
+                window.setTimeout(() => {
+                    button.classList.remove("is-selected");
+                }, 360);
 
                 const previewNode = section.querySelector("[data-answer-interaction-preview]");
 

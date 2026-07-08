@@ -6564,3 +6564,33 @@ button.dashboard-readiness-card__action:focus-visible {
     color: rgba(184, 153, 104, 0.9);
     font-weight: 700;
 }
+
+/* Foundation 2.3-C.4 Browser State Transition Feedback */
+.inspection-human-work-layer__transition-status {
+    margin-top: -8px;
+    margin-bottom: 18px;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(27, 43, 69, 0.48);
+}
+
+.inspection-human-work-layer.has-question-transition .inspection-human-work-layer__hero {
+    animation: inspection-question-transition 0.42s ease;
+}
+
+.inspection-human-work-layer.has-question-transition .inspection-human-work-layer__progress span {
+    transition: width 0.28s ease;
+}
+
+@keyframes inspection-question-transition {
+    0% {
+        transform: translateY(4px);
+        opacity: 0.68;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
