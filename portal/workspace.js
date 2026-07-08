@@ -2,9 +2,46 @@ import WorkspaceController from "./controllers/WorkspaceController.js";
 import WorkspaceRouter from "./router/WorkspaceRouter.js";
 import LanguageManager from "./core/LanguageManager.js";
 
+
+
+function ensureCatalogNavigation() {
+
+    const nav = document.getElementById("workspace-nav");
+
+    if (!nav || nav.querySelector("[data-route='catalog']")) {
+
+        return;
+
+    }
+
+    const link = document.createElement("a");
+
+    link.href = "#catalog";
+
+    link.dataset.route = "catalog";
+
+    link.dataset.i18n = "NavCatalog";
+
+    link.textContent = LanguageManager.t("NavCatalog");
+
+    const settingsLink = nav.querySelector("[data-route='settings']");
+
+    if (settingsLink) {
+
+        nav.insertBefore(link, settingsLink);
+
+    } else {
+
+        nav.appendChild(link);
+
+    }
+
+}
+
 function renderWorkspace() {
     const container = document.getElementById("workspace-page");
 
+    ensureCatalogNavigation();
     updateShellLanguage();
     WorkspaceRouter.render(container);
     updateSignals();

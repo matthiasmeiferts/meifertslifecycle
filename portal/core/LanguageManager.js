@@ -855,6 +855,14 @@ export default class LanguageManager {
                 en: "Reports",
                 de: "Reports"
             },
+            NavCatalog: {
+
+                en: "Catalog",
+
+                de: "Katalog"
+
+            },
+
             NavSettings: {
                 en: "Settings",
                 de: "Einstellungen"
