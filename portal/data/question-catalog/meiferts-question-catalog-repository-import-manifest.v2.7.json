@@ -1,0 +1,23 @@
+{
+  "name": "MEIFERTS Question Catalog Repository Import Package",
+  "version": "2.7.0",
+  "date": "2026-07-08",
+  "sourceMasterBundle": "meiferts-question-catalog-master-bundle.seed.v2.6.json",
+  "totalImportItems": 680,
+  "openGapItemsDeferred": 31,
+  "validationStatus": "pass",
+  "recommendedRepositoryTarget": "portal/data/question-catalog/",
+  "recommendedFiles": [
+    "catalog.de-germany-residential.v2.7.json",
+    "catalog-import-schema.v2.7.json",
+    "catalog-import-validation.v2.7.json",
+    "remaining-gap-summary.v2.6.csv"
+  ],
+  "recommendedNextFoundationBlock": "Foundation 2.2-A Question Catalog Repository Import",
+  "notes": [
+    "Open gaps are intentionally deferred and not invented.",
+    "Import-ready catalog contains only validated prepared items.",
+    "Question IDs are stable and suitable for manager integration.",
+    "Upload, Evidence, Finding, Assessment, CAPEX and Report flags are preserved."
+  ]
+}

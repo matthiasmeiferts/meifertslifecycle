@@ -1,0 +1,46 @@
+{
+  "name": "MEIFERTS Question Catalog Import Schema",
+  "version": "2.7.0",
+  "requiredFields": [
+    "questionId",
+    "chapterNumber",
+    "chapterTitle",
+    "sectionTitle",
+    "itemNumber",
+    "questionText",
+    "buildingSystem",
+    "inspectionArea",
+    "answerType"
+  ],
+  "stableIdentityField": "questionId",
+  "supportedAnswerTypes": [
+    "area_rating_matrix",
+    "capex_horizon",
+    "checklist_rating",
+    "defect_register_item",
+    "electrical_visual_check",
+    "executive_summary_decision",
+    "maintenance_backlog",
+    "measurement_device_record",
+    "moisture_measurement",
+    "photo_documentation",
+    "remaining_useful_life",
+    "thermography_measurement"
+  ],
+  "relationshipFlags": [
+    "capexRelevant",
+    "evidenceRelevant",
+    "findingRelevant",
+    "assessmentRelevant",
+    "recommendationRelevant",
+    "decisionRelevant",
+    "reportRelevant",
+    "uploadRelevant"
+  ],
+  "importBoundary": {
+    "language": "de",
+    "countryProfile": "germany_residential",
+    "status": "draft_import_ready",
+    "openGapItemsAreNotImported": true
+  }
+}
