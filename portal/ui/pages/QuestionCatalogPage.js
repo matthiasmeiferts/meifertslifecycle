@@ -14,6 +14,7 @@ import SandboxAnswerStateEngine from "../../core/SandboxAnswerStateEngine.js";
 import EvidenceRequirementPreviewEngine from "../../core/EvidenceRequirementPreviewEngine.js";
 import EvidenceCaptureDraftSandbox from "../../core/EvidenceCaptureDraftSandbox.js";
 import FindingDraftPreviewSandbox from "../../core/FindingDraftPreviewSandbox.js";
+import AssessmentDraftPreviewSandbox from "../../core/AssessmentDraftPreviewSandbox.js";
 
 import LanguageManager from "../../core/LanguageManager.js";
 
@@ -1096,6 +1097,104 @@ export default class QuestionCatalogPage {
 
     }
 
+    static createAssessmentDraftPreviewCard(assessmentDraft = {}) {
+
+        if (!assessmentDraft || assessmentDraft.draftMode !== "assessment_draft_preview_sandbox_read_only") {
+            return `
+
+                <span>Assessment draft preview</span>
+
+                <p>No assessment draft available yet.</p>
+
+            `;
+        }
+
+        if (!assessmentDraft.assessmentPrepared) {
+            return `
+
+                <span>Assessment draft preview</span>
+
+                <div class="assessment-draft-preview__empty">
+                    <strong>${this.escapeHtml(assessmentDraft.guidance?.title || "Assessment draft not ready")}</strong>
+                    <p>${this.escapeHtml(assessmentDraft.guidance?.primary || "Prepare finding draft first.")}</p>
+                </div>
+
+                <small>
+                    assessmentDraftPersisted: ${this.escapeHtml(String(assessmentDraft.safetyBoundary?.assessmentDraftPersisted))}
+                    · assessmentCreated: ${this.escapeHtml(String(assessmentDraft.safetyBoundary?.assessmentCreated))}
+                    · recommendationCreated: ${this.escapeHtml(String(assessmentDraft.safetyBoundary?.recommendationCreated))}
+                </small>
+
+            `;
+        }
+
+        return `
+
+            <span>Assessment draft preview sandbox</span>
+
+            <div class="assessment-draft-preview__summary">
+                <div>
+                    <small>Risk level</small>
+                    <strong>${this.escapeHtml(assessmentDraft.riskPreview?.level || "n/a")}</strong>
+                </div>
+                <div>
+                    <small>Confidence</small>
+                    <strong>${this.escapeHtml(assessmentDraft.riskPreview?.confidence || "preview")}</strong>
+                </div>
+                <div>
+                    <small>Source finding</small>
+                    <strong>${this.escapeHtml(assessmentDraft.finding?.sourceQuestionId || assessmentDraft.question?.questionId || "n/a")}</strong>
+                </div>
+            </div>
+
+            <div class="assessment-draft-preview__implication">
+                <small>Technical implication</small>
+                <p>${this.escapeHtml(assessmentDraft.assessment?.technicalImplication || "No implication prepared.")}</p>
+            </div>
+
+            <div class="assessment-draft-preview__review">
+                <small>Recommended review</small>
+                <p>${this.escapeHtml(assessmentDraft.assessment?.recommendedReview || "No review path prepared.")}</p>
+            </div>
+
+            <p>${this.escapeHtml(assessmentDraft.guidance?.detail || "Sandbox-only assessment preview.")}</p>
+
+            <small>
+                assessmentDraftPersisted: ${this.escapeHtml(String(assessmentDraft.safetyBoundary?.assessmentDraftPersisted))}
+                · assessmentCreated: ${this.escapeHtml(String(assessmentDraft.safetyBoundary?.assessmentCreated))}
+                · recommendationCreated: ${this.escapeHtml(String(assessmentDraft.safetyBoundary?.recommendationCreated))}
+                · decisionCreated: ${this.escapeHtml(String(assessmentDraft.safetyBoundary?.decisionCreated))}
+                · reportCreated: ${this.escapeHtml(String(assessmentDraft.safetyBoundary?.reportCreated))}
+            </small>
+
+        `;
+
+    }
+
+    static renderAssessmentDraftPreview(section, findingDraft = {}) {
+
+        const assessmentDraftNode = section.querySelector("[data-assessment-draft-preview]");
+
+        if (!assessmentDraftNode) {
+            return;
+        }
+
+        const assessmentDraft = AssessmentDraftPreviewSandbox.createDraft(findingDraft);
+
+        assessmentDraftNode.innerHTML = this.createAssessmentDraftPreviewCard(assessmentDraft);
+        assessmentDraftNode.classList.toggle("has-assessment-draft", Boolean(assessmentDraft.assessmentPrepared));
+
+        if (assessmentDraft.assessmentPrepared) {
+            window.setTimeout(() => {
+                assessmentDraftNode.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }, 140);
+        }
+
+    }
+
     static bindEvidenceCaptureDraftInteractions(section, captureDraft = {}) {
 
         const draftNode = section.querySelector("[data-evidence-capture-draft]");
@@ -1133,6 +1232,8 @@ export default class QuestionCatalogPage {
                     }, 120);
                 }
             }
+
+            this.renderAssessmentDraftPreview(section, findingDraft);
 
             this.bindEvidenceCaptureDraftInteractions(section, captureDraft);
         };
@@ -1183,6 +1284,8 @@ export default class QuestionCatalogPage {
                         }, 120);
                     }
                 }
+
+                this.renderAssessmentDraftPreview(section, findingDraft);
 
                 this.bindEvidenceCaptureDraftInteractions(section, captureDraft);
             });
@@ -1406,6 +1509,14 @@ export default class QuestionCatalogPage {
 
             </div>
 
+            <div class="assessment-draft-preview" data-assessment-draft-preview>
+
+                <span>Assessment draft preview</span>
+
+                <p>Assessment draft appears here once the finding draft is prepared.</p>
+
+            </div>
+
         `;
 
         section.querySelectorAll("[data-answer-value]").forEach((button) => {
@@ -1464,6 +1575,8 @@ export default class QuestionCatalogPage {
                         findingDraftNode.innerHTML = this.createFindingDraftPreviewCard(findingDraft);
                         findingDraftNode.classList.toggle("has-finding-draft", Boolean(findingDraft.findingPrepared));
                     }
+
+                    this.renderAssessmentDraftPreview(section, findingDraft);
 
                     if (captureDraft.evidenceRequired) {
                         window.setTimeout(() => {
