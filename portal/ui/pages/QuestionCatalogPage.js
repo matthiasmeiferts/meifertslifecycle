@@ -12,6 +12,7 @@ import InspectionHumanWorkLayer from "../../core/InspectionHumanWorkLayer.js";
 import AnswerInteractionSandbox from "../../core/AnswerInteractionSandbox.js";
 import SandboxAnswerStateEngine from "../../core/SandboxAnswerStateEngine.js";
 import EvidenceRequirementPreviewEngine from "../../core/EvidenceRequirementPreviewEngine.js";
+import EvidenceCaptureDraftSandbox from "../../core/EvidenceCaptureDraftSandbox.js";
 
 import LanguageManager from "../../core/LanguageManager.js";
 
@@ -930,6 +931,151 @@ export default class QuestionCatalogPage {
 
     }
 
+    static createEvidenceCaptureDraftCard(captureDraft = {}) {
+
+        if (!captureDraft || captureDraft.draftMode !== "evidence_capture_draft_sandbox_read_only") {
+            return `
+
+                <span>Evidence capture draft</span>
+
+                <p>No capture draft available yet.</p>
+
+            `;
+        }
+
+        const fields = Array.isArray(captureDraft.fields)
+            ? captureDraft.fields
+            : [];
+
+        if (!captureDraft.evidenceRequired) {
+            return `
+
+                <span>Evidence capture draft</span>
+
+                <div class="evidence-capture-draft__empty">
+                    <strong>${this.escapeHtml(captureDraft.captureGuidance?.title || "No capture draft required")}</strong>
+                    <p>${this.escapeHtml(captureDraft.captureGuidance?.primary || "Continue inspection flow.")}</p>
+                </div>
+
+                <small>
+                    captureDraftPersisted: ${this.escapeHtml(String(captureDraft.safetyBoundary?.captureDraftPersisted))}
+                    · evidenceCreated: ${this.escapeHtml(String(captureDraft.safetyBoundary?.evidenceCreated))}
+                    · findingCreated: ${this.escapeHtml(String(captureDraft.safetyBoundary?.findingCreated))}
+                </small>
+
+            `;
+        }
+
+        return `
+
+            <span>Evidence capture draft sandbox</span>
+
+            <div class="evidence-capture-draft__summary">
+                <div>
+                    <small>Completion</small>
+                    <strong>${this.escapeHtml(captureDraft.completion?.completionRate || 0)}%</strong>
+                </div>
+                <div>
+                    <small>Required fields</small>
+                    <strong>${this.escapeHtml(captureDraft.completion?.filledRequiredFields || 0)} / ${this.escapeHtml(captureDraft.completion?.requiredFields || 0)}</strong>
+                </div>
+                <div>
+                    <small>Ready for review</small>
+                    <strong>${this.escapeHtml(captureDraft.completion?.readyForReview ? "Yes" : "No")}</strong>
+                </div>
+            </div>
+
+            <p>${this.escapeHtml(captureDraft.captureGuidance?.detail || "Sandbox capture draft only.")}</p>
+
+            <div class="evidence-capture-draft__fields">
+                ${fields.map(field => `
+                    <label class="evidence-capture-draft__field">
+                        <small>${this.escapeHtml(field.required ? "Required" : "Optional")}</small>
+                        <strong>${this.escapeHtml(field.label)}</strong>
+                        <span>${this.escapeHtml(field.description)}</span>
+                        <input
+                            type="text"
+                            data-capture-draft-field="${this.escapeHtml(field.type)}"
+                            value="${this.escapeHtml(field.value || "")}"
+                            placeholder="${this.escapeHtml(field.placeholder || "Draft value · not saved")}"
+                        />
+                    </label>
+                `).join("")}
+            </div>
+
+            <button type="button" class="evidence-capture-draft__demo-fill" data-capture-draft-demo-fill>
+                Fill sandbox draft
+            </button>
+
+            <small>
+                captureDraftPersisted: ${this.escapeHtml(String(captureDraft.safetyBoundary?.captureDraftPersisted))}
+                · evidencePersisted: ${this.escapeHtml(String(captureDraft.safetyBoundary?.evidencePersisted))}
+                · evidenceCreated: ${this.escapeHtml(String(captureDraft.safetyBoundary?.evidenceCreated))}
+                · findingCreated: ${this.escapeHtml(String(captureDraft.safetyBoundary?.findingCreated))}
+            </small>
+
+        `;
+
+    }
+
+    static bindEvidenceCaptureDraftInteractions(section, captureDraft = {}) {
+
+        const draftNode = section.querySelector("[data-evidence-capture-draft]");
+
+        if (!draftNode || !captureDraft.evidenceRequired) {
+            return;
+        }
+
+        const updateDraftFromFields = () => {
+            const values = {};
+
+            draftNode.querySelectorAll("[data-capture-draft-field]").forEach((field) => {
+                values[field.getAttribute("data-capture-draft-field")] = field.value;
+            });
+
+            captureDraft = EvidenceCaptureDraftSandbox.updateDraft(captureDraft, values, {
+                timestamp: new Date().toISOString()
+            });
+
+            draftNode.innerHTML = this.createEvidenceCaptureDraftCard(captureDraft);
+            this.bindEvidenceCaptureDraftInteractions(section, captureDraft);
+        };
+
+        draftNode.querySelectorAll("[data-capture-draft-field]").forEach((field) => {
+            field.addEventListener("input", updateDraftFromFields);
+        });
+
+        const demoFillButton = draftNode.querySelector("[data-capture-draft-demo-fill]");
+
+        if (demoFillButton) {
+            demoFillButton.addEventListener("click", () => {
+                const values = {};
+
+                draftNode.querySelectorAll("[data-capture-draft-field]").forEach((field) => {
+                    const type = field.getAttribute("data-capture-draft-field");
+
+                    if (type === "photo") {
+                        values[type] = "sandbox-photo-placeholder.jpg";
+                    } else if (type === "comment") {
+                        values[type] = "Sandbox expert comment draft.";
+                    } else if (type === "moisture_indicator") {
+                        values[type] = "Optional moisture note.";
+                    } else {
+                        values[type] = "Sandbox draft value.";
+                    }
+                });
+
+                captureDraft = EvidenceCaptureDraftSandbox.updateDraft(captureDraft, values, {
+                    timestamp: new Date().toISOString()
+                });
+
+                draftNode.innerHTML = this.createEvidenceCaptureDraftCard(captureDraft);
+                this.bindEvidenceCaptureDraftInteractions(section, captureDraft);
+            });
+        }
+
+    }
+
     static updateInspectionHumanWorkLayerView(section, answerState = {}) {
 
         const currentQuestion = answerState.currentQuestion || {};
@@ -1130,6 +1276,14 @@ export default class QuestionCatalogPage {
 
             </div>
 
+            <div class="evidence-capture-draft" data-evidence-capture-draft>
+
+                <span>Evidence capture draft</span>
+
+                <p>Capture draft appears here after an evidence requirement is prepared.</p>
+
+            </div>
+
         `;
 
         section.querySelectorAll("[data-answer-value]").forEach((button) => {
@@ -1159,6 +1313,7 @@ export default class QuestionCatalogPage {
                 }, 360);
 
                 const evidencePreview = EvidenceRequirementPreviewEngine.createPreview(answerState);
+                const captureDraft = EvidenceCaptureDraftSandbox.createDraft(evidencePreview);
 
                 const previewNode = section.querySelector("[data-answer-interaction-preview]");
 
@@ -1171,10 +1326,18 @@ export default class QuestionCatalogPage {
                 if (evidencePreviewNode) {
                     evidencePreviewNode.innerHTML = this.createEvidenceRequirementPreviewCard(evidencePreview);
                     evidencePreviewNode.classList.toggle("has-evidence-required", Boolean(evidencePreview.evidenceRequired));
+                }
 
-                    if (evidencePreview.evidenceRequired) {
+                const captureDraftNode = section.querySelector("[data-evidence-capture-draft]");
+
+                if (captureDraftNode) {
+                    captureDraftNode.innerHTML = this.createEvidenceCaptureDraftCard(captureDraft);
+                    captureDraftNode.classList.toggle("has-capture-draft", Boolean(captureDraft.evidenceRequired));
+                    this.bindEvidenceCaptureDraftInteractions(section, captureDraft);
+
+                    if (captureDraft.evidenceRequired) {
                         window.setTimeout(() => {
-                            evidencePreviewNode.scrollIntoView({
+                            captureDraftNode.scrollIntoView({
                                 behavior: "smooth",
                                 block: "center"
                             });
