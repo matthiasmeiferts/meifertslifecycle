@@ -428,6 +428,61 @@ export default class DraftWorkspaceManager {
 
     }
 
+    static createFinalizationGate(review = {}, options = {}) {
+
+        const createdAt = options.createdAt || new Date().toISOString();
+
+        const isApprovedReview = review.status === "approved"
+            && review.safetyBoundary?.expertApprovalGranted === true;
+
+        return {
+            gateId: this.createFinalizationGateId(review),
+            gateType: "controlled_finalization_gate",
+            sourceReviewId: review.reviewId || null,
+            sourceDraftId: review.sourceDraftId || review.draftId || null,
+            status: isApprovedReview
+                ? "ready_for_internal_finalization_review"
+                : "blocked_pending_expert_approval",
+            createdAt,
+            updatedAt: createdAt,
+            readiness: {
+                expertReviewApproved: isApprovedReview,
+                internalFinalizationReviewRequired: true,
+                exportPreparationAllowed: false,
+                clientDocumentPreparationAllowed: false,
+                workflowFinalizationAllowed: false
+            },
+            permissions: {
+                canExport: false,
+                canCreateClientDocument: false,
+                canFinalizeWorkflow: false
+            },
+            safetyBoundary: this.createFinalizationGateSafetyBoundary()
+        };
+
+    }
+
+    static createFinalizationGateId(review = {}) {
+
+        const sourceId = review.reviewId || review.sourceDraftId || review.draftId || "unknown-review";
+
+        return `finalization_gate-${String(sourceId).replace(/^expert_review-/, "")}`;
+
+    }
+
+    static createFinalizationGateSafetyBoundary() {
+
+        return {
+            finalizationGatePersisted: false,
+            internalFinalizationReviewCompleted: false,
+            exportPrepared: false,
+            reportExported: false,
+            clientDocumentCreated: false,
+            workflowFinalized: false
+        };
+
+    }
+
     static createExpertReviewSafetyBoundary() {
 
         return {
