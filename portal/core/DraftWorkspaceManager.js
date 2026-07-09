@@ -470,6 +470,158 @@ export default class DraftWorkspaceManager {
 
     }
 
+    static createInternalFinalizationReview(gate = {}, options = {}) {
+
+        const createdAt = options.createdAt || new Date().toISOString();
+
+        const isReadyGate = gate.status === "ready_for_internal_finalization_review"
+            && gate.readiness?.expertReviewApproved === true;
+
+        return {
+            reviewId: this.createInternalFinalizationReviewId(gate),
+            reviewType: "internal_finalization_review",
+            sourceGateId: gate.gateId || null,
+            sourceReviewId: gate.sourceReviewId || null,
+            sourceDraftId: gate.sourceDraftId || null,
+            status: isReadyGate
+                ? "internal_review_required"
+                : "blocked_pending_finalization_gate",
+            reviewer: options.reviewer || null,
+            notes: [],
+            decision: null,
+            createdAt,
+            updatedAt: createdAt,
+            readiness: {
+                finalizationGateReady: isReadyGate,
+                internalReviewCompleted: false,
+                exportPreparationAllowed: false,
+                clientDocumentPreparationAllowed: false,
+                workflowFinalizationAllowed: false
+            },
+            permissions: {
+                canExport: false,
+                canCreateClientDocument: false,
+                canFinalizeWorkflow: false
+            },
+            safetyBoundary: this.createInternalFinalizationReviewSafetyBoundary()
+        };
+
+    }
+
+    static createInternalFinalizationReviewId(gate = {}) {
+
+        const sourceId = gate.gateId || gate.sourceReviewId || gate.sourceDraftId || "unknown-gate";
+
+        return `internal_finalization_review-${String(sourceId).replace(/^finalization_gate-/, "")}`;
+
+    }
+
+    static addInternalFinalizationReviewNote(review = {}, note = {}, options = {}) {
+
+        const nextReview = this.cloneInternalFinalizationReview(review);
+        const createdAt = options.createdAt || new Date().toISOString();
+
+        nextReview.notes.push({
+            noteId: `internal_finalization_note-${nextReview.notes.length + 1}`,
+            text: note.text || "",
+            author: note.author || null,
+            category: note.category || "internal-finalization",
+            createdAt
+        });
+
+        nextReview.updatedAt = createdAt;
+
+        return nextReview;
+
+    }
+
+    static approveInternalFinalizationReview(review = {}, decision = {}, options = {}) {
+
+        const nextReview = this.cloneInternalFinalizationReview(review);
+        const updatedAt = options.updatedAt || new Date().toISOString();
+
+        nextReview.status = "internally_approved";
+        nextReview.decision = {
+            decisionType: "internally_approved",
+            comment: decision.comment || "",
+            decidedBy: decision.decidedBy || null,
+            decidedAt: updatedAt
+        };
+
+        nextReview.readiness.internalReviewCompleted = true;
+        nextReview.safetyBoundary.internalFinalizationReviewCompleted = true;
+        nextReview.updatedAt = updatedAt;
+
+        return nextReview;
+
+    }
+
+    static rejectInternalFinalizationReview(review = {}, decision = {}, options = {}) {
+
+        const nextReview = this.cloneInternalFinalizationReview(review);
+        const updatedAt = options.updatedAt || new Date().toISOString();
+
+        nextReview.status = "internally_rejected";
+        nextReview.decision = {
+            decisionType: "internally_rejected",
+            comment: decision.comment || "",
+            decidedBy: decision.decidedBy || null,
+            decidedAt: updatedAt
+        };
+
+        nextReview.readiness.internalReviewCompleted = false;
+        nextReview.safetyBoundary.internalFinalizationReviewCompleted = false;
+        nextReview.updatedAt = updatedAt;
+
+        return nextReview;
+
+    }
+
+    static cloneInternalFinalizationReview(review = {}) {
+
+        return {
+            ...review,
+            notes: Array.isArray(review.notes)
+                ? review.notes.map(note => ({ ...note }))
+                : [],
+            decision: review.decision
+                ? { ...review.decision }
+                : null,
+            readiness: {
+                finalizationGateReady: false,
+                internalReviewCompleted: false,
+                exportPreparationAllowed: false,
+                clientDocumentPreparationAllowed: false,
+                workflowFinalizationAllowed: false,
+                ...(review.readiness || {})
+            },
+            permissions: {
+                canExport: false,
+                canCreateClientDocument: false,
+                canFinalizeWorkflow: false,
+                ...(review.permissions || {})
+            },
+            safetyBoundary: {
+                ...this.createInternalFinalizationReviewSafetyBoundary(),
+                ...(review.safetyBoundary || {})
+            }
+        };
+
+    }
+
+    static createInternalFinalizationReviewSafetyBoundary() {
+
+        return {
+            internalFinalizationReviewPersisted: false,
+            internalFinalizationReviewCompleted: false,
+            exportPrepared: false,
+            reportExported: false,
+            clientDocumentCreated: false,
+            workflowFinalized: false
+        };
+
+    }
+
     static createFinalizationGateSafetyBoundary() {
 
         return {
