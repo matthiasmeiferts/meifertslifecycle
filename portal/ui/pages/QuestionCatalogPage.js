@@ -16,6 +16,7 @@ import EvidenceCaptureDraftSandbox from "../../core/EvidenceCaptureDraftSandbox.
 import FindingDraftPreviewSandbox from "../../core/FindingDraftPreviewSandbox.js";
 import AssessmentDraftPreviewSandbox from "../../core/AssessmentDraftPreviewSandbox.js";
 import RecommendationDraftPreviewSandbox from "../../core/RecommendationDraftPreviewSandbox.js";
+import DecisionDraftPreviewSandbox from "../../core/DecisionDraftPreviewSandbox.js";
 
 import LanguageManager from "../../core/LanguageManager.js";
 
@@ -1289,6 +1290,8 @@ export default class QuestionCatalogPage {
         recommendationDraftNode.innerHTML = this.createRecommendationDraftPreviewCard(recommendationDraft);
         recommendationDraftNode.classList.toggle("has-recommendation-draft", Boolean(recommendationDraft.recommendationPrepared));
 
+        this.renderDecisionDraftPreview(section, recommendationDraft);
+
         if (recommendationDraft.recommendationPrepared) {
             window.setTimeout(() => {
                 recommendationDraftNode.scrollIntoView({
@@ -1296,6 +1299,108 @@ export default class QuestionCatalogPage {
                     block: "center"
                 });
             }, 160);
+        }
+
+    }
+
+    static createDecisionDraftPreviewCard(decisionDraft = {}) {
+
+        if (!decisionDraft || decisionDraft.draftMode !== "decision_draft_preview_sandbox_read_only") {
+            return `
+
+                <span>Decision draft preview</span>
+
+                <p>No decision draft available yet.</p>
+
+            `;
+        }
+
+        if (!decisionDraft.decisionPrepared) {
+            return `
+
+                <span>Decision draft preview</span>
+
+                <div class="decision-draft-preview__empty">
+                    <strong>${this.escapeHtml(decisionDraft.guidance?.title || "Decision draft not ready")}</strong>
+                    <p>${this.escapeHtml(decisionDraft.guidance?.primary || "Prepare recommendation draft first.")}</p>
+                </div>
+
+                <small>
+                    decisionDraftPersisted: ${this.escapeHtml(String(decisionDraft.safetyBoundary?.decisionDraftPersisted))}
+                    · decisionCreated: ${this.escapeHtml(String(decisionDraft.safetyBoundary?.decisionCreated))}
+                    · reportCreated: ${this.escapeHtml(String(decisionDraft.safetyBoundary?.reportCreated))}
+                </small>
+
+            `;
+        }
+
+        return `
+
+            <span>Decision draft preview sandbox</span>
+
+            <div class="decision-draft-preview__summary">
+                <div>
+                    <small>Route</small>
+                    <strong>${this.escapeHtml(decisionDraft.decisionRoute || "n/a")}</strong>
+                </div>
+                <div>
+                    <small>Linked risk</small>
+                    <strong>${this.escapeHtml(decisionDraft.recommendation?.linkedRiskLevel || "n/a")}</strong>
+                </div>
+                <div>
+                    <small>Source question</small>
+                    <strong>${this.escapeHtml(decisionDraft.question?.questionId || "n/a")}</strong>
+                </div>
+            </div>
+
+            <div class="decision-draft-preview__decision">
+                <small>Proposed decision</small>
+                <p>${this.escapeHtml(decisionDraft.decision?.proposedDecision || "No decision prepared.")}</p>
+            </div>
+
+            <div class="decision-draft-preview__condition">
+                <small>Required condition</small>
+                <p>${this.escapeHtml(decisionDraft.decision?.requiredCondition || "No condition prepared.")}</p>
+            </div>
+
+            <div class="decision-draft-preview__governance">
+                <small>Governance impact</small>
+                <p>${this.escapeHtml(decisionDraft.governanceImpact?.decisionImpact || "No governance impact prepared.")}</p>
+            </div>
+
+            <p>${this.escapeHtml(decisionDraft.guidance?.detail || "Sandbox-only decision preview.")}</p>
+
+            <small>
+                decisionDraftPersisted: ${this.escapeHtml(String(decisionDraft.safetyBoundary?.decisionDraftPersisted))}
+                · decisionCreated: ${this.escapeHtml(String(decisionDraft.safetyBoundary?.decisionCreated))}
+                · reportCreated: ${this.escapeHtml(String(decisionDraft.safetyBoundary?.reportCreated))}
+                · workflowCreated: ${this.escapeHtml(String(decisionDraft.safetyBoundary?.workflowCreated))}
+            </small>
+
+        `;
+
+    }
+
+    static renderDecisionDraftPreview(section, recommendationDraft = {}) {
+
+        const decisionDraftNode = section.querySelector("[data-decision-draft-preview]");
+
+        if (!decisionDraftNode) {
+            return;
+        }
+
+        const decisionDraft = DecisionDraftPreviewSandbox.createDraft(recommendationDraft);
+
+        decisionDraftNode.innerHTML = this.createDecisionDraftPreviewCard(decisionDraft);
+        decisionDraftNode.classList.toggle("has-decision-draft", Boolean(decisionDraft.decisionPrepared));
+
+        if (decisionDraft.decisionPrepared) {
+            window.setTimeout(() => {
+                decisionDraftNode.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }, 180);
         }
 
     }
@@ -1627,6 +1732,14 @@ export default class QuestionCatalogPage {
                 <span>Recommendation draft preview</span>
 
                 <p>Recommendation draft appears here once the assessment draft is prepared.</p>
+
+            </div>
+
+            <div class="decision-draft-preview" data-decision-draft-preview>
+
+                <span>Decision draft preview</span>
+
+                <p>Decision draft appears here once the recommendation draft is prepared.</p>
 
             </div>
 
