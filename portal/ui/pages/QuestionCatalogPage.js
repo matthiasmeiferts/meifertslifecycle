@@ -15,6 +15,7 @@ import EvidenceRequirementPreviewEngine from "../../core/EvidenceRequirementPrev
 import EvidenceCaptureDraftSandbox from "../../core/EvidenceCaptureDraftSandbox.js";
 import FindingDraftPreviewSandbox from "../../core/FindingDraftPreviewSandbox.js";
 import AssessmentDraftPreviewSandbox from "../../core/AssessmentDraftPreviewSandbox.js";
+import RecommendationDraftPreviewSandbox from "../../core/RecommendationDraftPreviewSandbox.js";
 
 import LanguageManager from "../../core/LanguageManager.js";
 
@@ -1184,6 +1185,8 @@ export default class QuestionCatalogPage {
         assessmentDraftNode.innerHTML = this.createAssessmentDraftPreviewCard(assessmentDraft);
         assessmentDraftNode.classList.toggle("has-assessment-draft", Boolean(assessmentDraft.assessmentPrepared));
 
+        this.renderRecommendationDraftPreview(section, assessmentDraft);
+
         if (assessmentDraft.assessmentPrepared) {
             window.setTimeout(() => {
                 assessmentDraftNode.scrollIntoView({
@@ -1191,6 +1194,108 @@ export default class QuestionCatalogPage {
                     block: "center"
                 });
             }, 140);
+        }
+
+    }
+
+    static createRecommendationDraftPreviewCard(recommendationDraft = {}) {
+
+        if (!recommendationDraft || recommendationDraft.draftMode !== "recommendation_draft_preview_sandbox_read_only") {
+            return `
+
+                <span>Recommendation draft preview</span>
+
+                <p>No recommendation draft available yet.</p>
+
+            `;
+        }
+
+        if (!recommendationDraft.recommendationPrepared) {
+            return `
+
+                <span>Recommendation draft preview</span>
+
+                <div class="recommendation-draft-preview__empty">
+                    <strong>${this.escapeHtml(recommendationDraft.guidance?.title || "Recommendation draft not ready")}</strong>
+                    <p>${this.escapeHtml(recommendationDraft.guidance?.primary || "Prepare assessment draft first.")}</p>
+                </div>
+
+                <small>
+                    recommendationDraftPersisted: ${this.escapeHtml(String(recommendationDraft.safetyBoundary?.recommendationDraftPersisted))}
+                    · recommendationCreated: ${this.escapeHtml(String(recommendationDraft.safetyBoundary?.recommendationCreated))}
+                    · decisionCreated: ${this.escapeHtml(String(recommendationDraft.safetyBoundary?.decisionCreated))}
+                </small>
+
+            `;
+        }
+
+        return `
+
+            <span>Recommendation draft preview sandbox</span>
+
+            <div class="recommendation-draft-preview__summary">
+                <div>
+                    <small>Tone</small>
+                    <strong>${this.escapeHtml(recommendationDraft.recommendationTone || "n/a")}</strong>
+                </div>
+                <div>
+                    <small>Linked risk</small>
+                    <strong>${this.escapeHtml(recommendationDraft.recommendation?.linkedRiskLevel || recommendationDraft.assessment?.riskLevel || "n/a")}</strong>
+                </div>
+                <div>
+                    <small>Source question</small>
+                    <strong>${this.escapeHtml(recommendationDraft.question?.questionId || "n/a")}</strong>
+                </div>
+            </div>
+
+            <div class="recommendation-draft-preview__recommendation">
+                <small>Expert recommendation</small>
+                <p>${this.escapeHtml(recommendationDraft.recommendation?.expertRecommendation || "No recommendation prepared.")}</p>
+            </div>
+
+            <div class="recommendation-draft-preview__next-action">
+                <small>Next action</small>
+                <p>${this.escapeHtml(recommendationDraft.recommendation?.nextAction || "No next action prepared.")}</p>
+            </div>
+
+            <div class="recommendation-draft-preview__decision-support">
+                <small>Decision impact</small>
+                <p>${this.escapeHtml(recommendationDraft.decisionSupport?.decisionImpact || "No decision support prepared.")}</p>
+            </div>
+
+            <p>${this.escapeHtml(recommendationDraft.guidance?.detail || "Sandbox-only recommendation preview.")}</p>
+
+            <small>
+                recommendationDraftPersisted: ${this.escapeHtml(String(recommendationDraft.safetyBoundary?.recommendationDraftPersisted))}
+                · recommendationCreated: ${this.escapeHtml(String(recommendationDraft.safetyBoundary?.recommendationCreated))}
+                · decisionCreated: ${this.escapeHtml(String(recommendationDraft.safetyBoundary?.decisionCreated))}
+                · reportCreated: ${this.escapeHtml(String(recommendationDraft.safetyBoundary?.reportCreated))}
+            </small>
+
+        `;
+
+    }
+
+    static renderRecommendationDraftPreview(section, assessmentDraft = {}) {
+
+        const recommendationDraftNode = section.querySelector("[data-recommendation-draft-preview]");
+
+        if (!recommendationDraftNode) {
+            return;
+        }
+
+        const recommendationDraft = RecommendationDraftPreviewSandbox.createDraft(assessmentDraft);
+
+        recommendationDraftNode.innerHTML = this.createRecommendationDraftPreviewCard(recommendationDraft);
+        recommendationDraftNode.classList.toggle("has-recommendation-draft", Boolean(recommendationDraft.recommendationPrepared));
+
+        if (recommendationDraft.recommendationPrepared) {
+            window.setTimeout(() => {
+                recommendationDraftNode.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }, 160);
         }
 
     }
@@ -1514,6 +1619,14 @@ export default class QuestionCatalogPage {
                 <span>Assessment draft preview</span>
 
                 <p>Assessment draft appears here once the finding draft is prepared.</p>
+
+            </div>
+
+            <div class="recommendation-draft-preview" data-recommendation-draft-preview>
+
+                <span>Recommendation draft preview</span>
+
+                <p>Recommendation draft appears here once the assessment draft is prepared.</p>
 
             </div>
 
