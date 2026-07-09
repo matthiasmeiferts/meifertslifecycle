@@ -1670,6 +1670,15 @@ export default class QuestionCatalogPage {
 
             this.bindExpertReviewPreview(expertReviewNode, expertReview);
 
+            if (expertReviewNode) {
+                window.setTimeout(() => {
+                    expertReviewNode.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+                }, 120);
+            }
+
             workspaceDraftNode.classList.add("has-workspace-draft");
             saveButton.disabled = true;
             saveButton.textContent = "Workspace draft prepared";
@@ -2745,6 +2754,28 @@ export default class QuestionCatalogPage {
             finalizationGateNode.classList.toggle("is-blocked", gate.status === "blocked_pending_expert_approval");
         };
 
+        const scrollToExpertReview = () => {
+            window.requestAnimationFrame(() => {
+                expertReviewNode.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            });
+        };
+
+        const scrollToFinalizationGate = () => {
+            if (!finalizationGateNode) {
+                return;
+            }
+
+            window.requestAnimationFrame(() => {
+                finalizationGateNode.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            });
+        };
+
         const renderReview = () => {
             reviewIdNode.textContent = currentReview.reviewId;
             reviewStatusNode.textContent = currentReview.status;
@@ -2797,6 +2828,7 @@ export default class QuestionCatalogPage {
             addNoteButton.textContent = "Review note added";
 
             renderReview();
+            scrollToExpertReview();
         });
 
         approveButton.addEventListener("click", () => {
@@ -2808,6 +2840,7 @@ export default class QuestionCatalogPage {
             });
 
             renderReview();
+            scrollToFinalizationGate();
         });
 
         rejectButton.addEventListener("click", () => {
@@ -2819,6 +2852,7 @@ export default class QuestionCatalogPage {
             });
 
             renderReview();
+            scrollToFinalizationGate();
         });
 
         renderReview();
