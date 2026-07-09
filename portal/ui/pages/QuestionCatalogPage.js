@@ -1604,7 +1604,48 @@ export default class QuestionCatalogPage {
                         · workflowFinalized: ${this.escapeHtml(String(savedRegistry.safetyBoundary.workflowFinalized))}
                     </small>
                 </div>
+
+                <div class="expert-review-preview" data-expert-review-preview>
+                    <span>Expert review required</span>
+
+                    <div class="expert-review-preview__summary">
+                        <div>
+                            <small>Review ID</small>
+                            <strong data-review-id>Pending</strong>
+                        </div>
+                        <div>
+                            <small>Status</small>
+                            <strong data-review-status>review_required</strong>
+                        </div>
+                        <div>
+                            <small>Notes</small>
+                            <strong data-review-notes>0</strong>
+                        </div>
+                    </div>
+
+                    <div class="expert-review-preview__actions">
+                        <button class="button secondary" type="button" data-add-review-note>Add review note</button>
+                        <button class="button secondary" type="button" data-approve-review>Approve review</button>
+                        <button class="button secondary" type="button" data-reject-review>Reject review</button>
+                    </div>
+
+                    <div class="expert-review-preview__note" data-review-note-preview>
+                        <p>No review note added yet.</p>
+                    </div>
+
+                    <small data-review-safety>
+                        canExport: false · canCreateClientDocument: false · canFinalizeWorkflow: false · expertApprovalGranted: false
+                    </small>
+                </div>
             `;
+
+            const expertReviewNode = workspaceDraftNode.querySelector("[data-expert-review-preview]");
+            const expertReview = DraftWorkspaceManager.createExpertReview(draftRecord, {
+                reviewer: "Matthias Meiferts",
+                createdAt
+            });
+
+            this.bindExpertReviewPreview(expertReviewNode, expertReview);
 
             workspaceDraftNode.classList.add("has-workspace-draft");
             saveButton.disabled = true;
@@ -2638,6 +2679,101 @@ export default class QuestionCatalogPage {
     static normalize(value = "") {
 
         return String(value || "").trim().toLowerCase();
+
+    }
+
+    static bindExpertReviewPreview(expertReviewNode, expertReview = {}) {
+
+        if (!expertReviewNode) {
+            return;
+        }
+
+        let currentReview = expertReview;
+
+        const reviewIdNode = expertReviewNode.querySelector("[data-review-id]");
+        const reviewStatusNode = expertReviewNode.querySelector("[data-review-status]");
+        const reviewNotesNode = expertReviewNode.querySelector("[data-review-notes]");
+        const reviewNotePreviewNode = expertReviewNode.querySelector("[data-review-note-preview]");
+        const reviewSafetyNode = expertReviewNode.querySelector("[data-review-safety]");
+        const addNoteButton = expertReviewNode.querySelector("[data-add-review-note]");
+        const approveButton = expertReviewNode.querySelector("[data-approve-review]");
+        const rejectButton = expertReviewNode.querySelector("[data-reject-review]");
+
+        const renderReview = () => {
+            reviewIdNode.textContent = currentReview.reviewId;
+            reviewStatusNode.textContent = currentReview.status;
+            reviewNotesNode.textContent = String(currentReview.notes.length);
+
+            let noteMarkup = "<p>No review note added yet.</p>";
+
+            if (currentReview.notes.length > 0) {
+                const lastNote = currentReview.notes[currentReview.notes.length - 1];
+                noteMarkup = `
+                    <small>${this.escapeHtml(lastNote.category)}</small>
+                    <p>${this.escapeHtml(lastNote.text)}</p>
+                `;
+            }
+
+            if (currentReview.decision) {
+                noteMarkup += `
+                    <div class="expert-review-preview__decision">
+                        <small>Decision</small>
+                        <p>${this.escapeHtml(currentReview.decision.comment)}</p>
+                    </div>
+                `;
+            }
+
+            reviewNotePreviewNode.innerHTML = noteMarkup;
+
+            reviewSafetyNode.textContent = `canExport: ${String(currentReview.permissions.canExport)} · canCreateClientDocument: ${String(currentReview.permissions.canCreateClientDocument)} · canFinalizeWorkflow: ${String(currentReview.permissions.canFinalizeWorkflow)} · expertApprovalGranted: ${String(currentReview.safetyBoundary.expertApprovalGranted)}`;
+
+            expertReviewNode.classList.toggle("is-approved", currentReview.status === "approved");
+            expertReviewNode.classList.toggle("is-rejected", currentReview.status === "rejected");
+            expertReviewNode.classList.toggle("is-review-required", currentReview.status === "review_required");
+        };
+
+        addNoteButton.addEventListener("click", () => {
+            if (currentReview.notes.length > 0) {
+                return;
+            }
+
+            currentReview = DraftWorkspaceManager.addExpertReviewNote(currentReview, {
+                text: "Review note added in browser preview.",
+                author: "Matthias Meiferts",
+                category: "expert-review"
+            }, {
+                createdAt: new Date().toISOString()
+            });
+
+            addNoteButton.disabled = true;
+            addNoteButton.textContent = "Review note added";
+
+            renderReview();
+        });
+
+        approveButton.addEventListener("click", () => {
+            currentReview = DraftWorkspaceManager.approveExpertReview(currentReview, {
+                comment: "Approved in browser preview.",
+                decidedBy: "Matthias Meiferts"
+            }, {
+                updatedAt: new Date().toISOString()
+            });
+
+            renderReview();
+        });
+
+        rejectButton.addEventListener("click", () => {
+            currentReview = DraftWorkspaceManager.rejectExpertReview(currentReview, {
+                comment: "Rejected in browser preview.",
+                decidedBy: "Matthias Meiferts"
+            }, {
+                updatedAt: new Date().toISOString()
+            });
+
+            renderReview();
+        });
+
+        renderReview();
 
     }
 

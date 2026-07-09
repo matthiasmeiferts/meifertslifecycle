@@ -7232,3 +7232,89 @@ button.dashboard-readiness-card__action:focus-visible {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* Foundation 2.5-C Expert Review Browser Preview */
+.expert-review-preview {
+    margin-top: 16px;
+    padding: 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(27, 43, 69, 0.14);
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.expert-review-preview.is-approved {
+    border-color: rgba(184, 153, 104, 0.56);
+    background: rgba(243, 238, 226, 0.62);
+}
+
+.expert-review-preview.is-rejected {
+    border-color: rgba(120, 40, 40, 0.28);
+}
+
+.expert-review-preview > span {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: rgba(27, 43, 69, 0.52);
+}
+
+.expert-review-preview__summary {
+    display: grid;
+    grid-template-columns: 1.6fr 0.8fr 0.5fr;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.expert-review-preview__summary div,
+.expert-review-preview__note {
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(243, 238, 226, 0.48);
+}
+
+.expert-review-preview__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 12px 0;
+}
+
+@media (max-width: 900px) {
+    .expert-review-preview__summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Foundation 2.5-C Expert Review Visual State Fix */
+.expert-review-preview.is-review-required {
+    border-color: rgba(27, 43, 69, 0.18);
+}
+
+.expert-review-preview [data-review-status] {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(27, 43, 69, 0.08);
+}
+
+.expert-review-preview.is-approved [data-review-status] {
+    background: rgba(184, 153, 104, 0.24);
+}
+
+.expert-review-preview.is-rejected [data-review-status] {
+    background: rgba(120, 40, 40, 0.12);
+}
+
+.expert-review-preview__decision {
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.58);
+}
