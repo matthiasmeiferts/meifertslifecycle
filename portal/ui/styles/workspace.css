@@ -7318,3 +7318,51 @@ button.dashboard-readiness-card__action:focus-visible {
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.58);
 }
+
+
+/* Foundation 2.6-C Finalization Gate Browser Preview */
+.finalization-gate-preview {
+    margin-top: 16px;
+    padding: 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(27, 43, 69, 0.14);
+    background: rgba(243, 238, 226, 0.42);
+}
+
+.finalization-gate-preview.is-ready {
+    border-color: rgba(184, 153, 104, 0.58);
+    background: rgba(243, 238, 226, 0.68);
+}
+
+.finalization-gate-preview.is-blocked {
+    border-color: rgba(27, 43, 69, 0.16);
+}
+
+.finalization-gate-preview > span {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: rgba(27, 43, 69, 0.54);
+}
+
+.finalization-gate-preview__summary {
+    display: grid;
+    grid-template-columns: 1.3fr 1.3fr 0.8fr;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.finalization-gate-preview__summary div {
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 900px) {
+    .finalization-gate-preview__summary {
+        grid-template-columns: 1fr;
+    }
+}

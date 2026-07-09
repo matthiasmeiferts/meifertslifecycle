@@ -1636,6 +1636,29 @@ export default class QuestionCatalogPage {
                     <small data-review-safety>
                         canExport: false · canCreateClientDocument: false · canFinalizeWorkflow: false · expertApprovalGranted: false
                     </small>
+
+                    <div class="finalization-gate-preview" data-finalization-gate-preview>
+                        <span>Finalization gate</span>
+
+                        <div class="finalization-gate-preview__summary">
+                            <div>
+                                <small>Gate ID</small>
+                                <strong data-gate-id>Pending</strong>
+                            </div>
+                            <div>
+                                <small>Status</small>
+                                <strong data-gate-status>blocked_pending_expert_approval</strong>
+                            </div>
+                            <div>
+                                <small>Expert review approved</small>
+                                <strong data-gate-expert-approved>false</strong>
+                            </div>
+                        </div>
+
+                        <small data-gate-safety>
+                            canExport: false · canCreateClientDocument: false · canFinalizeWorkflow: false
+                        </small>
+                    </div>
                 </div>
             `;
 
@@ -2698,6 +2721,29 @@ export default class QuestionCatalogPage {
         const addNoteButton = expertReviewNode.querySelector("[data-add-review-note]");
         const approveButton = expertReviewNode.querySelector("[data-approve-review]");
         const rejectButton = expertReviewNode.querySelector("[data-reject-review]");
+        const finalizationGateNode = expertReviewNode.querySelector("[data-finalization-gate-preview]");
+        const gateIdNode = expertReviewNode.querySelector("[data-gate-id]");
+        const gateStatusNode = expertReviewNode.querySelector("[data-gate-status]");
+        const gateExpertApprovedNode = expertReviewNode.querySelector("[data-gate-expert-approved]");
+        const gateSafetyNode = expertReviewNode.querySelector("[data-gate-safety]");
+
+        const renderFinalizationGate = () => {
+            if (!finalizationGateNode) {
+                return;
+            }
+
+            const gate = DraftWorkspaceManager.createFinalizationGate(currentReview, {
+                createdAt: new Date().toISOString()
+            });
+
+            gateIdNode.textContent = gate.gateId;
+            gateStatusNode.textContent = gate.status;
+            gateExpertApprovedNode.textContent = String(gate.readiness.expertReviewApproved);
+            gateSafetyNode.textContent = `canExport: ${String(gate.permissions.canExport)} · canCreateClientDocument: ${String(gate.permissions.canCreateClientDocument)} · canFinalizeWorkflow: ${String(gate.permissions.canFinalizeWorkflow)}`;
+
+            finalizationGateNode.classList.toggle("is-ready", gate.status === "ready_for_internal_finalization_review");
+            finalizationGateNode.classList.toggle("is-blocked", gate.status === "blocked_pending_expert_approval");
+        };
 
         const renderReview = () => {
             reviewIdNode.textContent = currentReview.reviewId;
@@ -2730,6 +2776,8 @@ export default class QuestionCatalogPage {
             expertReviewNode.classList.toggle("is-approved", currentReview.status === "approved");
             expertReviewNode.classList.toggle("is-rejected", currentReview.status === "rejected");
             expertReviewNode.classList.toggle("is-review-required", currentReview.status === "review_required");
+
+            renderFinalizationGate();
         };
 
         addNoteButton.addEventListener("click", () => {
