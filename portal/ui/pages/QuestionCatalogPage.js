@@ -13,6 +13,7 @@ import AnswerInteractionSandbox from "../../core/AnswerInteractionSandbox.js";
 import SandboxAnswerStateEngine from "../../core/SandboxAnswerStateEngine.js";
 import EvidenceRequirementPreviewEngine from "../../core/EvidenceRequirementPreviewEngine.js";
 import EvidenceCaptureDraftSandbox from "../../core/EvidenceCaptureDraftSandbox.js";
+import FindingDraftPreviewSandbox from "../../core/FindingDraftPreviewSandbox.js";
 
 import LanguageManager from "../../core/LanguageManager.js";
 
@@ -1018,6 +1019,83 @@ export default class QuestionCatalogPage {
 
     }
 
+    static createFindingDraftPreviewCard(findingDraft = {}) {
+
+        if (!findingDraft || findingDraft.draftMode !== "finding_draft_preview_sandbox_read_only") {
+            return `
+
+                <span>Finding draft preview</span>
+
+                <p>No finding draft available yet.</p>
+
+            `;
+        }
+
+        if (!findingDraft.findingPrepared) {
+            return `
+
+                <span>Finding draft preview</span>
+
+                <div class="finding-draft-preview__empty">
+                    <strong>${this.escapeHtml(findingDraft.guidance?.title || "Finding draft not ready")}</strong>
+                    <p>${this.escapeHtml(findingDraft.guidance?.primary || "Complete capture draft first.")}</p>
+                </div>
+
+                <small>
+                    findingDraftPersisted: ${this.escapeHtml(String(findingDraft.safetyBoundary?.findingDraftPersisted))}
+                    · findingCreated: ${this.escapeHtml(String(findingDraft.safetyBoundary?.findingCreated))}
+                    · assessmentCreated: ${this.escapeHtml(String(findingDraft.safetyBoundary?.assessmentCreated))}
+                </small>
+
+            `;
+        }
+
+        return `
+
+            <span>Finding draft preview sandbox</span>
+
+            <div class="finding-draft-preview__summary">
+                <div>
+                    <small>Issue title</small>
+                    <strong>${this.escapeHtml(findingDraft.finding?.title || "n/a")}</strong>
+                </div>
+                <div>
+                    <small>Severity preview</small>
+                    <strong>${this.escapeHtml(findingDraft.severityPreview?.level || "n/a")}</strong>
+                </div>
+                <div>
+                    <small>Source question</small>
+                    <strong>${this.escapeHtml(findingDraft.finding?.sourceQuestionId || findingDraft.question?.questionId || "n/a")}</strong>
+                </div>
+            </div>
+
+            <div class="finding-draft-preview__wording">
+                <small>Expert wording</small>
+                <p>${this.escapeHtml(findingDraft.finding?.expertWording || "No wording prepared.")}</p>
+            </div>
+
+            <div class="finding-draft-preview__references">
+                <small>Evidence references</small>
+                <div>
+                    ${(findingDraft.finding?.evidenceReferences || []).map(reference => `
+                        <span>${this.escapeHtml(reference)}</span>
+                    `).join("")}
+                </div>
+            </div>
+
+            <p>${this.escapeHtml(findingDraft.guidance?.detail || "Sandbox-only finding draft preview.")}</p>
+
+            <small>
+                findingDraftPersisted: ${this.escapeHtml(String(findingDraft.safetyBoundary?.findingDraftPersisted))}
+                · findingCreated: ${this.escapeHtml(String(findingDraft.safetyBoundary?.findingCreated))}
+                · assessmentCreated: ${this.escapeHtml(String(findingDraft.safetyBoundary?.assessmentCreated))}
+                · reportCreated: ${this.escapeHtml(String(findingDraft.safetyBoundary?.reportCreated))}
+            </small>
+
+        `;
+
+    }
+
     static bindEvidenceCaptureDraftInteractions(section, captureDraft = {}) {
 
         const draftNode = section.querySelector("[data-evidence-capture-draft]");
@@ -1038,6 +1116,24 @@ export default class QuestionCatalogPage {
             });
 
             draftNode.innerHTML = this.createEvidenceCaptureDraftCard(captureDraft);
+
+            const findingDraftNode = section.querySelector("[data-finding-draft-preview]");
+            const findingDraft = FindingDraftPreviewSandbox.createDraft(captureDraft);
+
+            if (findingDraftNode) {
+                findingDraftNode.innerHTML = this.createFindingDraftPreviewCard(findingDraft);
+                findingDraftNode.classList.toggle("has-finding-draft", Boolean(findingDraft.findingPrepared));
+
+                if (findingDraft.findingPrepared) {
+                    window.setTimeout(() => {
+                        findingDraftNode.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center"
+                        });
+                    }, 120);
+                }
+            }
+
             this.bindEvidenceCaptureDraftInteractions(section, captureDraft);
         };
 
@@ -1070,6 +1166,24 @@ export default class QuestionCatalogPage {
                 });
 
                 draftNode.innerHTML = this.createEvidenceCaptureDraftCard(captureDraft);
+
+                const findingDraftNode = section.querySelector("[data-finding-draft-preview]");
+                const findingDraft = FindingDraftPreviewSandbox.createDraft(captureDraft);
+
+                if (findingDraftNode) {
+                    findingDraftNode.innerHTML = this.createFindingDraftPreviewCard(findingDraft);
+                    findingDraftNode.classList.toggle("has-finding-draft", Boolean(findingDraft.findingPrepared));
+
+                    if (findingDraft.findingPrepared) {
+                        window.setTimeout(() => {
+                            findingDraftNode.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center"
+                            });
+                        }, 120);
+                    }
+                }
+
                 this.bindEvidenceCaptureDraftInteractions(section, captureDraft);
             });
         }
@@ -1284,6 +1398,14 @@ export default class QuestionCatalogPage {
 
             </div>
 
+            <div class="finding-draft-preview" data-finding-draft-preview>
+
+                <span>Finding draft preview</span>
+
+                <p>Finding draft appears here once the capture draft is ready for review.</p>
+
+            </div>
+
         `;
 
         section.querySelectorAll("[data-answer-value]").forEach((button) => {
@@ -1334,6 +1456,14 @@ export default class QuestionCatalogPage {
                     captureDraftNode.innerHTML = this.createEvidenceCaptureDraftCard(captureDraft);
                     captureDraftNode.classList.toggle("has-capture-draft", Boolean(captureDraft.evidenceRequired));
                     this.bindEvidenceCaptureDraftInteractions(section, captureDraft);
+
+                    const findingDraftNode = section.querySelector("[data-finding-draft-preview]");
+                    const findingDraft = FindingDraftPreviewSandbox.createDraft(captureDraft);
+
+                    if (findingDraftNode) {
+                        findingDraftNode.innerHTML = this.createFindingDraftPreviewCard(findingDraft);
+                        findingDraftNode.classList.toggle("has-finding-draft", Boolean(findingDraft.findingPrepared));
+                    }
 
                     if (captureDraft.evidenceRequired) {
                         window.setTimeout(() => {
