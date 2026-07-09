@@ -1535,8 +1535,23 @@ export default class QuestionCatalogPage {
         }
 
         saveButton.addEventListener("click", () => {
+            const createdAt = new Date().toISOString();
+
             const draftRecord = DraftWorkspaceManager.createDraftRecord(reportDraft, {
-                createdAt: new Date().toISOString()
+                createdAt
+            });
+
+            const registry = DraftWorkspaceManager.createRegistry({
+                registryId: "browser-draft-registry-preview",
+                createdAt
+            });
+
+            const savedRegistry = DraftWorkspaceManager.addDraft(registry, draftRecord, {
+                updatedAt: createdAt
+            });
+
+            const activeDrafts = DraftWorkspaceManager.listDrafts(savedRegistry, {
+                status: "draft"
             });
 
             workspaceDraftNode.innerHTML = `
@@ -1563,6 +1578,32 @@ export default class QuestionCatalogPage {
                     · canFinalizeWorkflow: ${this.escapeHtml(String(draftRecord.permissions.canFinalizeWorkflow))}
                     · expertApprovalGranted: ${this.escapeHtml(String(draftRecord.safetyBoundary.expertApprovalGranted))}
                 </small>
+
+                <div class="workspace-draft-registry-preview" data-workspace-draft-registry-preview>
+                    <span>Draft registry preview</span>
+
+                    <div class="workspace-draft-registry-preview__summary">
+                        <div>
+                            <small>Registry ID</small>
+                            <strong>${this.escapeHtml(savedRegistry.registryId)}</strong>
+                        </div>
+                        <div>
+                            <small>Draft count</small>
+                            <strong>${this.escapeHtml(String(savedRegistry.drafts.length))}</strong>
+                        </div>
+                        <div>
+                            <small>Active drafts</small>
+                            <strong>${this.escapeHtml(String(activeDrafts.length))}</strong>
+                        </div>
+                    </div>
+
+                    <small>
+                        registryPersisted: ${this.escapeHtml(String(savedRegistry.safetyBoundary.registryPersisted))}
+                        · reportExported: ${this.escapeHtml(String(savedRegistry.safetyBoundary.reportExported))}
+                        · clientDocumentCreated: ${this.escapeHtml(String(savedRegistry.safetyBoundary.clientDocumentCreated))}
+                        · workflowFinalized: ${this.escapeHtml(String(savedRegistry.safetyBoundary.workflowFinalized))}
+                    </small>
+                </div>
             `;
 
             workspaceDraftNode.classList.add("has-workspace-draft");

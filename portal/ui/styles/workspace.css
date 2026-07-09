@@ -7193,3 +7193,42 @@ button.dashboard-readiness-card__action:focus-visible {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* Foundation 2.4-G Draft Registry Browser Panel */
+.workspace-draft-registry-preview {
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(27, 43, 69, 0.12);
+    background: rgba(255, 255, 255, 0.44);
+}
+
+.workspace-draft-registry-preview > span {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: rgba(27, 43, 69, 0.52);
+}
+
+.workspace-draft-registry-preview__summary {
+    display: grid;
+    grid-template-columns: 1.4fr 0.8fr 0.8fr;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.workspace-draft-registry-preview__summary div {
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(243, 238, 226, 0.48);
+}
+
+@media (max-width: 900px) {
+    .workspace-draft-registry-preview__summary {
+        grid-template-columns: 1fr;
+    }
+}
