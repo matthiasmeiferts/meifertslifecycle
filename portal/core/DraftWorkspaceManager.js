@@ -157,4 +157,148 @@ export default class DraftWorkspaceManager {
 
     }
 
+    static createRegistry(options = {}) {
+
+        return {
+            registryMode: "workspace_draft_registry_controlled",
+            registryId: options.registryId || "draft-registry",
+            createdAt: options.createdAt || new Date().toISOString(),
+            updatedAt: options.updatedAt || options.createdAt || new Date().toISOString(),
+            drafts: [],
+            safetyBoundary: this.createRegistrySafetyBoundary()
+        };
+
+    }
+
+    static addDraft(registry = {}, draftRecord = {}, options = {}) {
+
+        const nextRegistry = this.cloneRegistry(registry);
+        const existingIndex = nextRegistry.drafts.findIndex((draft) => draft.draftId === draftRecord.draftId);
+
+        const nextDraft = {
+            ...draftRecord,
+            updatedAt: options.updatedAt || draftRecord.updatedAt || new Date().toISOString(),
+            status: draftRecord.status || "draft"
+        };
+
+        if (existingIndex >= 0) {
+            nextRegistry.drafts[existingIndex] = nextDraft;
+        } else {
+            nextRegistry.drafts.push(nextDraft);
+        }
+
+        nextRegistry.updatedAt = options.updatedAt || new Date().toISOString();
+
+        return nextRegistry;
+
+    }
+
+    static getDraftById(registry = {}, draftId = "") {
+
+        return (registry.drafts || []).find((draft) => draft.draftId === draftId) || null;
+
+    }
+
+    static listDrafts(registry = {}, filters = {}) {
+
+        let drafts = [...(registry.drafts || [])];
+
+        if (filters.status) {
+            drafts = drafts.filter((draft) => draft.status === filters.status);
+        }
+
+        if (filters.draftType) {
+            drafts = drafts.filter((draft) => draft.draftType === filters.draftType);
+        }
+
+        if (filters.sourceId) {
+            drafts = drafts.filter((draft) => draft.sourceId === filters.sourceId);
+        }
+
+        return drafts;
+
+    }
+
+    static replaceDraft(registry = {}, draftId = "", replacementDraft = {}, options = {}) {
+
+        const nextRegistry = this.cloneRegistry(registry);
+        const existingIndex = nextRegistry.drafts.findIndex((draft) => draft.draftId === draftId);
+
+        if (existingIndex < 0) {
+            return nextRegistry;
+        }
+
+        nextRegistry.drafts[existingIndex] = {
+            ...replacementDraft,
+            draftId,
+            updatedAt: options.updatedAt || new Date().toISOString()
+        };
+
+        nextRegistry.updatedAt = options.updatedAt || new Date().toISOString();
+
+        return nextRegistry;
+
+    }
+
+    static discardDraft(registry = {}, draftId = "", options = {}) {
+
+        const draft = this.getDraftById(registry, draftId);
+
+        if (!draft) {
+            return this.cloneRegistry(registry);
+        }
+
+        const discardedDraft = {
+            ...draft,
+            status: "discarded",
+            updatedAt: options.updatedAt || new Date().toISOString()
+        };
+
+        return this.replaceDraft(registry, draftId, discardedDraft, options);
+
+    }
+
+    static restoreDraft(registry = {}, draftId = "", options = {}) {
+
+        const draft = this.getDraftById(registry, draftId);
+
+        if (!draft) {
+            return this.cloneRegistry(registry);
+        }
+
+        const restoredDraft = {
+            ...draft,
+            status: "draft",
+            updatedAt: options.updatedAt || new Date().toISOString()
+        };
+
+        return this.replaceDraft(registry, draftId, restoredDraft, options);
+
+    }
+
+    static cloneRegistry(registry = {}) {
+
+        return {
+            registryMode: registry.registryMode || "workspace_draft_registry_controlled",
+            registryId: registry.registryId || "draft-registry",
+            createdAt: registry.createdAt || new Date().toISOString(),
+            updatedAt: registry.updatedAt || registry.createdAt || new Date().toISOString(),
+            drafts: [...(registry.drafts || [])],
+            safetyBoundary: registry.safetyBoundary || this.createRegistrySafetyBoundary()
+        };
+
+    }
+
+    static createRegistrySafetyBoundary() {
+
+        return {
+            registryPersisted: false,
+            clientDocumentCreated: false,
+            reportExported: false,
+            workflowFinalized: false,
+            expertApprovalGranted: false
+        };
+
+    }
+
 }
