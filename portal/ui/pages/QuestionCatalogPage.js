@@ -17,6 +17,7 @@ import FindingDraftPreviewSandbox from "../../core/FindingDraftPreviewSandbox.js
 import AssessmentDraftPreviewSandbox from "../../core/AssessmentDraftPreviewSandbox.js";
 import RecommendationDraftPreviewSandbox from "../../core/RecommendationDraftPreviewSandbox.js";
 import DecisionDraftPreviewSandbox from "../../core/DecisionDraftPreviewSandbox.js";
+import ReportDraftPreviewSandbox from "../../core/ReportDraftPreviewSandbox.js";
 
 import LanguageManager from "../../core/LanguageManager.js";
 
@@ -1394,6 +1395,8 @@ export default class QuestionCatalogPage {
         decisionDraftNode.innerHTML = this.createDecisionDraftPreviewCard(decisionDraft);
         decisionDraftNode.classList.toggle("has-decision-draft", Boolean(decisionDraft.decisionPrepared));
 
+        this.renderReportDraftPreview(section, decisionDraft);
+
         if (decisionDraft.decisionPrepared) {
             window.setTimeout(() => {
                 decisionDraftNode.scrollIntoView({
@@ -1401,6 +1404,109 @@ export default class QuestionCatalogPage {
                     block: "center"
                 });
             }, 180);
+        }
+
+    }
+
+    static createReportDraftPreviewCard(reportDraft = {}) {
+
+        if (!reportDraft || reportDraft.draftMode !== "report_draft_preview_sandbox_read_only") {
+            return `
+
+                <span>Report draft preview</span>
+
+                <p>No report draft available yet.</p>
+
+            `;
+        }
+
+        if (!reportDraft.reportPrepared) {
+            return `
+
+                <span>Report draft preview</span>
+
+                <div class="report-draft-preview__empty">
+                    <strong>${this.escapeHtml(reportDraft.guidance?.title || "Report draft not ready")}</strong>
+                    <p>${this.escapeHtml(reportDraft.guidance?.primary || "Prepare decision draft first.")}</p>
+                </div>
+
+                <small>
+                    reportDraftPersisted: ${this.escapeHtml(String(reportDraft.safetyBoundary?.reportDraftPersisted))}
+                    · reportCreated: ${this.escapeHtml(String(reportDraft.safetyBoundary?.reportCreated))}
+                    · reportExported: ${this.escapeHtml(String(reportDraft.safetyBoundary?.reportExported))}
+                </small>
+
+            `;
+        }
+
+        return `
+
+            <span>Report draft preview sandbox</span>
+
+            <div class="report-draft-preview__summary">
+                <div>
+                    <small>Section</small>
+                    <strong>${this.escapeHtml(reportDraft.reportSection || "n/a")}</strong>
+                </div>
+                <div>
+                    <small>Decision route</small>
+                    <strong>${this.escapeHtml(reportDraft.decision?.route || "n/a")}</strong>
+                </div>
+                <div>
+                    <small>Source question</small>
+                    <strong>${this.escapeHtml(reportDraft.question?.questionId || "n/a")}</strong>
+                </div>
+            </div>
+
+            <div class="report-draft-preview__executive-summary">
+                <small>Executive summary</small>
+                <p>${this.escapeHtml(reportDraft.report?.executiveSummary || "No executive summary prepared.")}</p>
+            </div>
+
+            <div class="report-draft-preview__technical-narrative">
+                <small>Technical narrative</small>
+                <p>${this.escapeHtml(reportDraft.report?.technicalNarrative || "No technical narrative prepared.")}</p>
+            </div>
+
+            <div class="report-draft-preview__decision-note">
+                <small>Decision note</small>
+                <p>${this.escapeHtml(reportDraft.report?.decisionNote || "No decision note prepared.")}</p>
+            </div>
+
+            <p>${this.escapeHtml(reportDraft.guidance?.detail || "Sandbox-only report preview.")}</p>
+
+            <small>
+                reportDraftPersisted: ${this.escapeHtml(String(reportDraft.safetyBoundary?.reportDraftPersisted))}
+                · reportCreated: ${this.escapeHtml(String(reportDraft.safetyBoundary?.reportCreated))}
+                · reportExported: ${this.escapeHtml(String(reportDraft.safetyBoundary?.reportExported))}
+                · clientDocumentCreated: ${this.escapeHtml(String(reportDraft.safetyBoundary?.clientDocumentCreated))}
+                · workflowCreated: ${this.escapeHtml(String(reportDraft.safetyBoundary?.workflowCreated))}
+            </small>
+
+        `;
+
+    }
+
+    static renderReportDraftPreview(section, decisionDraft = {}) {
+
+        const reportDraftNode = section.querySelector("[data-report-draft-preview]");
+
+        if (!reportDraftNode) {
+            return;
+        }
+
+        const reportDraft = ReportDraftPreviewSandbox.createDraft(decisionDraft);
+
+        reportDraftNode.innerHTML = this.createReportDraftPreviewCard(reportDraft);
+        reportDraftNode.classList.toggle("has-report-draft", Boolean(reportDraft.reportPrepared));
+
+        if (reportDraft.reportPrepared) {
+            window.setTimeout(() => {
+                reportDraftNode.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }, 200);
         }
 
     }
@@ -1740,6 +1846,14 @@ export default class QuestionCatalogPage {
                 <span>Decision draft preview</span>
 
                 <p>Decision draft appears here once the recommendation draft is prepared.</p>
+
+            </div>
+
+            <div class="report-draft-preview" data-report-draft-preview>
+
+                <span>Report draft preview</span>
+
+                <p>Report draft appears here once the decision draft is prepared.</p>
 
             </div>
 
