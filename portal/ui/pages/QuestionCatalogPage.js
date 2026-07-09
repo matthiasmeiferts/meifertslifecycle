@@ -18,6 +18,7 @@ import AssessmentDraftPreviewSandbox from "../../core/AssessmentDraftPreviewSand
 import RecommendationDraftPreviewSandbox from "../../core/RecommendationDraftPreviewSandbox.js";
 import DecisionDraftPreviewSandbox from "../../core/DecisionDraftPreviewSandbox.js";
 import ReportDraftPreviewSandbox from "../../core/ReportDraftPreviewSandbox.js";
+import DraftWorkspaceManager from "../../core/DraftWorkspaceManager.js";
 
 import LanguageManager from "../../core/LanguageManager.js";
 
@@ -1473,6 +1474,17 @@ export default class QuestionCatalogPage {
                 <p>${this.escapeHtml(reportDraft.report?.decisionNote || "No decision note prepared.")}</p>
             </div>
 
+            <div class="report-draft-preview__actions">
+                <button class="button secondary" type="button" data-save-report-draft>
+                    Save as workspace draft
+                </button>
+            </div>
+
+            <div class="workspace-draft-preview" data-workspace-draft-preview>
+                <span>Workspace draft</span>
+                <p>No workspace draft created yet.</p>
+            </div>
+
             <p>${this.escapeHtml(reportDraft.guidance?.detail || "Sandbox-only report preview.")}</p>
 
             <small>
@@ -1500,6 +1512,8 @@ export default class QuestionCatalogPage {
         reportDraftNode.innerHTML = this.createReportDraftPreviewCard(reportDraft);
         reportDraftNode.classList.toggle("has-report-draft", Boolean(reportDraft.reportPrepared));
 
+        this.bindReportDraftWorkspaceSave(reportDraftNode, reportDraft);
+
         if (reportDraft.reportPrepared) {
             window.setTimeout(() => {
                 reportDraftNode.scrollIntoView({
@@ -1508,6 +1522,53 @@ export default class QuestionCatalogPage {
                 });
             }, 200);
         }
+
+    }
+
+    static bindReportDraftWorkspaceSave(reportDraftNode, reportDraft = {}) {
+
+        const saveButton = reportDraftNode.querySelector("[data-save-report-draft]");
+        const workspaceDraftNode = reportDraftNode.querySelector("[data-workspace-draft-preview]");
+
+        if (!saveButton || !workspaceDraftNode || !reportDraft.reportPrepared) {
+            return;
+        }
+
+        saveButton.addEventListener("click", () => {
+            const draftRecord = DraftWorkspaceManager.createDraftRecord(reportDraft, {
+                createdAt: new Date().toISOString()
+            });
+
+            workspaceDraftNode.innerHTML = `
+                <span>Workspace draft created</span>
+
+                <div class="workspace-draft-preview__summary">
+                    <div>
+                        <small>Draft ID</small>
+                        <strong>${this.escapeHtml(draftRecord.draftId)}</strong>
+                    </div>
+                    <div>
+                        <small>Draft type</small>
+                        <strong>${this.escapeHtml(draftRecord.draftType)}</strong>
+                    </div>
+                    <div>
+                        <small>Status</small>
+                        <strong>${this.escapeHtml(draftRecord.status)}</strong>
+                    </div>
+                </div>
+
+                <small>
+                    canExport: ${this.escapeHtml(String(draftRecord.permissions.canExport))}
+                    · canCreateClientDocument: ${this.escapeHtml(String(draftRecord.permissions.canCreateClientDocument))}
+                    · canFinalizeWorkflow: ${this.escapeHtml(String(draftRecord.permissions.canFinalizeWorkflow))}
+                    · expertApprovalGranted: ${this.escapeHtml(String(draftRecord.safetyBoundary.expertApprovalGranted))}
+                </small>
+            `;
+
+            workspaceDraftNode.classList.add("has-workspace-draft");
+            saveButton.disabled = true;
+            saveButton.textContent = "Workspace draft prepared";
+        });
 
     }
 
