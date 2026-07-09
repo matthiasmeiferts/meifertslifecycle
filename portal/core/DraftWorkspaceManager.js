@@ -301,4 +301,140 @@ export default class DraftWorkspaceManager {
 
     }
 
+    static createExpertReview(draftRecord = {}, options = {}) {
+
+        return {
+            reviewMode: "expert_review_controlled",
+            reviewId: options.reviewId || this.createReviewId(draftRecord),
+            draftId: draftRecord.draftId || "unknown-draft",
+            draftType: draftRecord.draftType || "unknown_draft",
+            sourceId: draftRecord.sourceId || "unknown-source",
+            createdAt: options.createdAt || new Date().toISOString(),
+            updatedAt: options.updatedAt || options.createdAt || new Date().toISOString(),
+            status: "review_required",
+            reviewer: options.reviewer || null,
+            notes: [],
+            decision: null,
+            permissions: {
+                canAddNote: true,
+                canApprove: true,
+                canReject: true,
+                canExport: false,
+                canCreateClientDocument: false,
+                canFinalizeWorkflow: false
+            },
+            safetyBoundary: this.createExpertReviewSafetyBoundary()
+        };
+
+    }
+
+    static createReviewId(draftRecord = {}) {
+
+        const draftId = draftRecord.draftId || "unknown-draft";
+        return `expert_review-${draftId}`;
+
+    }
+
+    static addExpertReviewNote(review = {}, note = {}, options = {}) {
+
+        const nextReview = this.cloneExpertReview(review);
+
+        const nextNote = {
+            noteId: note.noteId || `review-note-${nextReview.notes.length + 1}`,
+            text: note.text || "",
+            author: note.author || options.author || "expert",
+            createdAt: note.createdAt || options.createdAt || new Date().toISOString(),
+            category: note.category || "general"
+        };
+
+        nextReview.notes.push(nextNote);
+        nextReview.updatedAt = options.updatedAt || nextNote.createdAt;
+
+        return nextReview;
+
+    }
+
+    static approveExpertReview(review = {}, decision = {}, options = {}) {
+
+        const nextReview = this.cloneExpertReview(review);
+
+        nextReview.status = "approved";
+        nextReview.updatedAt = options.updatedAt || new Date().toISOString();
+        nextReview.decision = {
+            decisionType: "approved",
+            comment: decision.comment || "Expert review approved.",
+            decidedBy: decision.decidedBy || options.decidedBy || "expert",
+            decidedAt: decision.decidedAt || nextReview.updatedAt
+        };
+
+        nextReview.safetyBoundary.expertApprovalGranted = true;
+        nextReview.permissions.canExport = false;
+        nextReview.permissions.canCreateClientDocument = false;
+        nextReview.permissions.canFinalizeWorkflow = false;
+
+        return nextReview;
+
+    }
+
+    static rejectExpertReview(review = {}, decision = {}, options = {}) {
+
+        const nextReview = this.cloneExpertReview(review);
+
+        nextReview.status = "rejected";
+        nextReview.updatedAt = options.updatedAt || new Date().toISOString();
+        nextReview.decision = {
+            decisionType: "rejected",
+            comment: decision.comment || "Expert review rejected.",
+            decidedBy: decision.decidedBy || options.decidedBy || "expert",
+            decidedAt: decision.decidedAt || nextReview.updatedAt
+        };
+
+        nextReview.safetyBoundary.expertApprovalGranted = false;
+        nextReview.permissions.canExport = false;
+        nextReview.permissions.canCreateClientDocument = false;
+        nextReview.permissions.canFinalizeWorkflow = false;
+
+        return nextReview;
+
+    }
+
+    static cloneExpertReview(review = {}) {
+
+        return {
+            reviewMode: review.reviewMode || "expert_review_controlled",
+            reviewId: review.reviewId || "expert_review-unknown",
+            draftId: review.draftId || "unknown-draft",
+            draftType: review.draftType || "unknown_draft",
+            sourceId: review.sourceId || "unknown-source",
+            createdAt: review.createdAt || new Date().toISOString(),
+            updatedAt: review.updatedAt || review.createdAt || new Date().toISOString(),
+            status: review.status || "review_required",
+            reviewer: review.reviewer || null,
+            notes: [...(review.notes || [])],
+            decision: review.decision || null,
+            permissions: {
+                canAddNote: review.permissions?.canAddNote ?? true,
+                canApprove: review.permissions?.canApprove ?? true,
+                canReject: review.permissions?.canReject ?? true,
+                canExport: false,
+                canCreateClientDocument: false,
+                canFinalizeWorkflow: false
+            },
+            safetyBoundary: review.safetyBoundary || this.createExpertReviewSafetyBoundary()
+        };
+
+    }
+
+    static createExpertReviewSafetyBoundary() {
+
+        return {
+            reviewPersisted: false,
+            expertApprovalGranted: false,
+            clientDocumentCreated: false,
+            reportExported: false,
+            workflowFinalized: false
+        };
+
+    }
+
 }
