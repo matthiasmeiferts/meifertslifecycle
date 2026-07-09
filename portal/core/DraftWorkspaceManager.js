@@ -420,7 +420,10 @@ export default class DraftWorkspaceManager {
                 canCreateClientDocument: false,
                 canFinalizeWorkflow: false
             },
-            safetyBoundary: review.safetyBoundary || this.createExpertReviewSafetyBoundary()
+            safetyBoundary: {
+                ...this.createExpertReviewSafetyBoundary(),
+                ...(review.safetyBoundary || {})
+            }
         };
 
     }
