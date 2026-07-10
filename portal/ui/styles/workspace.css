@@ -7453,3 +7453,79 @@ button.dashboard-readiness-card__action:focus-visible {
 .internal-finalization-review-preview.is-blocked .internal-finalization-review-preview__note {
     background: rgba(243, 238, 226, 0.7);
 }
+
+/* Foundation 2.8-C Export Preparation Gate Browser Preview */
+
+.export-preparation-gate-preview {
+    margin-top: 24px;
+    padding: 24px;
+    border: 1px solid rgba(27, 43, 69, 0.16);
+    border-radius: 18px;
+    background: rgba(243, 238, 226, 0.76);
+}
+
+.export-preparation-gate-preview.is-required {
+    border-color: rgba(184, 153, 104, 0.58);
+}
+
+.export-preparation-gate-preview.is-blocked {
+    opacity: 0.76;
+}
+
+.export-preparation-gate-preview__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.export-preparation-gate-preview__header h3 {
+    margin: 4px 0 8px;
+}
+
+.export-preparation-gate-preview__header p {
+    margin: 0;
+    max-width: 680px;
+}
+
+.export-preparation-gate-preview__meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin: 22px 0;
+}
+
+.export-preparation-gate-preview__meta div {
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.58);
+}
+
+.export-preparation-gate-preview__meta dt {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.64;
+}
+
+.export-preparation-gate-preview__meta dd {
+    margin: 6px 0 0;
+    font-weight: 600;
+}
+
+.export-preparation-gate-preview__safety {
+    display: grid;
+    gap: 4px;
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(27, 43, 69, 0.06);
+}
+
+.export-preparation-gate-preview__locks {
+    margin: 18px 0 0;
+    padding-left: 18px;
+}
+
+.export-preparation-gate-preview__locks li + li {
+    margin-top: 6px;
+}

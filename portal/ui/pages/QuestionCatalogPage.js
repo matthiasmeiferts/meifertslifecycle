@@ -1660,6 +1660,7 @@ export default class QuestionCatalogPage {
                         </small>
 
                         <div class="internal-finalization-review-preview" data-internal-finalization-review-preview>
+                    <div data-export-preparation-gate-preview></div>
                             <span>Internal finalization review</span>
 
                             <div class="internal-finalization-review-preview__summary">
@@ -2780,6 +2781,7 @@ export default class QuestionCatalogPage {
 
         let currentGate = null;
         let currentInternalReview = null;
+let currentExportPreparationGate = null;
 
         const renderInternalFinalizationReview = (gate) => {
             if (!internalReviewNode || !gate) {
@@ -3013,7 +3015,11 @@ export default class QuestionCatalogPage {
             });
 
             renderInternalFinalizationReview(currentGate);
-            scrollToInternalFinalizationReview();
+            currentExportPreparationGate = DraftWorkspaceManager.createExportPreparationGate(currentInternalReview, {
+            createdAt: new Date().toISOString()
+        });
+        renderExportPreparationGate();
+        scrollToExportPreparationGate();
         });
 
         approveInternalButton.addEventListener("click", () => {
@@ -3066,6 +3072,77 @@ export default class QuestionCatalogPage {
 
             .replaceAll("'", "&#039;");
 
+    }
+
+}
+
+function renderExportPreparationGate() {
+
+    const container = document.querySelector("[data-export-preparation-gate-preview]");
+
+    if (!container || !currentExportPreparationGate) {
+        return;
+    }
+
+    const status = currentExportPreparationGate.status || "unknown";
+    const isReady = status === "export_preparation_review_required";
+    const stateClass = isReady ? "is-required" : "is-blocked";
+
+    container.innerHTML = `
+        <section class="export-preparation-gate-preview ${stateClass}" data-export-preparation-gate-card>
+            <div class="export-preparation-gate-preview__header">
+                <div>
+                    <p class="section-kicker">Foundation 2.8-C Export Preparation Gate Browser Preview</p>
+                    <h3>Export Preparation Gate</h3>
+                    <p>Controlled preparation checkpoint after internal finalization review. No export file is created.</p>
+                </div>
+                <span class="status-badge">${escapeHtml(status)}</span>
+            </div>
+
+            <dl class="export-preparation-gate-preview__meta">
+                <div>
+                    <dt>Gate ID</dt>
+                    <dd>${escapeHtml(currentExportPreparationGate.gateId)}</dd>
+                </div>
+                <div>
+                    <dt>Source Internal Review</dt>
+                    <dd>${escapeHtml(currentExportPreparationGate.sourceInternalReviewId || "not available")}</dd>
+                </div>
+                <div>
+                    <dt>Internal Review Completed</dt>
+                    <dd>${currentExportPreparationGate.readiness.internalFinalizationReviewCompleted ? "Yes" : "No"}</dd>
+                </div>
+                <div>
+                    <dt>Export Preparation Review</dt>
+                    <dd>${currentExportPreparationGate.readiness.exportPreparationReviewRequired ? "Required" : "Not ready"}</dd>
+                </div>
+            </dl>
+
+            <div class="export-preparation-gate-preview__safety">
+                <strong>Safety boundary</strong>
+                <span>Export preparation only. Export, client document creation and workflow finalization remain locked.</span>
+            </div>
+
+            <ul class="export-preparation-gate-preview__locks">
+                <li>Can export: ${currentExportPreparationGate.permissions.canExport ? "true" : "false"}</li>
+                <li>Can create client document: ${currentExportPreparationGate.permissions.canCreateClientDocument ? "true" : "false"}</li>
+                <li>Can finalize workflow: ${currentExportPreparationGate.permissions.canFinalizeWorkflow ? "true" : "false"}</li>
+                <li>Export file created: ${currentExportPreparationGate.safetyBoundary.exportFileCreated ? "true" : "false"}</li>
+            </ul>
+        </section>
+    `;
+
+}
+
+function scrollToExportPreparationGate() {
+
+    const card = document.querySelector("[data-export-preparation-gate-card]");
+
+    if (card) {
+        card.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
     }
 
 }
