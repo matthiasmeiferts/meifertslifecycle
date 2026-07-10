@@ -10,12 +10,14 @@ node --check portal/ui/pages/QuestionCatalogPage.js
 node --check tests/export-preparation-gate-model-test.js
 node --check tests/export-preparation-gate-from-internal-review-test.js
 node --check tests/export-preparation-gate-browser-preview-test.js
+node --check tests/export-preparation-gate-release-lock-test.js
 node --check tests/export-preparation-gate-regression-safety-test.js
 
 echo
 echo "Syntax checks passed."
 echo
 
+node tests/export-preparation-gate-release-lock-test.js
 node tests/export-preparation-gate-regression-safety-test.js
 node tests/export-preparation-gate-browser-preview-test.js
 node tests/export-preparation-gate-from-internal-review-test.js
