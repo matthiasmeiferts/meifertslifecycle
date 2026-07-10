@@ -609,6 +609,65 @@ export default class DraftWorkspaceManager {
 
     }
 
+    static createExportPreparationGate(internalReview = {}, options = {}) {
+
+        const createdAt = options.createdAt || new Date().toISOString();
+
+        const isInternallyApproved = internalReview.status === "internally_approved"
+            && internalReview.safetyBoundary?.internalFinalizationReviewCompleted === true;
+
+        return {
+            gateId: this.createExportPreparationGateId(internalReview),
+            gateType: "export_preparation_gate",
+            sourceInternalReviewId: internalReview.reviewId || null,
+            sourceGateId: internalReview.sourceGateId || null,
+            sourceReviewId: internalReview.sourceReviewId || null,
+            sourceDraftId: internalReview.sourceDraftId || null,
+            status: isInternallyApproved
+                ? "export_preparation_review_required"
+                : "blocked_pending_internal_finalization_review",
+            createdAt,
+            updatedAt: createdAt,
+            readiness: {
+                internalFinalizationReviewCompleted: isInternallyApproved,
+                exportPreparationReviewRequired: true,
+                exportPreparationAllowed: false,
+                reportExportAllowed: false,
+                clientDocumentPreparationAllowed: false,
+                workflowFinalizationAllowed: false
+            },
+            permissions: {
+                canExport: false,
+                canCreateClientDocument: false,
+                canFinalizeWorkflow: false
+            },
+            safetyBoundary: this.createExportPreparationGateSafetyBoundary()
+        };
+
+    }
+
+    static createExportPreparationGateId(internalReview = {}) {
+
+        const sourceId = internalReview.reviewId || internalReview.sourceGateId || internalReview.sourceDraftId || "unknown-internal-review";
+
+        return `export_preparation_gate-${String(sourceId).replace(/^internal_finalization_review-/, "")}`;
+
+    }
+
+    static createExportPreparationGateSafetyBoundary() {
+
+        return {
+            exportPreparationGatePersisted: false,
+            exportPreparationReviewCompleted: false,
+            exportPrepared: false,
+            exportFileCreated: false,
+            reportExported: false,
+            clientDocumentCreated: false,
+            workflowFinalized: false
+        };
+
+    }
+
     static createInternalFinalizationReviewSafetyBoundary() {
 
         return {
