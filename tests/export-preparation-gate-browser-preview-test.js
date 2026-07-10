@@ -15,6 +15,12 @@ assert.ok(pageSource.includes("Export preparation only. Export, client document 
 assert.ok(pageSource.includes("currentExportPreparationGate.permissions.canExport"));
 assert.ok(pageSource.includes("currentExportPreparationGate.safetyBoundary.exportFileCreated"));
 
+assert.ok(pageSource.includes("const hasReviewNote = currentReview.notes.length > 0"));
+assert.ok(pageSource.includes("Expert review note required first."));
+assert.ok(pageSource.includes("currentReview.notes.length === 0 || currentReview.status !== \"review_required\""));
+assert.ok(pageSource.includes("expertReviewNode.classList.toggle(\"is-note-required\""));
+
+
 assert.ok(styleSource.includes("Foundation 2.8-C Export Preparation Gate Browser Preview"));
 assert.ok(styleSource.includes(".export-preparation-gate-preview"));
 assert.ok(styleSource.includes(".export-preparation-gate-preview.is-required"));

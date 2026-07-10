@@ -2946,6 +2946,29 @@ let currentExportPreparationGate = null;
                 `;
             }
 
+            const hasReviewNote = currentReview.notes.length > 0;
+            const expertDecisionLocked = !hasReviewNote || currentReview.status !== "review_required";
+
+            approveButton.disabled = expertDecisionLocked;
+            rejectButton.disabled = expertDecisionLocked;
+
+            if (!hasReviewNote) {
+                approveButton.textContent = "Approval locked";
+                rejectButton.textContent = "Reject locked";
+                approveButton.title = "Expert review note required first.";
+                rejectButton.title = "Expert review note required first.";
+            } else if (currentReview.status === "review_required") {
+                approveButton.textContent = "Approve review";
+                rejectButton.textContent = "Reject review";
+                approveButton.title = "";
+                rejectButton.title = "";
+            } else {
+                approveButton.textContent = "Approval locked";
+                rejectButton.textContent = "Reject locked";
+                approveButton.title = "Expert review decision already recorded.";
+                rejectButton.title = "Expert review decision already recorded.";
+            }
+
             reviewNotePreviewNode.innerHTML = noteMarkup;
 
             reviewSafetyNode.textContent = `canExport: ${String(currentReview.permissions.canExport)} · canCreateClientDocument: ${String(currentReview.permissions.canCreateClientDocument)} · canFinalizeWorkflow: ${String(currentReview.permissions.canFinalizeWorkflow)} · expertApprovalGranted: ${String(currentReview.safetyBoundary.expertApprovalGranted)}`;
@@ -2953,6 +2976,7 @@ let currentExportPreparationGate = null;
             expertReviewNode.classList.toggle("is-approved", currentReview.status === "approved");
             expertReviewNode.classList.toggle("is-rejected", currentReview.status === "rejected");
             expertReviewNode.classList.toggle("is-review-required", currentReview.status === "review_required");
+            expertReviewNode.classList.toggle("is-note-required", !hasReviewNote && currentReview.status === "review_required");
 
             renderFinalizationGate();
         };
@@ -2978,6 +3002,10 @@ let currentExportPreparationGate = null;
         });
 
         approveButton.addEventListener("click", () => {
+            if (currentReview.notes.length === 0 || currentReview.status !== "review_required") {
+                return;
+            }
+
             currentReview = DraftWorkspaceManager.approveExpertReview(currentReview, {
                 comment: "Approved in browser preview.",
                 decidedBy: "Matthias Meiferts"
@@ -2990,6 +3018,10 @@ let currentExportPreparationGate = null;
         });
 
         rejectButton.addEventListener("click", () => {
+            if (currentReview.notes.length === 0 || currentReview.status !== "review_required") {
+                return;
+            }
+
             currentReview = DraftWorkspaceManager.rejectExpertReview(currentReview, {
                 comment: "Rejected in browser preview.",
                 decidedBy: "Matthias Meiferts"
@@ -3015,11 +3047,6 @@ let currentExportPreparationGate = null;
             });
 
             renderInternalFinalizationReview(currentGate);
-            currentExportPreparationGate = DraftWorkspaceManager.createExportPreparationGate(currentInternalReview, {
-            createdAt: new Date().toISOString()
-        });
-        renderExportPreparationGate();
-        scrollToExportPreparationGate();
         });
 
         approveInternalButton.addEventListener("click", () => {
@@ -3035,7 +3062,72 @@ let currentExportPreparationGate = null;
             });
 
             renderInternalFinalizationReview(currentGate);
-            scrollToInternalFinalizationReview();
+
+            currentExportPreparationGate = DraftWorkspaceManager.createExportPreparationGate(currentInternalReview, {
+                createdAt: new Date().toISOString()
+            });
+
+            let exportGateContainer = document.querySelector("[data-export-preparation-gate-preview]");
+
+            if (!exportGateContainer) {
+                internalReviewNode.insertAdjacentHTML("afterend", "<div data-export-preparation-gate-preview></div>");
+                exportGateContainer = document.querySelector("[data-export-preparation-gate-preview]");
+            }
+
+            if (exportGateContainer) {
+                exportGateContainer.innerHTML = `
+                    <section class="export-preparation-gate-preview is-required" data-export-preparation-gate-card>
+                        <div class="export-preparation-gate-preview__header">
+                            <div>
+                                <p class="section-kicker">Foundation 2.8-C Export Preparation Gate Browser Preview</p>
+                                <h3>Export Preparation Gate</h3>
+                                <p>Controlled preparation checkpoint after internal finalization review. No export file is created.</p>
+                            </div>
+                            <span class="status-badge">${this.escapeHtml(currentExportPreparationGate.status)}</span>
+                        </div>
+
+                        <dl class="export-preparation-gate-preview__meta">
+                            <div>
+                                <dt>Gate ID</dt>
+                                <dd>${this.escapeHtml(currentExportPreparationGate.gateId)}</dd>
+                            </div>
+                            <div>
+                                <dt>Source Internal Review</dt>
+                                <dd>${this.escapeHtml(currentExportPreparationGate.sourceInternalReviewId || "not available")}</dd>
+                            </div>
+                            <div>
+                                <dt>Internal Review Completed</dt>
+                                <dd>${currentExportPreparationGate.readiness.internalFinalizationReviewCompleted ? "Yes" : "No"}</dd>
+                            </div>
+                            <div>
+                                <dt>Export Preparation Review</dt>
+                                <dd>${currentExportPreparationGate.readiness.exportPreparationReviewRequired ? "Required" : "Not ready"}</dd>
+                            </div>
+                        </dl>
+
+                        <div class="export-preparation-gate-preview__safety">
+                            <strong>Safety boundary</strong>
+                            <span>Export preparation only. Export, client document creation and workflow finalization remain locked.</span>
+                        </div>
+
+                        <ul class="export-preparation-gate-preview__locks">
+                            <li>Can export: ${currentExportPreparationGate.permissions.canExport ? "true" : "false"}</li>
+                            <li>Can create client document: ${currentExportPreparationGate.permissions.canCreateClientDocument ? "true" : "false"}</li>
+                            <li>Can finalize workflow: ${currentExportPreparationGate.permissions.canFinalizeWorkflow ? "true" : "false"}</li>
+                            <li>Export file created: ${currentExportPreparationGate.safetyBoundary.exportFileCreated ? "true" : "false"}</li>
+                        </ul>
+                    </section>
+                `;
+
+                const exportGateCard = exportGateContainer.querySelector("[data-export-preparation-gate-card]");
+
+                if (exportGateCard) {
+                    exportGateCard.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+                }
+            }
         });
 
         rejectInternalButton.addEventListener("click", () => {
@@ -3078,7 +3170,18 @@ let currentExportPreparationGate = null;
 
 function renderExportPreparationGate() {
 
-    const container = document.querySelector("[data-export-preparation-gate-preview]");
+    let container = document.querySelector("[data-export-preparation-gate-preview]");
+
+    if (!container) {
+        const internalReviewCard = document.querySelector("[data-internal-finalization-review-card]")
+            || document.querySelector("[data-internal-finalization-review-preview]")
+            || document.querySelector(".internal-finalization-review-preview");
+
+        if (internalReviewCard) {
+            internalReviewCard.insertAdjacentHTML("afterend", "<div data-export-preparation-gate-preview></div>");
+            container = document.querySelector("[data-export-preparation-gate-preview]");
+        }
+    }
 
     if (!container || !currentExportPreparationGate) {
         return;
