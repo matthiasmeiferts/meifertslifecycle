@@ -2782,6 +2782,7 @@ export default class QuestionCatalogPage {
         let currentGate = null;
         let currentInternalReview = null;
 let currentExportPreparationGate = null;
+let currentExportPreparationReview = null;
 
         const renderInternalFinalizationReview = (gate) => {
             if (!internalReviewNode || !gate) {
@@ -2981,6 +2982,87 @@ let currentExportPreparationGate = null;
             renderFinalizationGate();
         };
 
+
+        const renderExportPreparationReview = () => {
+            if (!currentExportPreparationReview) {
+                return;
+            }
+
+            let exportReviewContainer = document.querySelector("[data-export-preparation-review-preview]");
+
+            if (!exportReviewContainer) {
+                const exportGateCard = document.querySelector("[data-export-preparation-gate-card]");
+
+                if (exportGateCard) {
+                    exportGateCard.insertAdjacentHTML("afterend", "<div data-export-preparation-review-preview></div>");
+                    exportReviewContainer = document.querySelector("[data-export-preparation-review-preview]");
+                }
+            }
+
+            if (!exportReviewContainer) {
+                return;
+            }
+
+            exportReviewContainer.innerHTML = this.constructor.renderExportPreparationReviewPanel(currentExportPreparationReview);
+
+            const addExportPreparationReviewNoteButton = exportReviewContainer.querySelector("[data-add-export-preparation-review-note]");
+            const approveExportPreparationReviewButton = exportReviewContainer.querySelector("[data-approve-export-preparation-review]");
+            const rejectExportPreparationReviewButton = exportReviewContainer.querySelector("[data-reject-export-preparation-review]");
+
+            if (addExportPreparationReviewNoteButton) {
+                addExportPreparationReviewNoteButton.addEventListener("click", () => {
+                    if (!currentExportPreparationReview || currentExportPreparationReview.notes.length > 0 || currentExportPreparationReview.status !== "review_required") {
+                        return;
+                    }
+
+                    currentExportPreparationReview = DraftWorkspaceManager.addExportPreparationReviewNote(currentExportPreparationReview, {
+                        text: "Export preparation review note added in browser preview.",
+                        author: "Matthias Meiferts",
+                        category: "export-preparation"
+                    }, {
+                        createdAt: new Date().toISOString()
+                    });
+
+                    renderExportPreparationReview();
+                });
+            }
+
+            if (approveExportPreparationReviewButton) {
+                approveExportPreparationReviewButton.addEventListener("click", () => {
+                    if (!currentExportPreparationReview || currentExportPreparationReview.notes.length === 0 || currentExportPreparationReview.status !== "review_required") {
+                        return;
+                    }
+
+                    currentExportPreparationReview = DraftWorkspaceManager.approveExportPreparationReview(currentExportPreparationReview, {
+                        comment: "Export preparation review approved in browser preview. Export remains locked.",
+                        decidedBy: "Matthias Meiferts"
+                    }, {
+                        updatedAt: new Date().toISOString()
+                    });
+
+                    renderExportPreparationReview();
+                });
+            }
+
+            if (rejectExportPreparationReviewButton) {
+                rejectExportPreparationReviewButton.addEventListener("click", () => {
+                    if (!currentExportPreparationReview || currentExportPreparationReview.notes.length === 0 || currentExportPreparationReview.status !== "review_required") {
+                        return;
+                    }
+
+                    currentExportPreparationReview = DraftWorkspaceManager.rejectExportPreparationReview(currentExportPreparationReview, {
+                        comment: "Export preparation review rejected in browser preview. Export remains locked.",
+                        decidedBy: "Matthias Meiferts"
+                    }, {
+                        updatedAt: new Date().toISOString()
+                    });
+
+                    renderExportPreparationReview();
+                });
+            }
+        };
+
+
         addNoteButton.addEventListener("click", () => {
             if (currentReview.notes.length > 0) {
                 return;
@@ -2997,7 +3079,88 @@ let currentExportPreparationGate = null;
             addNoteButton.disabled = true;
             addNoteButton.textContent = "Review note added";
 
-            renderReview();
+    
+        const renderExportPreparationReview = () => {
+            if (!currentExportPreparationReview) {
+                return;
+            }
+
+            let exportReviewContainer = document.querySelector("[data-export-preparation-review-preview]");
+
+            if (!exportReviewContainer) {
+                const exportGateCard = document.querySelector("[data-export-preparation-gate-card]");
+
+                if (exportGateCard) {
+                    exportGateCard.insertAdjacentHTML("afterend", "<div data-export-preparation-review-preview></div>");
+                    exportReviewContainer = document.querySelector("[data-export-preparation-review-preview]");
+                }
+            }
+
+            if (!exportReviewContainer) {
+                return;
+            }
+
+            exportReviewContainer.innerHTML = this.constructor.renderExportPreparationReviewPanel(currentExportPreparationReview);
+
+            const addExportPreparationReviewNoteButton = exportReviewContainer.querySelector("[data-add-export-preparation-review-note]");
+            const approveExportPreparationReviewButton = exportReviewContainer.querySelector("[data-approve-export-preparation-review]");
+            const rejectExportPreparationReviewButton = exportReviewContainer.querySelector("[data-reject-export-preparation-review]");
+
+            if (addExportPreparationReviewNoteButton) {
+                addExportPreparationReviewNoteButton.addEventListener("click", () => {
+                    if (!currentExportPreparationReview || currentExportPreparationReview.notes.length > 0 || currentExportPreparationReview.status !== "review_required") {
+                        return;
+                    }
+
+                    currentExportPreparationReview = DraftWorkspaceManager.addExportPreparationReviewNote(currentExportPreparationReview, {
+                        text: "Export preparation review note added in browser preview.",
+                        author: "Matthias Meiferts",
+                        category: "export-preparation"
+                    }, {
+                        createdAt: new Date().toISOString()
+                    });
+
+                    renderExportPreparationReview();
+                });
+            }
+
+            if (approveExportPreparationReviewButton) {
+                approveExportPreparationReviewButton.addEventListener("click", () => {
+                    if (!currentExportPreparationReview || currentExportPreparationReview.notes.length === 0 || currentExportPreparationReview.status !== "review_required") {
+                        return;
+                    }
+
+                    currentExportPreparationReview = DraftWorkspaceManager.approveExportPreparationReview(currentExportPreparationReview, {
+                        comment: "Export preparation review approved in browser preview. Export remains locked.",
+                        decidedBy: "Matthias Meiferts"
+                    }, {
+                        updatedAt: new Date().toISOString()
+                    });
+
+                    renderExportPreparationReview();
+                });
+            }
+
+            if (rejectExportPreparationReviewButton) {
+                rejectExportPreparationReviewButton.addEventListener("click", () => {
+                    if (!currentExportPreparationReview || currentExportPreparationReview.notes.length === 0 || currentExportPreparationReview.status !== "review_required") {
+                        return;
+                    }
+
+                    currentExportPreparationReview = DraftWorkspaceManager.rejectExportPreparationReview(currentExportPreparationReview, {
+                        comment: "Export preparation review rejected in browser preview. Export remains locked.",
+                        decidedBy: "Matthias Meiferts"
+                    }, {
+                        updatedAt: new Date().toISOString()
+                    });
+
+                    renderExportPreparationReview();
+                });
+            }
+        };
+
+
+        renderReview();
             scrollToExpertReview();
         });
 
@@ -3119,7 +3282,30 @@ let currentExportPreparationGate = null;
                     </section>
                 `;
 
-                const exportGateCard = exportGateContainer.querySelector("[data-export-preparation-gate-card]");
+                currentExportPreparationReview = DraftWorkspaceManager.createExportPreparationReview(currentExportPreparationGate, {
+                    reviewer: "Matthias Meiferts",
+                    createdAt: new Date().toISOString()
+                });
+
+                renderExportPreparationReview();
+
+                let exportReviewContainer = document.querySelector("[data-export-preparation-review-preview]");
+
+                if (!exportReviewContainer) {
+                    const exportGateCardForReview = exportGateContainer.querySelector("[data-export-preparation-gate-card]");
+
+                    if (exportGateCardForReview) {
+                        exportGateCardForReview.insertAdjacentHTML("afterend", "<div data-export-preparation-review-preview></div>");
+                        exportReviewContainer = document.querySelector("[data-export-preparation-review-preview]");
+                    }
+                }
+
+                if (exportReviewContainer) {
+                    exportReviewContainer.innerHTML = this.constructor.renderExportPreparationReviewPanel(currentExportPreparationReview);
+                }
+
+                const exportReviewCard = document.querySelector("[data-export-preparation-review-card]");
+                const exportGateCard = exportReviewCard || exportGateContainer.querySelector("[data-export-preparation-gate-card]");
 
                 if (exportGateCard) {
                     exportGateCard.scrollIntoView({
@@ -3147,6 +3333,95 @@ let currentExportPreparationGate = null;
         });
 
         renderReview();
+
+    }
+
+
+    static renderExportPreparationReviewPanel(review) {
+
+        const status = review.status || "unknown";
+        const hasNote = (review.notes || []).length > 0;
+        const decisionLocked = !hasNote || review.status !== "review_required";
+
+        let noteMarkup = "<p>No export preparation review note added yet.</p>";
+
+        if (hasNote) {
+            const lastNote = review.notes[review.notes.length - 1];
+
+            noteMarkup = `
+                <small>${this.escapeHtml(lastNote.category)}</small>
+                <p>${this.escapeHtml(lastNote.text)}</p>
+            `;
+        }
+
+        if (review.decision) {
+            noteMarkup += `
+                <div class="export-preparation-review-preview__decision">
+                    <small>Decision</small>
+                    <p>${this.escapeHtml(review.decision.comment)}</p>
+                </div>
+            `;
+        }
+
+        return `
+            <section class="export-preparation-review-preview ${status === "review_required" ? "is-required" : ""} ${status === "approved" ? "is-approved" : ""} ${status === "rejected" ? "is-rejected" : ""}" data-export-preparation-review-card>
+                <div class="export-preparation-review-preview__header">
+                    <div>
+                        <p class="section-kicker">Foundation 2.9-C Export Preparation Review Browser Preview</p>
+                        <h3>Export Preparation Review</h3>
+                        <p>Internal review step after the Export Preparation Gate. No export file is created.</p>
+                    </div>
+                    <span class="status-badge">${this.escapeHtml(status)}</span>
+                </div>
+
+                <dl class="export-preparation-review-preview__meta">
+                    <div>
+                        <dt>Review ID</dt>
+                        <dd>${this.escapeHtml(review.reviewId)}</dd>
+                    </div>
+                    <div>
+                        <dt>Source Export Gate</dt>
+                        <dd>${this.escapeHtml(review.sourceExportPreparationGateId || "not available")}</dd>
+                    </div>
+                    <div>
+                        <dt>Notes</dt>
+                        <dd>${String((review.notes || []).length)}</dd>
+                    </div>
+                    <div>
+                        <dt>Review Completed</dt>
+                        <dd>${review.readiness.exportPreparationReviewCompleted ? "Yes" : "No"}</dd>
+                    </div>
+                </dl>
+
+                <div class="export-preparation-review-preview__note">
+                    ${noteMarkup}
+                </div>
+
+                <div class="export-preparation-review-preview__safety">
+                    <strong>Safety boundary</strong>
+                    <span>Export preparation review only. Export, client document creation and workflow finalization remain locked.</span>
+                </div>
+
+                <ul class="export-preparation-review-preview__locks">
+                    <li>Can export: ${review.permissions.canExport ? "true" : "false"}</li>
+                    <li>Can create client document: ${review.permissions.canCreateClientDocument ? "true" : "false"}</li>
+                    <li>Can finalize workflow: ${review.permissions.canFinalizeWorkflow ? "true" : "false"}</li>
+                    <li>Export file created: ${review.safetyBoundary.exportFileCreated ? "true" : "false"}</li>
+                </ul>
+
+                <div class="export-preparation-review-preview__actions">
+                    <button class="button secondary" type="button" data-add-export-preparation-review-note ${hasNote || review.status !== "review_required" ? "disabled" : ""}>
+                        ${hasNote ? "Export preparation note added" : "Add export preparation review note"}
+                    </button>
+                    <button class="button secondary" type="button" data-approve-export-preparation-review ${decisionLocked ? "disabled" : ""} title="${!hasNote ? "Export preparation review note required first." : ""}">
+                        ${decisionLocked ? "Approval locked" : "Approve export preparation review"}
+                    </button>
+                    <button class="button secondary" type="button" data-reject-export-preparation-review ${decisionLocked ? "disabled" : ""} title="${!hasNote ? "Export preparation review note required first." : ""}">
+                        ${decisionLocked ? "Reject locked" : "Reject export preparation review"}
+                    </button>
+                </div>
+            </section>
+        `;
 
     }
 
