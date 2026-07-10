@@ -2783,6 +2783,7 @@ export default class QuestionCatalogPage {
         let currentInternalReview = null;
 let currentExportPreparationGate = null;
 let currentExportPreparationReview = null;
+    let currentExportAuthorizationGate = null;
 
         const renderInternalFinalizationReview = (gate) => {
             if (!internalReviewNode || !gate) {
@@ -2983,6 +2984,33 @@ let currentExportPreparationReview = null;
         };
 
 
+        const renderExportAuthorizationGate = () => {
+            if (!currentExportPreparationReview) {
+                return;
+            }
+
+            currentExportAuthorizationGate = DraftWorkspaceManager.createExportAuthorizationGate(currentExportPreparationReview, {
+                createdAt: new Date().toISOString()
+            });
+
+            let exportAuthorizationContainer = document.querySelector("[data-export-authorization-gate-preview]");
+
+            if (!exportAuthorizationContainer) {
+                const exportReviewCard = document.querySelector("[data-export-preparation-review-card]");
+
+                if (exportReviewCard) {
+                    exportReviewCard.insertAdjacentHTML("afterend", "<div data-export-authorization-gate-preview></div>");
+                    exportAuthorizationContainer = document.querySelector("[data-export-authorization-gate-preview]");
+                }
+            }
+
+            if (!exportAuthorizationContainer) {
+                return;
+            }
+
+            exportAuthorizationContainer.innerHTML = this.constructor.renderExportAuthorizationGatePanel(currentExportAuthorizationGate);
+        };
+
         const renderExportPreparationReview = () => {
             if (!currentExportPreparationReview) {
                 return;
@@ -3004,6 +3032,7 @@ let currentExportPreparationReview = null;
             }
 
             exportReviewContainer.innerHTML = this.constructor.renderExportPreparationReviewPanel(currentExportPreparationReview);
+            renderExportAuthorizationGate();
 
             const addExportPreparationReviewNoteButton = exportReviewContainer.querySelector("[data-add-export-preparation-review-note]");
             const approveExportPreparationReviewButton = exportReviewContainer.querySelector("[data-approve-export-preparation-review]");
@@ -3289,22 +3318,18 @@ let currentExportPreparationReview = null;
 
                 renderExportPreparationReview();
 
-                let exportReviewContainer = document.querySelector("[data-export-preparation-review-preview]");
+                let exportReviewContainer = exportGateContainer.querySelector("[data-export-preparation-review-preview]");
 
                 if (!exportReviewContainer) {
-                    const exportGateCardForReview = exportGateContainer.querySelector("[data-export-preparation-gate-card]");
-
-                    if (exportGateCardForReview) {
-                        exportGateCardForReview.insertAdjacentHTML("afterend", "<div data-export-preparation-review-preview></div>");
-                        exportReviewContainer = document.querySelector("[data-export-preparation-review-preview]");
-                    }
+                    exportGateContainer.insertAdjacentHTML("beforeend", "<div data-export-preparation-review-preview></div>");
+                    exportReviewContainer = exportGateContainer.querySelector("[data-export-preparation-review-preview]");
                 }
 
                 if (exportReviewContainer) {
                     exportReviewContainer.innerHTML = this.constructor.renderExportPreparationReviewPanel(currentExportPreparationReview);
                 }
 
-                const exportReviewCard = document.querySelector("[data-export-preparation-review-card]");
+                const exportReviewCard = exportGateContainer.querySelector("[data-export-preparation-review-card]");
                 const exportGateCard = exportReviewCard || exportGateContainer.querySelector("[data-export-preparation-gate-card]");
 
                 if (exportGateCard) {
@@ -3420,6 +3445,56 @@ let currentExportPreparationReview = null;
                         ${decisionLocked ? "Reject locked" : "Reject export preparation review"}
                     </button>
                 </div>
+            </section>
+        `;
+
+    }
+
+    static renderExportAuthorizationGatePanel(gate) {
+
+        const status = gate.status || "unknown";
+
+        return `
+            <section class="export-authorization-gate-preview ${status === "export_authorization_required" ? "is-required" : "is-blocked"}" data-export-authorization-gate-card>
+                <div class="export-authorization-gate-preview__header">
+                    <div>
+                        <p class="section-kicker">Foundation 3.0-C Controlled Export Authorization Gate Browser Preview</p>
+                        <h3>Export Authorization Gate</h3>
+                        <p>Controlled gate after approved Export Preparation Review. No export file is created.</p>
+                    </div>
+                    <span class="status-badge">${this.escapeHtml(status)}</span>
+                </div>
+
+                <dl class="export-authorization-gate-preview__meta">
+                    <div>
+                        <dt>Gate ID</dt>
+                        <dd>${this.escapeHtml(gate.gateId)}</dd>
+                    </div>
+                    <div>
+                        <dt>Source Export Preparation Review</dt>
+                        <dd>${this.escapeHtml(gate.sourceExportPreparationReviewId || "not available")}</dd>
+                    </div>
+                    <div>
+                        <dt>Export Preparation Review Completed</dt>
+                        <dd>${gate.readiness.exportPreparationReviewCompleted ? "Yes" : "No"}</dd>
+                    </div>
+                    <div>
+                        <dt>Export Authorization</dt>
+                        <dd>${gate.readiness.exportAuthorizationRequired ? "Required" : "Not ready"}</dd>
+                    </div>
+                </dl>
+
+                <div class="export-authorization-gate-preview__safety">
+                    <strong>Safety boundary</strong>
+                    <span>Controlled export authorization gate only. Export, client document creation and workflow finalization remain locked.</span>
+                </div>
+
+                <ul class="export-authorization-gate-preview__locks">
+                    <li>Can export: ${gate.permissions.canExport ? "true" : "false"}</li>
+                    <li>Can create client document: ${gate.permissions.canCreateClientDocument ? "true" : "false"}</li>
+                    <li>Can finalize workflow: ${gate.permissions.canFinalizeWorkflow ? "true" : "false"}</li>
+                    <li>Export file created: ${gate.safetyBoundary.exportFileCreated ? "true" : "false"}</li>
+                </ul>
             </section>
         `;
 

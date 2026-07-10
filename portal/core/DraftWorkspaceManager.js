@@ -851,11 +851,77 @@ export default class DraftWorkspaceManager {
 
     }
 
+    static createExportAuthorizationGate(exportPreparationReview = {}, options = {}) {
+
+        const createdAt = options.createdAt || new Date().toISOString();
+
+        const isReviewApproved = exportPreparationReview.status === "approved"
+            && exportPreparationReview.readiness?.exportPreparationReviewCompleted === true
+            && exportPreparationReview.safetyBoundary?.exportPreparationReviewCompleted === true;
+
+        return {
+            gateId: this.createExportAuthorizationGateId(exportPreparationReview),
+            gateType: "export_authorization_gate",
+            sourceExportPreparationReviewId: exportPreparationReview.reviewId || null,
+            sourceExportPreparationGateId: exportPreparationReview.sourceExportPreparationGateId || null,
+            sourceInternalReviewId: exportPreparationReview.sourceInternalReviewId || null,
+            sourceGateId: exportPreparationReview.sourceGateId || null,
+            sourceReviewId: exportPreparationReview.sourceReviewId || null,
+            sourceDraftId: exportPreparationReview.sourceDraftId || null,
+            status: isReviewApproved
+                ? "export_authorization_required"
+                : "blocked_pending_export_preparation_review",
+            createdAt,
+            updatedAt: createdAt,
+            readiness: {
+                exportPreparationReviewCompleted: isReviewApproved,
+                exportAuthorizationRequired: true,
+                exportAuthorizationGranted: false,
+                exportAllowed: false,
+                reportExportAllowed: false,
+                clientDocumentPreparationAllowed: false,
+                workflowFinalizationAllowed: false
+            },
+            permissions: {
+                canExport: false,
+                canCreateClientDocument: false,
+                canFinalizeWorkflow: false
+            },
+            safetyBoundary: this.createExportAuthorizationGateSafetyBoundary()
+        };
+
+    }
+
+    static createExportAuthorizationGateId(exportPreparationReview = {}) {
+
+        const sourceId = exportPreparationReview.reviewId
+            || exportPreparationReview.sourceExportPreparationGateId
+            || exportPreparationReview.sourceDraftId
+            || "unknown-export-preparation-review";
+
+        return `export_authorization_gate-${String(sourceId).replace(/^export_preparation_review-/, "")}`;
+
+    }
+
     static createExportPreparationReviewSafetyBoundary() {
 
         return {
             exportPreparationReviewPersisted: false,
             exportPreparationReviewCompleted: false,
+            exportPrepared: false,
+            exportFileCreated: false,
+            reportExported: false,
+            clientDocumentCreated: false,
+            workflowFinalized: false
+        };
+
+    }
+
+    static createExportAuthorizationGateSafetyBoundary() {
+
+        return {
+            exportAuthorizationGatePersisted: false,
+            exportAuthorizationCompleted: false,
             exportPrepared: false,
             exportFileCreated: false,
             reportExported: false,

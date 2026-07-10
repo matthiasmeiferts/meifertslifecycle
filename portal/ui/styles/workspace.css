@@ -7605,3 +7605,67 @@ button.dashboard-readiness-card__action:focus-visible {
     gap: 12px;
     margin-top: 18px;
 }
+
+/* Foundation 3.0-C Controlled Export Authorization Gate Browser Preview */
+
+.export-authorization-gate-preview {
+    margin-top: 24px;
+    padding: 24px;
+    border: 1px solid rgba(27, 43, 69, 0.16);
+    border-radius: 18px;
+    background: rgba(243, 238, 226, 0.82);
+}
+
+.export-authorization-gate-preview.is-required {
+    border-color: rgba(184, 153, 104, 0.58);
+}
+
+.export-authorization-gate-preview.is-blocked {
+    opacity: 0.76;
+}
+
+.export-authorization-gate-preview__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.export-authorization-gate-preview__header h3 {
+    margin: 4px 0 8px;
+}
+
+.export-authorization-gate-preview__meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin: 22px 0;
+}
+
+.export-authorization-gate-preview__meta div,
+.export-authorization-gate-preview__safety {
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.58);
+}
+
+.export-authorization-gate-preview__meta dt {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.64;
+}
+
+.export-authorization-gate-preview__meta dd {
+    margin: 6px 0 0;
+    font-weight: 600;
+}
+
+.export-authorization-gate-preview__locks {
+    margin: 18px 0 0;
+    padding-left: 18px;
+}
+
+.export-authorization-gate-preview__locks li + li {
+    margin-top: 6px;
+}
