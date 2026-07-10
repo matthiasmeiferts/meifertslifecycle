@@ -1658,6 +1658,39 @@ export default class QuestionCatalogPage {
                         <small data-gate-safety>
                             canExport: false · canCreateClientDocument: false · canFinalizeWorkflow: false
                         </small>
+
+                        <div class="internal-finalization-review-preview" data-internal-finalization-review-preview>
+                            <span>Internal finalization review</span>
+
+                            <div class="internal-finalization-review-preview__summary">
+                                <div>
+                                    <small>Review ID</small>
+                                    <strong data-internal-review-id>Pending</strong>
+                                </div>
+                                <div>
+                                    <small>Status</small>
+                                    <strong data-internal-review-status>blocked_pending_finalization_gate</strong>
+                                </div>
+                                <div>
+                                    <small>Notes</small>
+                                    <strong data-internal-review-notes>0</strong>
+                                </div>
+                            </div>
+
+                            <div class="internal-finalization-review-preview__actions">
+                                <button class="button secondary" type="button" data-add-internal-review-note>Add internal note</button>
+                                <button class="button secondary" type="button" data-approve-internal-review>Approve internal review</button>
+                                <button class="button secondary" type="button" data-reject-internal-review>Reject internal review</button>
+                            </div>
+
+                            <div class="internal-finalization-review-preview__note" data-internal-review-note-preview>
+                                <p>No internal finalization note added yet.</p>
+                            </div>
+
+                            <small data-internal-review-safety>
+                                canExport: false · canCreateClientDocument: false · canFinalizeWorkflow: false
+                            </small>
+                        </div>
                     </div>
                 </div>
             `;
@@ -2735,6 +2768,100 @@ export default class QuestionCatalogPage {
         const gateStatusNode = expertReviewNode.querySelector("[data-gate-status]");
         const gateExpertApprovedNode = expertReviewNode.querySelector("[data-gate-expert-approved]");
         const gateSafetyNode = expertReviewNode.querySelector("[data-gate-safety]");
+        const internalReviewNode = expertReviewNode.querySelector("[data-internal-finalization-review-preview]");
+        const internalReviewIdNode = expertReviewNode.querySelector("[data-internal-review-id]");
+        const internalReviewStatusNode = expertReviewNode.querySelector("[data-internal-review-status]");
+        const internalReviewNotesNode = expertReviewNode.querySelector("[data-internal-review-notes]");
+        const internalReviewNotePreviewNode = expertReviewNode.querySelector("[data-internal-review-note-preview]");
+        const internalReviewSafetyNode = expertReviewNode.querySelector("[data-internal-review-safety]");
+        const addInternalNoteButton = expertReviewNode.querySelector("[data-add-internal-review-note]");
+        const approveInternalButton = expertReviewNode.querySelector("[data-approve-internal-review]");
+        const rejectInternalButton = expertReviewNode.querySelector("[data-reject-internal-review]");
+
+        let currentGate = null;
+        let currentInternalReview = null;
+
+        const renderInternalFinalizationReview = (gate) => {
+            if (!internalReviewNode || !gate) {
+                return;
+            }
+
+            const shouldCreateReview = !currentInternalReview
+                || currentInternalReview.sourceGateId !== gate.gateId
+                || currentInternalReview.readiness.finalizationGateReady !== gate.readiness.expertReviewApproved;
+
+            if (shouldCreateReview) {
+                currentInternalReview = DraftWorkspaceManager.createInternalFinalizationReview(gate, {
+                    reviewer: "Matthias Meiferts",
+                    createdAt: new Date().toISOString()
+                });
+            }
+
+            internalReviewIdNode.textContent = currentInternalReview.reviewId;
+            internalReviewStatusNode.textContent = currentInternalReview.status;
+            internalReviewNotesNode.textContent = String(currentInternalReview.notes.length);
+
+            let internalNoteMarkup = currentInternalReview.status === "blocked_pending_finalization_gate"
+                ? "<p>Expert Review approval required first.</p>"
+                : "<p>No internal finalization note added yet.</p>";
+
+            if (currentInternalReview.notes.length > 0) {
+                const lastNote = currentInternalReview.notes[currentInternalReview.notes.length - 1];
+                internalNoteMarkup = `
+                    <small>${this.escapeHtml(lastNote.category)}</small>
+                    <p>${this.escapeHtml(lastNote.text)}</p>
+                `;
+            }
+
+            if (currentInternalReview.decision) {
+                internalNoteMarkup += `
+                    <div class="internal-finalization-review-preview__decision">
+                        <small>Decision</small>
+                        <p>${this.escapeHtml(currentInternalReview.decision.comment)}</p>
+                    </div>
+                `;
+            }
+
+            internalReviewNotePreviewNode.innerHTML = internalNoteMarkup;
+            internalReviewSafetyNode.textContent = `canExport: ${String(currentInternalReview.permissions.canExport)} · canCreateClientDocument: ${String(currentInternalReview.permissions.canCreateClientDocument)} · canFinalizeWorkflow: ${String(currentInternalReview.permissions.canFinalizeWorkflow)}`;
+
+            const isReady = currentInternalReview.status === "internal_review_required";
+            const hasInternalNote = currentInternalReview.notes.length > 0;
+
+            addInternalNoteButton.disabled = !isReady || hasInternalNote;
+            approveInternalButton.disabled = !isReady || !hasInternalNote;
+            rejectInternalButton.disabled = !isReady || !hasInternalNote;
+
+            if (!isReady) {
+                addInternalNoteButton.textContent = "Internal note locked";
+                approveInternalButton.textContent = "Approval locked";
+                rejectInternalButton.textContent = "Reject locked";
+                addInternalNoteButton.title = "Expert Review approval required first.";
+                approveInternalButton.title = "Expert Review approval required first.";
+                rejectInternalButton.title = "Expert Review approval required first.";
+            } else {
+                approveInternalButton.textContent = "Approve internal review";
+                rejectInternalButton.textContent = "Reject internal review";
+                addInternalNoteButton.title = "";
+                approveInternalButton.title = "";
+                rejectInternalButton.title = "";
+
+                if (hasInternalNote) {
+                    addInternalNoteButton.textContent = "Internal note added";
+                    approveInternalButton.title = "";
+                    rejectInternalButton.title = "";
+                } else {
+                    addInternalNoteButton.textContent = "Add internal note";
+                    approveInternalButton.title = "Internal finalization note required first.";
+                    rejectInternalButton.title = "Internal finalization note required first.";
+                }
+            }
+
+            internalReviewNode.classList.toggle("is-required", currentInternalReview.status === "internal_review_required");
+            internalReviewNode.classList.toggle("is-approved", currentInternalReview.status === "internally_approved");
+            internalReviewNode.classList.toggle("is-rejected", currentInternalReview.status === "internally_rejected");
+            internalReviewNode.classList.toggle("is-blocked", currentInternalReview.status === "blocked_pending_finalization_gate");
+        };
 
         const renderFinalizationGate = () => {
             if (!finalizationGateNode) {
@@ -2750,8 +2877,12 @@ export default class QuestionCatalogPage {
             gateExpertApprovedNode.textContent = String(gate.readiness.expertReviewApproved);
             gateSafetyNode.textContent = `canExport: ${String(gate.permissions.canExport)} · canCreateClientDocument: ${String(gate.permissions.canCreateClientDocument)} · canFinalizeWorkflow: ${String(gate.permissions.canFinalizeWorkflow)}`;
 
+            currentGate = gate;
+
             finalizationGateNode.classList.toggle("is-ready", gate.status === "ready_for_internal_finalization_review");
             finalizationGateNode.classList.toggle("is-blocked", gate.status === "blocked_pending_expert_approval");
+
+            renderInternalFinalizationReview(gate);
         };
 
         const scrollToExpertReview = () => {
@@ -2770,6 +2901,19 @@ export default class QuestionCatalogPage {
 
             window.requestAnimationFrame(() => {
                 finalizationGateNode.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            });
+        };
+
+        const scrollToInternalFinalizationReview = () => {
+            if (!internalReviewNode) {
+                return;
+            }
+
+            window.requestAnimationFrame(() => {
+                internalReviewNode.scrollIntoView({
                     behavior: "smooth",
                     block: "center"
                 });
@@ -2853,6 +2997,55 @@ export default class QuestionCatalogPage {
 
             renderReview();
             scrollToFinalizationGate();
+        });
+
+        addInternalNoteButton.addEventListener("click", () => {
+            if (!currentInternalReview || currentInternalReview.notes.length > 0) {
+                return;
+            }
+
+            currentInternalReview = DraftWorkspaceManager.addInternalFinalizationReviewNote(currentInternalReview, {
+                text: "Internal finalization note added in browser preview.",
+                author: "Matthias Meiferts",
+                category: "internal-finalization"
+            }, {
+                createdAt: new Date().toISOString()
+            });
+
+            renderInternalFinalizationReview(currentGate);
+            scrollToInternalFinalizationReview();
+        });
+
+        approveInternalButton.addEventListener("click", () => {
+            if (!currentInternalReview) {
+                return;
+            }
+
+            currentInternalReview = DraftWorkspaceManager.approveInternalFinalizationReview(currentInternalReview, {
+                comment: "Internally approved in browser preview. Export remains locked.",
+                decidedBy: "Matthias Meiferts"
+            }, {
+                updatedAt: new Date().toISOString()
+            });
+
+            renderInternalFinalizationReview(currentGate);
+            scrollToInternalFinalizationReview();
+        });
+
+        rejectInternalButton.addEventListener("click", () => {
+            if (!currentInternalReview) {
+                return;
+            }
+
+            currentInternalReview = DraftWorkspaceManager.rejectInternalFinalizationReview(currentInternalReview, {
+                comment: "Internally rejected in browser preview. Export remains locked.",
+                decidedBy: "Matthias Meiferts"
+            }, {
+                updatedAt: new Date().toISOString()
+            });
+
+            renderInternalFinalizationReview(currentGate);
+            scrollToInternalFinalizationReview();
         });
 
         renderReview();
