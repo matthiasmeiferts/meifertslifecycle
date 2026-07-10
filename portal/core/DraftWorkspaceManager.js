@@ -903,6 +903,77 @@ export default class DraftWorkspaceManager {
 
     }
 
+    static createReportExportPreparationPackage(exportAuthorizationGate = {}, options = {}) {
+
+        const createdAt = options.createdAt || new Date().toISOString();
+
+        const hasValidType = exportAuthorizationGate.gateType === "export_authorization_gate";
+        const hasRequiredStatus = exportAuthorizationGate.status === "export_authorization_required";
+        const hasValidReadiness = exportAuthorizationGate.readiness?.exportPreparationReviewCompleted === true
+            && exportAuthorizationGate.readiness?.exportAuthorizationRequired === true
+            && exportAuthorizationGate.readiness?.exportAuthorizationGranted === false;
+        const hasLockedPermissions = exportAuthorizationGate.permissions?.canExport === false
+            && exportAuthorizationGate.permissions?.canCreateClientDocument === false
+            && exportAuthorizationGate.permissions?.canFinalizeWorkflow === false;
+        const hasSafeBoundary = exportAuthorizationGate.safetyBoundary?.exportFileCreated === false
+            && exportAuthorizationGate.safetyBoundary?.reportExported === false
+            && exportAuthorizationGate.safetyBoundary?.clientDocumentCreated === false
+            && exportAuthorizationGate.safetyBoundary?.workflowFinalized === false;
+
+        const isAuthorizationGateValid = hasValidType
+            && hasRequiredStatus
+            && hasValidReadiness
+            && hasLockedPermissions
+            && hasSafeBoundary;
+
+        return {
+            packageId: this.createReportExportPreparationPackageId(exportAuthorizationGate),
+            packageType: "report_export_preparation_package",
+            sourceExportAuthorizationGateId: exportAuthorizationGate.gateId || null,
+            sourceExportPreparationReviewId: exportAuthorizationGate.sourceExportPreparationReviewId || null,
+            sourceDraftId: exportAuthorizationGate.sourceDraftId || null,
+            status: isAuthorizationGateValid
+                ? "report_export_preparation_required"
+                : "blocked_pending_export_authorization_gate",
+            createdAt,
+            updatedAt: createdAt,
+            readiness: {
+                exportAuthorizationGateValidated: isAuthorizationGateValid,
+                reportExportPreparationRequired: true,
+                metadataOnlyPackage: true,
+                exportPackagePrepared: isAuthorizationGateValid,
+                exportAllowed: false,
+                reportExportAllowed: false,
+                clientDocumentPreparationAllowed: false,
+                workflowFinalizationAllowed: false
+            },
+            permissions: {
+                canExport: false,
+                canCreateClientDocument: false,
+                canFinalizeWorkflow: false
+            },
+            safetyBoundary: this.createReportExportPreparationPackageSafetyBoundary(isAuthorizationGateValid),
+            exportReadinessChecklist: {
+                exportAuthorizationGateValidated: isAuthorizationGateValid,
+                metadataOnlyPackage: true,
+                noBinaryFilesCreated: true,
+                noWorkflowFinalization: true
+            }
+        };
+
+    }
+
+    static createReportExportPreparationPackageId(exportAuthorizationGate = {}) {
+
+        const sourceId = exportAuthorizationGate.gateId
+            || exportAuthorizationGate.sourceExportPreparationReviewId
+            || exportAuthorizationGate.sourceDraftId
+            || "unknown-export-authorization-gate";
+
+        return `report_export_preparation_package-${String(sourceId).replace(/^export_authorization_gate-/, "")}`;
+
+    }
+
     static createExportPreparationReviewSafetyBoundary() {
 
         return {
@@ -923,6 +994,20 @@ export default class DraftWorkspaceManager {
             exportAuthorizationGatePersisted: false,
             exportAuthorizationCompleted: false,
             exportPrepared: false,
+            exportFileCreated: false,
+            reportExported: false,
+            clientDocumentCreated: false,
+            workflowFinalized: false
+        };
+
+    }
+
+    static createReportExportPreparationPackageSafetyBoundary(exportPackagePrepared = false) {
+
+        return {
+            reportExportPreparationPackagePersisted: false,
+            exportAuthorizationGateValidated: exportPackagePrepared,
+            exportPackagePrepared,
             exportFileCreated: false,
             reportExported: false,
             clientDocumentCreated: false,
