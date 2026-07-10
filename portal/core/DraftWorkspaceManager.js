@@ -15,6 +15,16 @@
 
 export default class DraftWorkspaceManager {
 
+    static clonePlainObject(value = {}) {
+
+        return {
+            ...(value || {})
+        };
+
+    }
+
+
+
     static createDraftRecord(sourceDraft = {}, options = {}) {
 
         const draftType = this.resolveDraftType(sourceDraft);
@@ -651,6 +661,207 @@ export default class DraftWorkspaceManager {
         const sourceId = internalReview.reviewId || internalReview.sourceGateId || internalReview.sourceDraftId || "unknown-internal-review";
 
         return `export_preparation_gate-${String(sourceId).replace(/^internal_finalization_review-/, "")}`;
+
+    }
+
+    static createExportPreparationReview(exportPreparationGate = {}, options = {}) {
+
+        const createdAt = options.createdAt || new Date().toISOString();
+
+        const isGateReady = exportPreparationGate.status === "export_preparation_review_required"
+            && exportPreparationGate.readiness?.internalFinalizationReviewCompleted === true;
+
+        return {
+            reviewId: this.createExportPreparationReviewId(exportPreparationGate),
+            reviewType: "export_preparation_review",
+            sourceExportPreparationGateId: exportPreparationGate.gateId || null,
+            sourceInternalReviewId: exportPreparationGate.sourceInternalReviewId || null,
+            sourceGateId: exportPreparationGate.sourceGateId || null,
+            sourceReviewId: exportPreparationGate.sourceReviewId || null,
+            sourceDraftId: exportPreparationGate.sourceDraftId || null,
+            status: isGateReady
+                ? "review_required"
+                : "blocked_pending_export_preparation_gate",
+            reviewer: options.reviewer || "Internal Export Preparation Reviewer",
+            notes: [],
+            decision: null,
+            createdAt,
+            updatedAt: createdAt,
+            readiness: {
+                exportPreparationGateReady: isGateReady,
+                exportPreparationReviewCompleted: false,
+                exportPreparationAllowed: false,
+                reportExportAllowed: false,
+                clientDocumentPreparationAllowed: false,
+                workflowFinalizationAllowed: false
+            },
+            permissions: {
+                canExport: false,
+                canCreateClientDocument: false,
+                canFinalizeWorkflow: false
+            },
+            safetyBoundary: this.createExportPreparationReviewSafetyBoundary()
+        };
+
+    }
+
+    static createExportPreparationReviewId(exportPreparationGate = {}) {
+
+        const sourceId = exportPreparationGate.gateId || exportPreparationGate.sourceDraftId || "unknown-export-preparation-gate";
+
+        return `export_preparation_review-${String(sourceId).replace(/^export_preparation_gate-/, "")}`;
+
+    }
+
+    static addExportPreparationReviewNote(exportPreparationReview = {}, note = {}, options = {}) {
+
+        const createdAt = options.createdAt || new Date().toISOString();
+
+        return {
+            ...exportPreparationReview,
+            notes: [
+                ...(exportPreparationReview.notes || []),
+                {
+                    noteId: note.noteId || `export_preparation_note-${Date.now()}`,
+                    text: note.text || "",
+                    author: note.author || "Internal Export Preparation Reviewer",
+                    category: note.category || "export-preparation",
+                    createdAt
+                }
+            ],
+            updatedAt: createdAt
+        };
+
+    }
+
+    static approveExportPreparationReview(exportPreparationReview = {}, decision = {}, options = {}) {
+
+        const updatedAt = options.updatedAt || new Date().toISOString();
+        const hasNote = (exportPreparationReview.notes || []).length > 0;
+        const canApprove = exportPreparationReview.status === "review_required" && hasNote;
+
+        if (!canApprove) {
+            return {
+                ...exportPreparationReview,
+                updatedAt
+            };
+        }
+
+        return {
+            ...exportPreparationReview,
+            status: "approved",
+            decision: {
+                decisionType: "approved",
+                comment: decision.comment || "",
+                decidedBy: decision.decidedBy || "Internal Export Preparation Reviewer",
+                decidedAt: updatedAt
+            },
+            readiness: {
+                ...exportPreparationReview.readiness,
+                exportPreparationReviewCompleted: true,
+                exportPreparationAllowed: false,
+                reportExportAllowed: false,
+                clientDocumentPreparationAllowed: false,
+                workflowFinalizationAllowed: false
+            },
+            permissions: {
+                canExport: false,
+                canCreateClientDocument: false,
+                canFinalizeWorkflow: false
+            },
+            safetyBoundary: {
+                ...this.clonePlainObject(exportPreparationReview.safetyBoundary),
+                exportPreparationReviewCompleted: true,
+                exportPrepared: false,
+                exportFileCreated: false,
+                reportExported: false,
+                clientDocumentCreated: false,
+                workflowFinalized: false
+            },
+            updatedAt
+        };
+
+    }
+
+    static rejectExportPreparationReview(exportPreparationReview = {}, decision = {}, options = {}) {
+
+        const updatedAt = options.updatedAt || new Date().toISOString();
+        const hasNote = (exportPreparationReview.notes || []).length > 0;
+        const canReject = exportPreparationReview.status === "review_required" && hasNote;
+
+        if (!canReject) {
+            return {
+                ...exportPreparationReview,
+                updatedAt
+            };
+        }
+
+        return {
+            ...exportPreparationReview,
+            status: "rejected",
+            decision: {
+                decisionType: "rejected",
+                comment: decision.comment || "",
+                decidedBy: decision.decidedBy || "Internal Export Preparation Reviewer",
+                decidedAt: updatedAt
+            },
+            readiness: {
+                ...exportPreparationReview.readiness,
+                exportPreparationReviewCompleted: false,
+                exportPreparationAllowed: false,
+                reportExportAllowed: false,
+                clientDocumentPreparationAllowed: false,
+                workflowFinalizationAllowed: false
+            },
+            permissions: {
+                canExport: false,
+                canCreateClientDocument: false,
+                canFinalizeWorkflow: false
+            },
+            safetyBoundary: {
+                ...this.clonePlainObject(exportPreparationReview.safetyBoundary),
+                exportPreparationReviewCompleted: false,
+                exportPrepared: false,
+                exportFileCreated: false,
+                reportExported: false,
+                clientDocumentCreated: false,
+                workflowFinalized: false
+            },
+            updatedAt
+        };
+
+    }
+
+    static cloneExportPreparationReview(exportPreparationReview = {}) {
+
+        return {
+            ...exportPreparationReview,
+            notes: (exportPreparationReview.notes || []).map((note) => ({
+                ...note
+            })),
+            decision: exportPreparationReview.decision
+                ? {
+                    ...exportPreparationReview.decision
+                }
+                : null,
+            readiness: this.clonePlainObject(exportPreparationReview.readiness),
+            permissions: this.clonePlainObject(exportPreparationReview.permissions),
+            safetyBoundary: this.clonePlainObject(exportPreparationReview.safetyBoundary)
+        };
+
+    }
+
+    static createExportPreparationReviewSafetyBoundary() {
+
+        return {
+            exportPreparationReviewPersisted: false,
+            exportPreparationReviewCompleted: false,
+            exportPrepared: false,
+            exportFileCreated: false,
+            reportExported: false,
+            clientDocumentCreated: false,
+            workflowFinalized: false
+        };
 
     }
 
