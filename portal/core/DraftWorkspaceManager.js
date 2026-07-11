@@ -1016,6 +1016,127 @@ export default class DraftWorkspaceManager {
 
     }
 
+    static createReportExportAssemblyPreview(reportExportPreparationPackage = {}, options = {}) {
+
+        const isPreparationPackageValid = reportExportPreparationPackage
+            && reportExportPreparationPackage.packageType === "report_export_preparation_package"
+            && reportExportPreparationPackage.status === "report_export_preparation_required"
+            && reportExportPreparationPackage.safetyBoundary?.exportPackagePrepared === true;
+
+        const createdAt = options.createdAt || new Date().toISOString();
+        const sourceDraftId = reportExportPreparationPackage.sourceDraftId || "unknown_draft";
+
+        const assemblySections = isPreparationPackageValid
+            ? this.createReportExportAssemblySections(reportExportPreparationPackage)
+            : [];
+
+        return {
+            assemblyId: this.createReportExportAssemblyPreviewId(reportExportPreparationPackage),
+            assemblyType: "report_export_assembly_preview",
+            sourcePackageId: reportExportPreparationPackage.packageId || null,
+            sourceDraftId,
+            status: isPreparationPackageValid
+                ? "report_export_assembly_preview_required"
+                : "blocked_pending_report_export_preparation_package",
+            createdAt,
+            createdBy: options.createdBy || "system",
+            assemblyPrepared: isPreparationPackageValid,
+            assemblySectionCount: assemblySections.length,
+            assemblySections,
+            governance: {
+                requiresReportExportPreparationPackage: true,
+                preparationPackageStatus: reportExportPreparationPackage.status || "missing",
+                requiresExportReadinessReview: true,
+                allowsDirectExport: false
+            },
+            permissions: {
+                canExport: false,
+                canCreateClientDocument: false,
+                canFinalizeWorkflow: false
+            },
+            safetyBoundary: this.createReportExportAssemblyPreviewSafetyBoundary(isPreparationPackageValid)
+        };
+
+    }
+
+    static createReportExportAssemblyPreviewId(reportExportPreparationPackage = {}) {
+
+        const sourceId = reportExportPreparationPackage.packageId
+            || reportExportPreparationPackage.sourceDraftId
+            || "unknown_draft";
+
+        return `report_export_assembly_preview-${String(sourceId).replace(/^report_export_preparation_package-/, "")}`;
+
+    }
+
+    static createReportExportAssemblySections(reportExportPreparationPackage = {}) {
+
+        const sourceDraftId = reportExportPreparationPackage.sourceDraftId || "unknown_draft";
+
+        return [
+            {
+                sectionId: "executive_summary",
+                label: "Executive summary",
+                sourceDraftId,
+                status: "prepared_for_assembly_preview",
+                includedInPreview: true
+            },
+            {
+                sectionId: "technical_narrative",
+                label: "Technical narrative",
+                sourceDraftId,
+                status: "prepared_for_assembly_preview",
+                includedInPreview: true
+            },
+            {
+                sectionId: "evidence_references",
+                label: "Evidence references",
+                sourceDraftId,
+                status: "prepared_for_assembly_preview",
+                includedInPreview: true
+            },
+            {
+                sectionId: "assessment_summary",
+                label: "Assessment summary",
+                sourceDraftId,
+                status: "prepared_for_assembly_preview",
+                includedInPreview: true
+            },
+            {
+                sectionId: "recommendation_summary",
+                label: "Recommendation summary",
+                sourceDraftId,
+                status: "prepared_for_assembly_preview",
+                includedInPreview: true
+            },
+            {
+                sectionId: "decision_note",
+                label: "Decision note",
+                sourceDraftId,
+                status: "prepared_for_assembly_preview",
+                includedInPreview: true
+            }
+        ];
+
+    }
+
+    static createReportExportAssemblyPreviewSafetyBoundary(assemblyPrepared = false) {
+
+        return {
+            reportExportAssemblyPreviewPersisted: false,
+            assemblyPrepared: Boolean(assemblyPrepared),
+            exportPackageValidated: Boolean(assemblyPrepared),
+            canExport: false,
+            canCreateClientDocument: false,
+            canFinalizeWorkflow: false,
+            exportFileCreated: false,
+            reportExported: false,
+            clientDocumentCreated: false,
+            workflowFinalized: false
+        };
+
+    }
+
     static createExportPreparationGateSafetyBoundary() {
 
         return {
