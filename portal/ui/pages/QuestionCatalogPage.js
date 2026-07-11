@@ -3292,8 +3292,8 @@ let currentExportPreparationReview = null;
                     reviewer: "Matthias Meiferts",
                     createdAt: new Date().toISOString()
                 });
-            }
-        });
+
+                const renderInlineExportPreparationReview = () => {
 
                         let exportAuthorizationContainer = exportGateContainer.querySelector("[data-export-authorization-gate-preview]");
 
@@ -3321,6 +3321,8 @@ let currentExportPreparationReview = null;
                             reportExportPackageContainer.innerHTML = this.renderReportExportPreparationPackagePanel(currentReportExportPreparationPackage);
                         }
                     };
+
+                const bindInlineExportPreparationReviewActions = () => {
 
                     const addExportPreparationReviewNoteButton = exportReviewContainer.querySelector("[data-add-export-preparation-review-note]");
                     const approveExportPreparationReviewButton = exportReviewContainer.querySelector("[data-approve-export-preparation-review]");
@@ -3390,7 +3392,6 @@ let currentExportPreparationReview = null;
                         block: "center"
                     });
                 }
-            }
         });
 
         rejectInternalButton.addEventListener("click", () => {
