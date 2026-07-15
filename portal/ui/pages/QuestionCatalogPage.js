@@ -33,6 +33,7 @@ import ExportAuthorizationGatePreview from "../components/ExportAuthorizationGat
 import ExportPreparationReviewPreview from "../components/ExportPreparationReviewPreview.js";
 import ExportPreparationGatePreview from "../components/ExportPreparationGatePreview.js";
 import InternalFinalizationReviewPreview from "../components/InternalFinalizationReviewPreview.js";
+import FinalizationGatePreview from "../components/FinalizationGatePreview.js";
 
 export default class QuestionCatalogPage {
 
@@ -2775,10 +2776,6 @@ export default class QuestionCatalogPage {
         const approveButton = expertReviewNode.querySelector("[data-approve-review]");
         const rejectButton = expertReviewNode.querySelector("[data-reject-review]");
         const finalizationGateNode = expertReviewNode.querySelector("[data-finalization-gate-preview]");
-        const gateIdNode = expertReviewNode.querySelector("[data-gate-id]");
-        const gateStatusNode = expertReviewNode.querySelector("[data-gate-status]");
-        const gateExpertApprovedNode = expertReviewNode.querySelector("[data-gate-expert-approved]");
-        const gateSafetyNode = expertReviewNode.querySelector("[data-gate-safety]");
         const internalReviewNode = expertReviewNode.querySelector("[data-internal-finalization-review-preview]");
         const exportFlowNode = expertReviewNode.querySelector("[data-export-flow-preview]");
 
@@ -2890,15 +2887,11 @@ let currentExportPreparationReview = null;
                 createdAt: new Date().toISOString()
             });
 
-            gateIdNode.textContent = gate.gateId;
-            gateStatusNode.textContent = gate.status;
-            gateExpertApprovedNode.textContent = String(gate.readiness.expertReviewApproved);
-            gateSafetyNode.textContent = `canExport: ${String(gate.permissions.canExport)} · canCreateClientDocument: ${String(gate.permissions.canCreateClientDocument)} · canFinalizeWorkflow: ${String(gate.permissions.canFinalizeWorkflow)}`;
-
             currentGate = gate;
 
-            finalizationGateNode.classList.toggle("is-ready", gate.status === "ready_for_internal_finalization_review");
-            finalizationGateNode.classList.toggle("is-blocked", gate.status === "blocked_pending_expert_approval");
+            finalizationGateNode.replaceChildren(
+                FinalizationGatePreview.create(gate)
+            );
 
             renderInternalFinalizationReview(gate);
         };
