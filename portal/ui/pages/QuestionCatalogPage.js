@@ -34,6 +34,7 @@ import ExportPreparationReviewPreview from "../components/ExportPreparationRevie
 import ExportPreparationGatePreview from "../components/ExportPreparationGatePreview.js";
 import InternalFinalizationReviewPreview from "../components/InternalFinalizationReviewPreview.js";
 import FinalizationGatePreview from "../components/FinalizationGatePreview.js";
+import ExpertReviewPreview from "../components/ExpertReviewPreview.js";
 
 export default class QuestionCatalogPage {
 
@@ -2767,14 +2768,6 @@ export default class QuestionCatalogPage {
 
         let currentReview = expertReview;
 
-        const reviewIdNode = expertReviewNode.querySelector("[data-review-id]");
-        const reviewStatusNode = expertReviewNode.querySelector("[data-review-status]");
-        const reviewNotesNode = expertReviewNode.querySelector("[data-review-notes]");
-        const reviewNotePreviewNode = expertReviewNode.querySelector("[data-review-note-preview]");
-        const reviewSafetyNode = expertReviewNode.querySelector("[data-review-safety]");
-        const addNoteButton = expertReviewNode.querySelector("[data-add-review-note]");
-        const approveButton = expertReviewNode.querySelector("[data-approve-review]");
-        const rejectButton = expertReviewNode.querySelector("[data-reject-review]");
         const finalizationGateNode = expertReviewNode.querySelector("[data-finalization-gate-preview]");
         const internalReviewNode = expertReviewNode.querySelector("[data-internal-finalization-review-preview]");
         const exportFlowNode = expertReviewNode.querySelector("[data-export-flow-preview]");
@@ -2932,60 +2925,56 @@ let currentExportPreparationReview = null;
         };
 
         const renderReview = () => {
-            reviewIdNode.textContent = currentReview.reviewId;
-            reviewStatusNode.textContent = currentReview.status;
-            reviewNotesNode.textContent = String(currentReview.notes.length);
+            expertReviewNode.replaceChildren(
+                ExpertReviewPreview.create(currentReview, {
+                    onAddNote: () => {
+                        if (currentReview.notes.length > 0 || currentReview.status !== "review_required") {
+                            return;
+                        }
 
-            let noteMarkup = "<p>No review note added yet.</p>";
+                        currentReview = DraftWorkspaceManager.addExpertReviewNote(currentReview, {
+                            text: "Review note added in browser preview.",
+                            author: "Matthias Meiferts",
+                            category: "expert-review"
+                        }, {
+                            createdAt: new Date().toISOString()
+                        });
 
-            if (currentReview.notes.length > 0) {
-                const lastNote = currentReview.notes[currentReview.notes.length - 1];
-                noteMarkup = `
-                    <small>${this.escapeHtml(lastNote.category)}</small>
-                    <p>${this.escapeHtml(lastNote.text)}</p>
-                `;
-            }
+                        renderReview();
+                        scrollToExpertReview();
+                    },
+                    onApprove: () => {
+                        if (currentReview.notes.length === 0 || currentReview.status !== "review_required") {
+                            return;
+                        }
 
-            if (currentReview.decision) {
-                noteMarkup += `
-                    <div class="expert-review-preview__decision">
-                        <small>Decision</small>
-                        <p>${this.escapeHtml(currentReview.decision.comment)}</p>
-                    </div>
-                `;
-            }
+                        currentReview = DraftWorkspaceManager.approveExpertReview(currentReview, {
+                            comment: "Approved in browser preview.",
+                            decidedBy: "Matthias Meiferts"
+                        }, {
+                            updatedAt: new Date().toISOString()
+                        });
 
-            const hasReviewNote = currentReview.notes.length > 0;
-            const expertDecisionLocked = !hasReviewNote || currentReview.status !== "review_required";
+                        renderReview();
+                        scrollToFinalizationGate();
+                    },
+                    onReject: () => {
+                        if (currentReview.notes.length === 0 || currentReview.status !== "review_required") {
+                            return;
+                        }
 
-            approveButton.disabled = expertDecisionLocked;
-            rejectButton.disabled = expertDecisionLocked;
+                        currentReview = DraftWorkspaceManager.rejectExpertReview(currentReview, {
+                            comment: "Rejected in browser preview.",
+                            decidedBy: "Matthias Meiferts"
+                        }, {
+                            updatedAt: new Date().toISOString()
+                        });
 
-            if (!hasReviewNote) {
-                approveButton.textContent = "Approval locked";
-                rejectButton.textContent = "Reject locked";
-                approveButton.title = "Expert review note required first.";
-                rejectButton.title = "Expert review note required first.";
-            } else if (currentReview.status === "review_required") {
-                approveButton.textContent = "Approve review";
-                rejectButton.textContent = "Reject review";
-                approveButton.title = "";
-                rejectButton.title = "";
-            } else {
-                approveButton.textContent = "Approval locked";
-                rejectButton.textContent = "Reject locked";
-                approveButton.title = "Expert review decision already recorded.";
-                rejectButton.title = "Expert review decision already recorded.";
-            }
-
-            reviewNotePreviewNode.innerHTML = noteMarkup;
-
-            reviewSafetyNode.textContent = `canExport: ${String(currentReview.permissions.canExport)} · canCreateClientDocument: ${String(currentReview.permissions.canCreateClientDocument)} · canFinalizeWorkflow: ${String(currentReview.permissions.canFinalizeWorkflow)} · expertApprovalGranted: ${String(currentReview.safetyBoundary.expertApprovalGranted)}`;
-
-            expertReviewNode.classList.toggle("is-approved", currentReview.status === "approved");
-            expertReviewNode.classList.toggle("is-rejected", currentReview.status === "rejected");
-            expertReviewNode.classList.toggle("is-review-required", currentReview.status === "review_required");
-            expertReviewNode.classList.toggle("is-note-required", !hasReviewNote && currentReview.status === "review_required");
+                        renderReview();
+                        scrollToFinalizationGate();
+                    }
+                })
+            );
 
             renderFinalizationGate();
         };
@@ -3151,59 +3140,6 @@ let currentExportPreparationReview = null;
             renderExportAuthorizationGate();
         };
 
-
-        addNoteButton.addEventListener("click", () => {
-            if (currentReview.notes.length > 0) {
-                return;
-            }
-
-            currentReview = DraftWorkspaceManager.addExpertReviewNote(currentReview, {
-                text: "Review note added in browser preview.",
-                author: "Matthias Meiferts",
-                category: "expert-review"
-            }, {
-                createdAt: new Date().toISOString()
-            });
-
-            addNoteButton.disabled = true;
-            addNoteButton.textContent = "Review note added";
-
-    
-        renderReview();
-            scrollToExpertReview();
-        });
-
-        approveButton.addEventListener("click", () => {
-            if (currentReview.notes.length === 0 || currentReview.status !== "review_required") {
-                return;
-            }
-
-            currentReview = DraftWorkspaceManager.approveExpertReview(currentReview, {
-                comment: "Approved in browser preview.",
-                decidedBy: "Matthias Meiferts"
-            }, {
-                updatedAt: new Date().toISOString()
-            });
-
-            renderReview();
-            scrollToFinalizationGate();
-        });
-
-        rejectButton.addEventListener("click", () => {
-            if (currentReview.notes.length === 0 || currentReview.status !== "review_required") {
-                return;
-            }
-
-            currentReview = DraftWorkspaceManager.rejectExpertReview(currentReview, {
-                comment: "Rejected in browser preview.",
-                decidedBy: "Matthias Meiferts"
-            }, {
-                updatedAt: new Date().toISOString()
-            });
-
-            renderReview();
-            scrollToFinalizationGate();
-        });
 
         renderReview();
 
