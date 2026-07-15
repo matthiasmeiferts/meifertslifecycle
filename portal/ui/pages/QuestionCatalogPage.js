@@ -29,6 +29,7 @@ import MetricCard from "../components/MetricCard.js";
 import EmptyState from "../components/EmptyState.js";
 import ReportExportAssemblyPreview from "../components/ReportExportAssemblyPreview.js";
 import ReportExportPreparationPackagePreview from "../components/ReportExportPreparationPackagePreview.js";
+import ExportAuthorizationGatePreview from "../components/ExportAuthorizationGatePreview.js";
 
 export default class QuestionCatalogPage {
 
@@ -3015,7 +3016,11 @@ let currentExportPreparationReview = null;
                 return;
             }
 
-            exportAuthorizationContainer.innerHTML = this.renderExportAuthorizationGatePanel(currentExportAuthorizationGate);
+            exportAuthorizationContainer.replaceChildren(
+                ExportAuthorizationGatePreview.create(
+                    currentExportAuthorizationGate
+                )
+            );
             renderReportExportPreparationPackage();
         };
 
@@ -3339,7 +3344,11 @@ let currentExportPreparationReview = null;
                         }
 
                         if (exportAuthorizationContainer) {
-                            exportAuthorizationContainer.innerHTML = this.renderExportAuthorizationGatePanel(currentExportAuthorizationGate);
+                            exportAuthorizationContainer.replaceChildren(
+                                ExportAuthorizationGatePreview.create(
+                                    currentExportAuthorizationGate
+                                )
+                            );
                         }
 
                         currentReportExportPreparationPackage = DraftWorkspaceManager.createReportExportPreparationPackage(currentExportAuthorizationGate || {}, {
@@ -3538,56 +3547,6 @@ let currentExportPreparationReview = null;
                         ${decisionLocked ? "Reject locked" : "Reject export preparation review"}
                     </button>
                 </div>
-            </section>
-        `;
-
-    }
-
-    static renderExportAuthorizationGatePanel(gate) {
-
-        const status = gate.status || "unknown";
-
-        return `
-            <section class="export-authorization-gate-preview ${status === "export_authorization_required" ? "is-required" : "is-blocked"}" data-export-authorization-gate-card>
-                <div class="export-authorization-gate-preview__header">
-                    <div>
-                        <p class="section-kicker">Foundation 3.0-C Controlled Export Authorization Gate Browser Preview</p>
-                        <h3>Export Authorization Gate</h3>
-                        <p>Controlled gate after approved Export Preparation Review. No export file is created.</p>
-                    </div>
-                    <span class="status-badge">${this.escapeHtml(status)}</span>
-                </div>
-
-                <dl class="export-authorization-gate-preview__meta">
-                    <div>
-                        <dt>Gate ID</dt>
-                        <dd>${this.escapeHtml(gate.gateId)}</dd>
-                    </div>
-                    <div>
-                        <dt>Source Export Preparation Review</dt>
-                        <dd>${this.escapeHtml(gate.sourceExportPreparationReviewId || "not available")}</dd>
-                    </div>
-                    <div>
-                        <dt>Export Preparation Review Completed</dt>
-                        <dd>${gate.readiness.exportPreparationReviewCompleted ? "Yes" : "No"}</dd>
-                    </div>
-                    <div>
-                        <dt>Export Authorization</dt>
-                        <dd>${gate.readiness.exportAuthorizationRequired ? "Required" : "Not ready"}</dd>
-                    </div>
-                </dl>
-
-                <div class="export-authorization-gate-preview__safety">
-                    <strong>Safety boundary</strong>
-                    <span>Controlled export authorization gate only. Export, client document creation and workflow finalization remain locked.</span>
-                </div>
-
-                <ul class="export-authorization-gate-preview__locks">
-                    <li>Can export: ${gate.permissions.canExport ? "true" : "false"}</li>
-                    <li>Can create client document: ${gate.permissions.canCreateClientDocument ? "true" : "false"}</li>
-                    <li>Can finalize workflow: ${gate.permissions.canFinalizeWorkflow ? "true" : "false"}</li>
-                    <li>Export file created: ${gate.safetyBoundary.exportFileCreated ? "true" : "false"}</li>
-                </ul>
             </section>
         `;
 
