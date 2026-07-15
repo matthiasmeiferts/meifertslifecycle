@@ -28,6 +28,7 @@ import MetricCard from "../components/MetricCard.js";
 
 import EmptyState from "../components/EmptyState.js";
 import ReportExportAssemblyPreview from "../components/ReportExportAssemblyPreview.js";
+import ReportExportPreparationPackagePreview from "../components/ReportExportPreparationPackagePreview.js";
 
 export default class QuestionCatalogPage {
 
@@ -3038,7 +3039,11 @@ let currentExportPreparationReview = null;
                 return;
             }
 
-            preparationPackageContainer.innerHTML = this.renderReportExportPreparationPackagePanel(currentReportExportPreparationPackage);
+            preparationPackageContainer.replaceChildren(
+                ReportExportPreparationPackagePreview.create(
+                    currentReportExportPreparationPackage
+                )
+            );
 
             const assemblyPreviewModel = DraftWorkspaceManager.createReportExportAssemblyPreview(
                 currentReportExportPreparationPackage,
@@ -3349,7 +3354,11 @@ let currentExportPreparationReview = null;
                         }
 
                         if (reportExportPackageContainer) {
-                            reportExportPackageContainer.innerHTML = this.renderReportExportPreparationPackagePanel(currentReportExportPreparationPackage);
+                            reportExportPackageContainer.replaceChildren(
+                                ReportExportPreparationPackagePreview.create(
+                                    currentReportExportPreparationPackage
+                                )
+                            );
                         }
                     };
 
@@ -3578,57 +3587,6 @@ let currentExportPreparationReview = null;
                     <li>Can create client document: ${gate.permissions.canCreateClientDocument ? "true" : "false"}</li>
                     <li>Can finalize workflow: ${gate.permissions.canFinalizeWorkflow ? "true" : "false"}</li>
                     <li>Export file created: ${gate.safetyBoundary.exportFileCreated ? "true" : "false"}</li>
-                </ul>
-            </section>
-        `;
-
-    }
-
-    static renderReportExportPreparationPackagePanel(reportExportPreparationPackage) {
-
-        const status = reportExportPreparationPackage.status || "unknown";
-
-        return `
-            <section class="report-export-preparation-package-preview ${status === "report_export_preparation_required" ? "is-required" : "is-blocked"}" data-report-export-preparation-package-card>
-                <div class="report-export-preparation-package-preview__header">
-                    <div>
-                        <p class="section-kicker">Foundation 3.1-C Controlled Report Export Preparation Package Browser Preview</p>
-                        <h3>Report Export Preparation Package</h3>
-                        <p>Controlled metadata-only preparation layer after the Export Authorization Gate. No export file, PDF, client document or workflow finalization is created.</p>
-                    </div>
-                    <span class="status-badge">${this.escapeHtml(status)}</span>
-                </div>
-
-                <dl class="report-export-preparation-package-preview__meta">
-                    <div>
-                        <dt>Package ID</dt>
-                        <dd>${this.escapeHtml(reportExportPreparationPackage.packageId)}</dd>
-                    </div>
-                    <div>
-                        <dt>Package Type</dt>
-                        <dd>${this.escapeHtml(reportExportPreparationPackage.packageType || "not available")}</dd>
-                    </div>
-                    <div>
-                        <dt>Source Export Authorization Gate</dt>
-                        <dd>${this.escapeHtml(reportExportPreparationPackage.sourceExportAuthorizationGateId || "not available")}</dd>
-                    </div>
-                    <div>
-                        <dt>Export Package Prepared</dt>
-                        <dd>${reportExportPreparationPackage.safetyBoundary?.exportPackagePrepared ? "Yes" : "No"}</dd>
-                    </div>
-                </dl>
-
-                <div class="report-export-preparation-package-preview__safety">
-                    <strong>Safety boundary</strong>
-                    <span>Preparation package metadata only. Export, client document creation and workflow finalization remain locked.</span>
-                </div>
-
-                <ul class="report-export-preparation-package-preview__locks">
-                    <li>Can export: ${reportExportPreparationPackage.permissions.canExport ? "true" : "false"}</li>
-                    <li>Can create client document: ${reportExportPreparationPackage.permissions.canCreateClientDocument ? "true" : "false"}</li>
-                    <li>Can finalize workflow: ${reportExportPreparationPackage.permissions.canFinalizeWorkflow ? "true" : "false"}</li>
-                    <li>Export file created: ${reportExportPreparationPackage.safetyBoundary.exportFileCreated ? "true" : "false"}</li>
-                    <li>Report exported: ${reportExportPreparationPackage.safetyBoundary.reportExported ? "true" : "false"}</li>
                 </ul>
             </section>
         `;
