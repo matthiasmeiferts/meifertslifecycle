@@ -27,6 +27,7 @@ import SectionHeader from "../components/SectionHeader.js";
 import MetricCard from "../components/MetricCard.js";
 
 import EmptyState from "../components/EmptyState.js";
+import ReportExportAssemblyPreview from "../components/ReportExportAssemblyPreview.js";
 
 export default class QuestionCatalogPage {
 
@@ -3038,6 +3039,36 @@ let currentExportPreparationReview = null;
             }
 
             preparationPackageContainer.innerHTML = this.renderReportExportPreparationPackagePanel(currentReportExportPreparationPackage);
+
+            const assemblyPreviewModel = DraftWorkspaceManager.createReportExportAssemblyPreview(
+                currentReportExportPreparationPackage,
+                {
+                    createdAt: new Date().toISOString()
+                }
+            );
+
+            let assemblyPreviewContainer = document.querySelector("[data-report-export-assembly-preview]");
+
+            if (!assemblyPreviewContainer) {
+                const preparationPackageCard = document.querySelector("[data-report-export-preparation-package-card]");
+
+                if (preparationPackageCard) {
+                    preparationPackageCard.insertAdjacentHTML(
+                        "afterend",
+                        "<div data-report-export-assembly-preview></div>"
+                    );
+
+                    assemblyPreviewContainer = document.querySelector(
+                        "[data-report-export-assembly-preview]"
+                    );
+                }
+            }
+
+            if (assemblyPreviewContainer) {
+                assemblyPreviewContainer.replaceChildren(
+                    ReportExportAssemblyPreview.create(assemblyPreviewModel)
+                );
+            }
         };
 
         const renderExportPreparationReview = () => {
