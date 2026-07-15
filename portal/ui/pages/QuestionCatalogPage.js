@@ -32,6 +32,7 @@ import ReportExportPreparationPackagePreview from "../components/ReportExportPre
 import ExportAuthorizationGatePreview from "../components/ExportAuthorizationGatePreview.js";
 import ExportPreparationReviewPreview from "../components/ExportPreparationReviewPreview.js";
 import ExportPreparationGatePreview from "../components/ExportPreparationGatePreview.js";
+import InternalFinalizationReviewPreview from "../components/InternalFinalizationReviewPreview.js";
 
 export default class QuestionCatalogPage {
 
@@ -2779,14 +2780,6 @@ export default class QuestionCatalogPage {
         const gateExpertApprovedNode = expertReviewNode.querySelector("[data-gate-expert-approved]");
         const gateSafetyNode = expertReviewNode.querySelector("[data-gate-safety]");
         const internalReviewNode = expertReviewNode.querySelector("[data-internal-finalization-review-preview]");
-        const internalReviewIdNode = expertReviewNode.querySelector("[data-internal-review-id]");
-        const internalReviewStatusNode = expertReviewNode.querySelector("[data-internal-review-status]");
-        const internalReviewNotesNode = expertReviewNode.querySelector("[data-internal-review-notes]");
-        const internalReviewNotePreviewNode = expertReviewNode.querySelector("[data-internal-review-note-preview]");
-        const internalReviewSafetyNode = expertReviewNode.querySelector("[data-internal-review-safety]");
-        const addInternalNoteButton = expertReviewNode.querySelector("[data-add-internal-review-note]");
-        const approveInternalButton = expertReviewNode.querySelector("[data-approve-internal-review]");
-        const rejectInternalButton = expertReviewNode.querySelector("[data-reject-internal-review]");
         const exportFlowNode = expertReviewNode.querySelector("[data-export-flow-preview]");
 
         let currentGate = null;
@@ -2812,70 +2805,80 @@ let currentExportPreparationReview = null;
                 });
             }
 
-            internalReviewIdNode.textContent = currentInternalReview.reviewId;
-            internalReviewStatusNode.textContent = currentInternalReview.status;
-            internalReviewNotesNode.textContent = String(currentInternalReview.notes.length);
+            internalReviewNode.replaceChildren(
+                InternalFinalizationReviewPreview.create(currentInternalReview, {
+                    onAddNote: () => {
+                        if (!currentInternalReview || currentInternalReview.notes.length > 0) {
+                            return;
+                        }
 
-            let internalNoteMarkup = currentInternalReview.status === "blocked_pending_finalization_gate"
-                ? "<p>Expert Review approval required first.</p>"
-                : "<p>No internal finalization note added yet.</p>";
+                        currentInternalReview = DraftWorkspaceManager.addInternalFinalizationReviewNote(currentInternalReview, {
+                            text: "Internal finalization note added in browser preview.",
+                            author: "Matthias Meiferts",
+                            category: "internal-finalization"
+                        }, {
+                            createdAt: new Date().toISOString()
+                        });
 
-            if (currentInternalReview.notes.length > 0) {
-                const lastNote = currentInternalReview.notes[currentInternalReview.notes.length - 1];
-                internalNoteMarkup = `
-                    <small>${this.escapeHtml(lastNote.category)}</small>
-                    <p>${this.escapeHtml(lastNote.text)}</p>
-                `;
-            }
+                        renderInternalFinalizationReview(currentGate);
+                    },
+                    onApprove: () => {
+                        if (!currentInternalReview) {
+                            return;
+                        }
 
-            if (currentInternalReview.decision) {
-                internalNoteMarkup += `
-                    <div class="internal-finalization-review-preview__decision">
-                        <small>Decision</small>
-                        <p>${this.escapeHtml(currentInternalReview.decision.comment)}</p>
-                    </div>
-                `;
-            }
+                        currentInternalReview = DraftWorkspaceManager.approveInternalFinalizationReview(currentInternalReview, {
+                            comment: "Internally approved in browser preview. Export remains locked.",
+                            decidedBy: "Matthias Meiferts"
+                        }, {
+                            updatedAt: new Date().toISOString()
+                        });
 
-            internalReviewNotePreviewNode.innerHTML = internalNoteMarkup;
-            internalReviewSafetyNode.textContent = `canExport: ${String(currentInternalReview.permissions.canExport)} · canCreateClientDocument: ${String(currentInternalReview.permissions.canCreateClientDocument)} · canFinalizeWorkflow: ${String(currentInternalReview.permissions.canFinalizeWorkflow)}`;
+                        renderInternalFinalizationReview(currentGate);
 
-            const isReady = currentInternalReview.status === "internal_review_required";
-            const hasInternalNote = currentInternalReview.notes.length > 0;
+                        currentExportPreparationGate = DraftWorkspaceManager.createExportPreparationGate(currentInternalReview, {
+                            createdAt: new Date().toISOString()
+                        });
 
-            addInternalNoteButton.disabled = !isReady || hasInternalNote;
-            approveInternalButton.disabled = !isReady || !hasInternalNote;
-            rejectInternalButton.disabled = !isReady || !hasInternalNote;
+                        currentExportPreparationReview = DraftWorkspaceManager.createExportPreparationReview(currentExportPreparationGate, {
+                            reviewer: "Matthias Meiferts",
+                            createdAt: new Date().toISOString()
+                        });
 
-            if (!isReady) {
-                addInternalNoteButton.textContent = "Internal note locked";
-                approveInternalButton.textContent = "Approval locked";
-                rejectInternalButton.textContent = "Reject locked";
-                addInternalNoteButton.title = "Expert Review approval required first.";
-                approveInternalButton.title = "Expert Review approval required first.";
-                rejectInternalButton.title = "Expert Review approval required first.";
-            } else {
-                approveInternalButton.textContent = "Approve internal review";
-                rejectInternalButton.textContent = "Reject internal review";
-                addInternalNoteButton.title = "";
-                approveInternalButton.title = "";
-                rejectInternalButton.title = "";
+                        if (exportFlowNode) {
+                            exportFlowNode.replaceChildren(
+                                ExportPreparationGatePreview.create(currentExportPreparationGate)
+                            );
+                        }
 
-                if (hasInternalNote) {
-                    addInternalNoteButton.textContent = "Internal note added";
-                    approveInternalButton.title = "";
-                    rejectInternalButton.title = "";
-                } else {
-                    addInternalNoteButton.textContent = "Add internal note";
-                    approveInternalButton.title = "Internal finalization note required first.";
-                    rejectInternalButton.title = "Internal finalization note required first.";
-                }
-            }
+                        renderExportPreparationReview();
 
-            internalReviewNode.classList.toggle("is-required", currentInternalReview.status === "internal_review_required");
-            internalReviewNode.classList.toggle("is-approved", currentInternalReview.status === "internally_approved");
-            internalReviewNode.classList.toggle("is-rejected", currentInternalReview.status === "internally_rejected");
-            internalReviewNode.classList.toggle("is-blocked", currentInternalReview.status === "blocked_pending_finalization_gate");
+                        const exportPreparationGateCard = exportFlowNode?.querySelector("[data-export-preparation-gate-card]");
+
+                        if (exportPreparationGateCard) {
+                            exportPreparationGateCard.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center"
+                            });
+                        }
+                    },
+                    onReject: () => {
+                        if (!currentInternalReview) {
+                            return;
+                        }
+
+                        currentInternalReview = DraftWorkspaceManager.rejectInternalFinalizationReview(currentInternalReview, {
+                            comment: "Internally rejected in browser preview. Export remains locked.",
+                            decidedBy: "Matthias Meiferts"
+                        }, {
+                            updatedAt: new Date().toISOString()
+                        });
+
+                        renderInternalFinalizationReview(currentGate);
+                        scrollToInternalFinalizationReview();
+                    }
+                })
+            );
         };
 
         const renderFinalizationGate = () => {
@@ -3207,79 +3210,6 @@ let currentExportPreparationReview = null;
 
             renderReview();
             scrollToFinalizationGate();
-        });
-
-        addInternalNoteButton.addEventListener("click", () => {
-            if (!currentInternalReview || currentInternalReview.notes.length > 0) {
-                return;
-            }
-
-            currentInternalReview = DraftWorkspaceManager.addInternalFinalizationReviewNote(currentInternalReview, {
-                text: "Internal finalization note added in browser preview.",
-                author: "Matthias Meiferts",
-                category: "internal-finalization"
-            }, {
-                createdAt: new Date().toISOString()
-            });
-
-            renderInternalFinalizationReview(currentGate);
-        });
-
-        approveInternalButton.addEventListener("click", () => {
-            if (!currentInternalReview) {
-                return;
-            }
-
-            currentInternalReview = DraftWorkspaceManager.approveInternalFinalizationReview(currentInternalReview, {
-                comment: "Internally approved in browser preview. Export remains locked.",
-                decidedBy: "Matthias Meiferts"
-            }, {
-                updatedAt: new Date().toISOString()
-            });
-
-            renderInternalFinalizationReview(currentGate);
-
-            currentExportPreparationGate = DraftWorkspaceManager.createExportPreparationGate(currentInternalReview, {
-                createdAt: new Date().toISOString()
-            });
-
-            currentExportPreparationReview = DraftWorkspaceManager.createExportPreparationReview(currentExportPreparationGate, {
-                reviewer: "Matthias Meiferts",
-                createdAt: new Date().toISOString()
-            });
-
-            if (exportFlowNode) {
-                exportFlowNode.replaceChildren(
-                    ExportPreparationGatePreview.create(currentExportPreparationGate)
-                );
-            }
-
-            renderExportPreparationReview();
-
-            const exportPreparationGateCard = exportFlowNode?.querySelector("[data-export-preparation-gate-card]");
-
-            if (exportPreparationGateCard) {
-                exportPreparationGateCard.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                });
-            }
-        });
-
-        rejectInternalButton.addEventListener("click", () => {
-            if (!currentInternalReview) {
-                return;
-            }
-
-            currentInternalReview = DraftWorkspaceManager.rejectInternalFinalizationReview(currentInternalReview, {
-                comment: "Internally rejected in browser preview. Export remains locked.",
-                decidedBy: "Matthias Meiferts"
-            }, {
-                updatedAt: new Date().toISOString()
-            });
-
-            renderInternalFinalizationReview(currentGate);
-            scrollToInternalFinalizationReview();
         });
 
         renderReview();
