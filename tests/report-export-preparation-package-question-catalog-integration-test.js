@@ -23,7 +23,7 @@ const createCallCount = (
     pageSource.match(/ReportExportPreparationPackagePreview\.create\(/g) || []
 ).length;
 
-assert.equal(createCallCount, 2);
+assert.equal(createCallCount, 1);
 
 assert.equal(
     pageSource.includes("renderReportExportPreparationPackagePanel"),
@@ -33,12 +33,6 @@ assert.equal(
 assert.ok(
     pageSource.includes(
         "preparationPackageContainer.replaceChildren("
-    )
-);
-
-assert.ok(
-    pageSource.includes(
-        "reportExportPackageContainer.replaceChildren("
     )
 );
 
