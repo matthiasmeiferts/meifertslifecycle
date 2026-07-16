@@ -27,14 +27,10 @@ import SectionHeader from "../components/SectionHeader.js";
 import MetricCard from "../components/MetricCard.js";
 
 import EmptyState from "../components/EmptyState.js";
-import ReportExportAssemblyPreview from "../components/ReportExportAssemblyPreview.js";
-import ReportExportPreparationPackagePreview from "../components/ReportExportPreparationPackagePreview.js";
-import ExportAuthorizationGatePreview from "../components/ExportAuthorizationGatePreview.js";
-import ExportPreparationReviewPreview from "../components/ExportPreparationReviewPreview.js";
-import ExportPreparationGatePreview from "../components/ExportPreparationGatePreview.js";
 import InternalFinalizationReviewPreview from "../components/InternalFinalizationReviewPreview.js";
 import FinalizationGatePreview from "../components/FinalizationGatePreview.js";
 import ExpertReviewPreview from "../components/ExpertReviewPreview.js";
+import ExportWorkflowPreviewController from "../controllers/ExportWorkflowPreviewController.js";
 
 export default class QuestionCatalogPage {
 
@@ -2717,10 +2713,15 @@ export default class QuestionCatalogPage {
 
         let currentGate = null;
         let currentInternalReview = null;
-let currentExportPreparationGate = null;
-let currentExportPreparationReview = null;
-    let currentExportAuthorizationGate = null;
-    let currentReportExportPreparationPackage = null;
+
+        const exportWorkflowController = new ExportWorkflowPreviewController({
+            exportPreparationGateNode,
+            exportPreparationReviewNode,
+            exportAuthorizationGateNode,
+            reportExportPreparationPackageNode,
+            reportExportAssemblyNode,
+            reviewer: "Matthias Meiferts"
+        });
 
         const renderInternalFinalizationReview = (gate) => {
             if (!internalReviewNode || !gate) {
@@ -2769,20 +2770,9 @@ let currentExportPreparationReview = null;
 
                         renderInternalFinalizationReview(currentGate);
 
-                        currentExportPreparationGate = DraftWorkspaceManager.createExportPreparationGate(currentInternalReview, {
-                            createdAt: new Date().toISOString()
-                        });
-
-                        currentExportPreparationReview = DraftWorkspaceManager.createExportPreparationReview(currentExportPreparationGate, {
-                            reviewer: "Matthias Meiferts",
-                            createdAt: new Date().toISOString()
-                        });
-
-                        exportPreparationGateNode.replaceChildren(
-                            ExportPreparationGatePreview.create(currentExportPreparationGate)
+                        exportWorkflowController.startFromInternalReview(
+                            currentInternalReview
                         );
-
-                        renderExportPreparationReview();
 
                         const exportPreparationGateCard = exportFlowNode?.querySelector("[data-export-preparation-gate-card]");
 
@@ -2918,103 +2908,6 @@ let currentExportPreparationReview = null;
             );
 
             renderFinalizationGate();
-        };
-
-
-        const renderExportAuthorizationGate = () => {
-            if (!currentExportPreparationReview) {
-                return;
-            }
-
-            currentExportAuthorizationGate = DraftWorkspaceManager.createExportAuthorizationGate(currentExportPreparationReview, {
-                createdAt: new Date().toISOString()
-            });
-
-            exportAuthorizationGateNode.replaceChildren(
-                ExportAuthorizationGatePreview.create(
-                    currentExportAuthorizationGate
-                )
-            );
-            renderReportExportPreparationPackage();
-        };
-
-        const renderReportExportPreparationPackage = () => {
-            currentReportExportPreparationPackage = DraftWorkspaceManager.createReportExportPreparationPackage(currentExportAuthorizationGate || {}, {
-                createdAt: new Date().toISOString()
-            });
-
-            reportExportPreparationPackageNode.replaceChildren(
-                ReportExportPreparationPackagePreview.create(
-                    currentReportExportPreparationPackage
-                )
-            );
-
-            const assemblyPreviewModel = DraftWorkspaceManager.createReportExportAssemblyPreview(
-                currentReportExportPreparationPackage,
-                {
-                    createdAt: new Date().toISOString()
-                }
-            );
-
-            reportExportAssemblyNode.replaceChildren(
-                ReportExportAssemblyPreview.create(assemblyPreviewModel)
-            );
-        };
-
-        const renderExportPreparationReview = () => {
-            if (!currentExportPreparationReview) {
-                return;
-            }
-
-            exportPreparationReviewNode.replaceChildren(
-                ExportPreparationReviewPreview.create(currentExportPreparationReview, {
-                    onAddNote: () => {
-                        if (!currentExportPreparationReview || currentExportPreparationReview.notes.length > 0 || currentExportPreparationReview.status !== "review_required") {
-                            return;
-                        }
-
-                        currentExportPreparationReview = DraftWorkspaceManager.addExportPreparationReviewNote(currentExportPreparationReview, {
-                            text: "Export preparation review note added in browser preview.",
-                            author: "Matthias Meiferts",
-                            category: "export-preparation"
-                        }, {
-                            createdAt: new Date().toISOString()
-                        });
-
-                        renderExportPreparationReview();
-                    },
-                    onApprove: () => {
-                        if (!currentExportPreparationReview || currentExportPreparationReview.notes.length === 0 || currentExportPreparationReview.status !== "review_required") {
-                            return;
-                        }
-
-                        currentExportPreparationReview = DraftWorkspaceManager.approveExportPreparationReview(currentExportPreparationReview, {
-                            comment: "Export preparation review approved in browser preview. Export remains locked.",
-                            decidedBy: "Matthias Meiferts"
-                        }, {
-                            updatedAt: new Date().toISOString()
-                        });
-
-                        renderExportPreparationReview();
-                    },
-                    onReject: () => {
-                        if (!currentExportPreparationReview || currentExportPreparationReview.notes.length === 0 || currentExportPreparationReview.status !== "review_required") {
-                            return;
-                        }
-
-                        currentExportPreparationReview = DraftWorkspaceManager.rejectExportPreparationReview(currentExportPreparationReview, {
-                            comment: "Export preparation review rejected in browser preview. Export remains locked.",
-                            decidedBy: "Matthias Meiferts"
-                        }, {
-                            updatedAt: new Date().toISOString()
-                        });
-
-                        renderExportPreparationReview();
-                    }
-                })
-            );
-
-            renderExportAuthorizationGate();
         };
 
 
