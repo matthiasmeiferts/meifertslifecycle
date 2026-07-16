@@ -32,7 +32,7 @@ assert.equal(
 
 assert.ok(
     pageSource.includes(
-        "exportAuthorizationContainer.replaceChildren("
+        "exportAuthorizationGateNode.replaceChildren("
     )
 );
 

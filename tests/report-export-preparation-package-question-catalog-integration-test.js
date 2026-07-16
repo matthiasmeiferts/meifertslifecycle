@@ -32,7 +32,7 @@ assert.equal(
 
 assert.ok(
     pageSource.includes(
-        "preparationPackageContainer.replaceChildren("
+        "reportExportPreparationPackageNode.replaceChildren("
     )
 );
 

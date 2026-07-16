@@ -27,13 +27,13 @@ assert.ok(
 
 assert.ok(
     pageSource.includes(
-        'document.querySelector("[data-report-export-assembly-preview]")'
+        'expertReviewWorkflowNode.querySelector("[data-report-export-assembly-preview]")'
     )
 );
 
 assert.ok(
     pageSource.includes(
-        '"<div data-report-export-assembly-preview></div>"'
+        "reportExportAssemblyNode.replaceChildren("
     )
 );
 
@@ -45,7 +45,7 @@ assert.ok(
 
 assert.ok(
     pageSource.includes(
-        "assemblyPreviewContainer.replaceChildren("
+        "reportExportAssemblyNode.replaceChildren("
     )
 );
 

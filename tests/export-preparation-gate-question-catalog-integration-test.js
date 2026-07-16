@@ -27,13 +27,13 @@ assert.equal(createCallCount, 1);
 
 assert.ok(
     pageSource.includes(
-        'expertReviewNode.querySelector("[data-export-flow-preview]")'
+        'expertReviewWorkflowNode.querySelector("[data-export-flow-preview]")'
     )
 );
 
 assert.ok(
     pageSource.includes(
-        "exportFlowNode.replaceChildren("
+        "exportPreparationGateNode.replaceChildren("
     )
 );
 

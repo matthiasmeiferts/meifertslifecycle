@@ -1613,108 +1613,31 @@ export default class QuestionCatalogPage {
                     </small>
                 </div>
 
-                <div class="expert-review-preview" data-expert-review-preview>
-                    <span>Expert review required</span>
+                <div class="expert-review-workflow" data-expert-review-workflow>
+                    <div data-expert-review-preview></div>
 
-                    <div class="expert-review-preview__summary">
-                        <div>
-                            <small>Review ID</small>
-                            <strong data-review-id>Pending</strong>
-                        </div>
-                        <div>
-                            <small>Status</small>
-                            <strong data-review-status>review_required</strong>
-                        </div>
-                        <div>
-                            <small>Notes</small>
-                            <strong data-review-notes>0</strong>
-                        </div>
-                    </div>
+                    <div data-finalization-gate-preview></div>
 
-                    <div class="expert-review-preview__actions">
-                        <button class="button secondary" type="button" data-add-review-note>Add review note</button>
-                        <button class="button secondary" type="button" data-approve-review>Approve review</button>
-                        <button class="button secondary" type="button" data-reject-review>Reject review</button>
-                    </div>
+                    <div data-internal-finalization-review-preview></div>
 
-                    <div class="expert-review-preview__note" data-review-note-preview>
-                        <p>No review note added yet.</p>
-                    </div>
-
-                    <small data-review-safety>
-                        canExport: false · canCreateClientDocument: false · canFinalizeWorkflow: false · expertApprovalGranted: false
-                    </small>
-
-                    <div class="finalization-gate-preview" data-finalization-gate-preview>
-                        <span>Finalization gate</span>
-
-                        <div class="finalization-gate-preview__summary">
-                            <div>
-                                <small>Gate ID</small>
-                                <strong data-gate-id>Pending</strong>
-                            </div>
-                            <div>
-                                <small>Status</small>
-                                <strong data-gate-status>blocked_pending_expert_approval</strong>
-                            </div>
-                            <div>
-                                <small>Expert review approved</small>
-                                <strong data-gate-expert-approved>false</strong>
-                            </div>
-                        </div>
-
-                        <small data-gate-safety>
-                            canExport: false · canCreateClientDocument: false · canFinalizeWorkflow: false
-                        </small>
-
-                <div class="internal-finalization-review-preview" data-internal-finalization-review-preview>
-                            <span>Internal finalization review</span>
-
-                            <div class="internal-finalization-review-preview__summary">
-                                <div>
-                                    <small>Review ID</small>
-                                    <strong data-internal-review-id>Pending</strong>
-                                </div>
-                                <div>
-                                    <small>Status</small>
-                                    <strong data-internal-review-status>blocked_pending_finalization_gate</strong>
-                                </div>
-                                <div>
-                                    <small>Notes</small>
-                                    <strong data-internal-review-notes>0</strong>
-                                </div>
-                            </div>
-
-                            <div class="internal-finalization-review-preview__actions">
-                                <button class="button secondary" type="button" data-add-internal-review-note>Add internal note</button>
-                                <button class="button secondary" type="button" data-approve-internal-review>Approve internal review</button>
-                                <button class="button secondary" type="button" data-reject-internal-review>Reject internal review</button>
-                            </div>
-
-                            <div class="internal-finalization-review-preview__note" data-internal-review-note-preview>
-                                <p>No internal finalization note added yet.</p>
-                            </div>
-
-                            <small data-internal-review-safety>
-                                canExport: false · canCreateClientDocument: false · canFinalizeWorkflow: false
-                            </small>
-                        </div>
-
-                        <div class="export-flow-preview" data-export-flow-preview>
-                            <span>Export flow preview</span>
-                            <p>Export preparation appears here after internal finalization approval.</p>
-                        </div>
+                    <div class="export-flow-preview" data-export-flow-preview>
+                        <div data-export-preparation-gate-preview></div>
+                        <div data-export-preparation-review-preview></div>
+                        <div data-export-authorization-gate-preview></div>
+                        <div data-report-export-preparation-package-preview></div>
+                        <div data-report-export-assembly-preview></div>
                     </div>
                 </div>
             `;
 
-            const expertReviewNode = workspaceDraftNode.querySelector("[data-expert-review-preview]");
+            const expertReviewWorkflowNode = workspaceDraftNode.querySelector("[data-expert-review-workflow]");
+            const expertReviewNode = expertReviewWorkflowNode?.querySelector("[data-expert-review-preview]");
             const expertReview = DraftWorkspaceManager.createExpertReview(draftRecord, {
                 reviewer: "Matthias Meiferts",
                 createdAt
             });
 
-            this.bindExpertReviewPreview(expertReviewNode, expertReview);
+            this.bindExpertReviewPreview(expertReviewWorkflowNode, expertReview);
 
             if (expertReviewNode) {
                 window.setTimeout(() => {
@@ -2760,17 +2683,37 @@ export default class QuestionCatalogPage {
 
     }
 
-    static bindExpertReviewPreview(expertReviewNode, expertReview = {}) {
+    static bindExpertReviewPreview(expertReviewWorkflowNode, expertReview = {}) {
 
-        if (!expertReviewNode) {
+        if (!expertReviewWorkflowNode) {
+            return;
+        }
+
+        const expertReviewNode = expertReviewWorkflowNode.querySelector("[data-expert-review-preview]");
+        const finalizationGateNode = expertReviewWorkflowNode.querySelector("[data-finalization-gate-preview]");
+        const internalReviewNode = expertReviewWorkflowNode.querySelector("[data-internal-finalization-review-preview]");
+        const exportFlowNode = expertReviewWorkflowNode.querySelector("[data-export-flow-preview]");
+        const exportPreparationGateNode = expertReviewWorkflowNode.querySelector("[data-export-preparation-gate-preview]");
+        const exportPreparationReviewNode = expertReviewWorkflowNode.querySelector("[data-export-preparation-review-preview]");
+        const exportAuthorizationGateNode = expertReviewWorkflowNode.querySelector("[data-export-authorization-gate-preview]");
+        const reportExportPreparationPackageNode = expertReviewWorkflowNode.querySelector("[data-report-export-preparation-package-preview]");
+        const reportExportAssemblyNode = expertReviewWorkflowNode.querySelector("[data-report-export-assembly-preview]");
+
+        if (
+            !expertReviewNode
+            || !finalizationGateNode
+            || !internalReviewNode
+            || !exportFlowNode
+            || !exportPreparationGateNode
+            || !exportPreparationReviewNode
+            || !exportAuthorizationGateNode
+            || !reportExportPreparationPackageNode
+            || !reportExportAssemblyNode
+        ) {
             return;
         }
 
         let currentReview = expertReview;
-
-        const finalizationGateNode = expertReviewNode.querySelector("[data-finalization-gate-preview]");
-        const internalReviewNode = expertReviewNode.querySelector("[data-internal-finalization-review-preview]");
-        const exportFlowNode = expertReviewNode.querySelector("[data-export-flow-preview]");
 
         let currentGate = null;
         let currentInternalReview = null;
@@ -2835,11 +2778,9 @@ let currentExportPreparationReview = null;
                             createdAt: new Date().toISOString()
                         });
 
-                        if (exportFlowNode) {
-                            exportFlowNode.replaceChildren(
-                                ExportPreparationGatePreview.create(currentExportPreparationGate)
-                            );
-                        }
+                        exportPreparationGateNode.replaceChildren(
+                            ExportPreparationGatePreview.create(currentExportPreparationGate)
+                        );
 
                         renderExportPreparationReview();
 
@@ -2989,22 +2930,7 @@ let currentExportPreparationReview = null;
                 createdAt: new Date().toISOString()
             });
 
-            let exportAuthorizationContainer = document.querySelector("[data-export-authorization-gate-preview]");
-
-            if (!exportAuthorizationContainer) {
-                const exportReviewCard = document.querySelector("[data-export-preparation-review-card]");
-
-                if (exportReviewCard) {
-                    exportReviewCard.insertAdjacentHTML("afterend", "<div data-export-authorization-gate-preview></div>");
-                    exportAuthorizationContainer = document.querySelector("[data-export-authorization-gate-preview]");
-                }
-            }
-
-            if (!exportAuthorizationContainer) {
-                return;
-            }
-
-            exportAuthorizationContainer.replaceChildren(
+            exportAuthorizationGateNode.replaceChildren(
                 ExportAuthorizationGatePreview.create(
                     currentExportAuthorizationGate
                 )
@@ -3017,22 +2943,7 @@ let currentExportPreparationReview = null;
                 createdAt: new Date().toISOString()
             });
 
-            let preparationPackageContainer = document.querySelector("[data-report-export-preparation-package-preview]");
-
-            if (!preparationPackageContainer) {
-                const exportAuthorizationCard = document.querySelector("[data-export-authorization-gate-card]");
-
-                if (exportAuthorizationCard) {
-                    exportAuthorizationCard.insertAdjacentHTML("afterend", "<div data-report-export-preparation-package-preview></div>");
-                    preparationPackageContainer = document.querySelector("[data-report-export-preparation-package-preview]");
-                }
-            }
-
-            if (!preparationPackageContainer) {
-                return;
-            }
-
-            preparationPackageContainer.replaceChildren(
+            reportExportPreparationPackageNode.replaceChildren(
                 ReportExportPreparationPackagePreview.create(
                     currentReportExportPreparationPackage
                 )
@@ -3045,28 +2956,9 @@ let currentExportPreparationReview = null;
                 }
             );
 
-            let assemblyPreviewContainer = document.querySelector("[data-report-export-assembly-preview]");
-
-            if (!assemblyPreviewContainer) {
-                const preparationPackageCard = document.querySelector("[data-report-export-preparation-package-card]");
-
-                if (preparationPackageCard) {
-                    preparationPackageCard.insertAdjacentHTML(
-                        "afterend",
-                        "<div data-report-export-assembly-preview></div>"
-                    );
-
-                    assemblyPreviewContainer = document.querySelector(
-                        "[data-report-export-assembly-preview]"
-                    );
-                }
-            }
-
-            if (assemblyPreviewContainer) {
-                assemblyPreviewContainer.replaceChildren(
-                    ReportExportAssemblyPreview.create(assemblyPreviewModel)
-                );
-            }
+            reportExportAssemblyNode.replaceChildren(
+                ReportExportAssemblyPreview.create(assemblyPreviewModel)
+            );
         };
 
         const renderExportPreparationReview = () => {
@@ -3074,22 +2966,7 @@ let currentExportPreparationReview = null;
                 return;
             }
 
-            let exportReviewContainer = document.querySelector("[data-export-preparation-review-preview]");
-
-            if (!exportReviewContainer) {
-                const exportGateCard = document.querySelector("[data-export-preparation-gate-card]");
-
-                if (exportGateCard) {
-                    exportGateCard.insertAdjacentHTML("afterend", "<div data-export-preparation-review-preview></div>");
-                    exportReviewContainer = document.querySelector("[data-export-preparation-review-preview]");
-                }
-            }
-
-            if (!exportReviewContainer) {
-                return;
-            }
-
-            exportReviewContainer.replaceChildren(
+            exportPreparationReviewNode.replaceChildren(
                 ExportPreparationReviewPreview.create(currentExportPreparationReview, {
                     onAddNote: () => {
                         if (!currentExportPreparationReview || currentExportPreparationReview.notes.length > 0 || currentExportPreparationReview.status !== "review_required") {
