@@ -407,6 +407,7 @@ export default class CanonicalDataModel {
             metadata: {
                 generatedAt:
                     this.normalizeString(
+                        source.generatedAt ??
                         source.metadata?.generatedAt,
                         new Date().toISOString()
                     ),

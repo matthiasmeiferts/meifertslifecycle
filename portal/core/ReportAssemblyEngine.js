@@ -6,7 +6,8 @@ export default class ReportAssemblyEngine {
         context = {},
         findings = [],
         assessments = [],
-        recommendations = []
+        recommendations = [],
+        generatedAt = new Date().toISOString()
     } = {}) {
 
         return {
@@ -14,7 +15,7 @@ export default class ReportAssemblyEngine {
             metadata: {
 
                 generatedAt:
-                    new Date().toISOString(),
+                    generatedAt,
 
                 reportVersion:
                     FoundationVersion.CURRENT,
