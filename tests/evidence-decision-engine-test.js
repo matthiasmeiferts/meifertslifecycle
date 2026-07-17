@@ -667,6 +667,67 @@ runTest(
     }
 );
 
+
+runTest(
+    "creates evidence from generated follow-up questions",
+    () => {
+        const generatedFollowUps = [
+            {
+                sourceQuestionId:
+                    "q-roof",
+
+                generationReason:
+                    "answer_equals",
+
+                question: {
+                    id:
+                        "q-roof-detail",
+
+                    evidenceRules: [
+                        {
+                            answered:
+                                true,
+
+                            evidenceId:
+                                "e-roof-detail",
+
+                            reason:
+                                "roof_detail_documented"
+                        }
+                    ]
+                }
+            }
+        ];
+
+        const result =
+            EvidenceDecisionEngine.evaluateEvidence(
+                [],
+                generatedFollowUps,
+                {
+                    answers: {
+                        "q-roof-detail":
+                            "major membrane failure"
+                    }
+                }
+            );
+
+        assert.equal(
+            result.length,
+            1
+        );
+
+        assert.equal(
+            result[0].evidenceId,
+            "e-roof-detail"
+        );
+
+        assert.equal(
+            result[0].sourceQuestionId,
+            "q-roof-detail"
+        );
+    }
+);
+
 console.log(
     "EvidenceDecisionEngine tests completed successfully."
 );

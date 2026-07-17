@@ -12,7 +12,34 @@ export default class EvidenceDecisionEngine {
         const evidence = [];
         const evidenceIds = new Set();
 
-        questions.forEach((question) => {
+        const followUpQuestions =
+            Array.isArray(generatedFollowUps)
+                ? generatedFollowUps
+                    .map((entry) => {
+                        if (
+                            entry &&
+                            typeof entry === "object" &&
+                            entry.question &&
+                            typeof entry.question === "object"
+                        ) {
+                            return entry.question;
+                        }
+
+                        return entry;
+                    })
+                    .filter(
+                        (question) =>
+                            question &&
+                            typeof question === "object"
+                    )
+                : [];
+
+        const evaluableQuestions = [
+            ...questions,
+            ...followUpQuestions
+        ];
+
+        evaluableQuestions.forEach((question) => {
             const rules = Array.isArray(
                 question.evidenceRules
             )
