@@ -1,3 +1,5 @@
+import FoundationVersion from "./FoundationVersion.js";
+
 export default class ReportAssemblyEngine {
 
     static assembleReport({
@@ -15,7 +17,7 @@ export default class ReportAssemblyEngine {
                     new Date().toISOString(),
 
                 reportVersion:
-                    "Foundation-4.0",
+                    FoundationVersion.CURRENT,
 
                 findingCount:
                     findings.length,

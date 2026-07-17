@@ -8,6 +8,7 @@ import AssessmentGenerationEngine from "./AssessmentGenerationEngine.js";
 import RecommendationGenerationEngine from "./RecommendationGenerationEngine.js";
 import ReportAssemblyEngine from "./ReportAssemblyEngine.js";
 
+import PipelineIntegrityValidator from "./PipelineIntegrityValidator.js";
 export default class InspectionPipelineEngine {
 
     static run({
@@ -114,7 +115,7 @@ export default class InspectionPipelineEngine {
                 recommendations
             });
 
-        return {
+        const result = {
             input: {
                 questions:
                     this.cloneValue(
@@ -173,6 +174,13 @@ export default class InspectionPipelineEngine {
             report
         };
 
+        result.integrity =
+            PipelineIntegrityValidator.validate(
+                result
+            );
+
+        return result;
+
     }
 
     static normalizeAnswers(
@@ -207,9 +215,11 @@ export default class InspectionPipelineEngine {
             return {};
         }
 
-        return {
+        const result = {
             ...context
-        };
+        }
+
+        return result;
     }
 
     static cloneValue(

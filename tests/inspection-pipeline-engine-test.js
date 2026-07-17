@@ -105,7 +105,7 @@ runTest(
         assert.equal(
             result.report.metadata
                 .reportVersion,
-            "Foundation-4.0"
+            "Foundation-1.0"
         );
 
         assert.equal(

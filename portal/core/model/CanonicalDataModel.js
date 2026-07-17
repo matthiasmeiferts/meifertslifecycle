@@ -1,3 +1,5 @@
+import FoundationVersion from "../FoundationVersion.js";
+
 export default class CanonicalDataModel {
 
     static createInspectionContext(input = {}) {
@@ -86,9 +88,11 @@ export default class CanonicalDataModel {
                     source.dependencies
                 ),
 
-            visibilityRules:
-                this.cloneArray(
-                    source.visibilityRules
+            visibility:
+                this.cloneObject(
+                    source.visibility ??
+                    source.visibilityRules ??
+                    {}
                 ),
 
             followUps:
@@ -410,7 +414,7 @@ export default class CanonicalDataModel {
                 reportVersion:
                     this.normalizeString(
                         source.metadata?.reportVersion,
-                        "Foundation-1.0"
+                        FoundationVersion.CURRENT
                     ),
 
                 findingCount:

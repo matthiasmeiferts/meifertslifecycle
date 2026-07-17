@@ -359,6 +359,78 @@ runTest(
     }
 );
 
+runTest(
+    "creates canonical visibility contract",
+    () => {
+        const source = {
+            id: "q-visible",
+            visibility: {
+                country: [
+                    "TH"
+                ]
+            }
+        };
+
+        const result =
+            CanonicalDataModel.createQuestion(
+                source
+            );
+
+        assert.deepEqual(
+            result.visibility,
+            {
+                country: [
+                    "TH"
+                ]
+            }
+        );
+
+        assert.equal(
+            Object.hasOwn(
+                result,
+                "visibilityRules"
+            ),
+            false
+        );
+    }
+);
+
+runTest(
+    "migrates legacy visibility rules",
+    () => {
+        const source = {
+            id: "q-legacy",
+            visibilityRules: {
+                buildingType: [
+                    "condominium"
+                ]
+            }
+        };
+
+        const result =
+            CanonicalDataModel.createQuestion(
+                source
+            );
+
+        assert.deepEqual(
+            result.visibility,
+            {
+                buildingType: [
+                    "condominium"
+                ]
+            }
+        );
+
+        assert.equal(
+            Object.hasOwn(
+                result,
+                "visibilityRules"
+            ),
+            false
+        );
+    }
+);
+
 console.log(
     "CanonicalDataModel tests completed successfully."
 );

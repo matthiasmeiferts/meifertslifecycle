@@ -424,6 +424,27 @@ runTest(
     }
 );
 
+
+runTest(
+    "passes complete pipeline integrity validation",
+    () => {
+        assert.equal(
+            result.integrity.valid,
+            true,
+            JSON.stringify(
+                result.integrity.errors,
+                null,
+                2
+            )
+        );
+
+        assert.deepEqual(
+            result.integrity.errors,
+            []
+        );
+    }
+);
+
 console.log(
     "InspectionPipelineEngine end-to-end tests completed successfully."
 );
