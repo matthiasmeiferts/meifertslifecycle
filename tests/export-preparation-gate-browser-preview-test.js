@@ -3,22 +3,21 @@ import { readFileSync } from "node:fs";
 
 const pageSource = readFileSync("portal/ui/pages/QuestionCatalogPage.js", "utf8");
 const styleSource = readFileSync("portal/ui/styles/workspace.css", "utf8");
+const controllerSource = readFileSync("portal/ui/controllers/ExportWorkflowPreviewController.js", "utf8");
+const exportPreparationGatePreviewSource = readFileSync("portal/ui/components/ExportPreparationGatePreview.js", "utf8");
+const expertReviewPreviewSource = readFileSync("portal/ui/components/ExpertReviewPreview.js", "utf8");
 
-assert.ok(pageSource.includes("let currentExportPreparationGate = null;"));
-assert.ok(pageSource.includes("DraftWorkspaceManager.createExportPreparationGate(currentInternalReview"));
-assert.ok(pageSource.includes("renderExportPreparationGate"));
-assert.ok(pageSource.includes("scrollToExportPreparationGate"));
-assert.ok(pageSource.includes("data-export-preparation-gate-preview"));
-assert.ok(pageSource.includes("data-export-preparation-gate-card"));
-assert.ok(pageSource.includes("Foundation 2.8-C Export Preparation Gate Browser Preview"));
-assert.ok(pageSource.includes("Export preparation only. Export, client document creation and workflow finalization remain locked."));
-assert.ok(pageSource.includes("currentExportPreparationGate.permissions.canExport"));
-assert.ok(pageSource.includes("currentExportPreparationGate.safetyBoundary.exportFileCreated"));
+assert.ok(pageSource.includes("ExportWorkflowPreviewController"));
+assert.ok(controllerSource.includes("currentExportPreparationGate"));
+assert.ok(controllerSource.includes("createExportPreparationGate"));
+assert.ok(controllerSource.includes("ExportPreparationGatePreview.create"));
+assert.ok(exportPreparationGatePreviewSource.includes("export-preparation-gate-preview"));
+assert.ok(exportPreparationGatePreviewSource.includes("preview.dataset.exportPreparationGateCard"));
+assert.ok(exportPreparationGatePreviewSource.includes("Export preparation only."));
+assert.ok(exportPreparationGatePreviewSource.includes("exportFileCreated"));
+assert.ok(expertReviewPreviewSource.includes("Expert review note required first."));
 
-assert.ok(pageSource.includes("const hasReviewNote = currentReview.notes.length > 0"));
-assert.ok(pageSource.includes("Expert review note required first."));
-assert.ok(pageSource.includes("currentReview.notes.length === 0 || currentReview.status !== \"review_required\""));
-assert.ok(pageSource.includes("expertReviewNode.classList.toggle(\"is-note-required\""));
+
 
 
 assert.ok(styleSource.includes("Foundation 2.8-C Export Preparation Gate Browser Preview"));

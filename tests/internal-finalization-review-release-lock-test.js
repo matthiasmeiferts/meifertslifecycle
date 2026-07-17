@@ -16,6 +16,18 @@ for (const file of requiredTestFiles) {
 const managerSource = readFileSync("portal/core/DraftWorkspaceManager.js", "utf8");
 const pageSource = readFileSync("portal/ui/pages/QuestionCatalogPage.js", "utf8");
 const styleSource = readFileSync("portal/ui/styles/workspace.css", "utf8");
+const internalReviewPreviewSource = readFileSync("portal/ui/components/InternalFinalizationReviewPreview.js", "utf8");
+
+assert.ok(pageSource.includes("InternalFinalizationReviewPreview"));
+assert.ok(pageSource.includes("renderInternalFinalizationReview"));
+assert.ok(internalReviewPreviewSource.includes("preview.dataset.internalFinalizationReviewPreview"));
+assert.ok(internalReviewPreviewSource.includes('"Add internal note"'));
+assert.ok(internalReviewPreviewSource.includes("onApprove"));
+assert.ok(internalReviewPreviewSource.includes("onReject"));
+assert.ok(internalReviewPreviewSource.includes("Internal finalization note required first."));
+assert.ok(internalReviewPreviewSource.includes("canExport"));
+assert.ok(internalReviewPreviewSource.includes("canCreateClientDocument"));
+assert.ok(internalReviewPreviewSource.includes("canFinalizeWorkflow"));
 
 assert.ok(managerSource.includes("createInternalFinalizationReview"));
 assert.ok(managerSource.includes("addInternalFinalizationReviewNote"));
@@ -24,12 +36,6 @@ assert.ok(managerSource.includes("rejectInternalFinalizationReview"));
 assert.ok(managerSource.includes("cloneInternalFinalizationReview"));
 assert.ok(managerSource.includes("createInternalFinalizationReviewSafetyBoundary"));
 
-assert.ok(pageSource.includes("data-internal-finalization-review-preview"));
-assert.ok(pageSource.includes("renderInternalFinalizationReview"));
-assert.ok(pageSource.includes("data-add-internal-review-note"));
-assert.ok(pageSource.includes("data-approve-internal-review"));
-assert.ok(pageSource.includes("data-reject-internal-review"));
-assert.ok(pageSource.includes("const hasInternalNote = currentInternalReview.notes.length > 0"));
 
 assert.ok(styleSource.includes("Foundation 2.7-C Internal Finalization Review Browser Preview"));
 assert.ok(styleSource.includes(".internal-finalization-review-preview.is-required"));

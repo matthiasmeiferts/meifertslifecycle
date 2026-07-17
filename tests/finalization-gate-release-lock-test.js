@@ -16,16 +16,19 @@ for (const file of requiredTestFiles) {
 const managerSource = readFileSync("portal/core/DraftWorkspaceManager.js", "utf8");
 const pageSource = readFileSync("portal/ui/pages/QuestionCatalogPage.js", "utf8");
 const styleSource = readFileSync("portal/ui/styles/workspace.css", "utf8");
+const finalizationGatePreviewSource = readFileSync("portal/ui/components/FinalizationGatePreview.js", "utf8");
+
+assert.ok(pageSource.includes("FinalizationGatePreview"));
+assert.ok(pageSource.includes("FinalizationGatePreview.create"));
+assert.ok(finalizationGatePreviewSource.includes("preview.dataset.finalizationGatePreview"));
+assert.ok(finalizationGatePreviewSource.includes("StatusBadge.create(status)"));
+assert.ok(finalizationGatePreviewSource.includes('"Expert Review Approved"'));
+assert.ok(finalizationGatePreviewSource.includes("finalization-gate-preview__safety"));
 
 assert.ok(managerSource.includes("createFinalizationGate"));
 assert.ok(managerSource.includes("createFinalizationGateId"));
 assert.ok(managerSource.includes("createFinalizationGateSafetyBoundary"));
 
-assert.ok(pageSource.includes("data-finalization-gate-preview"));
-assert.ok(pageSource.includes("renderFinalizationGate"));
-assert.ok(pageSource.includes("scrollToFinalizationGate"));
-assert.ok(pageSource.includes("data-gate-status"));
-assert.ok(pageSource.includes("data-gate-safety"));
 
 assert.ok(styleSource.includes("Foundation 2.6-C Finalization Gate Browser Preview"));
 assert.ok(styleSource.includes(".finalization-gate-preview.is-ready"));

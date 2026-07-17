@@ -4,23 +4,26 @@ import DraftWorkspaceManager from "../portal/core/DraftWorkspaceManager.js";
 
 const pageSource = readFileSync("portal/ui/pages/QuestionCatalogPage.js", "utf8");
 const styleSource = readFileSync("portal/ui/styles/workspace.css", "utf8");
+const controllerSource = readFileSync("portal/ui/controllers/ExportWorkflowPreviewController.js", "utf8");
+const exportPreparationReviewPreviewSource = readFileSync("portal/ui/components/ExportPreparationReviewPreview.js", "utf8");
 
-assert.ok(pageSource.includes("data-export-preparation-review-preview"));
-assert.ok(pageSource.includes("renderExportPreparationReview"));
-assert.ok(pageSource.includes("DraftWorkspaceManager.createExportPreparationReview"));
-assert.ok(pageSource.includes("DraftWorkspaceManager.addExportPreparationReviewNote"));
-assert.ok(pageSource.includes("DraftWorkspaceManager.approveExportPreparationReview"));
-assert.ok(pageSource.includes("DraftWorkspaceManager.rejectExportPreparationReview"));
+assert.ok(pageSource.includes("ExportWorkflowPreviewController"));
+assert.ok(controllerSource.includes("currentExportPreparationReview"));
+assert.ok(controllerSource.includes("createExportPreparationReview"));
+assert.ok(controllerSource.includes("addExportPreparationReviewNote"));
+assert.ok(controllerSource.includes("approveExportPreparationReview"));
+assert.ok(controllerSource.includes("rejectExportPreparationReview"));
+assert.ok(controllerSource.includes("renderExportPreparationReview"));
+assert.ok(exportPreparationReviewPreviewSource.includes("export-preparation-review-preview"));
+assert.ok(exportPreparationReviewPreviewSource.includes("preview.dataset.exportPreparationReviewCard"));
+assert.ok(exportPreparationReviewPreviewSource.includes('"Add export preparation review note"'));
+assert.ok(exportPreparationReviewPreviewSource.includes("onApprove"));
+assert.ok(exportPreparationReviewPreviewSource.includes("onReject"));
+assert.ok(exportPreparationReviewPreviewSource.includes("Export preparation review note required first."));
+assert.ok(exportPreparationReviewPreviewSource.includes("Export preparation review only."));
 
-assert.ok(
-    pageSource.includes("Export preparation review note required first."),
-    "Browser preview must explain why export preparation decisions are locked before note."
-);
 
-assert.ok(
-    pageSource.includes("Export preparation review only. Export, client document creation and workflow finalization remain locked."),
-    "Browser preview must keep export/client/finalization boundary visible."
-);
+
 
 assert.ok(styleSource.includes("Foundation 2.9-C Export Preparation Review Browser Preview"));
 assert.ok(styleSource.includes(".export-preparation-review-preview.is-required"));

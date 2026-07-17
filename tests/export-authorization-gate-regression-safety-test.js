@@ -4,12 +4,19 @@ import DraftWorkspaceManager from "../portal/core/DraftWorkspaceManager.js";
 
 const pageSource = readFileSync("portal/ui/pages/QuestionCatalogPage.js", "utf8");
 const styleSource = readFileSync("portal/ui/styles/workspace.css", "utf8");
+const controllerSource = readFileSync("portal/ui/controllers/ExportWorkflowPreviewController.js", "utf8");
+const exportAuthorizationGatePreviewSource = readFileSync("portal/ui/components/ExportAuthorizationGatePreview.js", "utf8");
 
-assert.ok(pageSource.includes("renderExportAuthorizationGate"));
-assert.ok(pageSource.includes("DraftWorkspaceManager.createExportAuthorizationGate(currentExportPreparationReview"));
-assert.ok(pageSource.includes("data-export-authorization-gate-preview"));
-assert.ok(pageSource.includes("data-export-authorization-gate-card"));
-assert.ok(pageSource.includes("Controlled export authorization gate only. Export, client document creation and workflow finalization remain locked."));
+assert.ok(pageSource.includes("ExportWorkflowPreviewController"));
+assert.ok(controllerSource.includes("currentExportAuthorizationGate"));
+assert.ok(controllerSource.includes("createExportAuthorizationGate"));
+assert.ok(controllerSource.includes("renderExportAuthorizationGate"));
+assert.ok(exportAuthorizationGatePreviewSource.includes("export-authorization-gate-preview"));
+assert.ok(exportAuthorizationGatePreviewSource.includes("preview.dataset.exportAuthorizationGateCard"));
+assert.ok(exportAuthorizationGatePreviewSource.includes("Controlled export authorization gate only."));
+assert.ok(exportAuthorizationGatePreviewSource.includes("canExport"));
+assert.ok(exportAuthorizationGatePreviewSource.includes("exportFileCreated"));
+
 
 assert.ok(styleSource.includes("Foundation 3.0-C Controlled Export Authorization Gate Browser Preview"));
 assert.ok(styleSource.includes(".export-authorization-gate-preview.is-required"));

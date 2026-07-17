@@ -17,6 +17,19 @@ for (const file of requiredFiles) {
 const managerSource = readFileSync("portal/core/DraftWorkspaceManager.js", "utf8");
 const pageSource = readFileSync("portal/ui/pages/QuestionCatalogPage.js", "utf8");
 const styleSource = readFileSync("portal/ui/styles/workspace.css", "utf8");
+const controllerSource = readFileSync("portal/ui/controllers/ExportWorkflowPreviewController.js", "utf8");
+const exportPreparationGatePreviewSource = readFileSync("portal/ui/components/ExportPreparationGatePreview.js", "utf8");
+const expertReviewPreviewSource = readFileSync("portal/ui/components/ExpertReviewPreview.js", "utf8");
+
+assert.ok(pageSource.includes("ExportWorkflowPreviewController"));
+assert.ok(controllerSource.includes("currentExportPreparationGate"));
+assert.ok(controllerSource.includes("createExportPreparationGate"));
+assert.ok(controllerSource.includes("ExportPreparationGatePreview.create"));
+assert.ok(exportPreparationGatePreviewSource.includes("export-preparation-gate-preview"));
+assert.ok(exportPreparationGatePreviewSource.includes("preview.dataset.exportPreparationGateCard"));
+assert.ok(exportPreparationGatePreviewSource.includes("Export preparation only."));
+assert.ok(exportPreparationGatePreviewSource.includes("exportFileCreated"));
+assert.ok(expertReviewPreviewSource.includes("Expert review note required first."));
 const runnerSource = readFileSync("scripts/run-foundation-2-8-tests.sh", "utf8");
 
 assert.ok(managerSource.includes("createExportPreparationGate"));
@@ -25,13 +38,6 @@ assert.ok(managerSource.includes("createExportPreparationGateSafetyBoundary"));
 assert.ok(managerSource.includes("blocked_pending_internal_finalization_review"));
 assert.ok(managerSource.includes("export_preparation_review_required"));
 
-assert.ok(pageSource.includes("Expert review note required first."));
-assert.ok(pageSource.includes("currentReview.notes.length === 0 || currentReview.status !== \"review_required\""));
-assert.ok(pageSource.includes("data-export-preparation-gate-preview"));
-assert.ok(pageSource.includes("data-export-preparation-gate-card"));
-assert.ok(pageSource.includes("Export Preparation Gate"));
-assert.ok(pageSource.includes("Export preparation only. Export, client document creation and workflow finalization remain locked."));
-assert.ok(pageSource.includes("currentExportPreparationGate.safetyBoundary.exportFileCreated"));
 
 assert.ok(styleSource.includes("Foundation 2.8-C Export Preparation Gate Browser Preview"));
 assert.ok(styleSource.includes(".export-preparation-gate-preview"));

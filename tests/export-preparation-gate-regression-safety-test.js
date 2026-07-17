@@ -3,13 +3,20 @@ import { readFileSync } from "node:fs";
 import DraftWorkspaceManager from "../portal/core/DraftWorkspaceManager.js";
 
 const pageSource = readFileSync("portal/ui/pages/QuestionCatalogPage.js", "utf8");
+const controllerSource = readFileSync("portal/ui/controllers/ExportWorkflowPreviewController.js", "utf8");
+const exportPreparationGatePreviewSource = readFileSync("portal/ui/components/ExportPreparationGatePreview.js", "utf8");
+const expertReviewPreviewSource = readFileSync("portal/ui/components/ExpertReviewPreview.js", "utf8");
 
-assert.ok(pageSource.includes("Expert review note required first."));
-assert.ok(pageSource.includes("currentReview.notes.length === 0 || currentReview.status !== \"review_required\""));
-assert.ok(pageSource.includes("const hasReviewNote = currentReview.notes.length > 0"));
-assert.ok(pageSource.includes("data-export-preparation-gate-card"));
-assert.ok(pageSource.includes("Export preparation only. Export, client document creation and workflow finalization remain locked."));
-assert.ok(pageSource.includes("currentExportPreparationGate.safetyBoundary.exportFileCreated"));
+assert.ok(pageSource.includes("ExportWorkflowPreviewController"));
+assert.ok(controllerSource.includes("currentExportPreparationGate"));
+assert.ok(controllerSource.includes("createExportPreparationGate"));
+assert.ok(controllerSource.includes("ExportPreparationGatePreview.create"));
+assert.ok(exportPreparationGatePreviewSource.includes("export-preparation-gate-preview"));
+assert.ok(exportPreparationGatePreviewSource.includes("preview.dataset.exportPreparationGateCard"));
+assert.ok(exportPreparationGatePreviewSource.includes("Export preparation only."));
+assert.ok(exportPreparationGatePreviewSource.includes("exportFileCreated"));
+assert.ok(expertReviewPreviewSource.includes("Expert review note required first."));
+
 
 const workspaceDraft = DraftWorkspaceManager.createDraftRecord({
     draftMode: "report_draft_preview_sandbox_read_only",
