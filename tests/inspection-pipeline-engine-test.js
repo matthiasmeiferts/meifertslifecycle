@@ -130,24 +130,34 @@ runTest(
 );
 
 runTest(
-    "preserves valid context",
+    "preserves valid context and injects answers",
     () => {
 
         const context = {
             profile: {
-                country: "Thailand",
-                propertyType: "Condominium"
+                country:
+                    "Thailand",
+
+                propertyType:
+                    "Condominium"
             }
         };
 
         const result =
             InspectionPipelineEngine.run({
+                questions: [],
+                answers: {},
                 context
             });
 
         assert.deepEqual(
-            result.report.context,
-            context
+            result.report.context.profile,
+            context.profile
+        );
+
+        assert.deepEqual(
+            result.report.context.answers,
+            {}
         );
 
     }

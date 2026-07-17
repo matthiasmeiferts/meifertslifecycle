@@ -23,160 +23,92 @@ export default class InspectionPipelineEngine {
                 : [];
 
         const safeAnswers =
-            answers &&
-            typeof answers === "object" &&
-            !Array.isArray(answers)
-                ? answers
-                : {};
+            this.normalizeAnswers(
+                answers
+            );
 
         const safeContext =
-            context &&
-            typeof context === "object" &&
-            !Array.isArray(context)
-                ? context
-                : {};
+            this.normalizeContext(
+                context
+            );
+
+        const inspectionContext = {
+            ...safeContext,
+            answers:
+                this.cloneValue(
+                    safeAnswers
+                )
+        };
 
         const visibleQuestions =
-            this.invokeEngine(
-                QuestionVisibilityEngine,
-                [
-                    "filterVisibleQuestions",
-                    "getVisibleQuestions",
-                    "evaluateQuestions",
-                    "evaluateVisibility",
-                    "applyVisibility"
-                ],
-                [
-                    safeQuestions,
-                    safeAnswers,
-                    safeContext
-                ],
-                safeQuestions
+            safeQuestions.filter(
+                (question) =>
+                    QuestionVisibilityEngine.isVisible(
+                        question,
+                        inspectionContext
+                    ).visible
+            );
+
+        const orderedQuestionEntries =
+            QuestionPriorityEngine.getOrderedQuestions(
+                visibleQuestions,
+                inspectionContext
             );
 
         const prioritizedQuestions =
-            this.invokeEngine(
-                QuestionPriorityEngine,
-                [
-                    "prioritizeQuestions",
-                    "sortQuestions",
-                    "applyPriority",
-                    "evaluatePriority"
-                ],
-                [
-                    visibleQuestions,
-                    safeAnswers,
-                    safeContext
-                ],
-                visibleQuestions
-            );
+            orderedQuestionEntries
+                .map((entry) => entry?.question)
+                .filter(Boolean);
 
         const navigation =
-            this.invokeEngine(
-                InspectionGraphNavigator,
-                [
-                    "navigate",
-                    "buildNavigation",
-                    "resolveNavigation",
-                    "createNavigation",
-                    "generateNavigation"
-                ],
-                [
-                    prioritizedQuestions,
-                    graph,
-                    safeAnswers,
-                    safeContext
-                ],
-                prioritizedQuestions
+            InspectionGraphNavigator.getNavigationState(
+                safeQuestions,
+                inspectionContext
+            );
+
+        const nextQuestion =
+            InspectionGraphNavigator.getNextQuestion(
+                safeQuestions,
+                inspectionContext
             );
 
         const generatedFollowUps =
-            this.invokeEngine(
-                FollowUpGenerationEngine,
-                [
-                    "generateFollowUps",
-                    "generate",
-                    "createFollowUps",
-                    "evaluateFollowUps"
-                ],
-                [
-                    prioritizedQuestions,
-                    safeAnswers,
-                    safeContext,
-                    navigation
-                ],
-                []
+            FollowUpGenerationEngine.generateFollowUps(
+                prioritizedQuestions,
+                inspectionContext
             );
 
         const evidence =
-            this.invokeEngine(
-                EvidenceDecisionEngine,
-                [
-                    "evaluateEvidence",
-                    "generateEvidence",
-                    "decideEvidence",
-                    "resolveEvidence"
-                ],
-                [
-                    prioritizedQuestions,
-                    generatedFollowUps,
-                    safeContext,
-                    safeAnswers
-                ],
-                []
+            EvidenceDecisionEngine.evaluateEvidence(
+                prioritizedQuestions,
+                generatedFollowUps,
+                inspectionContext
             );
 
         const findings =
-            this.invokeEngine(
-                FindingGenerationEngine,
-                [
-                    "generateFindings",
-                    "generate",
-                    "createFindings"
-                ],
-                [
-                    prioritizedQuestions,
-                    generatedFollowUps,
-                    evidence,
-                    safeContext,
-                    safeAnswers
-                ],
-                []
+            FindingGenerationEngine.generateFindings(
+                prioritizedQuestions,
+                generatedFollowUps,
+                evidence,
+                inspectionContext
             );
 
         const assessments =
-            this.invokeEngine(
-                AssessmentGenerationEngine,
-                [
-                    "generateAssessments",
-                    "generate",
-                    "createAssessments"
-                ],
-                [
-                    findings,
-                    safeContext
-                ],
-                []
+            AssessmentGenerationEngine.generateAssessments(
+                findings,
+                inspectionContext
             );
 
         const recommendations =
-            this.invokeEngine(
-                RecommendationGenerationEngine,
-                [
-                    "generateRecommendations",
-                    "generate",
-                    "createRecommendations"
-                ],
-                [
-                    assessments,
-                    safeContext
-                ],
-                []
+            RecommendationGenerationEngine.generateRecommendations(
+                assessments,
+                inspectionContext
             );
 
         const report =
             ReportAssemblyEngine.assembleReport({
-                context: safeContext,
+                context:
+                    inspectionContext,
                 findings,
                 assessments,
                 recommendations
@@ -184,98 +116,114 @@ export default class InspectionPipelineEngine {
 
         return {
             input: {
-                questions: [...safeQuestions],
-                answers: { ...safeAnswers },
-                context: { ...safeContext }
+                questions:
+                    this.cloneValue(
+                        safeQuestions
+                    ),
+
+                answers:
+                    this.cloneValue(
+                        safeAnswers
+                    ),
+
+                context:
+                    this.cloneValue(
+                        safeContext
+                    ),
+
+                graph:
+                    this.cloneValue(
+                        graph
+                    )
             },
 
-            visibleQuestions:
-                this.normalizeArray(
-                    visibleQuestions
+            inspectionContext:
+                this.cloneValue(
+                    inspectionContext
                 ),
 
+            visibleQuestions:
+                [...visibleQuestions],
+
+            orderedQuestionEntries:
+                [...orderedQuestionEntries],
+
             prioritizedQuestions:
-                this.normalizeArray(
-                    prioritizedQuestions
-                ),
+                [...prioritizedQuestions],
 
             navigation,
 
+            nextQuestion,
+
             generatedFollowUps:
-                this.normalizeArray(
-                    generatedFollowUps
-                ),
+                [...generatedFollowUps],
 
             evidence:
-                this.normalizeArray(
-                    evidence
-                ),
+                [...evidence],
 
             findings:
-                this.normalizeArray(
-                    findings
-                ),
+                [...findings],
 
             assessments:
-                this.normalizeArray(
-                    assessments
-                ),
+                [...assessments],
 
             recommendations:
-                this.normalizeArray(
-                    recommendations
-                ),
+                [...recommendations],
 
             report
         };
 
     }
 
-    static invokeEngine(
-        engine,
-        methodNames,
-        args,
-        fallback
+    static normalizeAnswers(
+        answers
     ) {
+        if (Array.isArray(answers)) {
+            return this.cloneValue(
+                answers
+            );
+        }
 
         if (
-            !engine ||
-            typeof engine !== "function"
+            answers &&
+            typeof answers === "object"
         ) {
-            return fallback;
+            return {
+                ...answers
+            };
         }
 
-        for (const methodName of methodNames) {
-
-            if (
-                typeof engine[methodName] ===
-                "function"
-            ) {
-
-                const result =
-                    engine[methodName](
-                        ...args
-                    );
-
-                return result ??
-                    fallback;
-
-            }
-
-        }
-
-        return fallback;
-
+        return {};
     }
 
-    static normalizeArray(
+    static normalizeContext(
+        context
+    ) {
+        if (
+            !context ||
+            typeof context !== "object" ||
+            Array.isArray(context)
+        ) {
+            return {};
+        }
+
+        return {
+            ...context
+        };
+    }
+
+    static cloneValue(
         value
     ) {
+        if (
+            value === undefined
+        ) {
+            return undefined;
+        }
 
-        return Array.isArray(value)
-            ? [...value]
-            : [];
-
+        return JSON.parse(
+            JSON.stringify(value)
+        );
     }
 
 }
