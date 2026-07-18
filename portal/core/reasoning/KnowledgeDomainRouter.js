@@ -9,6 +9,7 @@
 const DOMAIN_PRECEDENCE = [
     "concrete-corrosion",
     "basement-waterproofing",
+    "balconies-terraces",
     "windows-doors",
     "facade-wall-systems",
     "roof-envelope",
@@ -34,6 +35,10 @@ export default class KnowledgeDomainRouter {
 
         if (isBasementWaterproofingFinding(source)) {
             domains.push("basement-waterproofing");
+        }
+
+        if (isBalconiesTerracesFinding(source)) {
+            domains.push("balconies-terraces");
         }
 
         if (isWindowsDoorsFinding(source)) {
@@ -79,7 +84,7 @@ function isMoistureFinding(source = {}) {
         textOf(source.finding?.observations)
     ].join(" ").toLowerCase();
 
-    const hasMoistureSignal = /moisture|damp|\bwet\b|leak|water|condensation|humidity|rising damp|plumbing|roof|ventilation|thermal bridge|drainage|grading/.test(findingText);
+    const hasMoistureSignal = /moisture|damp|\bwet\b|leak|water|condensation|humidity|rising damp|plumbing|roof|ventilation|drainage|grading/.test(findingText);
     const hasNegatedMoistureOnly = /\b(no|without|not)\s+(any\s+)?(moisture|damp|\bwet\b|wetting|leak(age)?|water ingress|seepage|condensation)\b/.test(findingText) &&
         !/\b(moisture|damp|\bwet\b|leak|water|seepage|condensation|humidity)\b/.test(findingText.replace(/\b(no|without|not)\s+(any\s+)?(moisture|damp|\bwet\b|wetting|leak(age)?|water ingress|seepage|condensation)\b/g, " "));
 
@@ -138,8 +143,6 @@ function isRoofEnvelopeFinding(source = {}) {
         "drain",
         "scupper",
         "outlet",
-        "balcony",
-        "terrace",
         "penetration",
         "flashing",
         "sealant",
@@ -164,6 +167,28 @@ function isRoofEnvelopeFinding(source = {}) {
         "rain",
         "weather"
     ];
+    const balconyTerraceTerms = [
+        "balcony",
+        "balconies",
+        "loggia",
+        "loggias",
+        "terrace",
+        "terraces",
+        "roof terrace",
+        "balcony slab",
+        "cantilever slab",
+        "balcony door",
+        "terrace door",
+        "balcony wall connection",
+        "terrace wall connection",
+        "balcony outlet",
+        "terrace outlet",
+        "balcony joint",
+        "terrace joint"
+    ];
+
+    const hasBalconyTerraceContext = balconyTerraceTerms.some((term) => matchesWholeWord(findingText, term) || matchesWholeWord(categoryText, term));
+    const hasMoistureDetail = moistureTerms.some((term) => matchesWholeWord(findingText, term));
 
     const windowsDoorsContext = isWindowsDoorsFinding(source);
 
@@ -171,10 +196,137 @@ function isRoofEnvelopeFinding(source = {}) {
         return false;
     }
 
+    if (/basement|below-grade|sunken/.test(findingText) && hasBalconyTerraceContext && !/roof|facade|fa\u00e7ade|parapet|upstand|flashing|sill|threshold|reveal/.test(findingText)) {
+        return false;
+    }
+
+    if (hasBalconyTerraceContext) {
+        return hasMoistureDetail && (
+            /waterproofing|drainage|drain|outlet|overflow|ponding|standing water|leak|ingress|seepage|threshold|wall connection|joint|flashing|sealant|reveal|upstand|parapet|door/.test(findingText)
+        );
+    }
+
     return categoryTerms.some((term) => matchesWholeWord(categoryText, term)) || (
         moistureTerms.some((term) => matchesWholeWord(findingText, term)) &&
         categoryTerms.some((term) => matchesWholeWord(findingText, term))
     );
+}
+
+function isBalconiesTerracesFinding(source = {}) {
+    const findingCategory = textOf(source.finding?.category).toLowerCase();
+    const findingLocation = textOf(source.finding?.location).toLowerCase();
+    const findingDescription = textOf(source.finding?.description).toLowerCase();
+    const findingObservations = textOf(source.finding?.observations).toLowerCase();
+    const buildingText = [
+        textOf(source.building?.constructionYear),
+        textOf(source.building?.balconyType),
+        textOf(source.building?.terraceType),
+        textOf(source.building?.waterproofingType),
+        textOf(source.building?.railingType),
+        textOf(source.building?.structuralSystem)
+    ].join(" ").toLowerCase();
+    const measurementText = cloneArray(source.measurements).map((measurement) => [
+        textOf(measurement.type),
+        textOf(measurement.value),
+        textOf(measurement.unit),
+        textOf(measurement.location)
+    ].join(" ")).join(" ").toLowerCase();
+
+    const text = [findingCategory, findingLocation, findingDescription, findingObservations, buildingText, measurementText].join(" ").trim();
+
+    if (text.length === 0) {
+        return false;
+    }
+
+    if (/address|marketing|listing|advertisement/.test(text) && !/balcony|balconies|loggia|loggias|terrace|terraces|roof terrace|balcony slab|cantilever balcony|cantilever slab/.test(text)) {
+        return false;
+    }
+
+    if (/interior\s+floor\s+tile|internal\s+floor\s+tile|generic\s+tile/.test(text)) {
+        return false;
+    }
+
+    if (/generic\s+railing|handrail\s+only/.test(text) && !/balcony|balconies|loggia|loggias|terrace|terraces|balustrade/.test(text)) {
+        return false;
+    }
+
+    if (/generic\s+frost\s+damage/.test(text) && !/balcony|balconies|loggia|terrace|terraces/.test(text)) {
+        return false;
+    }
+
+    if (/generic\s+standing\s+water/.test(text) && !/balcony|balconies|loggia|terrace|terraces/.test(text)) {
+        return false;
+    }
+
+    const componentTerms = [
+        "balcony",
+        "balconies",
+        "loggia",
+        "loggias",
+        "terrace",
+        "terraces",
+        "roof terrace",
+        "balcony slab",
+        "cantilever balcony",
+        "cantilever slab",
+        "balcony outlet",
+        "terrace outlet",
+        "wall connection",
+        "balcony wall connection",
+        "terrace wall connection",
+        "balcony door threshold",
+        "terrace door threshold",
+        "balcony tiles",
+        "terrace tiles",
+        "railing anchor",
+        "balustrade anchor",
+        "balcony railing",
+        "movement joint",
+        "balcony joint",
+        "terrace joint",
+        "occupied-space leakage below balcony",
+        "leakage below terrace",
+        "thermal bridge at balcony connection"
+    ];
+
+    const issueTerms = [
+        "waterproofing",
+        "drainage",
+        "outlet",
+        "standing water",
+        "ponding",
+        "slope",
+        "wall connection",
+        "door threshold",
+        "tile",
+        "hollow",
+        "frost",
+        "corrosion",
+        "spalling",
+        "anchor",
+        "movement joint",
+        "age-related",
+        "workmanship",
+        "penetration",
+        "thermal bridge",
+        "leak",
+        "leakage",
+        "moisture",
+        "staining"
+    ];
+
+    const hasComponent = componentTerms.some((term) => matchesWholeWord(text, term));
+    const hasIssue = issueTerms.some((term) => matchesWholeWord(text, term));
+
+    if (!hasComponent || !hasIssue) {
+        return false;
+    }
+
+    if (matchesWholeWord(text, "movement joint") && /interior|internal/.test(text) && !/balcony|terrace|loggia/.test(text)) {
+        return false;
+    }
+
+    return true;
 }
 
 function isConcreteCorrosionFinding(source = {}) {

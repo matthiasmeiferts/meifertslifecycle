@@ -28,6 +28,189 @@ runTest(
 );
 
 runTest(
+    "balconies-terraces-only routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "balcony",
+                location: "balcony edge",
+                description: "balcony workmanship defect"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["balconies-terraces"]);
+    }
+);
+
+runTest(
+    "balcony threshold leakage overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "balcony",
+                location: "balcony door threshold",
+                description: "leaking balcony door threshold with rain ingress"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["balconies-terraces", "windows-doors", "roof-envelope", "moisture"]);
+    }
+);
+
+runTest(
+    "terrace waterproofing plus roof-envelope and moisture",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "terrace",
+                location: "roof terrace",
+                description: "terrace waterproofing leakage with rain ingress"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["balconies-terraces", "roof-envelope", "moisture"]);
+    }
+);
+
+runTest(
+    "balcony concrete spalling overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "balcony",
+                location: "balcony edge",
+                description: "balcony edge spalling with exposed reinforcement and rust"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["concrete-corrosion", "balconies-terraces"]);
+    }
+);
+
+runTest(
+    "balcony wall connection plus facade overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "balcony",
+                location: "balcony wall connection",
+                description: "balcony wall connection moisture and staining at facade junction"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["balconies-terraces", "facade-wall-systems", "roof-envelope", "moisture"]);
+    }
+);
+
+runTest(
+    "basement terrace overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "moisture",
+                location: "sunken terrace",
+                description: "basement terrace leakage with dampness"
+            },
+            building: {
+                basementType: "full basement"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["basement-waterproofing", "balconies-terraces", "moisture"]);
+    }
+);
+
+runTest(
+    "balcony thermal-bridge routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "balcony",
+                location: "balcony connection",
+                description: "thermal bridge at balcony connection"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["balconies-terraces"]);
+    }
+);
+
+runTest(
+    "no false routing for internal tiles",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "tile",
+                location: "internal floor",
+                description: "interior floor tiles cracked"
+            }
+        });
+
+        assert.equal(domains.includes("balconies-terraces"), false);
+    }
+);
+
+runTest(
+    "no false routing for generic railing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "railing",
+                location: "handrail",
+                description: "generic railing corrosion"
+            }
+        });
+
+        assert.equal(domains.includes("balconies-terraces"), false);
+    }
+);
+
+runTest(
+    "no false routing for roof-only drainage",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "roof",
+                location: "roof drain",
+                description: "roof drainage outlet blockage"
+            }
+        });
+
+        assert.equal(domains.includes("balconies-terraces"), false);
+    }
+);
+
+runTest(
+    "no false routing for generic frost damage",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "surface",
+                location: "external surface",
+                description: "generic frost damage"
+            }
+        });
+
+        assert.equal(domains.includes("balconies-terraces"), false);
+    }
+);
+
+runTest(
+    "no false routing for generic standing water",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "surface",
+                location: "courtyard",
+                description: "generic standing water"
+            }
+        });
+
+        assert.equal(domains.includes("balconies-terraces"), false);
+    }
+);
+
+runTest(
     "rendered facade plus crack",
     () => {
         const domains = KnowledgeDomainRouter.resolve({

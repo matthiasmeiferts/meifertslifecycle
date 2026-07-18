@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 import ExpertReasoningEngine from "../portal/core/ExpertReasoningEngine.js";
+import KnowledgeDomainRouter from "../portal/core/reasoning/KnowledgeDomainRouter.js";
 
 function runTest(name, fn) {
     try {
@@ -141,7 +142,7 @@ runTest(
 runTest(
     "balcony or terrace leakage produces a waterproofing hypothesis",
     () => {
-        const result = ExpertReasoningEngine.analyze({
+        const input = {
             finding: {
                 location: "terrace",
                 description: "Leakage below the balcony edge",
@@ -150,9 +151,14 @@ runTest(
             building: {
                 constructionType: "mixed use"
             }
+        };
+
+        const result = ExpertReasoningEngine.analyze({
+            ...input
         });
 
-        assert.ok(allCauses(result).includes("failed balcony or terrace waterproofing"));
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve(input), ["balconies-terraces", "roof-envelope", "moisture"]);
+        assert.ok(allCauses(result).includes("defective terrace waterproofing"));
         assert.ok(result.primaryHypothesis.classification);
         assert.equal(typeof result.primaryHypothesis.riskRelevance, "string");
         assert.equal(typeof result.primaryHypothesis.capexRelevance, "string");
