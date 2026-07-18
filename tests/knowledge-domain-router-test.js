@@ -61,6 +61,79 @@ runTest(
 );
 
 runTest(
+    "basement-only routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "inspection",
+                location: "basement wall",
+                description: "below-grade tanking detail review"
+            },
+            building: {
+                basementType: "full basement"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["basement-waterproofing"]);
+    }
+);
+
+runTest(
+    "basement plus moisture routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "moisture",
+                location: "basement wall",
+                description: "dampness and seepage"
+            },
+            building: {
+                basementType: "full basement"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["basement-waterproofing", "moisture"]);
+    }
+);
+
+runTest(
+    "basement plus crack plus moisture routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "moisture",
+                location: "basement wall crack",
+                description: "wet crack and seepage at retaining wall"
+            },
+            building: {
+                basementType: "full basement"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["basement-waterproofing", "moisture", "crack"]);
+    }
+);
+
+runTest(
+    "basement plus concrete-corrosion routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "corrosion",
+                location: "reinforced concrete basement wall",
+                description: "spalling and rust staining"
+            },
+            building: {
+                basementType: "full basement",
+                constructionType: "reinforced concrete"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["concrete-corrosion", "basement-waterproofing"]);
+    }
+);
+
+runTest(
     "roof-envelope category also routes moisture",
     () => {
         const domains = KnowledgeDomainRouter.resolve({
@@ -72,6 +145,43 @@ runTest(
         });
 
         assert.deepStrictEqual(domains, ["roof-envelope", "moisture"]);
+    }
+);
+
+runTest(
+    "no false routing for roof-only findings",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "roof-envelope",
+                location: "roof penetration",
+                description: "water ingress near flashing"
+            },
+            building: {
+                constructionType: "apartment"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["roof-envelope", "moisture"]);
+        assert.equal(domains.includes("basement-waterproofing"), false);
+    }
+);
+
+runTest(
+    "no false routing for generic indoor moisture",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "moisture",
+                location: "interior wall",
+                description: "condensation near cold corner"
+            },
+            building: {
+                constructionType: "apartment"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["moisture"]);
     }
 );
 
@@ -111,12 +221,12 @@ runTest(
         const domains = KnowledgeDomainRouter.resolve({
             finding: {
                 category: "corrosion",
-                location: "roof concrete slab with crack",
+                location: "reinforced concrete basement wall crack",
                 description: "water ingress with rust staining and spalling"
             }
         });
 
-        assert.deepStrictEqual(domains, ["concrete-corrosion", "roof-envelope", "moisture", "crack"]);
+        assert.deepStrictEqual(domains, ["concrete-corrosion", "basement-waterproofing", "moisture", "crack"]);
     }
 );
 

@@ -2,6 +2,7 @@ import MoistureKnowledgeProvider from "./knowledge/MoistureKnowledgeProvider.js"
 import CrackKnowledgeProvider from "./knowledge/CrackKnowledgeProvider.js";
 import RoofEnvelopeKnowledgeProvider from "./knowledge/RoofEnvelopeKnowledgeProvider.js";
 import ConcreteCorrosionKnowledgeProvider from "./knowledge/ConcreteCorrosionKnowledgeProvider.js";
+import BasementWaterproofingKnowledgeProvider from "./knowledge/BasementWaterproofingKnowledgeProvider.js";
 import KnowledgeReasoningMapper from "./reasoning/KnowledgeReasoningMapper.js";
 import KnowledgeDomainRouter from "./reasoning/KnowledgeDomainRouter.js";
 
@@ -151,6 +152,8 @@ export default class ExpertReasoningEngine {
         for (const domain of domains) {
             const contract = domain === "concrete-corrosion"
                 ? buildConcreteCorrosionReasoning(source)
+                : domain === "basement-waterproofing"
+                    ? buildBasementWaterproofingReasoning(source)
                 : domain === "roof-envelope"
                     ? buildRoofEnvelopeReasoning(source)
                     : domain === "moisture"
@@ -359,6 +362,98 @@ function buildRoofEnvelopeReasoning(source = {}) {
         knowledge,
         input: source
     });
+}
+
+function buildBasementWaterproofingReasoning(source = {}) {
+    const knowledge = BasementWaterproofingKnowledgeProvider.getKnowledge({
+        finding: cloneObject(source.finding),
+        building: cloneObject(source.building),
+        measurements: cloneArray(source.measurements)
+    });
+
+    if (!knowledge.hypotheses.length) {
+        return null;
+    }
+
+    const [primaryHypothesis, ...alternativeHypotheses] = knowledge.hypotheses;
+    const mappedPrimary = mapBasementHypothesis(primaryHypothesis, source);
+
+    return KnowledgeReasoningMapper.map({
+        knowledge: {
+            domain: knowledge.domain,
+            hypotheses: [primaryHypothesis]
+        },
+        input: source
+    }) && {
+        primaryHypothesis: mappedPrimary.primaryHypothesis,
+        alternativeHypotheses: alternativeHypotheses.map((hypothesis) => {
+            const mapped = mapBasementHypothesis(hypothesis, source);
+            return mapped.primaryHypothesis;
+        }),
+        supportingEvidence: mappedPrimary.supportingEvidence,
+        missingEvidence: mappedPrimary.missingEvidence,
+        requiredVerification: mappedPrimary.requiredVerification,
+        potentialConsequences: mappedPrimary.potentialConsequences,
+        confidence: mappedPrimary.confidence
+    };
+}
+
+function mapBasementHypothesis(hypothesis = {}, source = {}) {
+    const mapped = KnowledgeReasoningMapper.map({
+        knowledge: {
+            domain: "basement-waterproofing",
+            hypotheses: [cloneObject(hypothesis)]
+        },
+        input: cloneObject(source)
+    });
+
+    if (mapped?.primaryHypothesis) {
+        const normalizedCause = normalizeBasementCauseLabel(mapped.primaryHypothesis.cause);
+
+        return {
+            ...mapped,
+            primaryHypothesis: {
+                ...mapped.primaryHypothesis,
+                cause: normalizedCause,
+                label: normalizedCause
+            }
+        };
+    }
+
+    const fallbackCause = normalizeBasementCauseLabel(hypothesis.cause);
+
+    return {
+        primaryHypothesis: {
+            id: hypothesis.id,
+            label: fallbackCause,
+            cause: fallbackCause,
+            classification: hypothesis.classification,
+            structuralRelevance: hypothesis.structuralRelevance,
+            supportingIndicators: cloneArray(hypothesis.supportingIndicators),
+            contradictingIndicators: cloneArray(hypothesis.contradictingIndicators),
+            requiredVerification: cloneArray(hypothesis.requiredVerification),
+            potentialConsequences: cloneArray(hypothesis.potentialConsequences),
+            recommendedActions: cloneArray(hypothesis.recommendedActions),
+            riskRelevance: hypothesis.riskRelevance,
+            capexRelevance: hypothesis.capexRelevance,
+            valuationRelevance: hypothesis.valuationRelevance,
+            status: "hypothesis"
+        },
+        alternativeHypotheses: [],
+        supportingEvidence: [],
+        missingEvidence: cloneArray(hypothesis.contradictingIndicators),
+        requiredVerification: cloneArray(hypothesis.requiredVerification),
+        potentialConsequences: cloneArray(hypothesis.potentialConsequences),
+        confidence: 0
+    };
+}
+
+function normalizeBasementCauseLabel(value) {
+    const cause = String(value || "").trim().toLowerCase();
+
+    return cause === "rising damp in masonry"
+        ? "rising damp"
+        : value;
 }
 
 function buildConcreteCorrosionReasoning(source = {}) {

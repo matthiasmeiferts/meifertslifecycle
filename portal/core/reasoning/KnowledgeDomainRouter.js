@@ -8,6 +8,7 @@
 
 const DOMAIN_PRECEDENCE = [
     "concrete-corrosion",
+    "basement-waterproofing",
     "roof-envelope",
     "moisture",
     "crack"
@@ -27,6 +28,10 @@ export default class KnowledgeDomainRouter {
 
         if (isConcreteCorrosionFinding(source)) {
             domains.push("concrete-corrosion");
+        }
+
+        if (isBasementWaterproofingFinding(source)) {
+            domains.push("basement-waterproofing");
         }
 
         if (isRoofEnvelopeFinding(source)) {
@@ -64,7 +69,11 @@ function isMoistureFinding(source = {}) {
         textOf(source.finding?.observations)
     ].join(" ").toLowerCase();
 
-    return /moisture|damp|wet|leak|water|condensation|humidity|rising damp|plumbing|roof|facade|ventilation|thermal bridge|drainage|grading/.test(findingText);
+    const hasMoistureSignal = /moisture|damp|\bwet\b|leak|water|condensation|humidity|rising damp|plumbing|roof|facade|ventilation|thermal bridge|drainage|grading/.test(findingText);
+    const hasNegatedMoistureOnly = /\b(no|without|not)\s+(any\s+)?(moisture|damp|\bwet\b|wetting|leak(age)?|water ingress|seepage|condensation)\b/.test(findingText) &&
+        !/\b(moisture|damp|\bwet\b|leak|water|seepage|condensation|humidity)\b/.test(findingText.replace(/\b(no|without|not)\s+(any\s+)?(moisture|damp|\bwet\b|wetting|leak(age)?|water ingress|seepage|condensation)\b/g, " "));
+
+    return hasMoistureSignal && !hasNegatedMoistureOnly;
 }
 
 function isCrackFinding(source = {}) {
@@ -85,7 +94,12 @@ function isCrackFinding(source = {}) {
         ].join(" "))
     ].join(" ").toLowerCase();
 
-    return categoryText.includes("crack") || (detailText.trim().length > 0 && /crack|cracking|fracture|split|settlement|foundation|movement|displacement|opening|lintel|slab|masonry|corrosion|spalling|joint|load-bearing|bearing|widening|recurring/.test(`${categoryText} ${detailText}`));
+    const text = `${categoryText} ${detailText}`;
+    const hasCrackSignal = /crack|cracking|fracture|split|settlement|foundation|movement|displacement|opening|lintel|slab|masonry|joint|load-bearing|bearing|widening|recurring/.test(text);
+    const hasNegatedCrackOnly = /\b(no|without|not)\s+(visible\s+)?crack(s|ing)?\b/.test(text) &&
+        !/\b(diagonal|widening|recurring|displacement|fracture|split|settlement|movement|foundation|step crack)\b/.test(text.replace(/\b(no|without|not)\s+(visible\s+)?crack(s|ing)?\b/g, " "));
+
+    return categoryText.includes("crack") || (detailText.trim().length > 0 && hasCrackSignal && !hasNegatedCrackOnly);
 }
 
 function isRoofEnvelopeFinding(source = {}) {
@@ -169,7 +183,6 @@ function isConcreteCorrosionFinding(source = {}) {
     ].join(" ").toLowerCase();
 
     const concreteTerms = [
-        "concrete",
         "reinforced concrete",
         "reinforcement",
         "rebar",
@@ -190,6 +203,108 @@ function isConcreteCorrosionFinding(source = {}) {
     ];
 
     return concreteTerms.some((term) => matchesWholeWord(categoryText, term) || matchesWholeWord(findingText, term));
+}
+
+function isBasementWaterproofingFinding(source = {}) {
+    const text = [
+        textOf(source.finding?.category),
+        textOf(source.finding?.location),
+        textOf(source.finding?.description),
+        textOf(source.finding?.observations),
+        textOf(source.building?.constructionType),
+        textOf(source.building?.constructionYear),
+        textOf(source.building?.basementType),
+        textOf(source.building?.foundationType),
+        textOf(source.building?.waterproofingType),
+        textOf(source.building?.siteConditions),
+        ...cloneArray(source.measurements).map((measurement) => [
+            textOf(measurement.type),
+            textOf(measurement.value),
+            textOf(measurement.unit),
+            textOf(measurement.location)
+        ].join(" "))
+    ].join(" ").toLowerCase();
+
+    if (text.trim().length === 0) {
+        return false;
+    }
+
+    const anchorTerms = [
+        "basement",
+        "cellar",
+        "below grade",
+        "below-grade",
+        "underground",
+        "foundation",
+        "retaining wall",
+        "basement wall",
+        "basement floor",
+        "earth-facing"
+    ];
+    const basementSystemTerms = [
+        "floor slab",
+        "wall-floor junction",
+        "wall floor junction",
+        "construction joint",
+        "service penetration",
+        "pipe penetration",
+        "tanking",
+        "perimeter drainage",
+        "groundwater",
+        "hydrostatic pressure",
+        "rising damp",
+        "capillary moisture",
+        "salt efflorescence",
+        "basement condensation"
+    ];
+    const waterproofingTerms = [
+        "waterproofing",
+        "drainage"
+    ];
+    const moistureTerms = [
+        "moisture",
+        "damp",
+        "wet",
+        "water",
+        "ingress",
+        "seepage",
+        "condensation",
+        "efflorescence",
+        "mould",
+        "mold"
+    ];
+    const basementDistressTerms = [
+        "spalling",
+        "corrosion",
+        "rust",
+        "crack",
+        "cracking",
+        "seepage",
+        "ingress"
+    ];
+
+    const hasAnchor = anchorTerms.some((term) => matchesWholeWord(text, term));
+    const hasSystemTerm = basementSystemTerms.some((term) => matchesWholeWord(text, term));
+    const hasWaterproofing = waterproofingTerms.some((term) => matchesWholeWord(text, term));
+    const hasMoisture = moistureTerms.some((term) => matchesWholeWord(text, term));
+
+    if (hasSystemTerm) {
+        return true;
+    }
+
+    if (hasAnchor && hasMoisture) {
+        return true;
+    }
+
+    if (hasAnchor && hasWaterproofing) {
+        return true;
+    }
+
+    if (hasAnchor && basementDistressTerms.some((term) => matchesWholeWord(text, term))) {
+        return true;
+    }
+
+    return false;
 }
 
 function matchesWholeWord(text, term) {
