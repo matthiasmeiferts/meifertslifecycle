@@ -752,6 +752,242 @@ runTest(
 );
 
 runTest(
+    "drainage-rainwater-only routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "drainage",
+                location: "rainwater gutter",
+                description: "blocked gutter with debris in gutter"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["drainage-rainwater"]);
+    }
+);
+
+runTest(
+    "gutter plus facade and moisture overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "drainage",
+                location: "facade gutter",
+                description: "leaking gutter wetting facade with moisture staining"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["drainage-rainwater", "facade-wall-systems", "moisture"]);
+    }
+);
+
+runTest(
+    "roof outlet plus roof-envelope overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "roof",
+                location: "roof outlet",
+                description: "blocked roof outlet with ponding near roof outlet"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["drainage-rainwater", "roof-envelope"]);
+    }
+);
+
+runTest(
+    "downpipe at basement overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "drainage",
+                location: "basement wall",
+                description: "defective downpipe discharging rainwater against basement wall"
+            },
+            building: {
+                basementType: "full basement"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["basement-waterproofing", "drainage-rainwater"]);
+    }
+);
+
+runTest(
+    "balcony outlet overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "balcony",
+                location: "balcony outlet",
+                description: "blocked balcony outlet with overflow"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["balconies-terraces", "drainage-rainwater"]);
+    }
+);
+
+runTest(
+    "terrace leakage overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "terrace",
+                location: "roof terrace outlet",
+                description: "terrace drainage leakage into occupied space with moisture staining"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["balconies-terraces", "drainage-rainwater", "roof-envelope", "moisture"]);
+    }
+);
+
+runTest(
+    "entrance exposure plus windows-doors",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "site drainage",
+                location: "entrance door threshold",
+                description: "runoff directed toward entrance and water directed toward building"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["drainage-rainwater", "windows-doors"]);
+    }
+);
+
+runTest(
+    "standing water without automatic moisture",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "site drainage",
+                location: "external paved area",
+                description: "standing water around building"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["drainage-rainwater"]);
+    }
+);
+
+runTest(
+    "backwater-only routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "drainage",
+                location: "external drain",
+                description: "backwater from external building drain"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["drainage-rainwater"]);
+    }
+);
+
+runTest(
+    "backwater plus basement overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "drainage",
+                location: "basement drain",
+                description: "backwater from building drain affecting basement below-grade area"
+            },
+            building: {
+                basementType: "full basement"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["basement-waterproofing", "drainage-rainwater"]);
+    }
+);
+
+runTest(
+    "gutter corrosion without concrete-corrosion",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "drainage",
+                location: "gutter",
+                description: "corroded gutter at rainwater gutter"
+            }
+        });
+
+        assert.ok(domains.includes("drainage-rainwater"));
+        assert.equal(domains.includes("concrete-corrosion"), false);
+    }
+);
+
+runTest(
+    "cracked downpipe without crack-domain routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "drainage",
+                location: "downpipe",
+                description: "cracked rainwater downpipe"
+            }
+        });
+
+        assert.ok(domains.includes("drainage-rainwater"));
+        assert.equal(domains.includes("crack"), false);
+    }
+);
+
+runTest(
+    "drainage false-positive guards",
+    () => {
+        const cases = [
+            ["generic rain", { finding: { category: "inspection", description: "rainfall occurred yesterday" } }],
+            ["weather description", { finding: { category: "inspection", description: "stormy weather and wind" } }],
+            ["indoor plumbing leak", { finding: { category: "plumbing", description: "indoor plumbing leakage below sink" } }],
+            ["sanitary pipe leak", { finding: { category: "plumbing", description: "sanitary pipe leakage in bathroom" } }],
+            ["shower drain", { finding: { category: "bathroom", description: "shower drain blockage" } }],
+            ["internal floor drain", { finding: { category: "interior", description: "internal floor drain in laundry" } }],
+            ["swimming-pool drainage", { finding: { category: "pool", description: "swimming-pool drainage maintenance" } }],
+            ["irrigation", { finding: { category: "landscape", description: "landscape irrigation pipe defect" } }],
+            ["street drainage", { finding: { category: "street", description: "street drainage blocked outside unrelated road" } }],
+            ["generic pipe corrosion", { finding: { category: "pipe", description: "generic pipe corrosion" } }],
+            ["generic standing water", { finding: { category: "surface", description: "generic standing water in a bucket" } }],
+            ["generic slope", { finding: { category: "site", description: "sloped surface noted" } }],
+            ["generic roof leakage", { finding: { category: "roof", description: "generic roof leakage at ceiling" } }],
+            ["generic basement moisture", { finding: { category: "basement", description: "basement moisture on internal wall" } }],
+            ["generic facade moisture", { finding: { category: "facade", description: "facade moisture without drainage context" } }],
+            ["marketing wording", { finding: { category: "marketing", description: "Rain Water Gutter Terrace Courtyard address" } }],
+            ["metadata only", { building: { drainageSystem: "rainwater drainage", backwaterProtection: "present" } }]
+        ];
+
+        cases.forEach(([label, input]) => {
+            assert.equal(KnowledgeDomainRouter.resolve(input).includes("drainage-rainwater"), false, label);
+        });
+    }
+);
+
+runTest(
+    "stable drainage precedence",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "corrosion",
+                location: "reinforced concrete basement balcony outlet facade entrance door threshold crack",
+                description: "blocked roof outlet with runoff directed toward entrance, wet facade staining, crack, rust staining, and spalling"
+            },
+            building: {
+                basementType: "full basement",
+                constructionType: "reinforced concrete"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["concrete-corrosion", "basement-waterproofing", "balconies-terraces", "drainage-rainwater", "windows-doors", "facade-wall-systems", "roof-envelope", "moisture", "crack"]);
+    }
+);
+
+runTest(
     "unknown input",
     () => {
         const domains = KnowledgeDomainRouter.resolve({

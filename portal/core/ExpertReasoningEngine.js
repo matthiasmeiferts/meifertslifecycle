@@ -4,6 +4,7 @@ import RoofEnvelopeKnowledgeProvider from "./knowledge/RoofEnvelopeKnowledgeProv
 import ConcreteCorrosionKnowledgeProvider from "./knowledge/ConcreteCorrosionKnowledgeProvider.js";
 import BasementWaterproofingKnowledgeProvider from "./knowledge/BasementWaterproofingKnowledgeProvider.js";
 import BalconiesTerracesKnowledgeProvider from "./knowledge/BalconiesTerracesKnowledgeProvider.js";
+import DrainageRainwaterKnowledgeProvider from "./knowledge/DrainageRainwaterKnowledgeProvider.js";
 import WindowsDoorsKnowledgeProvider from "./knowledge/WindowsDoorsKnowledgeProvider.js";
 import FacadeWallSystemsKnowledgeProvider from "./knowledge/FacadeWallSystemsKnowledgeProvider.js";
 import KnowledgeReasoningMapper from "./reasoning/KnowledgeReasoningMapper.js";
@@ -159,6 +160,8 @@ export default class ExpertReasoningEngine {
                     ? buildBasementWaterproofingReasoning(source)
                 : domain === "balconies-terraces"
                     ? buildBalconiesTerracesReasoning(source)
+                : domain === "drainage-rainwater"
+                    ? buildDrainageRainwaterReasoning(source)
                 : domain === "windows-doors"
                     ? buildWindowsDoorsReasoning(source)
                 : domain === "facade-wall-systems"
@@ -392,6 +395,23 @@ function buildWindowsDoorsReasoning(source = {}) {
 
 function buildBalconiesTerracesReasoning(source = {}) {
     const knowledge = BalconiesTerracesKnowledgeProvider.getKnowledge({
+        finding: cloneObject(source.finding),
+        building: cloneObject(source.building),
+        measurements: cloneArray(source.measurements)
+    });
+
+    if (!knowledge.hypotheses.length) {
+        return null;
+    }
+
+    return KnowledgeReasoningMapper.map({
+        knowledge,
+        input: source
+    });
+}
+
+function buildDrainageRainwaterReasoning(source = {}) {
+    const knowledge = DrainageRainwaterKnowledgeProvider.getKnowledge({
         finding: cloneObject(source.finding),
         building: cloneObject(source.building),
         measurements: cloneArray(source.measurements)

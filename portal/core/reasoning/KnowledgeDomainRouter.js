@@ -10,6 +10,7 @@ const DOMAIN_PRECEDENCE = [
     "concrete-corrosion",
     "basement-waterproofing",
     "balconies-terraces",
+    "drainage-rainwater",
     "windows-doors",
     "facade-wall-systems",
     "roof-envelope",
@@ -39,6 +40,10 @@ export default class KnowledgeDomainRouter {
 
         if (isBalconiesTerracesFinding(source)) {
             domains.push("balconies-terraces");
+        }
+
+        if (isDrainageRainwaterFinding(source)) {
+            domains.push("drainage-rainwater");
         }
 
         if (isWindowsDoorsFinding(source)) {
@@ -88,6 +93,10 @@ function isMoistureFinding(source = {}) {
     const hasNegatedMoistureOnly = /\b(no|without|not)\s+(any\s+)?(moisture|damp|\bwet\b|wetting|leak(age)?|water ingress|seepage|condensation)\b/.test(findingText) &&
         !/\b(moisture|damp|\bwet\b|leak|water|seepage|condensation|humidity)\b/.test(findingText.replace(/\b(no|without|not)\s+(any\s+)?(moisture|damp|\bwet\b|wetting|leak(age)?|water ingress|seepage|condensation)\b/g, " "));
 
+    if (isDrainageRainwaterFinding(source) && !hasDirectMoistureEvidence(findingText)) {
+        return false;
+    }
+
     return hasMoistureSignal && !hasNegatedMoistureOnly;
 }
 
@@ -114,7 +123,145 @@ function isCrackFinding(source = {}) {
     const hasNegatedCrackOnly = /\b(no|without|not)\s+(visible\s+)?crack(s|ing)?\b/.test(text) &&
         !/\b(diagonal|widening|recurring|displacement|fracture|split|settlement|movement|foundation|step crack)\b/.test(text.replace(/\b(no|without|not)\s+(visible\s+)?crack(s|ing)?\b/g, " "));
 
+    if (/\b(cracked|crack)\s+(rainwater\s+)?(downpipe|pipe)\b|\b(downpipe|pipe)\s+(crack|cracked)\b/.test(text) && !/wall|masonry|concrete|render|slab|foundation|load-bearing|bearing|settlement|movement|displacement|widening/.test(text)) {
+        return false;
+    }
+
     return categoryText.includes("crack") || (detailText.trim().length > 0 && hasCrackSignal && !hasNegatedCrackOnly);
+}
+
+function isDrainageRainwaterFinding(source = {}) {
+    const findingText = [
+        textOf(source.finding?.category),
+        textOf(source.finding?.location),
+        textOf(source.finding?.description),
+        textOf(source.finding?.observations),
+        ...cloneArray(source.measurements).map((measurement) => [
+            textOf(measurement.type),
+            textOf(measurement.value),
+            textOf(measurement.unit),
+            textOf(measurement.location)
+        ].join(" "))
+    ].join(" ").toLowerCase();
+
+    if (findingText.trim().length === 0) {
+        return false;
+    }
+
+    if (/address|marketing|listing|advertisement/.test(findingText)) {
+        return false;
+    }
+
+    if (/indoor plumbing|sanitary pipe|sanitary drainage|internal floor drain|shower drain|sink drain|toilet drainage|wastewater pipe|swimming-pool|swimming pool|decorative water feature|landscape irrigation|street drainage/.test(findingText) && !/backwater|surcharge|external|rainwater|surface water|around building|building drain/.test(findingText)) {
+        return false;
+    }
+
+    const componentTerms = [
+        "gutter",
+        "downpipe",
+        "rainwater pipe",
+        "rainwater discharge pipe",
+        "roof outlet",
+        "roof drain",
+        "roof drainage",
+        "emergency outlet",
+        "emergency overflow",
+        "emergency drainage",
+        "balcony outlet",
+        "terrace outlet",
+        "courtyard drain",
+        "yard drain",
+        "external gully",
+        "gully",
+        "surface drain",
+        "surface-water drain",
+        "drainage channel",
+        "channel drain",
+        "trench drain",
+        "external drain",
+        "surface water",
+        "site water",
+        "site drainage",
+        "site grading",
+        "adverse grading",
+        "negative grading",
+        "runoff",
+        "building base",
+        "foundation",
+        "backwater",
+        "sewer surcharge",
+        "drain surcharge",
+        "backflow from drainage",
+        "backwater valve",
+        "backwater protection"
+    ];
+    const issueTerms = [
+        "blocked",
+        "clogged",
+        "overflowing",
+        "overflow",
+        "leaking",
+        "leakage",
+        "defective",
+        "damaged",
+        "cracked",
+        "sagging",
+        "detached",
+        "corroded",
+        "ponding",
+        "insufficient",
+        "missing",
+        "standing water",
+        "water accumulation",
+        "water flows toward",
+        "directed toward",
+        "against building",
+        "discharge near",
+        "backwater",
+        "backing up",
+        "water rising",
+        "backflow",
+        "absent",
+        "defect",
+        "not maintained",
+        "not cleaned",
+        "debris accumulation",
+        "workmanship defect",
+        "installation defect",
+        "poor drainage installation",
+        "incorrect drainage connection",
+        "improper discharge arrangement",
+        "age-related drainage deterioration"
+    ];
+
+    const hasComponent = componentTerms.some((term) => matchesWholeWord(findingText, term));
+    const hasIssue = issueTerms.some((term) => matchesWholeWord(findingText, term));
+
+    if (hasComponent && hasIssue) {
+        return true;
+    }
+
+    return [
+        "ground slopes toward building",
+        "terrain slopes toward building",
+        "water flows toward building",
+        "runoff directed toward facade",
+        "runoff directed toward basement",
+        "runoff directed toward entrance",
+        "surface water against building",
+        "water accumulation at building base",
+        "standing water around building",
+        "ponding near building",
+        "discharge near foundation",
+        "missing backwater valve",
+        "defective backwater valve",
+        "backwater protection absent",
+        "backwater protection defect"
+    ].some((term) => matchesWholeWord(findingText, term));
+}
+
+function hasDirectMoistureEvidence(text = "") {
+    return /moisture|damp|\bwet\b|wetting|leakage|leaking|leak into|water ingress|ingress|seepage|staining|saturation|mould|mold|condensation|humidity/.test(String(text).toLowerCase());
 }
 
 function isRoofEnvelopeFinding(source = {}) {
@@ -193,6 +340,18 @@ function isRoofEnvelopeFinding(source = {}) {
     const windowsDoorsContext = isWindowsDoorsFinding(source);
 
     if (windowsDoorsContext && !/roof|facade|fa\u00e7ade|balcony|terrace|parapet|upstand|flashing|sill|threshold|reveal/.test(findingText)) {
+        return false;
+    }
+
+    if (isDrainageRainwaterFinding(source) && /backwater|sewer surcharge|drain surcharge|external drain|external gully|courtyard drain|yard drain|surface water|standing water around building|ponding near building/.test(findingText) && !/roof|gutter|downpipe|rainwater|roof outlet|roof drain|scupper|balcony|terrace|flashing|parapet|upstand/.test(findingText)) {
+        return false;
+    }
+
+    if (isDrainageRainwaterFinding(source) && /runoff directed toward|water directed toward|water flows toward|surface water against/.test(findingText) && !/roof|gutter|downpipe|rainwater|roof outlet|roof drain|scupper|balcony|terrace|flashing|parapet|upstand/.test(findingText)) {
+        return false;
+    }
+
+    if (isDrainageRainwaterFinding(source) && /gutter|downpipe|rainwater pipe|rainwater discharge pipe|balcony outlet|terrace outlet/.test(findingText) && !/roof outlet|roof drain|roof drainage|roof terrace|terrace drainage leakage|occupied space|flashing|parapet|upstand/.test(findingText)) {
         return false;
     }
 
@@ -449,6 +608,11 @@ function isWindowsDoorsFinding(source = {}) {
         "draft",
         "water penetration at window",
         "water penetration at door",
+        "water directed toward entrance",
+        "runoff directed toward entrance",
+        "surface water against entrance",
+        "surface water against door",
+        "water against threshold",
         "condensation on glazing",
         "condensation on frame",
         "distorted frame",
@@ -586,6 +750,9 @@ function isFacadeWallSystemsFinding(source = {}) {
         "detachment",
         "hollow",
         "moisture",
+        "wetting",
+        "water",
+        "runoff",
         "leakage",
         "ingress",
         "deterioration",
@@ -648,6 +815,10 @@ function isBasementWaterproofingFinding(source = {}) {
         return false;
     }
 
+    if (isDrainageRainwaterFinding(source) && !/basement|cellar|below grade|below-grade|underground|foundation|retaining wall|earth-facing/.test(text)) {
+        return false;
+    }
+
     const anchorTerms = [
         "basement",
         "cellar",
@@ -671,6 +842,12 @@ function isBasementWaterproofingFinding(source = {}) {
         "perimeter drainage",
         "groundwater",
         "hydrostatic pressure",
+        "downpipe discharge",
+        "rainwater discharge",
+        "surface water",
+        "courtyard drain",
+        "external gully",
+        "water accumulation at building base",
         "rising damp",
         "capillary moisture",
         "salt efflorescence",
