@@ -1,0 +1,538 @@
+import MoistureKnowledgeProvider from "./knowledge/MoistureKnowledgeProvider.js";
+
+/**
+ * MBLS Expert Intelligence Layer
+ * Expert Reasoning Engine
+ *
+ * Deterministic reasoning contract for future expert intelligence workflows.
+ * The engine derives stable hypotheses from inspection findings, building
+ * context, and measurements without AI, external providers, or side effects.
+ */
+
+const SCENARIOS = {
+    general: {
+        primaryHypothesis: {
+            label: "Insufficient information for a specific expert hypothesis",
+            category: "general",
+            rationale:
+                "The available data does not isolate one stable root cause with confidence."
+        },
+        alternativeHypotheses: [
+            {
+                label: "Concealed moisture-related issue",
+                category: "general",
+                rationale:
+                    "Moisture can remain hidden until additional verification is completed."
+            },
+            {
+                label: "Maintenance or material-aging issue",
+                category: "general",
+                rationale:
+                    "Routine wear and maintenance gaps can produce ambiguous observations."
+            },
+            {
+                label: "Context-dependent condition requiring inspection",
+                category: "general",
+                rationale:
+                    "Some observations require more site detail before a stable conclusion is possible."
+            }
+        ],
+        requiredVerification: [
+            "Collect additional inspection evidence.",
+            "Document the observed condition with context and measurements.",
+            "Reassess once more site-specific information is available."
+        ],
+        potentialConsequences: [
+            "Delayed diagnosis.",
+            "Potential escalation of an undetected condition.",
+            "Need for follow-up inspection."
+        ]
+    },
+    cracking: {
+        primaryHypothesis: {
+            label: "Movement or cracking of the building fabric",
+            category: "cracking",
+            rationale:
+                "Observed cracking points to movement, stress, or substrate instability."
+        },
+        alternativeHypotheses: [
+            {
+                label: "Thermal movement",
+                category: "cracking",
+                rationale:
+                    "Repeated temperature change can create patterned cracking."
+            },
+            {
+                label: "Finish or render failure",
+                category: "cracking",
+                rationale:
+                    "Surface layers may crack before deeper structural elements are affected."
+            },
+            {
+                label: "Structural movement requiring specialist review",
+                category: "cracking",
+                rationale:
+                    "Persistent or widening cracks may indicate structural relevance."
+            }
+        ],
+        requiredVerification: [
+            "Record crack pattern, orientation and width.",
+            "Check for progression and nearby movement indicators.",
+            "Escalate for specialist review if deformation is suspected."
+        ],
+        potentialConsequences: [
+            "Continued deterioration of finishes.",
+            "Water ingress through openings in the fabric.",
+            "Possible structural implications if movement continues."
+        ]
+    },
+    corrosion: {
+        primaryHypothesis: {
+            label: "Corrosion from moisture or environmental exposure",
+            category: "corrosion",
+            rationale:
+                "Corrosion indicators usually arise from repeated exposure to moisture or aggressive air."
+        },
+        alternativeHypotheses: [
+            {
+                label: "Coating or protective layer failure",
+                category: "corrosion",
+                rationale:
+                    "Loss of protective coating can accelerate oxidation or deterioration."
+            },
+            {
+                label: "Water retention at a detail",
+                category: "corrosion",
+                rationale:
+                    "Standing water or poor drainage can intensify surface attack."
+            },
+            {
+                label: "Age-related material degradation",
+                category: "corrosion",
+                rationale:
+                    "Older materials may degrade even without a single dominant defect."
+            }
+        ],
+        requiredVerification: [
+            "Check exposure to water, salt air or aggressive conditions.",
+            "Verify remaining protective coating and drainage behavior.",
+            "Determine whether any structural elements are affected."
+        ],
+        potentialConsequences: [
+            "Reduced service life of affected components.",
+            "Progressive material loss.",
+            "Possible structural impact in advanced cases."
+        ]
+    }
+};
+
+/**
+ * Analyze a finding/building/measurement bundle and return a deterministic
+ * expert-reasoning contract.
+ *
+ * @param {Object} [input={}] - Analysis input.
+ * @param {Object} [input.finding] - Primary finding payload.
+ * @param {Object} [input.building] - Building context payload.
+ * @param {Array<Object>} [input.measurements] - Measurement entries.
+ * @param {Object} [input.context] - Supplemental context.
+ * @returns {Object} Stable reasoning output.
+ */
+export default class ExpertReasoningEngine {
+
+    static analyze(input = {}) {
+        const source = cloneObject(input);
+
+        if (isMoistureFinding(source)) {
+            const moistureContract = buildMoistureReasoning(source);
+
+            if (moistureContract) {
+                return moistureContract;
+            }
+
+            return this.analyzeLegacy();
+        }
+
+        return this.analyzeLegacy(source);
+    }
+
+    static analyzeLegacy(input = {}) {
+        const source = cloneObject(input);
+        const finding = cloneObject(source.finding);
+        const building = cloneObject(source.building);
+        const context = cloneObject(source.context);
+        const measurements = cloneArray(source.measurements).filter((entry) => entry && typeof entry === "object");
+
+        const combinedText = [
+            textOf(finding),
+            textOf(building),
+            textOf(context),
+            ...measurements.map((measurement) => textOf(measurement))
+        ].join(" ");
+
+        const scenario = detectScenario(combinedText);
+        const template = SCENARIOS[scenario] || SCENARIOS.general;
+
+        const supportingEvidence = collectSupportingEvidence({
+            finding,
+            building,
+            context,
+            measurements
+        });
+
+        const missingEvidence = collectMissingEvidence({
+            finding,
+            building,
+            measurements,
+            supportingEvidence
+        });
+
+        const primaryHypothesis = {
+            ...cloneObject(template.primaryHypothesis),
+            rationale: enrichRationale(template.primaryHypothesis.rationale, supportingEvidence.length)
+        };
+
+        const alternativeHypotheses = template.alternativeHypotheses.map((hypothesis, index) => ({
+            ...cloneObject(hypothesis),
+            rationale: `${hypothesis.rationale} (${scenario} alternate ${index + 1})`
+        }));
+
+        const requiredVerification = missingEvidence.length > 0
+            ? [...template.requiredVerification, "Close evidence gaps before finalizing the hypothesis."]
+            : [...template.requiredVerification];
+
+        const potentialConsequences = [
+            ...template.potentialConsequences,
+            ...(textOf(context).trim().length > 0
+                ? [`Context-sensitive follow-up may be required for ${scenario}.`]
+                : [])
+        ];
+
+        const confidence = clampConfidence(
+            20 +
+            (scenario === "general" ? 0 : 20) +
+            Math.min(supportingEvidence.length, 4) * 10 -
+            Math.min(missingEvidence.length, 4) * 6 -
+            Math.min(alternativeHypotheses.length, 3) * 2 +
+            (measurements.length > 0 ? 8 : 0)
+        );
+
+        return {
+            primaryHypothesis,
+            alternativeHypotheses,
+            supportingEvidence,
+            missingEvidence,
+            requiredVerification,
+            potentialConsequences,
+            confidence
+        };
+    }
+
+}
+
+function isMoistureFinding(source = {}) {
+    const findingText = [
+        textOf(source.finding?.category),
+        textOf(source.finding?.location),
+        textOf(source.finding?.description),
+        textOf(source.finding?.observations)
+    ].join(" ").toLowerCase();
+
+    return /moisture|damp|wet|leak|water|condensation|humidity|rising damp|plumbing|roof|facade|ventilation|thermal bridge|drainage|grading/.test(findingText);
+}
+
+function buildMoistureReasoning(source = {}) {
+    const knowledge = MoistureKnowledgeProvider.getKnowledge({
+        finding: cloneObject(source.finding),
+        building: cloneObject(source.building),
+        measurements: cloneArray(source.measurements)
+    });
+
+    if (!knowledge.hypotheses.length) {
+        return null;
+    }
+
+    const ranked = knowledge.hypotheses
+        .map((hypothesis) => ({
+            hypothesis,
+            score: scoreMoistureHypothesis(hypothesis, source)
+        }))
+        .sort((left, right) => {
+            if (right.score !== left.score) {
+                return right.score - left.score;
+            }
+
+            return left.hypothesis.id.localeCompare(right.hypothesis.id);
+        });
+
+    if (ranked.length === 0 || ranked[0].score === 0) {
+        return null;
+    }
+
+    const primary = ranked[0].hypothesis;
+    const alternativeHypotheses = ranked.slice(1).map((entry) => cloneValue(entry.hypothesis));
+    const supportingEvidence = collectMatchedIndicators(primary, source);
+    const missingEvidence = collectMoistureMissingEvidence(primary, supportingEvidence);
+    const requiredVerification = [...cloneArray(primary.requiredVerification)];
+    const potentialConsequences = [...cloneArray(primary.potentialConsequences)];
+    const confidence = calculateMoistureConfidence(supportingEvidence);
+
+    return {
+        primaryHypothesis: cloneValue(primary),
+        alternativeHypotheses,
+        supportingEvidence,
+        missingEvidence,
+        requiredVerification,
+        potentialConsequences,
+        confidence
+    };
+}
+
+function scoreMoistureHypothesis(hypothesis = {}, source = {}) {
+    const text = [
+        textOf(source.finding?.category),
+        textOf(source.finding?.location),
+        textOf(source.finding?.description),
+        textOf(source.finding?.observations),
+        textOf(source.building?.constructionType),
+        textOf(source.building?.constructionYear),
+        source.building?.basementPresent === true ? "basement present" : "",
+        ...cloneArray(source.measurements).map((entry) => textOf(entry))
+    ].join(" ").toLowerCase();
+
+    return cloneArray(hypothesis.supportingIndicators).reduce((total, indicator) => {
+        const match = matchesIndicator(text, indicator);
+        return total + (match ? 1 : 0);
+    }, 0);
+}
+
+function collectMatchedIndicators(hypothesis = {}, source = {}) {
+    const text = [
+        textOf(source.finding?.category),
+        textOf(source.finding?.location),
+        textOf(source.finding?.description),
+        textOf(source.finding?.observations),
+        textOf(source.building?.constructionType),
+        textOf(source.building?.constructionYear),
+        source.building?.basementPresent === true ? "basement present" : "",
+        ...cloneArray(source.measurements).map((entry) => textOf(entry))
+    ].join(" ").toLowerCase();
+
+    return cloneArray(hypothesis.supportingIndicators).filter((indicator) => matchesIndicator(text, indicator));
+}
+
+function collectMoistureMissingEvidence(hypothesis = {}, supportingEvidence = []) {
+    const missingEvidence = [];
+
+    cloneArray(hypothesis.contradictingIndicators).forEach((indicator) => {
+        missingEvidence.push(indicator);
+    });
+
+    if (supportingEvidence.length === 0) {
+        missingEvidence.push("No supporting indicators matched the available moisture knowledge.");
+    }
+
+    return missingEvidence;
+}
+
+function calculateMoistureConfidence(supportingEvidence = []) {
+    if (supportingEvidence.length === 0) {
+        return 0;
+    }
+
+    const score = supportingEvidence.length >= 4
+        ? 1
+        : supportingEvidence.length === 3
+            ? 0.75
+            : supportingEvidence.length === 2
+                ? 0.5
+                : 0.25;
+
+    return score;
+}
+
+function detectScenario(text = "") {
+    const normalized = String(text).toLowerCase();
+
+    if (/crack|cracking|fracture|split|movement|deformation/.test(normalized)) {
+        return "cracking";
+    }
+
+    if (/corrosion|rust|oxidation|salt|coating|metal/.test(normalized)) {
+        return "corrosion";
+    }
+
+    if (/moisture|leak|water|humidity|damp|stain/.test(normalized)) {
+        return "moisture";
+    }
+
+    return "general";
+}
+
+function collectSupportingEvidence({ finding, building, context, measurements }) {
+    const evidence = [];
+
+    if (hasMeaningfulText(finding)) {
+        evidence.push({
+            source: "finding",
+            label: summarize(finding)
+        });
+    }
+
+    if (hasMeaningfulText(building)) {
+        evidence.push({
+            source: "building",
+            label: summarize(building)
+        });
+    }
+
+    measurements.forEach((measurement, index) => {
+        evidence.push({
+            source: "measurement",
+            label: summarizeMeasurement(measurement, index)
+        });
+    });
+
+    if (hasMeaningfulText(context)) {
+        evidence.push({
+            source: "context",
+            label: summarize(context)
+        });
+    }
+
+    return evidence;
+}
+
+function collectMissingEvidence({ finding, building, measurements, supportingEvidence }) {
+    const missingEvidence = [];
+
+    if (!hasMeaningfulText(finding)) {
+        missingEvidence.push("Finding detail is missing.");
+    }
+
+    if (!hasMeaningfulText(building)) {
+        missingEvidence.push("Building context is missing.");
+    }
+
+    if (measurements.length === 0) {
+        missingEvidence.push("Measurement data is missing.");
+    }
+
+    if (supportingEvidence.length === 0) {
+        missingEvidence.push("No supporting evidence was available.");
+    }
+
+    return missingEvidence;
+}
+
+function enrichRationale(rationale, supportingEvidenceCount) {
+    if (supportingEvidenceCount === 0) {
+        return `${rationale} Evidence is currently limited.`;
+    }
+
+    return `${rationale} Supported by ${supportingEvidenceCount} evidence item(s).`;
+}
+
+function summarize(value) {
+    if (typeof value === "string") {
+        return value;
+    }
+
+    if (!value || typeof value !== "object") {
+        return "Unspecified evidence";
+    }
+
+    const label = value.label || value.name || value.type || value.category || value.summary;
+    const detail = value.value ?? value.amount ?? value.level ?? value.note;
+
+    if (label && detail !== undefined && detail !== null && `${detail}`.length > 0) {
+        return `${label}: ${detail}`;
+    }
+
+    if (label) {
+        return String(label);
+    }
+
+    return textOf(value) || "Unspecified evidence";
+}
+
+function summarizeMeasurement(measurement, index) {
+    const name = measurement.name || measurement.type || measurement.measurementType || `Measurement ${index + 1}`;
+    const value = measurement.value ?? measurement.amount ?? measurement.level ?? measurement.reading;
+
+    if (value !== undefined && value !== null && `${value}`.length > 0) {
+        return `${name}: ${value}`;
+    }
+
+    return String(name);
+}
+
+function textOf(value) {
+    if (typeof value === "string") {
+        return value;
+    }
+
+    if (!value || typeof value !== "object") {
+        return "";
+    }
+
+    return Object.values(value)
+        .filter((entry) => typeof entry === "string" || typeof entry === "number" || typeof entry === "boolean")
+        .map((entry) => String(entry))
+        .join(" ");
+}
+
+function hasMeaningfulText(value) {
+    return textOf(value).trim().length > 0;
+}
+
+function cloneArray(value) {
+    if (!Array.isArray(value)) {
+        return [];
+    }
+
+    return value.map((entry) => cloneValue(entry));
+}
+
+function cloneObject(value) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+        return {};
+    }
+
+    return cloneValue(value);
+}
+
+function cloneValue(value) {
+    if (value === undefined) {
+        return undefined;
+    }
+
+    return JSON.parse(JSON.stringify(value));
+}
+
+function contains(source, value) {
+    return String(source).includes(String(value).toLowerCase());
+}
+
+function matchesIndicator(text, indicator) {
+    const normalizedText = String(text).toLowerCase();
+    const normalizedIndicator = String(indicator).toLowerCase();
+
+    if (normalizedText.includes(normalizedIndicator)) {
+        return true;
+    }
+
+    return normalizedIndicator
+        .split(/[^a-z0-9]+/)
+        .filter((token) => token.length >= 4)
+        .some((token) => normalizedText.includes(token));
+}
+
+function clampConfidence(value) {
+    const number = Number(value);
+
+    if (!Number.isFinite(number)) {
+        return 0;
+    }
+
+    return Math.max(0, Math.min(100, Math.round(number)));
+}
