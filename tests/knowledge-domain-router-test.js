@@ -13,6 +13,178 @@ function runTest(name, fn) {
 }
 
 runTest(
+    "facade-only routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "facade",
+                location: "external wall render",
+                description: "coating deterioration on facade"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["facade-wall-systems"]);
+    }
+);
+
+runTest(
+    "rendered facade plus crack",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "facade",
+                location: "rendered external wall",
+                description: "cracked render on facade"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["facade-wall-systems", "crack"]);
+    }
+);
+
+runTest(
+    "facade moisture plus roof-envelope plus moisture",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "facade",
+                location: "facade sealant joint",
+                description: "damp facade with failed sealant joint and rain ingress"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["facade-wall-systems", "roof-envelope", "moisture"]);
+    }
+);
+
+runTest(
+    "ETICS window connection overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "facade",
+                location: "ETICS window connection",
+                description: "ETICS moisture near window flashing with ingress"
+            },
+            building: {
+                insulationSystem: "ETICS"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["windows-doors", "facade-wall-systems", "roof-envelope", "moisture"]);
+    }
+);
+
+runTest(
+    "basement plinth overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "moisture",
+                location: "basement plinth external wall",
+                description: "facade moisture and seepage at plinth"
+            },
+            building: {
+                basementType: "full basement"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["basement-waterproofing", "facade-wall-systems", "moisture"]);
+    }
+);
+
+runTest(
+    "concrete facade spalling overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "facade",
+                location: "reinforced concrete facade",
+                description: "spalling facade finish with exposed reinforcement and rust"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["concrete-corrosion", "facade-wall-systems"]);
+    }
+);
+
+runTest(
+    "algae facade without automatic moisture domain",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "facade",
+                location: "north facade",
+                description: "algae on facade surface"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["facade-wall-systems"]);
+    }
+);
+
+runTest(
+    "no false routing for internal plaster",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "internal wall",
+                location: "living room",
+                description: "internal wall plaster cracking"
+            }
+        });
+
+        assert.equal(domains.includes("facade-wall-systems"), false);
+    }
+);
+
+runTest(
+    "no false routing for internal wall crack",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "crack",
+                location: "internal wall",
+                description: "generic wall crack in bedroom"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["crack"]);
+        assert.equal(domains.includes("facade-wall-systems"), false);
+    }
+);
+
+runTest(
+    "no false routing for roof cladding",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "roof",
+                location: "roof cladding",
+                description: "roof cladding weathering"
+            }
+        });
+
+        assert.equal(domains.includes("facade-wall-systems"), false);
+    }
+);
+
+runTest(
+    "no false routing for generic algae",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "surface",
+                location: "garden element",
+                description: "algae growth visible"
+            }
+        });
+
+        assert.equal(domains.includes("facade-wall-systems"), false);
+    }
+);
+
+runTest(
     "concrete-only routing",
     () => {
         const domains = KnowledgeDomainRouter.resolve({
@@ -387,12 +559,12 @@ runTest(
         const domains = KnowledgeDomainRouter.resolve({
             finding: {
                 category: "corrosion",
-                location: "reinforced concrete basement window frame crack",
-                description: "water ingress with rust staining and spalling at window joint and flashing"
+                location: "reinforced concrete basement external wall window frame crack",
+                description: "water ingress with rust staining and spalling facade finish at window joint and flashing"
             }
         });
 
-        assert.deepStrictEqual(domains, ["concrete-corrosion", "basement-waterproofing", "windows-doors", "roof-envelope", "moisture", "crack"]);
+        assert.deepStrictEqual(domains, ["concrete-corrosion", "basement-waterproofing", "windows-doors", "facade-wall-systems", "roof-envelope", "moisture", "crack"]);
     }
 );
 

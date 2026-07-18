@@ -10,6 +10,7 @@ const DOMAIN_PRECEDENCE = [
     "concrete-corrosion",
     "basement-waterproofing",
     "windows-doors",
+    "facade-wall-systems",
     "roof-envelope",
     "moisture",
     "crack"
@@ -37,6 +38,10 @@ export default class KnowledgeDomainRouter {
 
         if (isWindowsDoorsFinding(source)) {
             domains.push("windows-doors");
+        }
+
+        if (isFacadeWallSystemsFinding(source)) {
+            domains.push("facade-wall-systems");
         }
 
         if (isRoofEnvelopeFinding(source)) {
@@ -74,7 +79,7 @@ function isMoistureFinding(source = {}) {
         textOf(source.finding?.observations)
     ].join(" ").toLowerCase();
 
-    const hasMoistureSignal = /moisture|damp|\bwet\b|leak|water|condensation|humidity|rising damp|plumbing|roof|facade|ventilation|thermal bridge|drainage|grading/.test(findingText);
+    const hasMoistureSignal = /moisture|damp|\bwet\b|leak|water|condensation|humidity|rising damp|plumbing|roof|ventilation|thermal bridge|drainage|grading/.test(findingText);
     const hasNegatedMoistureOnly = /\b(no|without|not)\s+(any\s+)?(moisture|damp|\bwet\b|wetting|leak(age)?|water ingress|seepage|condensation)\b/.test(findingText) &&
         !/\b(moisture|damp|\bwet\b|leak|water|seepage|condensation|humidity)\b/.test(findingText.replace(/\b(no|without|not)\s+(any\s+)?(moisture|damp|\bwet\b|wetting|leak(age)?|water ingress|seepage|condensation)\b/g, " "));
 
@@ -133,8 +138,6 @@ function isRoofEnvelopeFinding(source = {}) {
         "drain",
         "scupper",
         "outlet",
-        "facade",
-        "fa\u00e7ade",
         "balcony",
         "terrace",
         "penetration",
@@ -197,10 +200,7 @@ function isConcreteCorrosionFinding(source = {}) {
         "concrete",
         "reinforcement",
         "rebar",
-        "concrete cover",
-        "hollow sounding",
-        "delamination",
-        "spalling"
+        "concrete cover"
     ];
     const concreteDamageTerms = [
         "spalling",
@@ -225,7 +225,7 @@ function isConcreteCorrosionFinding(source = {}) {
     const hasConcreteDamageSignal = concreteDamageTerms.some((term) => matchesWholeWord(categoryText, term) || matchesWholeWord(findingText, term));
     const hasCorrosionSignal = corrosionTerms.some((term) => matchesWholeWord(categoryText, term) || matchesWholeWord(findingText, term));
 
-    if (hasConcreteDamageSignal) {
+    if (hasConcreteDamageSignal && (hasConcreteContext || hasCorrosionSignal)) {
         return true;
     }
 
@@ -337,6 +337,135 @@ function isWindowsDoorsFinding(source = {}) {
     }
 
     if (matchesWholeWord(text, "opening") && !/window|door|glazing|frame|sash|joint|seal|hardware/.test(text)) {
+        return false;
+    }
+
+    return true;
+}
+
+function isFacadeWallSystemsFinding(source = {}) {
+    const findingCategory = textOf(source.finding?.category).toLowerCase();
+    const findingLocation = textOf(source.finding?.location).toLowerCase();
+    const findingDescription = textOf(source.finding?.description).toLowerCase();
+    const findingObservations = textOf(source.finding?.observations).toLowerCase();
+    const buildingText = [
+        textOf(source.building?.constructionYear),
+        textOf(source.building?.constructionType),
+        textOf(source.building?.facadeType),
+        textOf(source.building?.insulationSystem),
+        textOf(source.building?.claddingType),
+        textOf(source.building?.exposure)
+    ].join(" ").toLowerCase();
+    const measurementText = cloneArray(source.measurements).map((measurement) => [
+        textOf(measurement.type),
+        textOf(measurement.value),
+        textOf(measurement.unit),
+        textOf(measurement.location)
+    ].join(" ")).join(" ").toLowerCase();
+
+    const text = [findingCategory, findingLocation, findingDescription, findingObservations, buildingText, measurementText].join(" ").trim();
+
+    if (text.length === 0) {
+        return false;
+    }
+
+    if (/internal\s+(wall|plaster|render|decorative\s+render|movement\s+joint)|interior\s+(wall|plaster|render|movement\s+joint)/.test(text)) {
+        return false;
+    }
+
+    if (matchesWholeWord(text, "roof cladding") && !/facade|fa\u00e7ade|external wall|exterior wall|cladding anchor|facade panel/.test(text)) {
+        return false;
+    }
+
+    if ((matchesWholeWord(text, "algae") || matchesWholeWord(text, "biological growth")) && !/facade|fa\u00e7ade|external wall|exterior wall|render|cladding|masonry/.test(text)) {
+        return false;
+    }
+
+    if (matchesWholeWord(text, "anchor") && !/facade|fa\u00e7ade|cladding|external wall|exterior wall/.test(text)) {
+        return false;
+    }
+
+    if (/crack|cracking/.test(text) && !/facade|fa\u00e7ade|external wall|exterior wall|render|stucco|plaster facade|masonry facade|brick facade|facing brick|cladding/.test(text)) {
+        return false;
+    }
+
+    const facadeComponentTerms = [
+        "facade",
+        "fa\u00e7ade",
+        "external wall",
+        "exterior wall",
+        "rendered wall",
+        "render",
+        "plaster facade",
+        "stucco",
+        "cladding",
+        "facade panel",
+        "masonry facade",
+        "brick facade",
+        "facing brick",
+        "etics",
+        "eifs",
+        "external insulation",
+        "insulation render system",
+        "facade coating",
+        "exterior coating",
+        "facade joint",
+        "sealant joint",
+        "movement joint",
+        "expansion joint",
+        "facade anchor",
+        "cladding anchor",
+        "plinth"
+    ];
+
+    const facadeIssueTerms = [
+        "hollow render",
+        "detached render",
+        "render delamination",
+        "algae on facade",
+        "biological growth on facade",
+        "facade weathering",
+        "facade moisture",
+        "facade leakage",
+        "spalling facade finish",
+        "crack",
+        "cracked",
+        "cracking",
+        "detachment",
+        "hollow",
+        "moisture",
+        "leakage",
+        "ingress",
+        "deterioration",
+        "weathering",
+        "freeze-thaw",
+        "frost",
+        "algae",
+        "biological growth",
+        "anchor",
+        "movement joint",
+        "sealant",
+        "workmanship"
+    ];
+
+    const hasComponent = facadeComponentTerms.some((term) => matchesWholeWord(text, term));
+    const hasIssue = facadeIssueTerms.some((term) => matchesWholeWord(text, term));
+
+    if (!hasComponent || !hasIssue) {
+        return false;
+    }
+
+    if ((matchesWholeWord(text, "facade joint") || matchesWholeWord(text, "sealant joint") || matchesWholeWord(text, "sealant line")) &&
+        (matchesWholeWord(text, "moisture") || matchesWholeWord(text, "damp") || matchesWholeWord(text, "staining")) &&
+        !/failed|defect|crack|open joint|detached|delamination|weathering|deterioration|movement joint|expansion joint|anchor|cladding|etics|eifs|render|stucco|masonry|spalling|workmanship/.test(text)) {
+        return false;
+    }
+
+    if (text.includes("external wall insulation") &&
+        textOf(source.finding?.category).trim().length === 0 &&
+        textOf(source.finding?.location).trim().length === 0 &&
+        textOf(source.finding?.description).trim().length === 0 &&
+        textOf(source.finding?.observations).trim().length === 0) {
         return false;
     }
 

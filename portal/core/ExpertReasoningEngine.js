@@ -4,6 +4,7 @@ import RoofEnvelopeKnowledgeProvider from "./knowledge/RoofEnvelopeKnowledgeProv
 import ConcreteCorrosionKnowledgeProvider from "./knowledge/ConcreteCorrosionKnowledgeProvider.js";
 import BasementWaterproofingKnowledgeProvider from "./knowledge/BasementWaterproofingKnowledgeProvider.js";
 import WindowsDoorsKnowledgeProvider from "./knowledge/WindowsDoorsKnowledgeProvider.js";
+import FacadeWallSystemsKnowledgeProvider from "./knowledge/FacadeWallSystemsKnowledgeProvider.js";
 import KnowledgeReasoningMapper from "./reasoning/KnowledgeReasoningMapper.js";
 import KnowledgeDomainRouter from "./reasoning/KnowledgeDomainRouter.js";
 
@@ -157,6 +158,8 @@ export default class ExpertReasoningEngine {
                     ? buildBasementWaterproofingReasoning(source)
                 : domain === "windows-doors"
                     ? buildWindowsDoorsReasoning(source)
+                : domain === "facade-wall-systems"
+                    ? buildFacadeWallSystemsReasoning(source)
                 : domain === "roof-envelope"
                     ? buildRoofEnvelopeReasoning(source)
                     : domain === "moisture"
@@ -369,6 +372,23 @@ function buildRoofEnvelopeReasoning(source = {}) {
 
 function buildWindowsDoorsReasoning(source = {}) {
     const knowledge = WindowsDoorsKnowledgeProvider.getKnowledge({
+        finding: cloneObject(source.finding),
+        building: cloneObject(source.building),
+        measurements: cloneArray(source.measurements)
+    });
+
+    if (!knowledge.hypotheses.length) {
+        return null;
+    }
+
+    return KnowledgeReasoningMapper.map({
+        knowledge,
+        input: source
+    });
+}
+
+function buildFacadeWallSystemsReasoning(source = {}) {
+    const knowledge = FacadeWallSystemsKnowledgeProvider.getKnowledge({
         finding: cloneObject(source.finding),
         building: cloneObject(source.building),
         measurements: cloneArray(source.measurements)
