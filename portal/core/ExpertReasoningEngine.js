@@ -1,5 +1,7 @@
 import MoistureKnowledgeProvider from "./knowledge/MoistureKnowledgeProvider.js";
 import CrackKnowledgeProvider from "./knowledge/CrackKnowledgeProvider.js";
+import RoofEnvelopeKnowledgeProvider from "./knowledge/RoofEnvelopeKnowledgeProvider.js";
+import KnowledgeReasoningMapper from "./reasoning/KnowledgeReasoningMapper.js";
 
 /**
  * MBLS Expert Intelligence Layer
@@ -143,6 +145,16 @@ export default class ExpertReasoningEngine {
     static analyze(input = {}) {
         const source = cloneObject(input);
 
+        if (isRoofEnvelopeFinding(source)) {
+            const roofEnvelopeContract = buildRoofEnvelopeReasoning(source);
+
+            if (roofEnvelopeContract) {
+                return roofEnvelopeContract;
+            }
+
+            return this.analyzeLegacy();
+        }
+
         if (isMoistureFinding(source)) {
             const moistureContract = buildMoistureReasoning(source);
 
@@ -160,7 +172,7 @@ export default class ExpertReasoningEngine {
                 return crackContract;
             }
 
-            return this.analyze();
+            return this.analyzeLegacy();
         }
 
         return this.analyzeLegacy(source);
@@ -350,6 +362,23 @@ function buildCrackReasoning(source = {}) {
     };
 }
 
+function buildRoofEnvelopeReasoning(source = {}) {
+    const knowledge = RoofEnvelopeKnowledgeProvider.getKnowledge({
+        finding: cloneObject(source.finding),
+        building: cloneObject(source.building),
+        measurements: cloneArray(source.measurements)
+    });
+
+    if (!knowledge.hypotheses.length) {
+        return null;
+    }
+
+    return KnowledgeReasoningMapper.map({
+        knowledge,
+        input: source
+    });
+}
+
 function scoreCrackHypothesis(hypothesis = {}, source = {}) {
     const text = buildCrackText(source);
 
@@ -449,8 +478,8 @@ function matchesCrackIndicator(text, indicator) {
 }
 
 function isCrackFinding(source = {}) {
-    const crackText = [
-        textOf(source.finding?.category),
+    const categoryText = textOf(source.finding?.category).toLowerCase();
+    const detailText = [
         textOf(source.finding?.location),
         textOf(source.finding?.description),
         textOf(source.finding?.observations),
@@ -466,7 +495,84 @@ function isCrackFinding(source = {}) {
         ].join(" "))
     ].join(" ").toLowerCase();
 
-    return /crack|cracking|fracture|split|settlement|foundation|movement|displacement|opening|lintel|slab|masonry|corrosion|spalling|joint|load-bearing|bearing|widening|recurring/.test(crackText);
+    return categoryText.includes("crack") || (detailText.trim().length > 0 && /crack|cracking|fracture|split|settlement|foundation|movement|displacement|opening|lintel|slab|masonry|corrosion|spalling|joint|load-bearing|bearing|widening|recurring/.test(`${categoryText} ${detailText}`));
+}
+
+function isRoofEnvelopeFinding(source = {}) {
+    const categoryText = textOf(source.finding?.category).toLowerCase();
+    const findingText = [
+        textOf(source.finding?.category),
+        textOf(source.finding?.location),
+        textOf(source.finding?.description),
+        textOf(source.finding?.observations),
+        textOf(source.building?.constructionType),
+        textOf(source.building?.constructionYear),
+        textOf(source.building?.numberOfStoreys),
+        source.building?.basementPresent === true ? "basement present" : ""
+    ].join(" ").toLowerCase();
+
+    const categoryTerms = [
+        "roof",
+        "flat roof",
+        "roofing",
+        "roof covering",
+        "roof membrane",
+        "roof drainage",
+        "gutter",
+        "downpipe",
+        "drainage",
+        "drain",
+        "scupper",
+        "outlet",
+        "facade",
+        "fa\u00e7ade",
+        "window",
+        "balcony",
+        "terrace",
+        "penetration",
+        "flashing",
+        "sealant",
+        "joint",
+        "reveal",
+        "sill",
+        "threshold",
+        "upstand",
+        "parapet"
+    ];
+    const moistureTerms = [
+        "moisture",
+        "damp",
+        "wet",
+        "leak",
+        "water",
+        "overflow",
+        "ponding",
+        "staining",
+        "ingress",
+        "seepage",
+        "rain",
+        "weather"
+    ];
+
+    return categoryTerms.some((term) => matchesWholeWord(categoryText, term)) || (
+        moistureTerms.some((term) => matchesWholeWord(findingText, term)) &&
+        categoryTerms.some((term) => matchesWholeWord(findingText, term))
+    );
+}
+
+function matchesWholeWord(text, term) {
+    const normalizedText = String(text).toLowerCase();
+    const normalizedTerm = String(term).toLowerCase();
+
+    if (normalizedTerm.includes(" ")) {
+        return normalizedText.includes(normalizedTerm);
+    }
+
+    return new RegExp(`(^|[^a-z0-9])${escapeRegex(normalizedTerm)}([^a-z0-9]|$)`).test(normalizedText);
+}
+
+function escapeRegex(value) {
+    return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function scoreMoistureHypothesis(hypothesis = {}, source = {}) {
