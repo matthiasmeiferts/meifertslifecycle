@@ -1,7 +1,9 @@
 import MoistureKnowledgeProvider from "./knowledge/MoistureKnowledgeProvider.js";
 import CrackKnowledgeProvider from "./knowledge/CrackKnowledgeProvider.js";
 import RoofEnvelopeKnowledgeProvider from "./knowledge/RoofEnvelopeKnowledgeProvider.js";
+import ConcreteCorrosionKnowledgeProvider from "./knowledge/ConcreteCorrosionKnowledgeProvider.js";
 import KnowledgeReasoningMapper from "./reasoning/KnowledgeReasoningMapper.js";
+import KnowledgeDomainRouter from "./reasoning/KnowledgeDomainRouter.js";
 
 /**
  * MBLS Expert Intelligence Layer
@@ -144,34 +146,25 @@ export default class ExpertReasoningEngine {
 
     static analyze(input = {}) {
         const source = cloneObject(input);
+        const domains = KnowledgeDomainRouter.resolve(source);
 
-        if (isRoofEnvelopeFinding(source)) {
-            const roofEnvelopeContract = buildRoofEnvelopeReasoning(source);
+        for (const domain of domains) {
+            const contract = domain === "concrete-corrosion"
+                ? buildConcreteCorrosionReasoning(source)
+                : domain === "roof-envelope"
+                    ? buildRoofEnvelopeReasoning(source)
+                    : domain === "moisture"
+                        ? buildMoistureReasoning(source)
+                        : domain === "crack"
+                            ? buildCrackReasoning(source)
+                            : null;
 
-            if (roofEnvelopeContract) {
-                return roofEnvelopeContract;
+            if (contract) {
+                return contract;
             }
-
-            return this.analyzeLegacy();
         }
 
-        if (isMoistureFinding(source)) {
-            const moistureContract = buildMoistureReasoning(source);
-
-            if (moistureContract) {
-                return moistureContract;
-            }
-
-            return this.analyzeLegacy();
-        }
-
-        if (isCrackFinding(source)) {
-            const crackContract = buildCrackReasoning(source);
-
-            if (crackContract) {
-                return crackContract;
-            }
-
+        if (domains.length > 0) {
             return this.analyzeLegacy();
         }
 
@@ -250,17 +243,6 @@ export default class ExpertReasoningEngine {
         };
     }
 
-}
-
-function isMoistureFinding(source = {}) {
-    const findingText = [
-        textOf(source.finding?.category),
-        textOf(source.finding?.location),
-        textOf(source.finding?.description),
-        textOf(source.finding?.observations)
-    ].join(" ").toLowerCase();
-
-    return /moisture|damp|wet|leak|water|condensation|humidity|rising damp|plumbing|roof|facade|ventilation|thermal bridge|drainage|grading/.test(findingText);
 }
 
 function buildMoistureReasoning(source = {}) {
@@ -379,6 +361,150 @@ function buildRoofEnvelopeReasoning(source = {}) {
     });
 }
 
+function buildConcreteCorrosionReasoning(source = {}) {
+    const knowledge = ConcreteCorrosionKnowledgeProvider.getKnowledge({
+        finding: cloneObject(source.finding),
+        building: cloneObject(source.building),
+        measurements: cloneArray(source.measurements)
+    });
+
+    if (!knowledge.hypotheses.length) {
+        return null;
+    }
+
+    const [primaryHypothesis, ...alternativeHypotheses] = knowledge.hypotheses;
+    const mappedPrimary = mapConcreteHypothesis(primaryHypothesis, source);
+
+    return KnowledgeReasoningMapper.map({
+        knowledge: {
+            domain: knowledge.domain,
+            hypotheses: [primaryHypothesis]
+        },
+        input: source
+    }) && {
+        primaryHypothesis: mappedPrimary.primaryHypothesis,
+        alternativeHypotheses: alternativeHypotheses.map((hypothesis) => {
+            const mapped = mapConcreteHypothesis(hypothesis, source);
+            return mapped.primaryHypothesis;
+        }),
+        supportingEvidence: mappedPrimary.supportingEvidence,
+        missingEvidence: mappedPrimary.missingEvidence,
+        requiredVerification: mappedPrimary.requiredVerification,
+        potentialConsequences: mappedPrimary.potentialConsequences,
+        confidence: mappedPrimary.confidence
+    };
+}
+
+function mapConcreteHypothesis(hypothesis = {}, source = {}) {
+    const mapped = KnowledgeReasoningMapper.map({
+        knowledge: {
+            domain: "concrete-corrosion",
+            hypotheses: [cloneObject(hypothesis)]
+        },
+        input: buildConcreteMappingInput(source, hypothesis?.cause)
+    });
+
+    return mapped || {
+        primaryHypothesis: {
+            id: hypothesis.id,
+            label: hypothesis.cause,
+            cause: hypothesis.cause,
+            classification: hypothesis.classification,
+            structuralRelevance: hypothesis.structuralRelevance,
+            supportingIndicators: cloneArray(hypothesis.supportingIndicators),
+            contradictingIndicators: cloneArray(hypothesis.contradictingIndicators),
+            requiredVerification: cloneArray(hypothesis.requiredVerification),
+            potentialConsequences: cloneArray(hypothesis.potentialConsequences),
+            recommendedActions: cloneArray(hypothesis.recommendedActions),
+            riskRelevance: hypothesis.riskRelevance,
+            capexRelevance: hypothesis.capexRelevance,
+            valuationRelevance: hypothesis.valuationRelevance,
+            status: "hypothesis"
+        },
+        alternativeHypotheses: [],
+        supportingEvidence: [],
+        missingEvidence: cloneArray(hypothesis.contradictingIndicators),
+        requiredVerification: cloneArray(hypothesis.requiredVerification),
+        potentialConsequences: cloneArray(hypothesis.potentialConsequences),
+        confidence: 0
+    };
+}
+
+function buildConcreteMappingInput(source = {}, primaryCause = "") {
+    const mappedInput = cloneObject(source);
+    const primary = String(primaryCause).toLowerCase();
+
+    mappedInput.building = {
+        ...cloneObject(source.building),
+        constructionType: "",
+        exposureClass: ""
+    };
+    mappedInput.finding = {
+        ...cloneObject(source.finding),
+        category: primary
+    };
+
+    if (primary === "reinforcement corrosion") {
+        mappedInput.finding = sanitizeConcreteText(mappedInput.finding, [
+            "spalling",
+            "concrete",
+            "chloride",
+            "salt",
+            "coastal",
+            "marine",
+            "de-icing"
+        ]);
+        mappedInput.measurements = cloneArray(source.measurements).map((entry) => sanitizeConcreteText(entry, [
+            "spalling",
+            "concrete",
+            "chloride",
+            "salt",
+            "coastal",
+            "marine",
+            "de-icing"
+        ]));
+    }
+
+    return mappedInput;
+}
+
+function sanitizeConcreteText(value, terms) {
+    if (!value || typeof value !== "object") {
+        return value;
+    }
+
+    const cloned = cloneValue(value);
+    const pattern = new RegExp(`\\b(${terms.map((term) => escapeRegex(term)).join("|")})\\b`, "gi");
+
+    const scrub = (entry) => {
+        if (typeof entry === "string") {
+            return entry.replace(pattern, " ").replace(/\s+/g, " ").trim();
+        }
+
+        if (Array.isArray(entry)) {
+            return entry.map((item) => scrub(item));
+        }
+
+        if (entry && typeof entry === "object") {
+            const result = {};
+
+            Object.entries(entry).forEach(([key, child]) => {
+                result[key] = scrub(child);
+            });
+
+            return result;
+        }
+
+        return entry;
+    };
+
+    return scrub(cloned);
+}
+
+function escapeRegex(value) {
+    return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function scoreCrackHypothesis(hypothesis = {}, source = {}) {
     const text = buildCrackText(source);
 
@@ -475,104 +601,6 @@ function matchesCrackIndicator(text, indicator) {
         .split(/[^a-z0-9]+/)
         .filter((token) => token.length >= 4)
         .some((token) => normalizedText.includes(token));
-}
-
-function isCrackFinding(source = {}) {
-    const categoryText = textOf(source.finding?.category).toLowerCase();
-    const detailText = [
-        textOf(source.finding?.location),
-        textOf(source.finding?.description),
-        textOf(source.finding?.observations),
-        textOf(source.building?.constructionYear),
-        textOf(source.building?.constructionType),
-        textOf(source.building?.numberOfStoreys),
-        source.building?.basementPresent === true ? "basement present" : "",
-        ...cloneArray(source.measurements).map((measurement) => [
-            textOf(measurement.type),
-            textOf(measurement.value),
-            textOf(measurement.unit),
-            textOf(measurement.location)
-        ].join(" "))
-    ].join(" ").toLowerCase();
-
-    return categoryText.includes("crack") || (detailText.trim().length > 0 && /crack|cracking|fracture|split|settlement|foundation|movement|displacement|opening|lintel|slab|masonry|corrosion|spalling|joint|load-bearing|bearing|widening|recurring/.test(`${categoryText} ${detailText}`));
-}
-
-function isRoofEnvelopeFinding(source = {}) {
-    const categoryText = textOf(source.finding?.category).toLowerCase();
-    const findingText = [
-        textOf(source.finding?.category),
-        textOf(source.finding?.location),
-        textOf(source.finding?.description),
-        textOf(source.finding?.observations),
-        textOf(source.building?.constructionType),
-        textOf(source.building?.constructionYear),
-        textOf(source.building?.numberOfStoreys),
-        source.building?.basementPresent === true ? "basement present" : ""
-    ].join(" ").toLowerCase();
-
-    const categoryTerms = [
-        "roof",
-        "flat roof",
-        "roofing",
-        "roof covering",
-        "roof membrane",
-        "roof drainage",
-        "gutter",
-        "downpipe",
-        "drainage",
-        "drain",
-        "scupper",
-        "outlet",
-        "facade",
-        "fa\u00e7ade",
-        "window",
-        "balcony",
-        "terrace",
-        "penetration",
-        "flashing",
-        "sealant",
-        "joint",
-        "reveal",
-        "sill",
-        "threshold",
-        "upstand",
-        "parapet"
-    ];
-    const moistureTerms = [
-        "moisture",
-        "damp",
-        "wet",
-        "leak",
-        "water",
-        "overflow",
-        "ponding",
-        "staining",
-        "ingress",
-        "seepage",
-        "rain",
-        "weather"
-    ];
-
-    return categoryTerms.some((term) => matchesWholeWord(categoryText, term)) || (
-        moistureTerms.some((term) => matchesWholeWord(findingText, term)) &&
-        categoryTerms.some((term) => matchesWholeWord(findingText, term))
-    );
-}
-
-function matchesWholeWord(text, term) {
-    const normalizedText = String(text).toLowerCase();
-    const normalizedTerm = String(term).toLowerCase();
-
-    if (normalizedTerm.includes(" ")) {
-        return normalizedText.includes(normalizedTerm);
-    }
-
-    return new RegExp(`(^|[^a-z0-9])${escapeRegex(normalizedTerm)}([^a-z0-9]|$)`).test(normalizedText);
-}
-
-function escapeRegex(value) {
-    return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function scoreMoistureHypothesis(hypothesis = {}, source = {}) {
