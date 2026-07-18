@@ -61,6 +61,126 @@ runTest(
 );
 
 runTest(
+    "windows-doors-only routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "window",
+                location: "window frame",
+                description: "defective perimeter seal at frame edge"
+            },
+            building: {
+                windowType: "casement"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["windows-doors"]);
+    }
+);
+
+runTest(
+    "window leakage plus roof-envelope plus moisture",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "moisture",
+                location: "window sill and reveal",
+                description: "water penetration at window connection with flashing issue",
+                observations: ["rain-related ingress"]
+            },
+            building: {
+                constructionType: "apartment"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["windows-doors", "roof-envelope", "moisture"]);
+    }
+);
+
+runTest(
+    "basement window leakage overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "moisture",
+                location: "basement window",
+                description: "water penetration at window connection and flashing",
+                observations: ["seepage at reveal"]
+            },
+            building: {
+                basementType: "full basement"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["basement-waterproofing", "windows-doors", "roof-envelope", "moisture"]);
+    }
+);
+
+runTest(
+    "window condensation plus moisture",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "moisture",
+                location: "window glazing",
+                description: "condensation on glazing",
+                observations: ["surface moisture"]
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["windows-doors", "moisture"]);
+    }
+);
+
+runTest(
+    "crack adjacent to window opening without connection relevance",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "crack",
+                location: "wall near window opening",
+                description: "diagonal crack in plaster adjacent to opening",
+                observations: ["widening line"]
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["crack"]);
+    }
+);
+
+runTest(
+    "crack adjacent to window opening with connection relevance",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "crack",
+                location: "window frame joint",
+                description: "crack and leakage at window installation joint",
+                observations: ["seal discontinuity"]
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["windows-doors", "moisture", "crack"]);
+    }
+);
+
+runTest(
+    "exterior door seal defect",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "door",
+                location: "exterior door threshold",
+                description: "defective exterior door seal",
+                observations: ["draught at gasket"]
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["windows-doors"]);
+    }
+);
+
+runTest(
     "basement-only routing",
     () => {
         const domains = KnowledgeDomainRouter.resolve({
@@ -186,6 +306,52 @@ runTest(
 );
 
 runTest(
+    "no false routing for cabinet door",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "door",
+                location: "kitchen cabinet door",
+                description: "cabinet door hinge loose"
+            }
+        });
+
+        assert.deepStrictEqual(domains, []);
+    }
+);
+
+runTest(
+    "no false routing for lift door",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "door",
+                location: "lift door",
+                description: "lift door panel misalignment"
+            }
+        });
+
+        assert.deepStrictEqual(domains, []);
+    }
+);
+
+runTest(
+    "no false routing for roof-only flashing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "roof-envelope",
+                location: "roof flashing",
+                description: "defective roof flashing with rain ingress"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["roof-envelope", "moisture"]);
+        assert.equal(domains.includes("windows-doors"), false);
+    }
+);
+
+runTest(
     "overlapping crack and concrete routing",
     () => {
         const domains = KnowledgeDomainRouter.resolve({
@@ -221,12 +387,12 @@ runTest(
         const domains = KnowledgeDomainRouter.resolve({
             finding: {
                 category: "corrosion",
-                location: "reinforced concrete basement wall crack",
-                description: "water ingress with rust staining and spalling"
+                location: "reinforced concrete basement window frame crack",
+                description: "water ingress with rust staining and spalling at window joint and flashing"
             }
         });
 
-        assert.deepStrictEqual(domains, ["concrete-corrosion", "basement-waterproofing", "moisture", "crack"]);
+        assert.deepStrictEqual(domains, ["concrete-corrosion", "basement-waterproofing", "windows-doors", "roof-envelope", "moisture", "crack"]);
     }
 );
 

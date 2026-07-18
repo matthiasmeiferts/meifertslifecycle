@@ -9,6 +9,7 @@
 const DOMAIN_PRECEDENCE = [
     "concrete-corrosion",
     "basement-waterproofing",
+    "windows-doors",
     "roof-envelope",
     "moisture",
     "crack"
@@ -32,6 +33,10 @@ export default class KnowledgeDomainRouter {
 
         if (isBasementWaterproofingFinding(source)) {
             domains.push("basement-waterproofing");
+        }
+
+        if (isWindowsDoorsFinding(source)) {
+            domains.push("windows-doors");
         }
 
         if (isRoofEnvelopeFinding(source)) {
@@ -95,7 +100,7 @@ function isCrackFinding(source = {}) {
     ].join(" ").toLowerCase();
 
     const text = `${categoryText} ${detailText}`;
-    const hasCrackSignal = /crack|cracking|fracture|split|settlement|foundation|movement|displacement|opening|lintel|slab|masonry|joint|load-bearing|bearing|widening|recurring/.test(text);
+    const hasCrackSignal = /crack|cracking|fracture|split|settlement|foundation|movement|displacement|lintel|slab|masonry|load-bearing|bearing|widening|recurring/.test(text);
     const hasNegatedCrackOnly = /\b(no|without|not)\s+(visible\s+)?crack(s|ing)?\b/.test(text) &&
         !/\b(diagonal|widening|recurring|displacement|fracture|split|settlement|movement|foundation|step crack)\b/.test(text.replace(/\b(no|without|not)\s+(visible\s+)?crack(s|ing)?\b/g, " "));
 
@@ -130,7 +135,6 @@ function isRoofEnvelopeFinding(source = {}) {
         "outlet",
         "facade",
         "fa\u00e7ade",
-        "window",
         "balcony",
         "terrace",
         "penetration",
@@ -158,6 +162,12 @@ function isRoofEnvelopeFinding(source = {}) {
         "weather"
     ];
 
+    const windowsDoorsContext = isWindowsDoorsFinding(source);
+
+    if (windowsDoorsContext && !/roof|facade|fa\u00e7ade|balcony|terrace|parapet|upstand|flashing|sill|threshold|reveal/.test(findingText)) {
+        return false;
+    }
+
     return categoryTerms.some((term) => matchesWholeWord(categoryText, term)) || (
         moistureTerms.some((term) => matchesWholeWord(findingText, term)) &&
         categoryTerms.some((term) => matchesWholeWord(findingText, term))
@@ -182,10 +192,17 @@ function isConcreteCorrosionFinding(source = {}) {
         ].join(" "))
     ].join(" ").toLowerCase();
 
-    const concreteTerms = [
+    const concreteContextTerms = [
         "reinforced concrete",
+        "concrete",
         "reinforcement",
         "rebar",
+        "concrete cover",
+        "hollow sounding",
+        "delamination",
+        "spalling"
+    ];
+    const concreteDamageTerms = [
         "spalling",
         "delamination",
         "hollow sounding",
@@ -196,13 +213,134 @@ function isConcreteCorrosionFinding(source = {}) {
         "frost damage",
         "asr",
         "alkali-silica",
-        "durability",
+        "durability"
+    ];
+    const corrosionTerms = [
         "corrosion",
         "rust",
         "rust staining"
     ];
 
-    return concreteTerms.some((term) => matchesWholeWord(categoryText, term) || matchesWholeWord(findingText, term));
+    const hasConcreteContext = concreteContextTerms.some((term) => matchesWholeWord(categoryText, term) || matchesWholeWord(findingText, term));
+    const hasConcreteDamageSignal = concreteDamageTerms.some((term) => matchesWholeWord(categoryText, term) || matchesWholeWord(findingText, term));
+    const hasCorrosionSignal = corrosionTerms.some((term) => matchesWholeWord(categoryText, term) || matchesWholeWord(findingText, term));
+
+    if (hasConcreteDamageSignal) {
+        return true;
+    }
+
+    return hasConcreteContext && hasCorrosionSignal;
+}
+
+function isWindowsDoorsFinding(source = {}) {
+    const text = [
+        textOf(source.finding?.category),
+        textOf(source.finding?.location),
+        textOf(source.finding?.description),
+        textOf(source.finding?.observations),
+        textOf(source.building?.constructionType),
+        textOf(source.building?.constructionYear),
+        textOf(source.building?.windowType),
+        textOf(source.building?.frameMaterial),
+        textOf(source.building?.glazingType),
+        ...cloneArray(source.measurements).map((measurement) => [
+            textOf(measurement.type),
+            textOf(measurement.value),
+            textOf(measurement.unit),
+            textOf(measurement.location)
+        ].join(" "))
+    ].join(" ").toLowerCase();
+
+    if (text.trim().length === 0) {
+        return false;
+    }
+
+    if (matchesWholeWord(text, "cabinet door") || matchesWholeWord(text, "lift door")) {
+        return false;
+    }
+
+    if (matchesWholeWord(text, "fire door") && !/frame|seal|gasket|glazing|glass|hardware|hinge|handle|joint|sill|flashing|draught|draft|air leakage|condensation/.test(text)) {
+        return false;
+    }
+
+    const openingComponents = [
+        "window",
+        "windows",
+        "external door",
+        "exterior door",
+        "entrance door",
+        "balcony door",
+        "patio door",
+        "glazing",
+        "glass pane",
+        "insulated glazing unit",
+        "glazing edge",
+        "frame",
+        "sash",
+        "window hardware",
+        "door hardware",
+        "hinges",
+        "handle"
+    ];
+    const issueIndicators = [
+        "perimeter seal",
+        "weather seal",
+        "gasket",
+        "installation joint",
+        "window joint",
+        "door joint",
+        "sill",
+        "window sill",
+        "flashing",
+        "air leakage",
+        "draught",
+        "draft",
+        "water penetration at window",
+        "water penetration at door",
+        "condensation on glazing",
+        "condensation on frame",
+        "distorted frame",
+        "distorted sash",
+        "warped frame",
+        "misaligned sash",
+        "binding sash",
+        "leak",
+        "ingress",
+        "seepage",
+        "hardware",
+        "seal",
+        "glazing damage",
+        "cracked glass",
+        "glass fracture",
+        "broken pane",
+        "chipped glass",
+        "installation defect",
+        "installation error",
+        "assembly defect",
+        "poor installation workmanship",
+        "incorrect detailing"
+    ];
+
+    const hasComponent = openingComponents.some((term) => matchesWholeWord(text, term));
+    const hasIssue = issueIndicators.some((term) => matchesWholeWord(text, term));
+
+    if (!hasComponent || !hasIssue) {
+        return false;
+    }
+
+    if (matchesWholeWord(text, "roof flashing") && !/window|door|glazing|frame|sash/.test(text)) {
+        return false;
+    }
+
+    if ((matchesWholeWord(text, "condensation") || matchesWholeWord(text, "humidity")) && !/window|door|glazing|frame|sash/.test(text)) {
+        return false;
+    }
+
+    if (matchesWholeWord(text, "opening") && !/window|door|glazing|frame|sash|joint|seal|hardware/.test(text)) {
+        return false;
+    }
+
+    return true;
 }
 
 function isBasementWaterproofingFinding(source = {}) {
