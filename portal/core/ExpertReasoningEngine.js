@@ -1,4 +1,5 @@
 import MoistureKnowledgeProvider from "./knowledge/MoistureKnowledgeProvider.js";
+import CrackKnowledgeProvider from "./knowledge/CrackKnowledgeProvider.js";
 
 /**
  * MBLS Expert Intelligence Layer
@@ -152,6 +153,16 @@ export default class ExpertReasoningEngine {
             return this.analyzeLegacy();
         }
 
+        if (isCrackFinding(source)) {
+            const crackContract = buildCrackReasoning(source);
+
+            if (crackContract) {
+                return crackContract;
+            }
+
+            return this.analyze();
+        }
+
         return this.analyzeLegacy(source);
     }
 
@@ -285,6 +296,177 @@ function buildMoistureReasoning(source = {}) {
         potentialConsequences,
         confidence
     };
+}
+
+function buildCrackReasoning(source = {}) {
+    const knowledge = CrackKnowledgeProvider.getKnowledge({
+        finding: cloneObject(source.finding),
+        building: cloneObject(source.building),
+        measurements: cloneArray(source.measurements)
+    });
+
+    if (!knowledge.hypotheses.length) {
+        return null;
+    }
+
+    const ranked = knowledge.hypotheses
+        .map((hypothesis) => ({
+            hypothesis,
+            score: scoreCrackHypothesis(hypothesis, source)
+        }))
+        .sort((left, right) => {
+            if (right.score !== left.score) {
+                return right.score - left.score;
+            }
+
+            return left.hypothesis.id.localeCompare(right.hypothesis.id);
+        });
+
+    if (ranked.length === 0 || ranked[0].score === 0) {
+        return null;
+    }
+
+    const primary = ranked[0].hypothesis;
+    const alternativeHypotheses = ranked.slice(1).map((entry) => mapCrackHypothesis(entry.hypothesis, false));
+    const supportingEvidence = collectCrackSupportingEvidence(primary, source);
+    const missingEvidence = collectCrackMissingEvidence(primary, supportingEvidence);
+    const requiredVerification = [...cloneArray(primary.requiredVerification)];
+
+    if (isStructurallySuspiciousCrack(primary, source)) {
+        requiredVerification.push("Specialist structural verification is required before any conclusion is drawn.");
+    }
+
+    const potentialConsequences = [...cloneArray(primary.potentialConsequences)];
+    const confidence = calculateCrackConfidence(supportingEvidence, primary, source);
+
+    return {
+        primaryHypothesis: mapCrackHypothesis(primary, true),
+        alternativeHypotheses,
+        supportingEvidence,
+        missingEvidence,
+        requiredVerification,
+        potentialConsequences,
+        confidence
+    };
+}
+
+function scoreCrackHypothesis(hypothesis = {}, source = {}) {
+    const text = buildCrackText(source);
+
+    return cloneArray(hypothesis.supportingIndicators).reduce((total, indicator) => {
+        const match = matchesCrackIndicator(text, indicator);
+        return total + (match ? 1 : 0);
+    }, 0);
+}
+
+function collectCrackSupportingEvidence(hypothesis = {}, source = {}) {
+    const text = buildCrackText(source);
+
+    return cloneArray(hypothesis.supportingIndicators).filter((indicator) => matchesCrackIndicator(text, indicator)).map((indicator) => ({
+        source: "indicator",
+        label: indicator
+    }));
+}
+
+function collectCrackMissingEvidence(hypothesis = {}, supportingEvidence = []) {
+    const missingEvidence = cloneArray(hypothesis.contradictingIndicators);
+
+    if (supportingEvidence.length === 0) {
+        missingEvidence.push("No supporting crack indicators were available.");
+    }
+
+    return missingEvidence;
+}
+
+function calculateCrackConfidence(supportingEvidence = [], hypothesis = {}, source = {}) {
+    if (supportingEvidence.length === 0) {
+        return 0;
+    }
+
+    const totalIndicators = cloneArray(hypothesis.supportingIndicators).length || 1;
+    const score = supportingEvidence.length / totalIndicators;
+
+    return Math.max(0, Math.min(1, Number(score.toFixed(2))));
+}
+
+function mapCrackHypothesis(hypothesis = {}, isPrimary = false) {
+    return {
+        id: hypothesis.id,
+        label: hypothesis.cause,
+        cause: hypothesis.cause,
+        classification: hypothesis.classification,
+        structuralRelevance: hypothesis.structuralRelevance,
+        supportingIndicators: cloneArray(hypothesis.supportingIndicators),
+        contradictingIndicators: cloneArray(hypothesis.contradictingIndicators),
+        requiredVerification: cloneArray(hypothesis.requiredVerification),
+        potentialConsequences: cloneArray(hypothesis.potentialConsequences),
+        recommendedActions: cloneArray(hypothesis.recommendedActions),
+        riskRelevance: hypothesis.riskRelevance,
+        capexRelevance: hypothesis.capexRelevance,
+        valuationRelevance: hypothesis.valuationRelevance,
+        status: isPrimary ? "hypothesis" : "hypothesis"
+    };
+}
+
+function isStructurallySuspiciousCrack(hypothesis = {}, source = {}) {
+    const text = buildCrackText(source);
+
+    return /recurring|widening|load-bearing|bearing|displacement|displaced|structural|settlement|foundation|sagging|deflection|step crack/.test(text) ||
+        /structural assessment required/i.test(String(hypothesis.classification));
+}
+
+function buildCrackText(source = {}) {
+    return [
+        textOf(source.finding?.category),
+        textOf(source.finding?.location),
+        textOf(source.finding?.description),
+        textOf(source.finding?.observations),
+        textOf(source.building?.constructionYear),
+        textOf(source.building?.constructionType),
+        textOf(source.building?.numberOfStoreys),
+        source.building?.basementPresent === true ? "basement present" : "",
+        ...cloneArray(source.measurements).map((measurement) => [
+            textOf(measurement.type),
+            textOf(measurement.value),
+            textOf(measurement.unit),
+            textOf(measurement.location)
+        ].join(" "))
+    ].join(" ").toLowerCase();
+}
+
+function matchesCrackIndicator(text, indicator) {
+    const normalizedText = String(text).toLowerCase();
+    const normalizedIndicator = String(indicator).toLowerCase();
+
+    if (normalizedText.includes(normalizedIndicator)) {
+        return true;
+    }
+
+    return normalizedIndicator
+        .split(/[^a-z0-9]+/)
+        .filter((token) => token.length >= 4)
+        .some((token) => normalizedText.includes(token));
+}
+
+function isCrackFinding(source = {}) {
+    const crackText = [
+        textOf(source.finding?.category),
+        textOf(source.finding?.location),
+        textOf(source.finding?.description),
+        textOf(source.finding?.observations),
+        textOf(source.building?.constructionYear),
+        textOf(source.building?.constructionType),
+        textOf(source.building?.numberOfStoreys),
+        source.building?.basementPresent === true ? "basement present" : "",
+        ...cloneArray(source.measurements).map((measurement) => [
+            textOf(measurement.type),
+            textOf(measurement.value),
+            textOf(measurement.unit),
+            textOf(measurement.location)
+        ].join(" "))
+    ].join(" ").toLowerCase();
+
+    return /crack|cracking|fracture|split|settlement|foundation|movement|displacement|opening|lintel|slab|masonry|corrosion|spalling|joint|load-bearing|bearing|widening|recurring/.test(crackText);
 }
 
 function scoreMoistureHypothesis(hypothesis = {}, source = {}) {
