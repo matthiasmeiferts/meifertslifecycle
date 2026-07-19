@@ -200,11 +200,22 @@ if (
 }
 
 if (
-    customDraft.description
-    !== "Custom draft description."
+    !customDraft.description.startsWith(
+        "Custom draft description."
+    )
 ) {
     throw new Error(
         "Custom description not applied"
+    );
+}
+
+if (
+    !customDraft.description.includes(
+        "has not been confirmed as a diagnosis"
+    )
+) {
+    throw new Error(
+        "Custom description bypassed diagnostic wording safeguard"
     );
 }
 

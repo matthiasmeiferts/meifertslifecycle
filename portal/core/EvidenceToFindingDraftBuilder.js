@@ -41,8 +41,10 @@ export default class EvidenceToFindingDraftBuilder {
                 || this.createDraftTitle(evidence),
 
             description:
-                options.description
-                || this.createDraftDescription(evidence),
+                this.createGuardedDraftDescription(
+                    evidence,
+                    options.description
+                ),
 
             category:
                 evidence.category
@@ -145,6 +147,27 @@ export default class EvidenceToFindingDraftBuilder {
                 : "selected evidence";
 
         return `Finding Draft from ${title}`;
+    }
+
+    static createGuardedDraftDescription(
+        evidence = {},
+        customDescription
+    ) {
+        const safeguard =
+            "Draft only. The observed condition requires expert review and has not been confirmed as a diagnosis.";
+
+        if (
+            typeof customDescription === "string"
+            && customDescription.trim().length > 0
+        ) {
+            return [
+                customDescription.trim(),
+                "",
+                safeguard
+            ].join("\n");
+        }
+
+        return this.createDraftDescription(evidence);
     }
 
     static createDraftDescription(evidence = {}) {

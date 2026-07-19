@@ -1,5 +1,7 @@
 import EvidenceManager from "../portal/core/EvidenceManager.js";
 import FindingManager from "../portal/core/FindingManager.js";
+import EvidenceToFindingDraftBuilder
+    from "../portal/core/EvidenceToFindingDraftBuilder.js";
 import StorageManager from "../portal/core/storage/StorageManager.js";
 
 const memoryStorage = new Map();
@@ -42,41 +44,18 @@ const evidence = EvidenceManager.create({
     confidence: 68
 });
 
-const finding = FindingManager.create({
-    caseId: evidence.caseId,
-    buildingId: evidence.buildingId,
-    inspectionId: evidence.inspectionId,
-    evidenceIds: [evidence.id],
-    sourceEvidenceIds: [evidence.id],
-    title: `Finding Draft from ${evidence.title}`,
-    description: [
-        evidence.description,
-        "",
-        "Evidence metadata trace:",
-        `File name: ${evidence.fileName}`,
-        `File reference: ${evidence.fileReference}`,
-        `Measurement: ${evidence.measurementValue} ${evidence.measurementUnit}`,
-        `Evidence review status: ${evidence.reviewStatus}`
-    ].join("\\n"),
-    category: evidence.category || evidence.type || "General",
-    buildingSystem: evidence.buildingSystem || "",
-    location: evidence.locationLabel || evidence.location || "",
-    inspectionArea: evidence.inspectionArea || "",
-    sourceFileName: evidence.fileName || "",
-    sourceFileType: evidence.fileType || "",
-    sourceFileReference: evidence.fileReference || "",
-    sourceCaptureMethod: evidence.captureMethod || "",
-    sourceLocationLabel: evidence.locationLabel || "",
-    sourceInspectionArea: evidence.inspectionArea || "",
-    sourceMeasurementValue: evidence.measurementValue ?? null,
-    sourceMeasurementUnit: evidence.measurementUnit || "",
-    sourceReviewStatus: evidence.reviewStatus || "",
-    sourceExpertReviewRequired: evidence.expertReviewRequired,
-    status: "Draft",
-    reviewStatus: "Draft",
-    expertReviewRequired: true,
-    confidence: 60
-});
+const draftPayload =
+    EvidenceToFindingDraftBuilder.build(
+        evidence,
+        {
+            confidence: 60
+        }
+    );
+
+const finding =
+    FindingManager.create(
+        draftPayload
+    );
 
 if (!finding.evidenceIds.includes(evidence.id)) throw new Error("Evidence ID not linked to finding");
 if (!finding.sourceEvidenceIds.includes(evidence.id)) throw new Error("Source evidence ID not linked to finding");
