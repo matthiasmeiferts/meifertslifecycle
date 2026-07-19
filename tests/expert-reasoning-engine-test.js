@@ -170,6 +170,148 @@ runTest(
     }
 );
 
+runTest(
+    "language option is outside technical input and omitted language remains English",
+    () => {
+
+        const input = {
+            language: "de",
+            finding: {
+                category: "window",
+                location: "frame perimeter",
+                description: "defective perimeter seal and draught"
+            },
+            building: {
+                frameMaterial: "aluminum"
+            }
+        };
+
+        const result = ExpertReasoningEngine.analyze(input);
+
+        assert.equal(result.primaryHypothesis.id, "defective-perimeter-seal");
+        assert.equal(result.primaryHypothesis.cause, "defective perimeter seal");
+
+    }
+);
+
+runTest(
+    "explicit German option renders windows-doors output without changing IDs",
+    () => {
+
+        const input = {
+            finding: {
+                category: "window",
+                location: "frame perimeter",
+                description: "defective perimeter seal and draught"
+            },
+            building: {
+                frameMaterial: "aluminum"
+            }
+        };
+
+        const english = ExpertReasoningEngine.analyze(input, { language: "en" });
+        const german = ExpertReasoningEngine.analyze(input, { language: "de" });
+
+        assert.equal(english.primaryHypothesis.id, german.primaryHypothesis.id);
+        assert.equal(english.primaryHypothesis.cause, "defective perimeter seal");
+        assert.equal(german.primaryHypothesis.cause, "mangelhafte Anschlussdichtung");
+
+    }
+);
+
+runTest(
+    "unsupported language option falls back to English",
+    () => {
+
+        const result = ExpertReasoningEngine.analyze({
+            finding: {
+                category: "window",
+                location: "frame perimeter",
+                description: "defective perimeter seal and draught"
+            },
+            building: {
+                frameMaterial: "aluminum"
+            }
+        }, { language: "fr" });
+
+        assert.equal(result.primaryHypothesis.cause, "defective perimeter seal");
+
+    }
+);
+
+runTest(
+    "five-path API compatibility for omitted empty English and unsupported language options",
+    () => {
+        const cases = [
+            {
+                finding: { category: "window", location: "frame perimeter", description: "defective perimeter seal and draught" },
+                building: { frameMaterial: "aluminum" }
+            },
+            {
+                finding: { category: "moisture", location: "basement wall", description: "damp staining and salt marks" },
+                building: { basementPresent: true }
+            },
+            {
+                finding: { category: "crack", location: "window opening", description: "diagonal crack from opening corner" }
+            },
+            {
+                finding: { category: "hvac", location: "plant room", description: "corroded heating pipe insulation and leaking valve" }
+            },
+            {
+                finding: { category: "inspection note", description: "general observation without defect" }
+            }
+        ];
+
+        cases.forEach((input) => {
+            const omitted = ExpertReasoningEngine.analyze(input);
+            const emptyOptions = ExpertReasoningEngine.analyze(input, {});
+            const english = ExpertReasoningEngine.analyze(input, { language: "en" });
+            const unsupported = ExpertReasoningEngine.analyze(input, { language: "fr" });
+
+            assert.deepStrictEqual(omitted, emptyOptions);
+            assert.deepStrictEqual(emptyOptions, english);
+            assert.deepStrictEqual(unsupported, english);
+        });
+    }
+);
+
+runTest(
+    "input and options isolation for language and canonical context",
+    () => {
+        const input = {
+            language: "de",
+            finding: {
+                category: "window",
+                location: "frame perimeter",
+                description: "defective perimeter seal and draught",
+                observations: ["sealant issue"]
+            },
+            building: {
+                frameMaterial: "aluminum"
+            },
+            measurements: [
+                { type: "note", value: "draught", location: "frame" }
+            ]
+        };
+        const options = { language: "de" };
+        const originalInput = structuredClone(input);
+        const originalOptions = structuredClone(options);
+        const inputLanguageResult = ExpertReasoningEngine.analyze(input);
+        const optionsLanguageResult = ExpertReasoningEngine.analyze(input, options);
+
+        assert.equal(inputLanguageResult.primaryHypothesis.cause, "defective perimeter seal");
+        assert.equal(optionsLanguageResult.primaryHypothesis.cause, "mangelhafte Anschlussdichtung");
+        assert.deepStrictEqual(input, originalInput);
+        assert.deepStrictEqual(input.finding, originalInput.finding);
+        assert.deepStrictEqual(input.measurements, originalInput.measurements);
+        assert.deepStrictEqual(options, originalOptions);
+        assert.equal(JSON.stringify(input).includes("expertIntelligenceCanonicalContext"), false);
+        assert.equal(JSON.stringify(optionsLanguageResult).includes("expertIntelligenceCanonicalContext"), false);
+        assert.equal(JSON.stringify(optionsLanguageResult).includes('"language"'), false);
+        assert.equal(globalThis.LanguageManager, undefined);
+    }
+);
+
 console.log(
     "ExpertReasoningEngine tests completed successfully."
 );

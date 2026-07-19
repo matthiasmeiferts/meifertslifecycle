@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 import WindowsDoorsKnowledgeProvider from "../portal/core/knowledge/WindowsDoorsKnowledgeProvider.js";
+import WindowsDoorsTerminologyAdapter from "../portal/core/reasoning/adapters/WindowsDoorsTerminologyAdapter.js";
 
 function runTest(name, fn) {
     try {
@@ -383,6 +384,74 @@ runTest(
 
         assert.equal(/confirmed/i.test(text), false);
         assert.equal(/diagnosis/i.test(text), false);
+    }
+);
+
+runTest(
+    "canonical adaptation keeps German terminology outside provider input",
+    () => {
+        const adapted = WindowsDoorsTerminologyAdapter.adapt({
+            finding: {
+                category: "Fenster",
+                location: "Fensterrahmen",
+                description: "undichte Dichtung mit Zugluft am Rahmen"
+            }
+        });
+        const result = WindowsDoorsKnowledgeProvider.getKnowledge(adapted.input);
+
+        assert.equal(result.domain, "windows-doors");
+        assert.deepStrictEqual(result.hypotheses, []);
+        assert.deepStrictEqual(adapted.canonicalContext.matchedSignalIds, ["defective-perimeter-seal", "air-leakage"]);
+    }
+);
+
+runTest(
+    "canonical adaptation keeps mixed terminology semantically unchanged for provider",
+    () => {
+        const adapted = WindowsDoorsTerminologyAdapter.adapt({
+            finding: {
+                category: "window",
+                location: "Rahmen",
+                description: "undichte seal with draught at frame"
+            }
+        });
+        const result = WindowsDoorsKnowledgeProvider.getKnowledge(adapted.input);
+
+        assert.equal(result.domain, "windows-doors");
+        assert.deepStrictEqual(ids(result), ["air-leakage"]);
+        assert.deepStrictEqual(adapted.canonicalContext.matchedSignalIds, ["defective-perimeter-seal", "air-leakage"]);
+    }
+);
+
+runTest(
+    "direct German terminology is not required by the provider contract",
+    () => {
+        const result = WindowsDoorsKnowledgeProvider.getKnowledge({
+            finding: {
+                category: "Fenster",
+                location: "Fensterrahmen",
+                description: "undichte Dichtung mit Zugluft am Rahmen"
+            }
+        });
+
+        assert.equal(result.domain, "windows-doors");
+        assert.deepStrictEqual(result.hypotheses, []);
+    }
+);
+
+runTest(
+    "direct mixed terminology follows native provider English matching only",
+    () => {
+        const result = WindowsDoorsKnowledgeProvider.getKnowledge({
+            finding: {
+                category: "window",
+                location: "Rahmen",
+                description: "undichte seal with draught at frame"
+            }
+        });
+
+        assert.equal(result.domain, "windows-doors");
+        assert.deepStrictEqual(ids(result), ["air-leakage"]);
     }
 );
 

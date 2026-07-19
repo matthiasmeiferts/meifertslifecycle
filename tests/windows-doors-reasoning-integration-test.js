@@ -564,6 +564,132 @@ runTest(
 );
 
 runTest(
+    "omitted-language and explicit English output are compatible",
+    () => {
+        const input = {
+            finding: {
+                category: "window",
+                location: "frame perimeter",
+                description: "defective perimeter seal and draught"
+            },
+            building: {
+                frameMaterial: "aluminum"
+            }
+        };
+
+        assert.deepStrictEqual(
+            ExpertReasoningEngine.analyze(input),
+            ExpertReasoningEngine.analyze(input, { language: "en" })
+        );
+    }
+);
+
+runTest(
+    "explicit German output preserves internal IDs",
+    () => {
+        const input = {
+            finding: {
+                category: "window",
+                location: "frame perimeter",
+                description: "defective perimeter seal and draught"
+            },
+            building: {
+                frameMaterial: "aluminum"
+            }
+        };
+
+        const english = ExpertReasoningEngine.analyze(input, { language: "en" });
+        const german = ExpertReasoningEngine.analyze(input, { language: "de" });
+
+        assert.equal(english.primaryHypothesis.id, "defective-perimeter-seal");
+        assert.equal(german.primaryHypothesis.id, "defective-perimeter-seal");
+        assert.equal(english.primaryHypothesis.cause, "defective perimeter seal");
+        assert.equal(german.primaryHypothesis.cause, "mangelhafte Anschlussdichtung");
+        assert.deepStrictEqual(
+            english.alternativeHypotheses.map((hypothesis) => hypothesis.id),
+            german.alternativeHypotheses.map((hypothesis) => hypothesis.id)
+        );
+    }
+);
+
+runTest(
+    "German input routes and renders windows-doors output",
+    () => {
+        const input = {
+            finding: {
+                category: "Fenster",
+                location: "Fensterrahmen",
+                description: "undichte Dichtung mit Zugluft am Rahmen"
+            }
+        };
+        const result = ExpertReasoningEngine.analyze(input, { language: "de" });
+
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve(input), ["windows-doors"]);
+        assert.equal(result.primaryHypothesis.id, "defective-perimeter-seal");
+        assert.equal(result.primaryHypothesis.cause, "mangelhafte Anschlussdichtung");
+    }
+);
+
+runTest(
+    "mixed-language input routes to windows-doors deterministically",
+    () => {
+        const input = {
+            finding: {
+                category: "window",
+                location: "Rahmen",
+                description: "undichte seal with draught"
+            }
+        };
+
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve(input), ["windows-doors"]);
+        assert.deepStrictEqual(
+            ExpertReasoningEngine.analyze(input, { language: "de" }),
+            ExpertReasoningEngine.analyze(input, { language: "de" })
+        );
+    }
+);
+
+runTest(
+    "unsupported language handling falls back to English",
+    () => {
+        const result = ExpertReasoningEngine.analyze({
+            finding: {
+                category: "window",
+                location: "frame perimeter",
+                description: "defective perimeter seal and draught"
+            },
+            building: {
+                frameMaterial: "aluminum"
+            }
+        }, { language: "es" });
+
+        assert.equal(result.primaryHypothesis.cause, "defective perimeter seal");
+    }
+);
+
+runTest(
+    "German and English wording guardrails remain conservative",
+    () => {
+        const input = {
+            finding: {
+                category: "window",
+                location: "frame perimeter",
+                description: "defective perimeter seal and draught"
+            },
+            building: {
+                frameMaterial: "aluminum"
+            }
+        };
+        const english = ExpertReasoningEngine.analyze(input, { language: "en" });
+        const german = ExpertReasoningEngine.analyze(input, { language: "de" });
+        const text = `${JSON.stringify(english)} ${JSON.stringify(german)}`;
+
+        assert.equal(/confirmed|diagnosis|fact|non-compliant|non compliant|mandatory replacement|replacement required/i.test(text), false);
+        assert.equal(/bestaetigt|bestätigt|diagnose|pflicht|muss ersetzt|nicht konform/i.test(text), false);
+    }
+);
+
+runTest(
     "existing concrete-corrosion behavior unchanged",
     () => {
         const result = ExpertReasoningEngine.analyze({
@@ -599,6 +725,94 @@ runTest(
         });
 
         assert.ok(allCauses(result).includes("defective wall-floor junction"));
+    }
+);
+
+runTest(
+    "English and German semantic parity for distinct windows-doors hypotheses",
+    () => {
+        const cases = [
+            {
+                finding: { category: "window", location: "frame perimeter", description: "defective perimeter seal and draught" },
+                building: { frameMaterial: "aluminum" }
+            },
+            {
+                finding: { category: "glazing", location: "window pane", description: "cracked glass at corner", observations: ["glass fracture"] },
+                building: { glazingType: "double glazing" }
+            },
+            {
+                finding: { category: "window", location: "sash", description: "misaligned sash and warped frame", observations: ["binding sash"] }
+            }
+        ];
+
+        cases.forEach((input) => {
+            const english = ExpertReasoningEngine.analyze(input, { language: "en" });
+            const german = ExpertReasoningEngine.analyze(input, { language: "de" });
+
+            assert.equal(english.primaryHypothesis.id, german.primaryHypothesis.id);
+            assert.deepStrictEqual(
+                english.alternativeHypotheses.map((hypothesis) => hypothesis.id),
+                german.alternativeHypotheses.map((hypothesis) => hypothesis.id)
+            );
+            assert.equal(english.confidence, german.confidence);
+            assert.equal(english.primaryHypothesis.status, german.primaryHypothesis.status);
+            assert.equal(english.primaryHypothesis.riskRelevance, german.primaryHypothesis.riskRelevance);
+            assert.equal(english.primaryHypothesis.capexRelevance, german.primaryHypothesis.capexRelevance);
+            assert.equal(english.primaryHypothesis.valuationRelevance, german.primaryHypothesis.valuationRelevance);
+            assert.equal(english.requiredVerification.length, german.requiredVerification.length);
+            assert.equal(english.potentialConsequences.length, german.potentialConsequences.length);
+            assert.equal(english.primaryHypothesis.recommendedActions.length, german.primaryHypothesis.recommendedActions.length);
+        });
+    }
+);
+
+runTest(
+    "German windows-doors output renders controlled provider text without fallback ASCII forms",
+    () => {
+        const result = ExpertReasoningEngine.analyze({
+            finding: { category: "window", location: "frame perimeter", description: "defective perimeter seal and draught" }
+        }, { language: "de" });
+        const text = JSON.stringify(result);
+
+        assert.equal(/Oeffnung|pruefen|Massnahmen|Aussentuer|Tuer|ueber|fuer/.test(text), false);
+        assert.equal(result.supportingEvidence.every((entry) => /[A-Za-z]/.test(entry)), true);
+        assert.equal(result.primaryHypothesis.supportingIndicators[0], "sichtbare Unterbrechung der Dichtung am Rahmenumfang");
+        assert.equal(result.primaryHypothesis.contradictingIndicators[0], "keine Verschlechterung an der umlaufenden Dichtungslinie");
+    }
+);
+
+runTest(
+    "whole-word wording guardrails reject unsupported conclusions",
+    () => {
+        const result = ExpertReasoningEngine.analyze({
+            finding: { category: "window", location: "frame perimeter", description: "defective perimeter seal and draught" }
+        }, { language: "de" });
+        const text = JSON.stringify(result);
+        const forbidden = [
+            /\bconfirmed\b/i,
+            /\bproven\b/i,
+            /\bdefinitely\b/i,
+            /\bguaranteed\b/i,
+            /mandatory replacement/i,
+            /replacement required/i,
+            /legally compliant/i,
+            /\bsafe\b/i,
+            /\bunsafe\b/i,
+            /diagnosis presented as fact/i,
+            /muss ersetzt werden/i,
+            /zwingend auszutauschen/i,
+            /\beindeutig\b/i,
+            /\bzweifelsfrei\b/i,
+            /\bgarantiert\b/i,
+            /\bnachweislich\b/i,
+            /\bbestätigt\b/i,
+            /\bsicher\b/i,
+            /nicht sicher/i
+        ];
+
+        forbidden.forEach((pattern) => {
+            assert.equal(pattern.test(text), false);
+        });
     }
 );
 

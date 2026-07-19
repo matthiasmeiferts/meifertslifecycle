@@ -6,6 +6,8 @@
  * deterministic precedence. Routing only: no mapping, confidence, or diagnosis.
  */
 
+import ExpertIntelligenceTerminologyRegistry from "./ExpertIntelligenceTerminologyRegistry.js";
+
 const DOMAIN_PRECEDENCE = [
     "concrete-corrosion",
     "basement-waterproofing",
@@ -1200,6 +1202,10 @@ function isWindowsDoorsFinding(source = {}) {
 
     if (matchesWholeWord(text, "fire door") && !/frame|seal|gasket|glazing|glass|hardware|hinge|handle|joint|sill|flashing|draught|draft|air leakage|condensation/.test(text)) {
         return false;
+    }
+
+    if (ExpertIntelligenceTerminologyRegistry.hasDomainEvidence("windows-doors", source)) {
+        return true;
     }
 
     const openingComponents = [

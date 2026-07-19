@@ -14,6 +14,10 @@ import WindowsDoorsKnowledgeProvider from "./knowledge/WindowsDoorsKnowledgeProv
 import FacadeWallSystemsKnowledgeProvider from "./knowledge/FacadeWallSystemsKnowledgeProvider.js";
 import KnowledgeReasoningMapper from "./reasoning/KnowledgeReasoningMapper.js";
 import KnowledgeDomainRouter from "./reasoning/KnowledgeDomainRouter.js";
+import WindowsDoorsTerminologyAdapter from "./reasoning/adapters/WindowsDoorsTerminologyAdapter.js";
+import WindowsDoorsReasoningCoordinator from "./reasoning/adapters/WindowsDoorsReasoningCoordinator.js";
+import ExpertIntelligenceLanguage from "./reasoning/ExpertIntelligenceLanguage.js";
+import ExpertIntelligenceReasoningRenderer from "./reasoning/ExpertIntelligenceReasoningRenderer.js";
 
 /**
  * MBLS Expert Intelligence Layer
@@ -150,12 +154,15 @@ const SCENARIOS = {
  * @param {Object} [input.building] - Building context payload.
  * @param {Array<Object>} [input.measurements] - Measurement entries.
  * @param {Object} [input.context] - Supplemental context.
+ * @param {Object} [options={}] - Analysis options.
+ * @param {string} [options.language] - Optional output language, currently `en` or `de`.
  * @returns {Object} Stable reasoning output.
  */
 export default class ExpertReasoningEngine {
 
-    static analyze(input = {}) {
+    static analyze(input = {}, options = {}) {
         const source = cloneObject(input);
+        const language = ExpertIntelligenceLanguage.normalize(options.language);
         const domains = KnowledgeDomainRouter.resolve(source);
 
         for (const domain of domains) {
@@ -178,7 +185,7 @@ export default class ExpertReasoningEngine {
                 : domain === "vertical-transportation-systems"
                     ? buildVerticalTransportationSystemsReasoning(source)
                 : domain === "windows-doors"
-                    ? buildWindowsDoorsReasoning(source)
+                    ? buildWindowsDoorsReasoning(source, { language })
                 : domain === "facade-wall-systems"
                     ? buildFacadeWallSystemsReasoning(source)
                 : domain === "roof-envelope"
@@ -391,20 +398,29 @@ function buildRoofEnvelopeReasoning(source = {}) {
     });
 }
 
-function buildWindowsDoorsReasoning(source = {}) {
+function buildWindowsDoorsReasoning(source = {}, options = {}) {
+    const adapted = WindowsDoorsTerminologyAdapter.adapt(source);
+    const technicalInput = adapted.input;
     const knowledge = WindowsDoorsKnowledgeProvider.getKnowledge({
-        finding: cloneObject(source.finding),
-        building: cloneObject(source.building),
-        measurements: cloneArray(source.measurements)
+        finding: cloneObject(technicalInput.finding),
+        building: cloneObject(technicalInput.building),
+        measurements: cloneArray(technicalInput.measurements)
     });
 
-    if (!knowledge.hypotheses.length) {
+    const reasoning = WindowsDoorsReasoningCoordinator.build({
+        providerKnowledge: knowledge,
+        input: technicalInput,
+        canonicalContext: adapted.canonicalContext
+    });
+
+    if (!reasoning) {
         return null;
     }
 
-    return KnowledgeReasoningMapper.map({
-        knowledge,
-        input: source
+    return ExpertIntelligenceReasoningRenderer.render({
+        domainId: "windows-doors",
+        reasoning,
+        language: options.language
     });
 }
 

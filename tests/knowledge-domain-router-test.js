@@ -434,6 +434,51 @@ runTest(
 );
 
 runTest(
+    "windows-doors German terminology routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "Fenster",
+                location: "Fensterrahmen",
+                description: "undichte Dichtung mit Zugluft am Rahmen"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["windows-doors"]);
+    }
+);
+
+runTest(
+    "windows-doors German ASCII terminology routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "Aussentuer",
+                location: "Schwelle",
+                description: "beschaedigte Tuerdichtung mit Zugluft"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["windows-doors"]);
+    }
+);
+
+runTest(
+    "windows-doors mixed-language routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "window",
+                location: "Rahmen",
+                description: "undichte seal with draught"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["windows-doors"]);
+    }
+);
+
+runTest(
     "hvac-systems heating routing",
     () => {
         const domains = KnowledgeDomainRouter.resolve({
@@ -2125,6 +2170,65 @@ runTest(
         KnowledgeDomainRouter.resolve(input);
 
         assert.deepStrictEqual(input, original);
+    }
+);
+
+runTest(
+    "windows-doors terminology completion coverage and guard order",
+    () => {
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve({ finding: { category: "window", location: "frame", description: "defective perimeter seal and draught" } }), ["windows-doors"]);
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve({ finding: { category: "Fenster", location: "Rahmen", description: "undichte Dichtung mit Zugluft am Rahmen" } }), ["windows-doors"]);
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve({ finding: { category: "Außentür", location: "Schwelle", description: "undichte Außentürdichtung mit Zugluft" } }), ["windows-doors"]);
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve({ finding: { category: "Aussentuer", location: "Schwelle", description: "undichte Aussentuerdichtung mit Zugluft" } }), ["windows-doors"]);
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve({ finding: { category: "window", location: "Rahmen", description: "undichte seal with draught" } }), ["windows-doors"]);
+        assert.equal(KnowledgeDomainRouter.resolve({ finding: { description: "undichte Dichtung mit Zugluft" } }).includes("windows-doors"), false);
+        assert.equal(KnowledgeDomainRouter.resolve({ finding: { description: "Fensterrahmen ohne Zustandsangabe" } }).includes("windows-doors"), false);
+        assert.equal(KnowledgeDomainRouter.resolve({ finding: { category: "Tür", description: "Tür beschädigt" } }).includes("windows-doors"), false);
+        assert.equal(KnowledgeDomainRouter.resolve({ finding: { category: "door", location: "cabinet door", description: "damaged hinge" } }).includes("windows-doors"), false);
+        assert.equal(KnowledgeDomainRouter.resolve({ finding: { category: "door", location: "lift door", description: "damaged elevator door panel" } }).includes("windows-doors"), false);
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve({ finding: { category: "vertical transportation", location: "elevator door", description: "damaged elevator door panel" } }), ["vertical-transportation-systems"]);
+        assert.equal(KnowledgeDomainRouter.resolve({ finding: { category: "fire protection", location: "fire door", description: "damaged fire door leaf" } }).includes("windows-doors"), false);
+        assert.equal(KnowledgeDomainRouter.resolve({ finding: { category: "fire protection", location: "smoke-control door", description: "smoke-control door inspection note" } }).includes("windows-doors"), false);
+        assert.equal(KnowledgeDomainRouter.resolve({ finding: { category: "document", description: "fen ster rah men und dicht fragment" } }).includes("windows-doors"), false);
+    }
+);
+
+runTest(
+    "windows-doors terminology routing is deterministic and immutable",
+    () => {
+        const input = {
+            finding: {
+                category: "Fenster",
+                location: "Rahmen",
+                description: "undichte Dichtung mit Zugluft am Rahmen"
+            }
+        };
+        const original = structuredClone(input);
+        const first = KnowledgeDomainRouter.resolve(input);
+        const second = KnowledgeDomainRouter.resolve(input);
+
+        assert.deepStrictEqual(first, second);
+        assert.deepStrictEqual(input, original);
+    }
+);
+
+runTest(
+    "domain precedence remains unchanged for overlapping windows moisture crack concrete input",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "corrosion",
+                location: "reinforced concrete basement window frame crack",
+                description: "water ingress with rust staining and spalling at window joint and flashing"
+            },
+            building: {
+                basementType: "full basement",
+                constructionType: "reinforced concrete",
+                windowType: "fixed"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["concrete-corrosion", "basement-waterproofing", "windows-doors", "roof-envelope", "moisture", "crack"]);
     }
 );
 
