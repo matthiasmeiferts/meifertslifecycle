@@ -11,6 +11,7 @@ const DOMAIN_PRECEDENCE = [
     "basement-waterproofing",
     "balconies-terraces",
     "drainage-rainwater",
+    "hvac-systems",
     "windows-doors",
     "facade-wall-systems",
     "roof-envelope",
@@ -44,6 +45,10 @@ export default class KnowledgeDomainRouter {
 
         if (isDrainageRainwaterFinding(source)) {
             domains.push("drainage-rainwater");
+        }
+
+        if (isHvacSystemsFinding(source)) {
+            domains.push("hvac-systems");
         }
 
         if (isWindowsDoorsFinding(source)) {
@@ -264,6 +269,139 @@ function hasDirectMoistureEvidence(text = "") {
     return /moisture|damp|\bwet\b|wetting|leakage|leaking|leak into|water ingress|ingress|seepage|staining|saturation|mould|mold|condensation|humidity/.test(String(text).toLowerCase());
 }
 
+function isHvacSystemsFinding(source = {}) {
+    const text = [
+        textOf(source.finding?.category),
+        textOf(source.finding?.location),
+        textOf(source.finding?.description),
+        textOf(source.finding?.observations),
+        ...cloneArray(source.measurements).map((measurement) => [
+            textOf(measurement.type),
+            textOf(measurement.value),
+            textOf(measurement.unit),
+            textOf(measurement.location)
+        ].join(" "))
+    ].join(" ").toLowerCase();
+
+    if (text.trim().length === 0) {
+        return false;
+    }
+
+    if (/hot weather|cold weather|summer temperature|winter temperature|drinking-water pressure|drinking water pressure|domestic hot-water circulation|domestic hot water circulation|sanitary ventilation pipe|roof ventilation|facade ventilation|natural window ventilation|decorative fan|computer fan|vehicle air conditioning|refrigerator cooling|refrigeration appliance|marketing|address/.test(text)) {
+        return false;
+    }
+
+    if (/\b(room|space)\s+(warm|cold)\b/.test(text) && !/hvac|heating|radiator|underfloor|cooling|air conditioning|air-conditioning|thermostat|ventilation/.test(text)) {
+        return false;
+    }
+
+    if (/\b(stale air|humidity|condensation|mould|mold|noise|vibration|corrosion|pressure|pump|filter|water leak|pipe leak|leakage)\b/.test(text) && !/hvac|heating|heat generator|boiler|heat pump|radiator|underfloor heating|thermostat|circulation pump|ventilation|ventilation unit|air duct|air outlet|supply-air|extract-air|cooling|air conditioning|air-conditioning|air conditioner|indoor unit|outdoor unit|evaporator|cooling coil|condensate|chiller/.test(text)) {
+        return false;
+    }
+
+    const componentTerms = [
+        "hvac",
+        "heating",
+        "heat generator",
+        "boiler",
+        "heat pump",
+        "district heating",
+        "burner",
+        "radiator",
+        "underfloor heating",
+        "heating circuit",
+        "heating manifold",
+        "thermostat",
+        "heating control",
+        "circulation pump",
+        "ventilation",
+        "ventilation unit",
+        "air duct",
+        "air outlet",
+        "supply-air",
+        "extract-air",
+        "cooling",
+        "air conditioning",
+        "air-conditioning",
+        "air conditioner",
+        "indoor unit",
+        "outdoor unit",
+        "evaporator",
+        "cooling coil",
+        "condensate",
+        "chiller"
+    ];
+    const issueTerms = [
+        "not working",
+        "failure",
+        "fault",
+        "not operating",
+        "intermittent",
+        "switches off",
+        "alarm",
+        "error code",
+        "malfunction",
+        "cold",
+        "uneven",
+        "no circulation",
+        "poor circulation",
+        "noise",
+        "noisy",
+        "vibration",
+        "gurgling",
+        "stuck",
+        "not responding",
+        "pressure low",
+        "pressure drops",
+        "restricted",
+        "blocked",
+        "dirty",
+        "contaminated",
+        "clogged",
+        "overdue",
+        "not serviced",
+        "not maintained",
+        "leak",
+        "leaking",
+        "dripping",
+        "overflowing",
+        "icing",
+        "damaged",
+        "deteriorated",
+        "corrosion",
+        "loose",
+        "unsupported",
+        "defect",
+        "defective",
+        "poor installation",
+        "incorrect connection",
+        "reduced",
+        "insufficient"
+    ];
+
+    const hasComponent = componentTerms.some((term) => matchesWholeWord(text, term));
+    const hasIssue = issueTerms.some((term) => matchesWholeWord(text, term));
+
+    if (hasComponent && hasIssue) {
+        return true;
+    }
+
+    return [
+        "no heat",
+        "some rooms cold",
+        "room not heating",
+        "floor remains cold",
+        "weak airflow",
+        "no airflow",
+        "stale air despite ventilation",
+        "water below indoor unit",
+        "water below ventilation unit",
+        "condensate dripping",
+        "condensate overflowing",
+        "ice on cooling coil"
+    ].some((term) => matchesWholeWord(text, term));
+}
+
 function isRoofEnvelopeFinding(source = {}) {
     const categoryText = textOf(source.finding?.category).toLowerCase();
     const findingText = [
@@ -352,6 +490,10 @@ function isRoofEnvelopeFinding(source = {}) {
     }
 
     if (isDrainageRainwaterFinding(source) && /gutter|downpipe|rainwater pipe|rainwater discharge pipe|balcony outlet|terrace outlet/.test(findingText) && !/roof outlet|roof drain|roof drainage|roof terrace|terrace drainage leakage|occupied space|flashing|parapet|upstand/.test(findingText)) {
+        return false;
+    }
+
+    if (isHvacSystemsFinding(source) && !/\b(roof|facade|fa\u00e7ade|balcony|terrace|window|door|flashing|penetration|parapet|upstand|sill|threshold|reveal)\b/.test(findingText)) {
         return false;
     }
 

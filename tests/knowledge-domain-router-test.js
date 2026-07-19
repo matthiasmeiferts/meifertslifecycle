@@ -434,6 +434,81 @@ runTest(
 );
 
 runTest(
+    "hvac-systems heating routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "HVAC",
+                location: "radiator",
+                description: "radiator remains cold and heating pressure low"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["hvac-systems"]);
+    }
+);
+
+runTest(
+    "hvac-systems ventilation routing with existing moisture overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "ventilation",
+                location: "ventilation unit",
+                description: "mechanical ventilation weak airflow and clogged ventilation filter"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["hvac-systems", "moisture"]);
+    }
+);
+
+runTest(
+    "hvac-systems cooling and condensate routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "cooling",
+                location: "indoor unit",
+                description: "air-conditioning unit leaking water with blocked condensate drain"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["hvac-systems", "moisture"]);
+    }
+);
+
+runTest(
+    "metadata-only HVAC routing is ignored",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            building: {
+                heatingSystemType: "radiator heating",
+                ventilationSystemType: "mechanical ventilation",
+                coolingSystemType: "split air-conditioning"
+            }
+        });
+
+        assert.deepStrictEqual(domains, []);
+    }
+);
+
+runTest(
+    "unrelated text does not route to hvac-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "inspection",
+                location: "living room",
+                description: "room feels warm during hot weather"
+            }
+        });
+
+        assert.equal(domains.includes("hvac-systems"), false);
+    }
+);
+
+runTest(
     "window leakage plus roof-envelope plus moisture",
     () => {
         const domains = KnowledgeDomainRouter.resolve({

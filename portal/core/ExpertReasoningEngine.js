@@ -5,6 +5,7 @@ import ConcreteCorrosionKnowledgeProvider from "./knowledge/ConcreteCorrosionKno
 import BasementWaterproofingKnowledgeProvider from "./knowledge/BasementWaterproofingKnowledgeProvider.js";
 import BalconiesTerracesKnowledgeProvider from "./knowledge/BalconiesTerracesKnowledgeProvider.js";
 import DrainageRainwaterKnowledgeProvider from "./knowledge/DrainageRainwaterKnowledgeProvider.js";
+import HvacSystemsKnowledgeProvider from "./knowledge/HvacSystemsKnowledgeProvider.js";
 import WindowsDoorsKnowledgeProvider from "./knowledge/WindowsDoorsKnowledgeProvider.js";
 import FacadeWallSystemsKnowledgeProvider from "./knowledge/FacadeWallSystemsKnowledgeProvider.js";
 import KnowledgeReasoningMapper from "./reasoning/KnowledgeReasoningMapper.js";
@@ -162,6 +163,8 @@ export default class ExpertReasoningEngine {
                     ? buildBalconiesTerracesReasoning(source)
                 : domain === "drainage-rainwater"
                     ? buildDrainageRainwaterReasoning(source)
+                : domain === "hvac-systems"
+                    ? buildHvacSystemsReasoning(source)
                 : domain === "windows-doors"
                     ? buildWindowsDoorsReasoning(source)
                 : domain === "facade-wall-systems"
@@ -412,6 +415,23 @@ function buildBalconiesTerracesReasoning(source = {}) {
 
 function buildDrainageRainwaterReasoning(source = {}) {
     const knowledge = DrainageRainwaterKnowledgeProvider.getKnowledge({
+        finding: cloneObject(source.finding),
+        building: cloneObject(source.building),
+        measurements: cloneArray(source.measurements)
+    });
+
+    if (!knowledge.hypotheses.length) {
+        return null;
+    }
+
+    return KnowledgeReasoningMapper.map({
+        knowledge,
+        input: source
+    });
+}
+
+function buildHvacSystemsReasoning(source = {}) {
+    const knowledge = HvacSystemsKnowledgeProvider.getKnowledge({
         finding: cloneObject(source.finding),
         building: cloneObject(source.building),
         measurements: cloneArray(source.measurements)
