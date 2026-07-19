@@ -659,6 +659,52 @@ runTest(
 );
 
 runTest(
+    "electrical-systems German enclosure routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "Elektroinstallation",
+                location: "Sicherungskasten",
+                description: "fehlende Abdeckung und offenes Gehäuse an der Verteilung"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["electrical-systems"]);
+    }
+);
+
+runTest(
+    "electrical-systems mixed-language thermal and labeling routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "electrical",
+                location: "Unterverteilung",
+                description: "Schmorspuren and missing circuit labeling at circuit breaker"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["electrical-systems"]);
+    }
+);
+
+runTest(
+    "electrical-systems generic terms without mapped signal do not route",
+    () => {
+        ["cable", "wire", "power", "current", "socket", "light", "switch", "panel", "box", "heat", "smell", "burn", "damage"].forEach((description) => {
+            const domains = KnowledgeDomainRouter.resolve({
+                finding: {
+                    category: "inspection",
+                    description
+                }
+            });
+
+            assert.equal(domains.includes("electrical-systems"), false, description);
+        });
+    }
+);
+
+runTest(
     "fire-protection-systems portable equipment routing",
     () => {
         const domains = KnowledgeDomainRouter.resolve({

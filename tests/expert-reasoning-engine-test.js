@@ -340,6 +340,34 @@ runTest(
     }
 );
 
+runTest(
+    "explicit German option renders electrical output without canonical evidence leakage",
+    () => {
+        const input = {
+            language: "en",
+            finding: {
+                category: "Elektroinstallation",
+                location: "Sicherungskasten",
+                description: "fehlende Abdeckung und offenes Gehäuse an der Verteilung"
+            }
+        };
+        const options = { language: "de" };
+        const originalInput = structuredClone(input);
+        const originalOptions = structuredClone(options);
+        const result = ExpertReasoningEngine.analyze(input, options);
+
+        assert.equal(result.primaryHypothesis.id, "damaged-or-incomplete-electrical-enclosure");
+        assert.equal(result.primaryHypothesis.cause, "beschädigtes oder unvollständiges Elektrogehäuse");
+        assert.deepStrictEqual(result.supportingEvidence, []);
+        assert.equal(JSON.stringify(result.supportingEvidence).includes("missing cover"), false);
+        assert.equal(JSON.stringify(result.missingEvidence).includes("missing cover"), false);
+        assert.equal(JSON.stringify(result).includes("canonicalContext"), false);
+        assert.equal(JSON.stringify(result).includes('"language"'), false);
+        assert.deepStrictEqual(input, originalInput);
+        assert.deepStrictEqual(options, originalOptions);
+    }
+);
+
 console.log(
     "ExpertReasoningEngine tests completed successfully."
 );

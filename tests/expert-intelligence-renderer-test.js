@@ -64,6 +64,32 @@ function sampleSanitaryReasoning() {
     };
 }
 
+function sampleElectricalReasoning() {
+    return {
+        primaryHypothesis: {
+            id: "damaged-or-incomplete-electrical-enclosure",
+            label: "damaged or incomplete electrical enclosure",
+            cause: "damaged or incomplete electrical enclosure",
+            classification: "visual electrical hypothesis",
+            supportingIndicators: ["cover or enclosure condition is visibly incomplete or damaged"],
+            contradictingIndicators: ["cover is intact and correctly secured"],
+            requiredVerification: ["Inspect the visible cover, enclosure, and accessible fixings."],
+            potentialConsequences: ["reduced component protection"],
+            recommendedActions: ["Document the enclosure and missing or damaged cover condition."],
+            riskRelevance: "medium",
+            capexRelevance: "medium",
+            valuationRelevance: "medium",
+            status: "hypothesis"
+        },
+        alternativeHypotheses: [],
+        supportingEvidence: ["cover or enclosure condition is visibly incomplete or damaged"],
+        missingEvidence: [],
+        requiredVerification: ["Inspect the visible cover, enclosure, and accessible fixings."],
+        potentialConsequences: ["reduced component protection"],
+        confidence: 0.33
+    };
+}
+
 runTest(
     "German rendering changes user-facing fields and preserves IDs",
     () => {
@@ -138,6 +164,23 @@ runTest(
         assert.equal(result.primaryHypothesis.cause, "sichtbare Leckage an einer Sanitärkomponente");
         assert.equal(result.primaryHypothesis.classification, "visuelle Sanitärhypothese");
         assert.equal(result.requiredVerification[0], "Betroffene Komponente, Lage und sichtbare Feuchteausdehnung dokumentieren.");
+    }
+);
+
+runTest(
+    "German electrical rendering changes user-facing fields and preserves IDs",
+    () => {
+        const result = ExpertIntelligenceReasoningRenderer.render({
+            domainId: "electrical-systems",
+            reasoning: sampleElectricalReasoning(),
+            language: "de"
+        });
+
+        assert.equal(result.primaryHypothesis.id, "damaged-or-incomplete-electrical-enclosure");
+        assert.equal(result.primaryHypothesis.cause, "beschädigtes oder unvollständiges Elektrogehäuse");
+        assert.equal(result.primaryHypothesis.classification, "visuelle Elektrohypothese");
+        assert.equal(result.supportingEvidence[0], "Abdeckung oder Gehäusezustand erscheint sichtbar unvollständig oder beschädigt");
+        assert.equal(result.requiredVerification[0], "Sichtbare Abdeckung, Gehäuse und zugängliche Befestigungen prüfen.");
     }
 );
 

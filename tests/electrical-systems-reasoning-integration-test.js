@@ -231,4 +231,74 @@ runTest(
     }
 );
 
+runTest(
+    "German electrical terminology routes and renders without synthetic supporting evidence",
+    () => {
+        const input = {
+            finding: {
+                category: "Elektroinstallation",
+                location: "Sicherungskasten",
+                description: "fehlende Abdeckung und offenes Gehäuse an der Verteilung"
+            }
+        };
+        const result = ExpertReasoningEngine.analyze(input, { language: "de" });
+
+        assert.equal(KnowledgeDomainRouter.resolve(input).includes("electrical-systems"), true);
+        assert.equal(result.primaryHypothesis.id, "damaged-or-incomplete-electrical-enclosure");
+        assert.equal(result.primaryHypothesis.cause, "beschädigtes oder unvollständiges Elektrogehäuse");
+        assert.deepStrictEqual(result.supportingEvidence, []);
+        assert.equal(JSON.stringify(result).includes("missing cover"), false);
+        assert.equal(JSON.stringify(result).includes("canonicalContext"), false);
+        assert.equal(JSON.stringify(result).includes('"language"'), false);
+    }
+);
+
+runTest(
+    "mixed electrical terminology preserves hypothesis precedence",
+    () => {
+        const result = ExpertReasoningEngine.analyze({
+            finding: {
+                category: "electrical",
+                location: "Unterverteilung",
+                description: "Schmorspuren and missing circuit labeling at circuit breaker"
+            }
+        });
+
+        assert.equal(result.primaryHypothesis.id, "visible-thermal-stress-indication");
+        assertHasCause(result, "unclear or missing circuit labeling");
+    }
+);
+
+runTest(
+    "English electrical reasoning remains compatible through bilingual path",
+    () => {
+        const input = {
+            finding: {
+                category: "electrical",
+                location: "electrical panel",
+                description: "electrical panel missing cover with damaged electrical enclosure"
+            }
+        };
+
+        assert.deepStrictEqual(ExpertReasoningEngine.analyze(input), ExpertReasoningEngine.analyze(input, { language: "en" }));
+        assert.equal(ExpertReasoningEngine.analyze(input).primaryHypothesis.cause, "damaged or incomplete electrical enclosure");
+    }
+);
+
+runTest(
+    "generic electrical words do not route through bilingual registry",
+    () => {
+        ["cable", "wire", "power", "current", "socket", "light", "switch", "panel", "box", "heat", "smell", "burn", "damage"].forEach((description) => {
+            const domains = KnowledgeDomainRouter.resolve({
+                finding: {
+                    category: "inspection",
+                    description
+                }
+            });
+
+            assert.equal(domains.includes("electrical-systems"), false, description);
+        });
+    }
+);
+
 console.log("ElectricalSystems reasoning integration tests completed successfully.");

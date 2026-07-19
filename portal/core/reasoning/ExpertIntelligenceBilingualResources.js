@@ -1,9 +1,11 @@
 import windowsDoorsBilingualResources from "./resources/windowsDoorsBilingualResources.js";
 import sanitarySystemsBilingualResources from "./resources/sanitarySystemsBilingualResources.js";
+import electricalSystemsBilingualResources from "./resources/electricalSystemsBilingualResources.js";
 
 const RESOURCES = Object.freeze({
     "windows-doors": windowsDoorsBilingualResources,
-    "sanitary-systems": sanitarySystemsBilingualResources
+    "sanitary-systems": sanitarySystemsBilingualResources,
+    "electrical-systems": electricalSystemsBilingualResources
 });
 
 export default class ExpertIntelligenceBilingualResources {

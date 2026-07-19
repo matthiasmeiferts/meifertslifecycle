@@ -128,4 +128,54 @@ runTest(
     }
 );
 
+runTest(
+    "German electrical terminology is recognized",
+    () => {
+        assert.equal(ExpertIntelligenceTerminologyRegistry.hasDomainEvidence("electrical-systems", {
+            finding: {
+                category: "Elektroinstallation",
+                location: "Sicherungskasten",
+                description: "fehlende Abdeckung und offenes Gehäuse an der Verteilung"
+            }
+        }), true);
+    }
+);
+
+runTest(
+    "mixed electrical terminology is recognized",
+    () => {
+        assert.equal(ExpertIntelligenceTerminologyRegistry.hasDomainEvidence("electrical-systems", {
+            finding: {
+                category: "electrical",
+                location: "Unterverteilung",
+                description: "Schmorspuren and missing circuit labeling at circuit breaker"
+            }
+        }), true);
+    }
+);
+
+runTest(
+    "electrical evidence requires component issue and signal terminology",
+    () => {
+        [
+            { finding: { description: "cable" } },
+            { finding: { description: "wire" } },
+            { finding: { description: "power" } },
+            { finding: { description: "current" } },
+            { finding: { description: "socket" } },
+            { finding: { description: "light" } },
+            { finding: { description: "switch" } },
+            { finding: { description: "panel" } },
+            { finding: { description: "box" } },
+            { finding: { description: "heat" } },
+            { finding: { description: "smell" } },
+            { finding: { description: "burn" } },
+            { finding: { description: "damage" } },
+            { finding: { category: "Elektroinstallation", description: "ohne sichtbaren Defekt" } }
+        ].forEach((input) => {
+            assert.equal(ExpertIntelligenceTerminologyRegistry.hasDomainEvidence("electrical-systems", input), false);
+        });
+    }
+);
+
 console.log("ExpertIntelligenceTerminologyRegistry tests completed successfully.");

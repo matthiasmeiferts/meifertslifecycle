@@ -18,6 +18,8 @@ import WindowsDoorsTerminologyAdapter from "./reasoning/adapters/WindowsDoorsTer
 import WindowsDoorsReasoningCoordinator from "./reasoning/adapters/WindowsDoorsReasoningCoordinator.js";
 import SanitarySystemsTerminologyAdapter from "./reasoning/adapters/SanitarySystemsTerminologyAdapter.js";
 import SanitarySystemsReasoningCoordinator from "./reasoning/adapters/SanitarySystemsReasoningCoordinator.js";
+import ElectricalSystemsTerminologyAdapter from "./reasoning/adapters/ElectricalSystemsTerminologyAdapter.js";
+import ElectricalSystemsReasoningCoordinator from "./reasoning/adapters/ElectricalSystemsReasoningCoordinator.js";
 import ExpertIntelligenceLanguage from "./reasoning/ExpertIntelligenceLanguage.js";
 import ExpertIntelligenceReasoningRenderer from "./reasoning/ExpertIntelligenceReasoningRenderer.js";
 
@@ -179,7 +181,7 @@ export default class ExpertReasoningEngine {
                 : domain === "hvac-systems"
                     ? buildHvacSystemsReasoning(source)
                 : domain === "electrical-systems"
-                    ? buildElectricalSystemsReasoning(source)
+                    ? buildElectricalSystemsReasoning(source, { language })
                 : domain === "sanitary-systems"
                     ? buildSanitarySystemsReasoning(source, { language })
                 : domain === "fire-protection-systems"
@@ -477,20 +479,29 @@ function buildHvacSystemsReasoning(source = {}) {
     });
 }
 
-function buildElectricalSystemsReasoning(source = {}) {
+function buildElectricalSystemsReasoning(source = {}, options = {}) {
+    const adapted = ElectricalSystemsTerminologyAdapter.adapt(source);
+    const technicalInput = adapted.input;
     const knowledge = ElectricalSystemsKnowledgeProvider.getKnowledge({
-        finding: cloneObject(source.finding),
-        building: cloneObject(source.building),
-        measurements: cloneArray(source.measurements)
+        finding: cloneObject(technicalInput.finding),
+        building: cloneObject(technicalInput.building),
+        measurements: cloneArray(technicalInput.measurements)
     });
 
-    if (!knowledge.hypotheses.length) {
+    const reasoning = ElectricalSystemsReasoningCoordinator.build({
+        providerKnowledge: knowledge,
+        input: technicalInput,
+        canonicalContext: adapted.canonicalContext
+    });
+
+    if (!reasoning) {
         return null;
     }
 
-    return KnowledgeReasoningMapper.map({
-        knowledge,
-        input: source
+    return ExpertIntelligenceReasoningRenderer.render({
+        domainId: "electrical-systems",
+        reasoning,
+        language: options.language
     });
 }
 

@@ -162,9 +162,115 @@ const SANITARY_SYSTEMS_TERMINOLOGY = Object.freeze({
     })
 });
 
+const ELECTRICAL_SYSTEMS_TERMINOLOGY = Object.freeze({
+    components: Object.freeze([
+        "electrical", "electrical installation", "distribution board", "electrical panel", "consumer unit",
+        "fuse box", "circuit breaker", "breaker", "residual current device", "rcd", "socket outlet",
+        "power outlet", "socket", "switch", "electrical wiring", "wiring", "wire", "cable",
+        "junction box", "electrical enclosure", "enclosure", "conductor", "grounding conductor",
+        "earthing conductor", "bonding conductor", "extension lead", "extension leads", "adapter",
+        "elektrik", "elektrisch", "elektroinstallation", "elektrische anlage", "unterverteilung",
+        "verteilung", "sicherungskasten", "verteilerkasten", "schaltschrank", "stromkreis", "sicherung",
+        "leitungsschutzschalter", "fi schalter", "fi-schalter", "rcd schalter", "steckdose", "schalter",
+        "elektroleitung", "leitung", "kabel", "abzweigdose", "verteilerdose", "elektrogehaeuse",
+        "elektrogehäuse", "gehaeuse", "gehäuse", "leiter", "schutzleiter", "erdungsleiter",
+        "potentialausgleich", "potenzialausgleich", "verlaengerungskabel", "verlängerungskabel", "adapter"
+    ]),
+    issues: Object.freeze([
+        "visible overheating", "overheating", "overheating marks", "thermal stress", "scorching", "scorch marks",
+        "burn mark", "discoloration", "heat discoloration", "damaged", "damage", "broken", "cracked",
+        "missing cover", "open enclosure", "open electrical panel", "exposed conductor", "visible bare wire",
+        "bare conductor", "unprotected conductor", "open cable end", "cable insulation damaged", "loose component",
+        "corrosion", "corroded", "rust", "moisture", "water marks", "condensation", "temporary wiring",
+        "unsupported cable", "poor cable support", "hanging cable", "overloaded adapter", "multiple extension leads",
+        "daisy chained extension", "missing circuit labeling", "unclear circuit labeling", "unlabeled circuit breaker",
+        "missing label", "aged", "old", "deteriorated", "brittle", "missing bonding", "disconnected",
+        "ueberhitzung", "überhitzung", "ueberhitzungsspuren", "überhitzungsspuren", "schmorspur",
+        "schmorspuren", "brandspur", "verfaerbung", "verfärbung", "waermeverfaerbung", "wärmeverfärbung",
+        "beschaedigt", "beschädigt", "gebrochen", "gerissen", "fehlende abdeckung", "offenes gehaeuse",
+        "offenes gehäuse", "offene verteilung", "freiliegender leiter", "freiliegende leiter", "blanker draht",
+        "blanke leitung", "offenes kabelende", "beschaedigte isolierung", "beschädigte isolierung", "locker",
+        "lose", "korrosion", "rost", "feuchtigkeit", "wasserfleck", "kondensation", "provisorische verdrahtung",
+        "provisorische verkabelung", "unzureichende befestigung", "haengendes kabel", "hängendes kabel",
+        "ueberlasteter adapter", "überlasteter adapter", "mehrfachsteckdose ueberlastet", "mehrfachsteckdose überlastet",
+        "mehrere verlaengerungskabel", "mehrere verlängerungskabel", "verkettete verlaengerung", "verkettete verlängerung",
+        "fehlende beschriftung", "unklare beschriftung", "unbeschrifteter stromkreis", "alt", "gealtert",
+        "verschlechtert", "bruechig", "brüchig", "fehlender potentialausgleich", "fehlender potenzialausgleich",
+        "getrennt", "abgeklemmt"
+    ]),
+    signals: Object.freeze({
+        "visible-thermal-stress-indication": Object.freeze([
+            "visible overheating marks", "overheating marks", "scorching", "scorch marks", "heat discoloration",
+            "thermal stress", "burn mark", "brown marks", "ueberhitzungsspuren", "überhitzungsspuren",
+            "schmorspuren", "schmorspur", "brandspur", "waermeverfaerbung", "wärmeverfärbung",
+            "verfaerbung an sicherung", "verfärbung an sicherung", "verfaerbung an verteilung", "verfärbung an verteilung"
+        ]),
+        "damaged-or-incomplete-electrical-enclosure": Object.freeze([
+            "damaged cover", "missing cover", "missing enclosure cover", "damaged electrical enclosure",
+            "open electrical panel", "broken consumer unit cover", "missing fuse box cover", "damaged distribution board cover",
+            "fehlende abdeckung", "beschaedigte abdeckung", "beschädigte abdeckung", "offenes gehaeuse",
+            "offenes gehäuse", "offene verteilung", "fehlende abdeckung am sicherungskasten",
+            "beschaedigtes elektrogehaeuse", "beschädigtes elektrogehäuse"
+        ]),
+        "exposed-or-insufficiently-protected-conductors": Object.freeze([
+            "exposed conductor", "exposed conductors", "visible bare wire", "bare conductor", "unprotected conductor",
+            "open cable end", "cable insulation damaged", "damaged insulation on wiring", "freiliegender leiter",
+            "freiliegende leiter", "blanker draht", "blanke leitung", "offenes kabelende", "beschaedigte isolierung",
+            "beschädigte isolierung", "ungeschuetzter leiter", "ungeschützter leiter"
+        ]),
+        "moisture-or-corrosion-related-electrical-deterioration": Object.freeze([
+            "corrosion in electrical panel", "corroded electrical component", "rust in fuse box", "moisture near electrical panel",
+            "water marks near consumer unit", "condensation in electrical enclosure", "moisture proximity", "corroded junction box",
+            "korrosion in verteilung", "korrosion am sicherungskasten", "rost im sicherungskasten", "feuchtigkeit an verteilung",
+            "feuchtigkeit nahe elektroinstallation", "wasserfleck am sicherungskasten", "kondensation im elektrogehaeuse",
+            "kondensation im elektrogehäuse", "korrodierte abzweigdose"
+        ]),
+        "temporary-or-poorly-supported-wiring": Object.freeze([
+            "temporary wiring", "loose cable", "unsupported cable", "poor cable support", "hanging cable",
+            "improvised wiring", "cable not supported", "temporary cable run", "provisorische verdrahtung",
+            "provisorische verkabelung", "loses kabel", "locker befestigtes kabel", "unzureichende kabelbefestigung",
+            "haengendes kabel", "hängendes kabel", "improvisierte verdrahtung"
+        ]),
+        "damaged-socket-or-switch-component": Object.freeze([
+            "damaged socket", "cracked socket", "broken socket", "loose socket", "damaged switch", "cracked switch",
+            "broken switch", "loose switch", "socket cover damaged", "switch cover damaged", "beschaedigte steckdose",
+            "beschädigte steckdose", "gerissene steckdose", "lose steckdose", "lockere steckdose",
+            "beschaedigter schalter", "beschädigter schalter", "gerissener schalter", "loser schalter",
+            "lockerer schalter", "steckdosenabdeckung beschaedigt", "steckdosenabdeckung beschädigt"
+        ]),
+        "unclear-or-missing-circuit-labeling": Object.freeze([
+            "missing circuit labeling", "unclear circuit labeling", "unlabeled circuit breaker", "unlabelled circuit breaker",
+            "missing label", "unclear labels", "distribution board labeling missing", "fuse box labels missing",
+            "fehlende stromkreisbeschriftung", "unklare stromkreisbeschriftung", "unbeschrifteter stromkreis",
+            "unbeschriftete sicherung", "fehlende beschriftung", "unklare beschriftung", "beschriftung am sicherungskasten fehlt"
+        ]),
+        "aged-or-visibly-deteriorated-electrical-components": Object.freeze([
+            "aged electrical component", "old fuse box", "old consumer unit", "aged wiring", "deteriorated wiring",
+            "brittle cable", "old circuit breaker", "visible age-related deterioration", "gealterte elektrokomponente",
+            "alter sicherungskasten", "alte unterverteilung", "gealterte verdrahtung", "verschlechterte leitung",
+            "bruechiges kabel", "brüchiges kabel", "alter leitungsschutzschalter", "sichtbare altersbedingte verschlechterung"
+        ]),
+        "possible-overloaded-extension-or-adapter-arrangement": Object.freeze([
+            "overloaded adapter", "overloaded extension", "multiple extension leads", "daisy chained extension",
+            "many plugs in adapter", "extension lead cluster", "multi plug adapter overloaded", "temporary extension leads",
+            "ueberlasteter adapter", "überlasteter adapter", "ueberlastete verlaengerung", "überlastete verlängerung",
+            "mehrere verlaengerungskabel", "mehrere verlängerungskabel", "verkettete verlaengerung",
+            "verkettete verlängerung", "viele stecker im adapter", "ueberlastete mehrfachsteckdose", "überlastete mehrfachsteckdose"
+        ]),
+        "visible-grounding-or-bonding-irregularity": Object.freeze([
+            "loose grounding conductor", "loose earthing conductor", "missing bonding conductor", "bonding conductor disconnected",
+            "grounding conductor damaged", "earthing conductor damaged", "visible bonding irregularity", "earth wire loose",
+            "loser erdungsleiter", "lockerer erdungsleiter", "fehlender potentialausgleich", "fehlender potenzialausgleich",
+            "potentialausgleich abgeklemmt", "potenzialausgleich abgeklemmt", "schutzleiter beschaedigt",
+            "schutzleiter beschädigt", "sichtbare potentialausgleichsunregelmaessigkeit", "sichtbare potenzialausgleichsunregelmäßigkeit"
+        ])
+    })
+});
+
 const REGISTRY = Object.freeze({
     "windows-doors": WINDOWS_DOORS_TERMINOLOGY,
-    "sanitary-systems": SANITARY_SYSTEMS_TERMINOLOGY
+    "sanitary-systems": SANITARY_SYSTEMS_TERMINOLOGY,
+    "electrical-systems": ELECTRICAL_SYSTEMS_TERMINOLOGY
 });
 
 export default class ExpertIntelligenceTerminologyRegistry {

@@ -825,6 +825,10 @@ function isElectricalSystemsFinding(source = {}) {
         return false;
     }
 
+    if (ExpertIntelligenceTerminologyRegistry.hasDomainEvidence("electrical-systems", source)) {
+        return true;
+    }
+
     const componentTerms = [
         "electrical",
         "electrical installation",
