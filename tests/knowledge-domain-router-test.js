@@ -1637,6 +1637,51 @@ runTest(
 );
 
 runTest(
+    "sanitary-systems German leakage routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "Sanitärinstallation",
+                location: "Waschtisch Siphon",
+                description: "sichtbar undicht und tropfend am Anschluss"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["sanitary-systems"]);
+    }
+);
+
+runTest(
+    "sanitary-systems mixed-language seal routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "sanitary",
+                location: "WC Anschluss",
+                description: "fehlende Dichtung and damaged seal"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["sanitary-systems"]);
+    }
+);
+
+runTest(
+    "sanitary-systems generic German component terms without issue do not route",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "Sanitärinstallation",
+                location: "Bad",
+                description: "Waschtisch, WC und Dusche sichtbar vorhanden ohne Zustandsangabe"
+            }
+        });
+
+        assert.equal(domains.includes("sanitary-systems"), false);
+    }
+);
+
+runTest(
     "metadata-only sanitary routing is ignored",
     () => {
         const domains = KnowledgeDomainRouter.resolve({

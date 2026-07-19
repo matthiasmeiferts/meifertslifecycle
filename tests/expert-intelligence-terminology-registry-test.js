@@ -71,4 +71,61 @@ runTest(
     }
 );
 
+runTest(
+    "German sanitary terminology is recognized",
+    () => {
+        assert.equal(ExpertIntelligenceTerminologyRegistry.hasDomainEvidence("sanitary-systems", {
+            finding: {
+                category: "Sanitärinstallation",
+                location: "Waschtisch Siphon",
+                description: "sichtbar undicht und tropfend am Anschluss"
+            }
+        }), true);
+    }
+);
+
+runTest(
+    "German sanitary ASCII variants are recognized",
+    () => {
+        assert.equal(ExpertIntelligenceTerminologyRegistry.hasDomainEvidence("sanitary-systems", {
+            finding: {
+                category: "Sanitaerinstallation",
+                location: "Waschbecken Anschluss",
+                description: "beschaedigte Dichtung und Feuchtespur am Siphon"
+            }
+        }), true);
+    }
+);
+
+runTest(
+    "mixed sanitary terminology is recognized",
+    () => {
+        assert.equal(ExpertIntelligenceTerminologyRegistry.hasDomainEvidence("sanitary-systems", {
+            finding: {
+                category: "sanitary",
+                location: "WC Anschluss",
+                description: "fehlende Dichtung and damaged seal"
+            }
+        }), true);
+    }
+);
+
+runTest(
+    "sanitary evidence requires component issue and signal terminology",
+    () => {
+        [
+            { finding: { description: "water" } },
+            { finding: { description: "pipe" } },
+            { finding: { description: "drain" } },
+            { finding: { description: "smell" } },
+            { finding: { description: "leak" } },
+            { finding: { description: "wet" } },
+            { finding: { category: "Sanitärinstallation", description: "ohne sichtbaren Defekt" } },
+            { finding: { category: "interior", description: "connection moisture and staining" } }
+        ].forEach((input) => {
+            assert.equal(ExpertIntelligenceTerminologyRegistry.hasDomainEvidence("sanitary-systems", input), false);
+        });
+    }
+);
+
 console.log("ExpertIntelligenceTerminologyRegistry tests completed successfully.");

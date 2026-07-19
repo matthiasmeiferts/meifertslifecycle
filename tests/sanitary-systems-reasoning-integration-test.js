@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 
 import ExpertReasoningEngine from "../portal/core/ExpertReasoningEngine.js";
 import KnowledgeDomainRouter from "../portal/core/reasoning/KnowledgeDomainRouter.js";
+import SanitarySystemsTerminologyAdapter from "../portal/core/reasoning/adapters/SanitarySystemsTerminologyAdapter.js";
 
 function runTest(name, fn) {
     try {
@@ -48,6 +49,10 @@ function analyzeAsSanitary(input) {
     } finally {
         KnowledgeDomainRouter.resolve = originalResolve;
     }
+}
+
+function canonicalTerms(input) {
+    return SanitarySystemsTerminologyAdapter.adapt(input).canonicalContext?.terms || [];
 }
 
 runTest(
@@ -228,6 +233,82 @@ runTest(
 
         assert.deepStrictEqual(domains, ["windows-doors"]);
         assertHasCause(result, "defective perimeter seal");
+    }
+);
+
+runTest(
+    "German sanitary input routes and renders without changing technical evidence",
+    () => {
+        const input = {
+            finding: {
+                category: "Sanitärinstallation",
+                location: "Waschtisch Siphon",
+                description: "sichtbar undicht und tropfend am Anschluss mit Leckagespur"
+            }
+        };
+        const original = structuredClone(input);
+        const result = ExpertReasoningEngine.analyze(input, { language: "de" });
+
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve(input), ["sanitary-systems"]);
+        assert.equal(result.primaryHypothesis.id, "visible-leakage-at-sanitary-component");
+        assert.equal(result.primaryHypothesis.cause, "sichtbare Leckage an einer Sanitärkomponente");
+        assert.deepStrictEqual(result.supportingEvidence, []);
+        assert.deepStrictEqual(input, original);
+    }
+);
+
+runTest(
+    "canonical sanitary terms stay out of public supporting and missing evidence",
+    () => {
+        const input = {
+            finding: {
+                category: "Sanitärinstallation",
+                location: "Waschtisch Siphon",
+                description: "sichtbar undicht und tropfend am Anschluss mit Leckagespur"
+            }
+        };
+        const result = ExpertReasoningEngine.analyze(input, { language: "de" });
+        const evidenceText = JSON.stringify([result.supportingEvidence, result.missingEvidence]);
+
+        canonicalTerms(input).forEach((term) => {
+            assert.equal(evidenceText.includes(term), false, term);
+        });
+        assert.equal(JSON.stringify(result).includes("canonicalContext"), false);
+    }
+);
+
+runTest(
+    "German sanitary semantic cases select stable hypothesis ids",
+    () => {
+        const cases = [
+            {
+                input: { finding: { category: "Sanitärinstallation", location: "Waschtisch", description: "sichtbar undicht und tropfend am Anschluss" } },
+                id: "visible-leakage-at-sanitary-component"
+            },
+            {
+                input: { finding: { category: "Sanitärinstallation", location: "WC", description: "beschädigte Dichtung und fehlende Dichtung am Anschluss" } },
+                id: "missing-or-damaged-sanitary-seal"
+            },
+            {
+                input: { finding: { category: "Sanitärinstallation", location: "Bodenablauf", description: "langsamer Ablauf mit Rückstauanzeichen" } },
+                id: "possible-drainage-restriction-indicator"
+            },
+            {
+                input: { finding: { category: "Sanitärinstallation", location: "Ablauf", description: "unangenehmer Geruch aus dem Geruchsverschluss" } },
+                id: "unpleasant-odour-near-sanitary-drainage"
+            },
+            {
+                input: { finding: { category: "Sanitärinstallation", location: "Rohrleitung", description: "unzureichende Befestigung mit loser Rohrschelle" } },
+                id: "poor-support-or-protection-of-sanitary-pipework"
+            }
+        ];
+
+        cases.forEach((entry) => {
+            const result = ExpertReasoningEngine.analyze(entry.input, { language: "de" });
+
+            assert.equal(result.primaryHypothesis.id, entry.id);
+            assert.deepStrictEqual(result.supportingEvidence, []);
+        });
     }
 );
 

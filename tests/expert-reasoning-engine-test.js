@@ -312,6 +312,34 @@ runTest(
     }
 );
 
+runTest(
+    "explicit German option renders sanitary output without canonical evidence leakage",
+    () => {
+        const input = {
+            language: "en",
+            finding: {
+                category: "Sanitärinstallation",
+                location: "Waschtisch Siphon",
+                description: "sichtbar undicht und tropfend am Anschluss"
+            }
+        };
+        const options = { language: "de" };
+        const originalInput = structuredClone(input);
+        const originalOptions = structuredClone(options);
+        const result = ExpertReasoningEngine.analyze(input, options);
+
+        assert.equal(result.primaryHypothesis.id, "visible-leakage-at-sanitary-component");
+        assert.equal(result.primaryHypothesis.cause, "sichtbare Leckage an einer Sanitärkomponente");
+        assert.deepStrictEqual(result.supportingEvidence, []);
+        assert.equal(JSON.stringify(result.supportingEvidence).includes("visible leakage"), false);
+        assert.equal(JSON.stringify(result.missingEvidence).includes("visible leakage"), false);
+        assert.equal(JSON.stringify(result).includes("canonicalContext"), false);
+        assert.equal(JSON.stringify(result).includes('"language"'), false);
+        assert.deepStrictEqual(input, originalInput);
+        assert.deepStrictEqual(options, originalOptions);
+    }
+);
+
 console.log(
     "ExpertReasoningEngine tests completed successfully."
 );

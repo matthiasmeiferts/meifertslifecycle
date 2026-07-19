@@ -38,6 +38,32 @@ function sampleReasoning() {
     };
 }
 
+function sampleSanitaryReasoning() {
+    return {
+        primaryHypothesis: {
+            id: "visible-leakage-at-sanitary-component",
+            label: "visible leakage around sanitary component",
+            cause: "visible leakage around sanitary component",
+            classification: "visual sanitary hypothesis",
+            supportingIndicators: ["visible leakage is reported at or near a sanitary component"],
+            contradictingIndicators: ["reported water is confirmed to originate from a non-sanitary source"],
+            requiredVerification: ["Document the affected component, location, and visible moisture extent."],
+            potentialConsequences: ["possible local deterioration of adjacent finishes"],
+            recommendedActions: ["Record visible leakage without treating it as pipe failure."],
+            riskRelevance: "medium",
+            capexRelevance: "medium",
+            valuationRelevance: "medium",
+            status: "hypothesis"
+        },
+        alternativeHypotheses: [],
+        supportingEvidence: ["visible leakage is reported at or near a sanitary component"],
+        missingEvidence: [],
+        requiredVerification: ["Document the affected component, location, and visible moisture extent."],
+        potentialConsequences: ["possible local deterioration of adjacent finishes"],
+        confidence: 0.33
+    };
+}
+
 runTest(
     "German rendering changes user-facing fields and preserves IDs",
     () => {
@@ -96,6 +122,22 @@ runTest(
         });
 
         assert.deepStrictEqual(input, original);
+    }
+);
+
+runTest(
+    "German sanitary rendering changes user-facing fields and preserves IDs",
+    () => {
+        const result = ExpertIntelligenceReasoningRenderer.render({
+            domainId: "sanitary-systems",
+            reasoning: sampleSanitaryReasoning(),
+            language: "de"
+        });
+
+        assert.equal(result.primaryHypothesis.id, "visible-leakage-at-sanitary-component");
+        assert.equal(result.primaryHypothesis.cause, "sichtbare Leckage an einer Sanitärkomponente");
+        assert.equal(result.primaryHypothesis.classification, "visuelle Sanitärhypothese");
+        assert.equal(result.requiredVerification[0], "Betroffene Komponente, Lage und sichtbare Feuchteausdehnung dokumentieren.");
     }
 );
 

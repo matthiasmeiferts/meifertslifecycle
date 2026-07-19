@@ -16,6 +16,8 @@ import KnowledgeReasoningMapper from "./reasoning/KnowledgeReasoningMapper.js";
 import KnowledgeDomainRouter from "./reasoning/KnowledgeDomainRouter.js";
 import WindowsDoorsTerminologyAdapter from "./reasoning/adapters/WindowsDoorsTerminologyAdapter.js";
 import WindowsDoorsReasoningCoordinator from "./reasoning/adapters/WindowsDoorsReasoningCoordinator.js";
+import SanitarySystemsTerminologyAdapter from "./reasoning/adapters/SanitarySystemsTerminologyAdapter.js";
+import SanitarySystemsReasoningCoordinator from "./reasoning/adapters/SanitarySystemsReasoningCoordinator.js";
 import ExpertIntelligenceLanguage from "./reasoning/ExpertIntelligenceLanguage.js";
 import ExpertIntelligenceReasoningRenderer from "./reasoning/ExpertIntelligenceReasoningRenderer.js";
 
@@ -179,7 +181,7 @@ export default class ExpertReasoningEngine {
                 : domain === "electrical-systems"
                     ? buildElectricalSystemsReasoning(source)
                 : domain === "sanitary-systems"
-                    ? buildSanitarySystemsReasoning(source)
+                    ? buildSanitarySystemsReasoning(source, { language })
                 : domain === "fire-protection-systems"
                     ? buildFireProtectionSystemsReasoning(source)
                 : domain === "vertical-transportation-systems"
@@ -492,20 +494,29 @@ function buildElectricalSystemsReasoning(source = {}) {
     });
 }
 
-function buildSanitarySystemsReasoning(source = {}) {
+function buildSanitarySystemsReasoning(source = {}, options = {}) {
+    const adapted = SanitarySystemsTerminologyAdapter.adapt(source);
+    const technicalInput = adapted.input;
     const knowledge = SanitarySystemsKnowledgeProvider.getKnowledge({
-        finding: cloneObject(source.finding),
-        building: cloneObject(source.building),
-        measurements: cloneArray(source.measurements)
+        finding: cloneObject(technicalInput.finding),
+        building: cloneObject(technicalInput.building),
+        measurements: cloneArray(technicalInput.measurements)
     });
 
-    if (!knowledge.hypotheses.length) {
+    const reasoning = SanitarySystemsReasoningCoordinator.build({
+        providerKnowledge: knowledge,
+        input: technicalInput,
+        canonicalContext: adapted.canonicalContext
+    });
+
+    if (!reasoning) {
         return null;
     }
 
-    return KnowledgeReasoningMapper.map({
-        knowledge,
-        input: source
+    return ExpertIntelligenceReasoningRenderer.render({
+        domainId: "sanitary-systems",
+        reasoning,
+        language: options.language
     });
 }
 

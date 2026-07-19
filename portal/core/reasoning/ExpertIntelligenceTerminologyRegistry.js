@@ -79,8 +79,92 @@ const WINDOWS_DOORS_TERMINOLOGY = Object.freeze({
     })
 });
 
+const SANITARY_SYSTEMS_TERMINOLOGY = Object.freeze({
+    components: Object.freeze([
+        "sanitary", "sanitary system", "sanitary component", "water supply pipe", "drinking water pipe",
+        "waste water pipe", "wastewater pipe", "drain pipe", "soil stack", "vent pipe", "sanitary fixture",
+        "wash basin", "basin", "sink", "toilet", "urinal", "shower", "bathtub", "bath tub", "floor drain",
+        "trap", "valve", "fitting", "pipe support", "pipe insulation", "pipework", "sanitary pipe", "drain",
+        "fixture", "sanitaer", "sanitaerinstallation", "sanitär", "sanitärinstallation",
+        "sanitaerkomponente", "sanitärkomponente", "trinkwasserleitung", "abwasserleitung", "rohrleitung",
+        "sanitaerleitung", "sanitärleitung", "anschluss", "armatur", "waschtisch", "waschbecken", "wc",
+        "toilette", "dusche", "badewanne", "siphon", "geruchsverschluss", "ablauf", "bodenablauf",
+        "rohrhalterung", "rohrschelle", "dichtung"
+    ]),
+    issues: Object.freeze([
+        "visible leakage", "leakage", "leaking", "water leak", "dripping", "corrosion", "corroded", "rust",
+        "staining", "moisture", "damaged", "damage", "broken", "cracked", "loose", "blocked", "slow drainage",
+        "slow draining", "unpleasant odour", "unpleasant odor", "odour", "odor", "missing seal", "damaged seal",
+        "seal gap", "backflow", "backing up", "overflow", "damaged connection", "poor support", "unsupported",
+        "sagging", "visible deterioration", "deteriorated", "defect", "defective", "sichtbar undicht", "undicht",
+        "tropfend", "tropft", "leckagespur", "feuchtespur", "korrosion", "rostspur", "verfaerbung", "verfärbung",
+        "lose", "locker", "beschaedigt", "beschädigt", "gebrochen", "langsamer ablauf", "rueckstauanzeichen",
+        "rückstauanzeichen", "rueckstau", "rückstau", "unangenehmer geruch", "geruch", "fehlende dichtung",
+        "beschaedigte dichtung", "beschädigte dichtung", "unzureichende befestigung", "beschaedigter anschluss",
+        "beschädigter anschluss", "verschlechterter anschlusszustand"
+    ]),
+    signals: Object.freeze({
+        "visible-leakage-at-sanitary-component": Object.freeze([
+            "visible leakage", "leaking pipe", "leaking valve", "leaking fitting", "water leak", "dripping",
+            "active drip", "leakage at trap", "leakage at connection", "sichtbar undicht", "siphon undicht",
+            "anschluss undicht", "armatur tropft", "tropfende armatur", "tropfender siphon", "leckage am siphon",
+            "leckage am anschluss", "leckagespur", "feuchtespur am siphon"
+        ]),
+        "visible-corrosion-staining-or-moisture": Object.freeze([
+            "corrosion", "corroded pipe", "rust staining", "staining", "water staining", "moisture around sanitary",
+            "moisture around pipe", "moisture around fixture", "damp around trap", "korrosion", "rostspur",
+            "rostspuren", "verfaerbung", "verfärbung", "wasserfleck", "feuchtespur", "feuchte am rohr",
+            "feuchte an armatur", "feuchte am siphon"
+        ]),
+        "damaged-or-loose-sanitary-fixture": Object.freeze([
+            "damaged fixture", "damaged wash basin", "damaged sink", "damaged toilet", "damaged urinal",
+            "damaged shower", "damaged bathtub", "cracked basin", "cracked toilet", "loose fixture", "loose toilet",
+            "loose basin", "loose sink", "beschaedigter waschtisch", "beschädigter waschtisch", "beschaedigtes waschbecken",
+            "beschädigtes waschbecken", "beschaedigte toilette", "beschädigte toilette", "beschaedigtes wc", "beschädigtes wc",
+            "lose toilette", "lockere toilette", "lose armatur", "lockere armatur", "gebrochenes waschbecken"
+        ]),
+        "possible-drainage-restriction-indicator": Object.freeze([
+            "blocked drain", "slow drainage", "slow draining", "standing water in fixture", "water backing up",
+            "gurgling drain", "floor drain blocked", "trap blocked", "drain obstruction", "ablauf verstopft",
+            "bodenablauf verstopft", "siphon verstopft", "langsamer ablauf", "wasser laeuft langsam ab",
+            "wasser läuft langsam ab", "wasser staut sich", "rueckstau am ablauf", "rückstau am ablauf"
+        ]),
+        "unpleasant-odour-near-sanitary-drainage": Object.freeze([
+            "unpleasant odour", "unpleasant odor", "sewer odour", "sewer odor", "drain smell", "odour at floor drain",
+            "odor at floor drain", "trap odour", "trap odor", "unangenehmer geruch", "geruch am ablauf",
+            "geruch am bodenablauf", "geruch aus siphon", "geruchsverschluss geruch", "kanalgeruch", "abwassergeruch"
+        ]),
+        "missing-or-damaged-sanitary-seal": Object.freeze([
+            "missing seal", "damaged seal", "failed seal", "seal gap", "sealant missing", "sealant damaged",
+            "damaged connection seal", "missing trap seal", "fehlende dichtung", "dichtung fehlt", "beschaedigte dichtung",
+            "beschädigte dichtung", "dichtung beschaedigt", "dichtung beschädigt", "dichtungsfuge fehlt", "dichtungsluecke",
+            "dichtungslücke"
+        ]),
+        "possible-backflow-indication": Object.freeze([
+            "backflow indication", "backflow at drain", "water backing up", "wastewater backing up", "reverse flow",
+            "overflow from floor drain", "floor drain overflow", "toilet backing up", "rueckstauanzeichen", "rückstauanzeichen",
+            "rueckstau am ablauf", "rückstau am ablauf", "abwasser staut zurueck", "abwasser staut zurück",
+            "wasser tritt aus bodenablauf aus", "bodenablauf laeuft ueber", "bodenablauf läuft über"
+        ]),
+        "poor-support-or-protection-of-sanitary-pipework": Object.freeze([
+            "poor support", "unsupported pipe", "loose pipe support", "missing pipe support", "sagging pipe",
+            "damaged pipe insulation", "missing pipe insulation", "poorly supported drain pipe", "pipe support damaged",
+            "unzureichende befestigung", "rohr unzureichend befestigt", "rohrhalterung lose", "rohrschelle lose",
+            "fehlende rohrhalterung", "fehlende rohrschelle", "durchhaengende leitung", "durchhängende leitung",
+            "beschaedigte rohrdaemmung", "beschädigte rohrdämmung"
+        ]),
+        "visible-deterioration-at-sanitary-connection": Object.freeze([
+            "damaged connection", "loose connection", "deteriorated connection", "visible deterioration", "deteriorated fitting",
+            "damaged fitting", "damaged valve", "loose valve", "corroded fitting", "beschaedigter anschluss",
+            "beschädigter anschluss", "loser anschluss", "lockerer anschluss", "verschlechterter anschlusszustand",
+            "beschaedigte armatur", "beschädigte armatur", "beschaedigtes ventil", "beschädigtes ventil", "korrodierter anschluss"
+        ])
+    })
+});
+
 const REGISTRY = Object.freeze({
-    "windows-doors": WINDOWS_DOORS_TERMINOLOGY
+    "windows-doors": WINDOWS_DOORS_TERMINOLOGY,
+    "sanitary-systems": SANITARY_SYSTEMS_TERMINOLOGY
 });
 
 export default class ExpertIntelligenceTerminologyRegistry {

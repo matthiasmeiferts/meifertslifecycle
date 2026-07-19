@@ -326,6 +326,10 @@ function isSanitarySystemsFinding(source = {}) {
         return false;
     }
 
+    if (ExpertIntelligenceTerminologyRegistry.hasDomainEvidence("sanitary-systems", source)) {
+        return true;
+    }
+
     const componentTerms = [
         "sanitary",
         "sanitary system",
