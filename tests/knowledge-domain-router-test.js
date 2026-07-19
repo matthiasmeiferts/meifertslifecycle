@@ -1036,17 +1036,286 @@ runTest(
 );
 
 runTest(
+    "sanitary-systems visible leakage routing with moisture overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "sanitary",
+                location: "wash basin trap",
+                description: "visible leakage at wash basin trap with dripping from sanitary fitting"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["sanitary-systems", "moisture"]);
+    }
+);
+
+runTest(
+    "sanitary-systems water supply pipe corrosion routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "sanitary",
+                location: "water supply pipe",
+                description: "corrosion and staining at water supply pipe fitting"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["sanitary-systems", "moisture"]);
+    }
+);
+
+runTest(
+    "sanitary-systems damaged fixture routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "sanitary fixture",
+                location: "toilet",
+                description: "damaged toilet and loose fixture at connection"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["sanitary-systems"]);
+    }
+);
+
+runTest(
+    "sanitary-systems blocked drain routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "sanitary",
+                location: "floor drain",
+                description: "blocked drain with slow drainage at floor drain"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["sanitary-systems", "moisture"]);
+    }
+);
+
+runTest(
+    "sanitary-systems unpleasant odour routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "sanitary",
+                location: "floor drain",
+                description: "unpleasant odour at floor drain and trap odour near shower"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["sanitary-systems"]);
+    }
+);
+
+runTest(
+    "sanitary-systems missing seal routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "sanitary",
+                location: "toilet connection",
+                description: "missing seal and damaged seal at toilet connection"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["sanitary-systems"]);
+    }
+);
+
+runTest(
+    "sanitary-systems backflow indication routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "sanitary",
+                location: "floor drain",
+                description: "backflow indication at floor drain with reverse flow"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["sanitary-systems"]);
+    }
+);
+
+runTest(
+    "sanitary-systems pipe support routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "sanitary",
+                location: "drain pipe",
+                description: "unsupported pipe with poor support and damaged pipe insulation"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["sanitary-systems"]);
+    }
+);
+
+runTest(
+    "metadata-only sanitary routing is ignored",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            building: {
+                sanitarySystemType: "domestic sanitary installation",
+                plumbingSystemType: "mixed pipework"
+            }
+        });
+
+        assert.deepStrictEqual(domains, []);
+    }
+);
+
+runTest(
+    "drinking water discussion without defect does not route to sanitary-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "document",
+                location: "meeting note",
+                description: "drinking water discussion without defect or observed sanitary component condition"
+            }
+        });
+
+        assert.equal(domains.includes("sanitary-systems"), false);
+    }
+);
+
+runTest(
+    "water bill does not route to sanitary-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "document",
+                location: "tenant file",
+                description: "water bill and utility bill for water consumption"
+            }
+        });
+
+        assert.equal(domains.includes("sanitary-systems"), false);
+    }
+);
+
+runTest(
+    "plumbing advertisement does not route to sanitary-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "marketing",
+                location: "brochure",
+                description: "plumbing company advertisement with contractor address information"
+            }
+        });
+
+        assert.equal(domains.includes("sanitary-systems"), false);
+    }
+);
+
+runTest(
+    "product specification does not route to sanitary-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "specification",
+                location: "submittal",
+                description: "product specification for sink and valve without visible defect"
+            }
+        });
+
+        assert.equal(domains.includes("sanitary-systems"), false);
+    }
+);
+
+runTest(
+    "harmless sanitary component mention without issue does not route",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "sanitary",
+                location: "wash basin",
+                description: "wash basin and sink located in bathroom"
+            }
+        });
+
+        assert.equal(domains.includes("sanitary-systems"), false);
+    }
+);
+
+runTest(
+    "unrelated text does not route to sanitary-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "interior",
+                location: "living room",
+                description: "paint finish discoloration at internal wall"
+            }
+        });
+
+        assert.equal(domains.includes("sanitary-systems"), false);
+    }
+);
+
+runTest(
+    "existing plumbing moisture routing is not stolen by sanitary-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "moisture",
+                location: "Kitchen wall beside sink",
+                description: "Localized moisture around pipe chase",
+                observations: ["fixture area", "drip pattern"]
+            },
+            building: {
+                constructionType: "apartment",
+                basementPresent: false
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["moisture"]);
+    }
+);
+
+runTest(
     "stable domain precedence",
     () => {
         const domains = KnowledgeDomainRouter.resolve({
             finding: {
                 category: "corrosion",
-                location: "reinforced concrete basement external wall window frame crack electrical panel",
-                description: "water ingress with rust staining and spalling facade finish at window joint, flashing, and electrical panel missing cover"
+                location: "reinforced concrete basement external wall window frame crack wash basin trap electrical panel",
+                description: "water ingress with rust staining and spalling facade finish at window joint, flashing, visible leakage at wash basin trap, and electrical panel missing cover"
             }
         });
 
-        assert.deepStrictEqual(domains, ["concrete-corrosion", "basement-waterproofing", "electrical-systems", "windows-doors", "facade-wall-systems", "roof-envelope", "moisture", "crack"]);
+        assert.deepStrictEqual(domains, ["concrete-corrosion", "basement-waterproofing", "sanitary-systems", "electrical-systems", "windows-doors", "facade-wall-systems", "roof-envelope", "moisture", "crack"]);
+    }
+);
+
+runTest(
+    "sanitary-systems output is deterministic and input immutable",
+    () => {
+        const input = {
+            finding: {
+                category: "sanitary",
+                location: "wash basin trap",
+                description: "visible leakage, missing seal, and water staining at wash basin trap",
+                observations: ["slow drainage at sink"]
+            },
+            measurements: [
+                {
+                    type: "visual observation",
+                    value: "moisture around sanitary fitting",
+                    location: "wash basin"
+                }
+            ]
+        };
+        const original = structuredClone(input);
+
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve(input), KnowledgeDomainRouter.resolve(structuredClone(input)));
+        assert.deepStrictEqual(input, original);
     }
 );
 

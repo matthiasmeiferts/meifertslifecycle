@@ -11,6 +11,7 @@ const DOMAIN_PRECEDENCE = [
     "basement-waterproofing",
     "balconies-terraces",
     "drainage-rainwater",
+    "sanitary-systems",
     "hvac-systems",
     "electrical-systems",
     "windows-doors",
@@ -46,6 +47,10 @@ export default class KnowledgeDomainRouter {
 
         if (isDrainageRainwaterFinding(source)) {
             domains.push("drainage-rainwater");
+        }
+
+        if (isSanitarySystemsFinding(source)) {
+            domains.push("sanitary-systems");
         }
 
         if (isHvacSystemsFinding(source)) {
@@ -272,6 +277,125 @@ function isDrainageRainwaterFinding(source = {}) {
 
 function hasDirectMoistureEvidence(text = "") {
     return /moisture|damp|\bwet\b|wetting|leakage|leaking|leak into|water ingress|ingress|seepage|staining|saturation|mould|mold|condensation|humidity/.test(String(text).toLowerCase());
+}
+
+function isSanitarySystemsFinding(source = {}) {
+    const categoryText = textOf(source.finding?.category).toLowerCase();
+    const text = [
+        categoryText,
+        textOf(source.finding?.location),
+        textOf(source.finding?.description),
+        textOf(source.finding?.observations),
+        ...cloneArray(source.measurements).map((measurement) => [
+            textOf(measurement.type),
+            textOf(measurement.value),
+            textOf(measurement.unit),
+            textOf(measurement.location)
+        ].join(" "))
+    ].join(" ").toLowerCase();
+
+    if (text.trim().length === 0) {
+        return false;
+    }
+
+    if (/water quality|laboratory analysis|legionella|pressure testing|pressure test|cctv inspection|functional certification|utility bill|water bill|water tariff|energy consumption|plumbing company advertisement|plumbing advertisement|contractor address|address information|product specification|specification-only|specification only|marketing|advertisement|listing/.test(text)) {
+        return false;
+    }
+
+    if (/drinking water discussion|drinking water/.test(text) && !/pipe|valve|fitting|leak|leaking|leakage|corrosion|staining|moisture|damaged|loose|deteriorated|defect/.test(text)) {
+        return false;
+    }
+
+    if (/drinking water discussion|drinking water/.test(text) && /without\s+(visible\s+|observed\s+)?(defect|sanitary component condition)|no\s+(visible\s+|observed\s+)?(defect|sanitary component condition)/.test(text)) {
+        return false;
+    }
+
+    if (categoryText === "moisture" && !/sanitary|water supply pipe|drinking water pipe|waste water pipe|wastewater pipe|drain pipe|soil stack|vent pipe|floor drain|trap|toilet|urinal|shower|bathtub|bath tub|wash basin|visible leakage|leaking|leakage|blocked drain|slow drainage|unpleasant odour|unpleasant odor|missing seal|damaged seal|backflow|unsupported pipe|damaged fixture|damaged connection|poor support/.test(text)) {
+        return false;
+    }
+
+    const componentTerms = [
+        "sanitary",
+        "sanitary system",
+        "water supply pipe",
+        "drinking water pipe",
+        "waste water pipe",
+        "wastewater pipe",
+        "drain pipe",
+        "soil stack",
+        "vent pipe",
+        "sanitary fixture",
+        "wash basin",
+        "basin",
+        "sink",
+        "toilet",
+        "urinal",
+        "shower",
+        "bathtub",
+        "bath tub",
+        "floor drain",
+        "trap",
+        "valve",
+        "fitting",
+        "pipe support",
+        "pipe insulation"
+    ];
+    const issueTerms = [
+        "visible leakage",
+        "leakage",
+        "leaking",
+        "dripping",
+        "corrosion",
+        "corroded",
+        "rust",
+        "staining",
+        "moisture around",
+        "damaged",
+        "broken",
+        "cracked",
+        "loose",
+        "blocked drain",
+        "blocked",
+        "slow drainage",
+        "slow draining",
+        "unpleasant odour",
+        "unpleasant odor",
+        "drain smell",
+        "missing seal",
+        "damaged seal",
+        "seal gap",
+        "backflow indication",
+        "backflow",
+        "water backing up",
+        "damaged connection",
+        "poor support",
+        "unsupported",
+        "sagging",
+        "visible deterioration",
+        "deteriorated",
+        "defect",
+        "defective"
+    ];
+
+    const hasComponent = componentTerms.some((term) => matchesWholeWord(text, term));
+    const hasIssue = issueTerms.some((term) => matchesWholeWord(text, term));
+
+    if (hasComponent && hasIssue) {
+        return true;
+    }
+
+    return [
+        "visible leakage at trap",
+        "leakage at wash basin",
+        "blocked floor drain",
+        "slow drainage at sink",
+        "unpleasant odour at floor drain",
+        "unpleasant odor at floor drain",
+        "missing seal at toilet",
+        "backflow at drain",
+        "unsupported sanitary pipe",
+        "damaged sanitary fixture"
+    ].some((term) => matchesWholeWord(text, term));
 }
 
 function isHvacSystemsFinding(source = {}) {
