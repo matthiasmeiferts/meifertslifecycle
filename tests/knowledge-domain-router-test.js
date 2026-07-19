@@ -479,6 +479,230 @@ runTest(
 );
 
 runTest(
+    "electrical-systems distribution board overheating routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "electrical",
+                location: "distribution board",
+                description: "distribution board has overheating marks and scorching near circuit breaker"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["electrical-systems"]);
+    }
+);
+
+runTest(
+    "electrical-systems panel missing cover routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "electrical",
+                location: "electrical panel",
+                description: "electrical panel missing cover with open enclosure"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["electrical-systems"]);
+    }
+);
+
+runTest(
+    "electrical-systems exposed conductor routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "electrical",
+                location: "junction box",
+                description: "junction box has exposed conductor and bare wire visible"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["electrical-systems"]);
+    }
+);
+
+runTest(
+    "electrical-systems damaged socket routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "electrical",
+                location: "socket outlet",
+                description: "damaged socket with loose socket component"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["electrical-systems"]);
+    }
+);
+
+runTest(
+    "electrical-systems damaged switch routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "electrical",
+                location: "switch",
+                description: "damaged switch with loose switch component"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["electrical-systems"]);
+    }
+);
+
+runTest(
+    "electrical-systems temporary wiring routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "electrical installation",
+                location: "service corridor",
+                description: "temporary wiring and poorly supported cable at electrical installation"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["electrical-systems"]);
+    }
+);
+
+runTest(
+    "electrical-systems unclear circuit labeling routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "electrical",
+                location: "consumer unit",
+                description: "unclear circuit labeling and missing labeling at circuit breaker"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["electrical-systems"]);
+    }
+);
+
+runTest(
+    "electrical-systems corrosion and moisture overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "electrical",
+                location: "electrical panel",
+                description: "corrosion at electrical panel with moisture nearby and staining"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["electrical-systems", "moisture"]);
+    }
+);
+
+runTest(
+    "electrical-systems grounding and bonding routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "electrical",
+                location: "plant room",
+                description: "defective grounding conductor and loose bonding conductor"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["electrical-systems"]);
+    }
+);
+
+runTest(
+    "metadata-only electrical routing is ignored",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            building: {
+                electricalSystemType: "low-voltage electrical installation",
+                distributionBoardType: "consumer unit"
+            }
+        });
+
+        assert.deepStrictEqual(domains, []);
+    }
+);
+
+runTest(
+    "electricity bill does not route to electrical-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "document",
+                location: "tenant file",
+                description: "electricity bill and electricity consumption record reviewed"
+            }
+        });
+
+        assert.equal(domains.includes("electrical-systems"), false);
+    }
+);
+
+runTest(
+    "electric vehicle does not route to electrical-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "parking",
+                location: "car park",
+                description: "electric vehicle parking bay noted without building electrical defect"
+            }
+        });
+
+        assert.equal(domains.includes("electrical-systems"), false);
+    }
+);
+
+runTest(
+    "computer network cable does not route to electrical-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "IT",
+                location: "office",
+                description: "computer cable and network cable visible at workstation"
+            }
+        });
+
+        assert.equal(domains.includes("electrical-systems"), false);
+    }
+);
+
+runTest(
+    "harmless electrical component mention without issue does not route",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "electrical",
+                location: "distribution board",
+                description: "distribution board accessible in service room"
+            }
+        });
+
+        assert.equal(domains.includes("electrical-systems"), false);
+    }
+);
+
+runTest(
+    "unrelated text does not route to electrical-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "interior",
+                location: "living room",
+                description: "paint finish discoloration at internal wall"
+            }
+        });
+
+        assert.equal(domains.includes("electrical-systems"), false);
+    }
+);
+
+runTest(
     "metadata-only HVAC routing is ignored",
     () => {
         const domains = KnowledgeDomainRouter.resolve({
@@ -817,12 +1041,37 @@ runTest(
         const domains = KnowledgeDomainRouter.resolve({
             finding: {
                 category: "corrosion",
-                location: "reinforced concrete basement external wall window frame crack",
-                description: "water ingress with rust staining and spalling facade finish at window joint and flashing"
+                location: "reinforced concrete basement external wall window frame crack electrical panel",
+                description: "water ingress with rust staining and spalling facade finish at window joint, flashing, and electrical panel missing cover"
             }
         });
 
-        assert.deepStrictEqual(domains, ["concrete-corrosion", "basement-waterproofing", "windows-doors", "facade-wall-systems", "roof-envelope", "moisture", "crack"]);
+        assert.deepStrictEqual(domains, ["concrete-corrosion", "basement-waterproofing", "electrical-systems", "windows-doors", "facade-wall-systems", "roof-envelope", "moisture", "crack"]);
+    }
+);
+
+runTest(
+    "electrical-systems output is deterministic and input immutable",
+    () => {
+        const input = {
+            finding: {
+                category: "electrical",
+                location: "distribution board",
+                description: "distribution board has overheating marks and missing cover",
+                observations: ["unclear circuit labeling"]
+            },
+            measurements: [
+                {
+                    type: "visual observation",
+                    value: "scorching near circuit breaker",
+                    location: "consumer unit"
+                }
+            ]
+        };
+        const original = structuredClone(input);
+
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve(input), KnowledgeDomainRouter.resolve(structuredClone(input)));
+        assert.deepStrictEqual(input, original);
     }
 );
 

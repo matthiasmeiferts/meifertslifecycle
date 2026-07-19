@@ -12,6 +12,7 @@ const DOMAIN_PRECEDENCE = [
     "balconies-terraces",
     "drainage-rainwater",
     "hvac-systems",
+    "electrical-systems",
     "windows-doors",
     "facade-wall-systems",
     "roof-envelope",
@@ -49,6 +50,10 @@ export default class KnowledgeDomainRouter {
 
         if (isHvacSystemsFinding(source)) {
             domains.push("hvac-systems");
+        }
+
+        if (isElectricalSystemsFinding(source)) {
+            domains.push("electrical-systems");
         }
 
         if (isWindowsDoorsFinding(source)) {
@@ -399,6 +404,105 @@ function isHvacSystemsFinding(source = {}) {
         "condensate dripping",
         "condensate overflowing",
         "ice on cooling coil"
+    ].some((term) => matchesWholeWord(text, term));
+}
+
+function isElectricalSystemsFinding(source = {}) {
+    const text = [
+        textOf(source.finding?.category),
+        textOf(source.finding?.location),
+        textOf(source.finding?.description),
+        textOf(source.finding?.observations),
+        ...cloneArray(source.measurements).map((measurement) => [
+            textOf(measurement.type),
+            textOf(measurement.value),
+            textOf(measurement.unit),
+            textOf(measurement.location)
+        ].join(" "))
+    ].join(" ").toLowerCase();
+
+    if (text.trim().length === 0) {
+        return false;
+    }
+
+    if (/electrical engineering degree|electrical contractor address|electricity price|electricity consumption|electricity bill|energy tariff|electric vehicle|electric car|electronic device|computer cable|network cable|telephone cable|marketing|advertisement|listing|equipment specification/.test(text)) {
+        return false;
+    }
+
+    if (/decorative lighting/.test(text) && !/damaged|broken|cracked|missing|open|exposed|loose|corrosion|moisture|staining|scorching|discoloration|overheating|temporary|overloaded|unclear|deteriorated|aged|defect|defective/.test(text)) {
+        return false;
+    }
+
+    if (/decorative switch|switch style/.test(text) && !/damaged switch|broken switch|cracked switch|loose switch|defective switch/.test(text)) {
+        return false;
+    }
+
+    const componentTerms = [
+        "electrical",
+        "electrical installation",
+        "distribution board",
+        "electrical panel",
+        "consumer unit",
+        "fuse box",
+        "circuit breaker",
+        "residual current device",
+        "rcd",
+        "socket outlet",
+        "power outlet",
+        "switch",
+        "electrical wiring",
+        "cable",
+        "junction box",
+        "electrical enclosure",
+        "grounding conductor",
+        "earthing conductor",
+        "bonding conductor"
+    ];
+    const issueTerms = [
+        "damaged",
+        "broken",
+        "cracked",
+        "missing cover",
+        "open enclosure",
+        "exposed conductor",
+        "loose component",
+        "corrosion",
+        "moisture nearby",
+        "staining",
+        "scorching",
+        "discoloration",
+        "overheating marks",
+        "poorly supported cable",
+        "temporary wiring",
+        "overloaded adapter",
+        "multiple extension leads",
+        "unclear labeling",
+        "missing labeling",
+        "deteriorated",
+        "aged",
+        "defect",
+        "defective"
+    ];
+
+    const hasComponent = componentTerms.some((term) => matchesWholeWord(text, term));
+    const hasIssue = issueTerms.some((term) => matchesWholeWord(text, term));
+
+    if (hasComponent && hasIssue) {
+        return true;
+    }
+
+    return [
+        "bare wire",
+        "exposed wire",
+        "loose socket",
+        "loose switch",
+        "cracked socket cover",
+        "cracked switch cover",
+        "unlabeled circuit breaker",
+        "unclear circuit labeling",
+        "missing circuit labeling",
+        "moisture near electrical equipment",
+        "corrosion at electrical panel"
     ].some((term) => matchesWholeWord(text, term));
 }
 
