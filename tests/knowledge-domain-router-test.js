@@ -793,6 +793,263 @@ runTest(
 );
 
 runTest(
+    "vertical-transportation-systems elevator routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "vertical transportation",
+                location: "elevator landing door",
+                description: "Damaged elevator landing door with damaged door sill and uneven alignment"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["vertical-transportation-systems"]);
+    }
+);
+
+runTest(
+    "vertical-transportation-systems escalator routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "vertical transportation",
+                location: "escalator",
+                description: "Escalator step damaged with escalator comb plate damaged and damaged escalator handrail"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["vertical-transportation-systems"]);
+    }
+);
+
+runTest(
+    "vertical-transportation-systems platform lift routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "vertical transportation",
+                location: "platform lift",
+                description: "Platform lift damaged with wheelchair lift missing cover and loose component"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["vertical-transportation-systems"]);
+    }
+);
+
+runTest(
+    "vertical-transportation elevator door overlap precedes windows-doors",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "vertical transportation",
+                location: "elevator landing door frame",
+                description: "Damaged elevator landing door with damaged door sill and door frame hardware issue"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["vertical-transportation-systems", "windows-doors"]);
+    }
+);
+
+runTest(
+    "vertical-transportation call button does not route to electrical-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "vertical transportation",
+                location: "landing call button",
+                description: "Landing call button damaged and floor indicator damaged at elevator landing"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["vertical-transportation-systems"]);
+    }
+);
+
+runTest(
+    "vertical-transportation hydraulic leakage does not route to sanitary-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "vertical transportation",
+                location: "lift machinery",
+                description: "Hydraulic oil leakage and staining at lift pit near lift machinery"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["vertical-transportation-systems", "moisture"]);
+        assert.equal(domains.includes("sanitary-systems"), false);
+    }
+);
+
+runTest(
+    "vertical-transportation fire lift wording with explicit fire evidence preserves fire precedence",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "fire protection",
+                location: "fire door at lift lobby",
+                description: "Damaged fire door at lift lobby beside elevator landing door"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["fire-protection-systems", "vertical-transportation-systems"]);
+    }
+);
+
+runTest(
+    "fire-service lift wording alone does not route without observable condition",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "vertical transportation",
+                location: "lift lobby",
+                description: "Fire-service lift and smoke-control lift noted in building description"
+            }
+        });
+
+        assert.equal(domains.includes("vertical-transportation-systems"), false);
+    }
+);
+
+runTest(
+    "ordinary door does not route to vertical-transportation-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "door",
+                location: "internal landing door",
+                description: "Damaged internal landing door with loose hinge"
+            }
+        });
+
+        assert.equal(domains.includes("vertical-transportation-systems"), false);
+    }
+);
+
+runTest(
+    "ordinary electrical switch remains electrical only",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "electrical",
+                location: "switch",
+                description: "damaged switch with loose switch component"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["electrical-systems"]);
+        assert.equal(domains.includes("vertical-transportation-systems"), false);
+    }
+);
+
+runTest(
+    "ordinary sanitary leakage remains sanitary",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "sanitary",
+                location: "wash basin trap",
+                description: "visible leakage at wash basin trap with dripping from sanitary fitting"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["sanitary-systems", "moisture"]);
+        assert.equal(domains.includes("vertical-transportation-systems"), false);
+    }
+);
+
+runTest(
+    "general floor reference does not route to vertical-transportation-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "building",
+                location: "third floor",
+                description: "Floor level and landing area described without elevator lift escalator or moving walkway condition"
+            }
+        });
+
+        assert.equal(domains.includes("vertical-transportation-systems"), false);
+    }
+);
+
+runTest(
+    "non-building lifting equipment does not route to vertical-transportation-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "site equipment",
+                location: "yard",
+                description: "Construction crane, forklift, vehicle lift, car jack, and warehouse lifting equipment noted"
+            }
+        });
+
+        assert.equal(domains.includes("vertical-transportation-systems"), false);
+    }
+);
+
+runTest(
+    "vertical transportation advertisements and product descriptions do not route",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "marketing",
+                location: "brochure",
+                description: "Lift advertisement and manufacturer brochure with model name only"
+            }
+        });
+
+        assert.equal(domains.includes("vertical-transportation-systems"), false);
+    }
+);
+
+runTest(
+    "vertical transportation records without observed condition do not route",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "document",
+                location: "maintenance file",
+                description: "Maintenance schedule and inspection record for elevator without observed condition"
+            }
+        });
+
+        assert.equal(domains.includes("vertical-transportation-systems"), false);
+    }
+);
+
+runTest(
+    "ordinary stair handrail does not route to vertical-transportation-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "stairs",
+                location: "stairwell",
+                description: "Ordinary stair handrail damaged without stair lift or escalator evidence"
+            }
+        });
+
+        assert.equal(domains.includes("vertical-transportation-systems"), false);
+    }
+);
+
+runTest(
+    "metadata-only vertical transportation routing is ignored",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            building: {
+                verticalTransportationSystemType: "passenger elevator",
+                elevatorType: "traction"
+            }
+        });
+
+        assert.deepStrictEqual(domains, []);
+    }
+);
+
+runTest(
     "metadata-only electrical routing is ignored",
     () => {
         const domains = KnowledgeDomainRouter.resolve({
@@ -1464,12 +1721,12 @@ runTest(
         const domains = KnowledgeDomainRouter.resolve({
             finding: {
                 category: "corrosion",
-                location: "reinforced concrete basement external wall window frame crack wash basin trap electrical panel",
-                description: "water ingress with rust staining and spalling facade finish at window joint, flashing, visible leakage at wash basin trap, electrical panel missing cover, and damaged fire door"
+                location: "reinforced concrete basement external wall window frame crack wash basin trap electrical panel elevator landing door",
+                description: "water ingress with rust staining and spalling facade finish at window joint, flashing, visible leakage at wash basin trap, electrical panel missing cover, damaged fire door, and damaged elevator landing door"
             }
         });
 
-        assert.deepStrictEqual(domains, ["concrete-corrosion", "basement-waterproofing", "fire-protection-systems", "sanitary-systems", "electrical-systems", "windows-doors", "facade-wall-systems", "roof-envelope", "moisture", "crack"]);
+        assert.deepStrictEqual(domains, ["concrete-corrosion", "basement-waterproofing", "fire-protection-systems", "vertical-transportation-systems", "sanitary-systems", "electrical-systems", "windows-doors", "facade-wall-systems", "roof-envelope", "moisture", "crack"]);
     }
 );
 
@@ -1488,6 +1745,31 @@ runTest(
                     type: "visual observation",
                     value: "damaged fire door and missing exit sign",
                     location: "corridor"
+                }
+            ]
+        };
+        const original = structuredClone(input);
+
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve(input), KnowledgeDomainRouter.resolve(structuredClone(input)));
+        assert.deepStrictEqual(input, original);
+    }
+);
+
+runTest(
+    "vertical-transportation-systems output is deterministic and input immutable",
+    () => {
+        const input = {
+            finding: {
+                category: "vertical transportation",
+                location: "lift landing",
+                description: "Damaged elevator landing door, hydraulic oil leakage, and damaged call button",
+                observations: ["staining at lift pit"]
+            },
+            measurements: [
+                {
+                    type: "visual observation",
+                    value: "damaged landing door and damaged call button",
+                    location: "lift landing"
                 }
             ]
         };

@@ -9,6 +9,7 @@ import HvacSystemsKnowledgeProvider from "./knowledge/HvacSystemsKnowledgeProvid
 import ElectricalSystemsKnowledgeProvider from "./knowledge/ElectricalSystemsKnowledgeProvider.js";
 import SanitarySystemsKnowledgeProvider from "./knowledge/SanitarySystemsKnowledgeProvider.js";
 import FireProtectionSystemsKnowledgeProvider from "./knowledge/FireProtectionSystemsKnowledgeProvider.js";
+import VerticalTransportationSystemsKnowledgeProvider from "./knowledge/VerticalTransportationSystemsKnowledgeProvider.js";
 import WindowsDoorsKnowledgeProvider from "./knowledge/WindowsDoorsKnowledgeProvider.js";
 import FacadeWallSystemsKnowledgeProvider from "./knowledge/FacadeWallSystemsKnowledgeProvider.js";
 import KnowledgeReasoningMapper from "./reasoning/KnowledgeReasoningMapper.js";
@@ -174,6 +175,8 @@ export default class ExpertReasoningEngine {
                     ? buildSanitarySystemsReasoning(source)
                 : domain === "fire-protection-systems"
                     ? buildFireProtectionSystemsReasoning(source)
+                : domain === "vertical-transportation-systems"
+                    ? buildVerticalTransportationSystemsReasoning(source)
                 : domain === "windows-doors"
                     ? buildWindowsDoorsReasoning(source)
                 : domain === "facade-wall-systems"
@@ -492,6 +495,23 @@ function buildSanitarySystemsReasoning(source = {}) {
 
 function buildFireProtectionSystemsReasoning(source = {}) {
     const knowledge = FireProtectionSystemsKnowledgeProvider.getKnowledge({
+        finding: cloneObject(source.finding),
+        building: cloneObject(source.building),
+        measurements: cloneArray(source.measurements)
+    });
+
+    if (!knowledge.hypotheses.length) {
+        return null;
+    }
+
+    return KnowledgeReasoningMapper.map({
+        knowledge,
+        input: source
+    });
+}
+
+function buildVerticalTransportationSystemsReasoning(source = {}) {
+    const knowledge = VerticalTransportationSystemsKnowledgeProvider.getKnowledge({
         finding: cloneObject(source.finding),
         building: cloneObject(source.building),
         measurements: cloneArray(source.measurements)

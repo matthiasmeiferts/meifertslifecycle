@@ -12,6 +12,7 @@ const DOMAIN_PRECEDENCE = [
     "balconies-terraces",
     "drainage-rainwater",
     "fire-protection-systems",
+    "vertical-transportation-systems",
     "sanitary-systems",
     "hvac-systems",
     "electrical-systems",
@@ -52,6 +53,10 @@ export default class KnowledgeDomainRouter {
 
         if (isFireProtectionSystemsFinding(source)) {
             domains.push("fire-protection-systems");
+        }
+
+        if (isVerticalTransportationSystemsFinding(source)) {
+            domains.push("vertical-transportation-systems");
         }
 
         if (isSanitarySystemsFinding(source)) {
@@ -505,6 +510,149 @@ function isFireProtectionSystemsFinding(source = {}) {
         "missing exit sign",
         "damaged fire damper",
         "damaged smoke detector"
+    ].some((term) => matchesWholeWord(text, term));
+}
+
+function isVerticalTransportationSystemsFinding(source = {}) {
+    const categoryText = textOf(source.finding?.category).toLowerCase();
+    const text = [
+        categoryText,
+        textOf(source.finding?.location),
+        textOf(source.finding?.description),
+        textOf(source.finding?.observations),
+        ...cloneArray(source.measurements).map((measurement) => [
+            textOf(measurement.type),
+            textOf(measurement.value),
+            textOf(measurement.unit),
+            textOf(measurement.location)
+        ].join(" "))
+    ].join(" ").toLowerCase();
+
+    if (text.trim().length === 0) {
+        return false;
+    }
+
+    if (/construction crane|forklift|vehicle lift|car jack|warehouse lifting equipment|lifting sling|lifting beam|hoist advertisement|lift advertisement|manufacturer brochure|product brochure|maintenance schedule|inspection record|statutory inspection|operational certificate|inspection certificate|load test|brake test|emergency brake test|overspeed governor test|door force test|electrical test|hydraulic pressure test|functional acceptance|address information|marketing|advertisement|listing|brand name|model name/.test(text)) {
+        return false;
+    }
+
+    if (/ordinary stairs|stair handrail|staircase handrail|stair tread|stair landing/.test(text) && !/stair lift|platform lift|wheelchair lift|escalator|moving walkway|elevator|lift car|lift landing|lift entrance/.test(text)) {
+        return false;
+    }
+
+    if (/without\s+(stair lift|lift|elevator|escalator|moving walkway)\s+(or\s+(stair lift|lift|elevator|escalator|moving walkway)\s+)?evidence/.test(text)) {
+        return false;
+    }
+
+    const verticalContext = /vertical transportation|elevator|passenger elevator|goods lift|freight elevator|service lift|platform lift|wheelchair lift|stair lift|escalator|moving walkway|lift car|elevator cabin|lift landing|lift entrance|lift door|lift shaft|elevator shaft|lift pit|elevator pit|lift machinery|lift control panel|landing call button|floor indicator|emergency communication unit|moving walkway belt/.test(text);
+
+    if (!verticalContext) {
+        return false;
+    }
+
+    if (/smoke-control lift|fire-service lift|fire service lift/.test(text) && !/visible leakage|leakage|hydraulic oil leakage|corrosion|corroded|impact damage|damaged|loose|missing cover|staining|debris|obstruction|obstructed|uneven alignment|visible deterioration|deteriorated|damaged seal|damaged threshold|damaged handrail|damaged step|missing access cover|defect|defective/.test(text)) {
+        return false;
+    }
+
+    const componentTerms = [
+        "elevator",
+        "passenger elevator",
+        "goods lift",
+        "freight elevator",
+        "service lift",
+        "platform lift",
+        "wheelchair lift",
+        "stair lift",
+        "escalator",
+        "moving walkway",
+        "lift car",
+        "elevator cabin",
+        "lift landing",
+        "lift entrance",
+        "landing door",
+        "car door",
+        "lift door",
+        "door sill",
+        "door track",
+        "shaft door",
+        "lift shaft",
+        "elevator shaft",
+        "lift pit",
+        "elevator pit",
+        "machine room",
+        "lift machinery",
+        "drive unit",
+        "traction equipment",
+        "hydraulic lift component",
+        "lift control panel",
+        "landing call button",
+        "floor indicator",
+        "emergency communication unit",
+        "escalator handrail",
+        "moving walkway handrail",
+        "escalator step",
+        "escalator comb plate",
+        "comb plate",
+        "escalator skirt panel",
+        "skirt panel",
+        "moving walkway belt",
+        "lift threshold",
+        "elevator threshold",
+        "lift seal",
+        "elevator seal",
+        "vertical transportation equipment"
+    ];
+    const issueTerms = [
+        "visible leakage",
+        "leakage",
+        "hydraulic oil leakage",
+        "corrosion",
+        "corroded",
+        "impact damage",
+        "damaged panel",
+        "damaged door",
+        "damaged",
+        "loose component",
+        "loose",
+        "missing cover",
+        "damaged button",
+        "damaged indicator",
+        "staining",
+        "debris accumulation",
+        "debris",
+        "obstruction",
+        "obstructed",
+        "uneven alignment",
+        "uneven",
+        "visible deterioration",
+        "deteriorated",
+        "damaged seal",
+        "damaged threshold",
+        "damaged handrail",
+        "damaged step",
+        "missing access cover",
+        "missing",
+        "defect",
+        "defective"
+    ];
+
+    const hasComponent = componentTerms.some((term) => matchesWholeWord(text, term));
+    const hasIssue = issueTerms.some((term) => matchesWholeWord(text, term));
+
+    if (hasComponent && hasIssue) {
+        return true;
+    }
+
+    return [
+        "damaged elevator landing door",
+        "damaged lift door",
+        "damaged escalator handrail",
+        "damaged escalator step",
+        "hydraulic oil leakage",
+        "damaged landing call button",
+        "damaged moving walkway belt",
+        "debris in lift pit",
+        "missing access cover at lift machinery"
     ].some((term) => matchesWholeWord(text, term));
 }
 
