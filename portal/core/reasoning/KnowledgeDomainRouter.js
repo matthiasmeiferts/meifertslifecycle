@@ -11,6 +11,7 @@ const DOMAIN_PRECEDENCE = [
     "basement-waterproofing",
     "balconies-terraces",
     "drainage-rainwater",
+    "fire-protection-systems",
     "sanitary-systems",
     "hvac-systems",
     "electrical-systems",
@@ -47,6 +48,10 @@ export default class KnowledgeDomainRouter {
 
         if (isDrainageRainwaterFinding(source)) {
             domains.push("drainage-rainwater");
+        }
+
+        if (isFireProtectionSystemsFinding(source)) {
+            domains.push("fire-protection-systems");
         }
 
         if (isSanitarySystemsFinding(source)) {
@@ -104,9 +109,9 @@ function isMoistureFinding(source = {}) {
         textOf(source.finding?.observations)
     ].join(" ").toLowerCase();
 
-    const hasMoistureSignal = /moisture|damp|\bwet\b|leak|water|condensation|humidity|rising damp|plumbing|roof|ventilation|drainage|grading/.test(findingText);
-    const hasNegatedMoistureOnly = /\b(no|without|not)\s+(any\s+)?(moisture|damp|\bwet\b|wetting|leak(age)?|water ingress|seepage|condensation)\b/.test(findingText) &&
-        !/\b(moisture|damp|\bwet\b|leak|water|seepage|condensation|humidity)\b/.test(findingText.replace(/\b(no|without|not)\s+(any\s+)?(moisture|damp|\bwet\b|wetting|leak(age)?|water ingress|seepage|condensation)\b/g, " "));
+    const hasMoistureSignal = /moisture|\bdamp\b|\bdampness\b|\bwet\b|leak|water|condensation|humidity|rising damp|plumbing|roof|ventilation|drainage|grading/.test(findingText);
+    const hasNegatedMoistureOnly = /\b(no|without|not)\s+(any\s+)?(moisture|damp|dampness|\bwet\b|wetting|leak(age)?|water ingress|seepage|condensation)\b/.test(findingText) &&
+        !/\b(moisture|damp|dampness|\bwet\b|leak|water|seepage|condensation|humidity)\b/.test(findingText.replace(/\b(no|without|not)\s+(any\s+)?(moisture|damp|dampness|\bwet\b|wetting|leak(age)?|water ingress|seepage|condensation)\b/g, " "));
 
     if (isDrainageRainwaterFinding(source) && !hasDirectMoistureEvidence(findingText)) {
         return false;
@@ -276,7 +281,7 @@ function isDrainageRainwaterFinding(source = {}) {
 }
 
 function hasDirectMoistureEvidence(text = "") {
-    return /moisture|damp|\bwet\b|wetting|leakage|leaking|leak into|water ingress|ingress|seepage|staining|saturation|mould|mold|condensation|humidity/.test(String(text).toLowerCase());
+    return /moisture|\bdamp\b|\bdampness\b|\bwet\b|wetting|leakage|leaking|leak into|water ingress|ingress|seepage|staining|saturation|mould|mold|condensation|humidity/.test(String(text).toLowerCase());
 }
 
 function isSanitarySystemsFinding(source = {}) {
@@ -395,6 +400,111 @@ function isSanitarySystemsFinding(source = {}) {
         "backflow at drain",
         "unsupported sanitary pipe",
         "damaged sanitary fixture"
+    ].some((term) => matchesWholeWord(text, term));
+}
+
+function isFireProtectionSystemsFinding(source = {}) {
+    const text = [
+        textOf(source.finding?.category),
+        textOf(source.finding?.location),
+        textOf(source.finding?.description),
+        textOf(source.finding?.observations),
+        ...cloneArray(source.measurements).map((measurement) => [
+            textOf(measurement.type),
+            textOf(measurement.value),
+            textOf(measurement.unit),
+            textOf(measurement.location)
+        ].join(" "))
+    ].join(" ").toLowerCase();
+
+    if (text.trim().length === 0) {
+        return false;
+    }
+
+    if (/fireplace|domestic stove|wood stove|insurance|fire brigade|fire safety advertisement|product catalogue|product catalog|maintenance record|functional certification|regulatory compliance|legal compliance|code compliance|fire safety approval|evacuation certification|pressure testing|alarm testing|sprinkler testing|detector functionality|certification validity|maintenance validity|contractor address|address information|marketing|advertisement|listing|brand name|model name/.test(text)) {
+        return false;
+    }
+
+    if (/\bfire\b/.test(text) && !/fire extinguisher|extinguisher cabinet|fire hose reel|fire hydrant|sprinkler head|sprinkler pipe|fire alarm detector|smoke detector|heat detector|manual call point|fire alarm panel|fire door|smoke control door|emergency exit door|escape route|exit sign|emergency lighting|fire compartment wall|fire stopping|penetration seal|fire damper|smoke damper|fire protection enclosure|fire-rated glazing|fire rated glazing|fire protection component|fire protection equipment/.test(text)) {
+        return false;
+    }
+
+    const componentTerms = [
+        "fire extinguisher",
+        "extinguisher cabinet",
+        "fire hose reel",
+        "fire hydrant",
+        "sprinkler head",
+        "sprinkler pipe",
+        "fire alarm detector",
+        "smoke detector",
+        "heat detector",
+        "manual call point",
+        "fire alarm panel",
+        "fire door",
+        "smoke control door",
+        "emergency exit door",
+        "escape route",
+        "exit sign",
+        "emergency lighting",
+        "fire compartment wall",
+        "fire stopping",
+        "penetration seal",
+        "fire damper",
+        "smoke damper",
+        "fire protection enclosure",
+        "fire-rated glazing",
+        "fire rated glazing",
+        "fire protection component",
+        "fire protection equipment"
+    ];
+    const issueTerms = [
+        "visible damage",
+        "damaged",
+        "broken",
+        "corrosion",
+        "corroded",
+        "missing cover",
+        "missing sign",
+        "obstructed access",
+        "obstructed",
+        "blocked escape route",
+        "blocked",
+        "wedged-open",
+        "wedged open",
+        "damaged closer",
+        "damaged seal",
+        "missing seal",
+        "unsealed penetration",
+        "displaced sprinkler head",
+        "painted sprinkler head",
+        "leaking sprinkler pipe",
+        "loose component",
+        "loose",
+        "visible deterioration",
+        "deteriorated",
+        "missing",
+        "defect",
+        "defective"
+    ];
+
+    const hasComponent = componentTerms.some((term) => matchesWholeWord(text, term));
+    const hasIssue = issueTerms.some((term) => matchesWholeWord(text, term));
+
+    if (hasComponent && hasIssue) {
+        return true;
+    }
+
+    return [
+        "wedged open fire door",
+        "unsealed penetration",
+        "painted sprinkler head",
+        "displaced sprinkler head",
+        "leaking sprinkler pipe",
+        "blocked escape route",
+        "missing exit sign",
+        "damaged fire damper",
+        "damaged smoke detector"
     ].some((term) => matchesWholeWord(text, term));
 }
 

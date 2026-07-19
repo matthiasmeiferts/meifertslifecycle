@@ -614,6 +614,185 @@ runTest(
 );
 
 runTest(
+    "fire-protection-systems portable equipment routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "fire protection",
+                location: "extinguisher cabinet",
+                description: "Damaged fire extinguisher and obstructed extinguisher cabinet with missing extinguisher sign"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["fire-protection-systems"]);
+    }
+);
+
+runTest(
+    "fire-protection-systems sprinkler leakage with moisture overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "fire protection",
+                location: "corridor sprinkler head",
+                description: "Painted sprinkler head with displaced sprinkler head and leaking sprinkler pipe"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["fire-protection-systems", "moisture"]);
+    }
+);
+
+runTest(
+    "fire-protection-systems detection and alarm routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "fire protection",
+                location: "fire alarm panel",
+                description: "Damaged smoke detector and manual call point missing cover near fire alarm panel"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["fire-protection-systems"]);
+    }
+);
+
+runTest(
+    "fire-protection-systems fire door routing precedes windows-doors overlap",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "fire protection",
+                location: "stairwell fire door frame",
+                description: "Damaged fire door with damaged closer, damaged fire door seal, and door frame hardware issue"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["fire-protection-systems", "windows-doors"]);
+    }
+);
+
+runTest(
+    "fire-protection-systems escape route routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "fire protection",
+                location: "escape route",
+                description: "Blocked escape route with missing exit sign and damaged emergency lighting"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["fire-protection-systems"]);
+    }
+);
+
+runTest(
+    "fire-protection-systems compartmentation routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "fire protection",
+                location: "fire compartment wall",
+                description: "Unsealed penetration and missing penetration seal at fire compartment wall"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["fire-protection-systems"]);
+    }
+);
+
+runTest(
+    "fire-protection-systems fire damper routing does not require HVAC aggregation",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "fire protection",
+                location: "duct riser",
+                description: "Damaged fire damper with obstructed access and loose fire damper component"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["fire-protection-systems"]);
+    }
+);
+
+runTest(
+    "metadata-only fire protection routing is ignored",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            building: {
+                fireProtectionSystemType: "sprinkler and fire alarm system",
+                fireAlarmSystemType: "addressable"
+            }
+        });
+
+        assert.deepStrictEqual(domains, []);
+    }
+);
+
+runTest(
+    "fire insurance and fire brigade text does not route to fire-protection-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "document",
+                location: "tenant file",
+                description: "Fire insurance and fire brigade contact information without visible fire protection component defect"
+            }
+        });
+
+        assert.equal(domains.includes("fire-protection-systems"), false);
+    }
+);
+
+runTest(
+    "fire certification text does not route to fire-protection-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "document",
+                location: "maintenance record",
+                description: "Functional certification, maintenance validity, and code compliance text without observed condition"
+            }
+        });
+
+        assert.equal(domains.includes("fire-protection-systems"), false);
+    }
+);
+
+runTest(
+    "harmless fire protection component mention without issue does not route",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "fire protection",
+                location: "corridor",
+                description: "Fire extinguisher and sprinkler head visible in corridor"
+            }
+        });
+
+        assert.equal(domains.includes("fire-protection-systems"), false);
+    }
+);
+
+runTest(
+    "fireplace text does not route to fire-protection-systems",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "interior",
+                location: "living room",
+                description: "Domestic stove and fireplace product catalogue without defect"
+            }
+        });
+
+        assert.equal(domains.includes("fire-protection-systems"), false);
+    }
+);
+
+runTest(
     "metadata-only electrical routing is ignored",
     () => {
         const domains = KnowledgeDomainRouter.resolve({
@@ -1286,11 +1465,36 @@ runTest(
             finding: {
                 category: "corrosion",
                 location: "reinforced concrete basement external wall window frame crack wash basin trap electrical panel",
-                description: "water ingress with rust staining and spalling facade finish at window joint, flashing, visible leakage at wash basin trap, and electrical panel missing cover"
+                description: "water ingress with rust staining and spalling facade finish at window joint, flashing, visible leakage at wash basin trap, electrical panel missing cover, and damaged fire door"
             }
         });
 
-        assert.deepStrictEqual(domains, ["concrete-corrosion", "basement-waterproofing", "sanitary-systems", "electrical-systems", "windows-doors", "facade-wall-systems", "roof-envelope", "moisture", "crack"]);
+        assert.deepStrictEqual(domains, ["concrete-corrosion", "basement-waterproofing", "fire-protection-systems", "sanitary-systems", "electrical-systems", "windows-doors", "facade-wall-systems", "roof-envelope", "moisture", "crack"]);
+    }
+);
+
+runTest(
+    "fire-protection-systems output is deterministic and input immutable",
+    () => {
+        const input = {
+            finding: {
+                category: "fire protection",
+                location: "corridor",
+                description: "Damaged fire door, missing exit sign, and unsealed penetration at fire compartment wall",
+                observations: ["painted sprinkler head near door"]
+            },
+            measurements: [
+                {
+                    type: "visual observation",
+                    value: "damaged fire door and missing exit sign",
+                    location: "corridor"
+                }
+            ]
+        };
+        const original = structuredClone(input);
+
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve(input), KnowledgeDomainRouter.resolve(structuredClone(input)));
+        assert.deepStrictEqual(input, original);
     }
 );
 
