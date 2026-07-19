@@ -6,6 +6,7 @@ import BasementWaterproofingKnowledgeProvider from "./knowledge/BasementWaterpro
 import BalconiesTerracesKnowledgeProvider from "./knowledge/BalconiesTerracesKnowledgeProvider.js";
 import DrainageRainwaterKnowledgeProvider from "./knowledge/DrainageRainwaterKnowledgeProvider.js";
 import HvacSystemsKnowledgeProvider from "./knowledge/HvacSystemsKnowledgeProvider.js";
+import ElectricalSystemsKnowledgeProvider from "./knowledge/ElectricalSystemsKnowledgeProvider.js";
 import WindowsDoorsKnowledgeProvider from "./knowledge/WindowsDoorsKnowledgeProvider.js";
 import FacadeWallSystemsKnowledgeProvider from "./knowledge/FacadeWallSystemsKnowledgeProvider.js";
 import KnowledgeReasoningMapper from "./reasoning/KnowledgeReasoningMapper.js";
@@ -165,6 +166,8 @@ export default class ExpertReasoningEngine {
                     ? buildDrainageRainwaterReasoning(source)
                 : domain === "hvac-systems"
                     ? buildHvacSystemsReasoning(source)
+                : domain === "electrical-systems"
+                    ? buildElectricalSystemsReasoning(source)
                 : domain === "windows-doors"
                     ? buildWindowsDoorsReasoning(source)
                 : domain === "facade-wall-systems"
@@ -432,6 +435,23 @@ function buildDrainageRainwaterReasoning(source = {}) {
 
 function buildHvacSystemsReasoning(source = {}) {
     const knowledge = HvacSystemsKnowledgeProvider.getKnowledge({
+        finding: cloneObject(source.finding),
+        building: cloneObject(source.building),
+        measurements: cloneArray(source.measurements)
+    });
+
+    if (!knowledge.hypotheses.length) {
+        return null;
+    }
+
+    return KnowledgeReasoningMapper.map({
+        knowledge,
+        input: source
+    });
+}
+
+function buildElectricalSystemsReasoning(source = {}) {
+    const knowledge = ElectricalSystemsKnowledgeProvider.getKnowledge({
         finding: cloneObject(source.finding),
         building: cloneObject(source.building),
         measurements: cloneArray(source.measurements)
