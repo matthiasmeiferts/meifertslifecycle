@@ -1,5 +1,14 @@
+import { getRiskRelevanceGovernanceDefinition } from "./RiskRelevanceGovernanceRegistry.js";
+
 const INTERPRETATION_MODEL_VERSION = "brs-risk-interpretation-1.0";
 const SUPPORTED_INTERNAL_MODEL_VERSION = "brs-internal-model-1.0";
+const RISK_RELEVANCE_GOVERNANCE_DEFINITION = getRiskRelevanceGovernanceDefinition();
+const SUPPORTED_RISK_RELEVANCE_GOVERNANCE_VERSION = RISK_RELEVANCE_GOVERNANCE_DEFINITION.governanceVersion;
+
+const RISK_RELEVANCE_INTERPRETATION_STATES = Object.freeze({
+    INTERPRETED: "INTERPRETED",
+    NOT_INTERPRETED: "NOT_INTERPRETED"
+});
 
 const RISK_CATEGORIES = Object.freeze({
     NO_CONFIRMED_RISK_INTERPRETATION: "NO_CONFIRMED_RISK_INTERPRETATION",
@@ -56,8 +65,7 @@ const EXPLICIT_CATEGORY_VALUES = Object.freeze({
 const CATEGORY_SOURCE_FIELDS = [
     "riskCategory",
     "concernCategory",
-    "riskConcern",
-    "riskRelevance"
+    "riskConcern"
 ];
 
 const INTERPRETATION_BLOCKING_CONFLICT_TYPES = [
@@ -306,6 +314,7 @@ function buildNoDomainInterpretation(input, invalidSources) {
 function interpretDomainAssessment({ assessment, assessmentPosition, conflicts }) {
     const blockingConflicts = interpretationBlockingConflicts(conflicts);
     const riskDrivers = collectRiskDrivers(assessment, conflicts);
+    const riskRelevanceInterpretationResult = buildRiskRelevanceInterpretationResult(assessment);
     const hypotheses = collectArray(assessment.hypotheses).map((entry, index) => ({
         hypothesisReference: buildElementReference(assessment.sourceReference, "hypothesis", index),
         sourceReference: assessment.sourceReference,
@@ -378,6 +387,7 @@ function interpretDomainAssessment({ assessment, assessmentPosition, conflicts }
         hypotheses,
         potentialConsequences,
         riskDrivers,
+        riskRelevanceInterpretations: riskRelevanceInterpretationResult.riskRelevanceInterpretations,
         supportingEvidenceReferences: collectArray(assessment.evidenceReferences).map((entry) => entry.evidenceReference),
         positiveIndicators,
         missingEvidence,
@@ -400,9 +410,221 @@ function interpretDomainAssessment({ assessment, assessmentPosition, conflicts }
             unknowns,
             conflicts,
             blockingConflicts,
-            evidenceSufficiency
+            evidenceSufficiency,
+            riskRelevanceLimitations: riskRelevanceInterpretationResult.limitations
         })
     };
+}
+
+function buildRiskRelevanceInterpretationResult(assessment) {
+    if (!hasOwnDataProperty(assessment, "riskRelevanceEntries")) {
+        return {
+            riskRelevanceInterpretations: Object.freeze([]),
+            limitations: ["Risk Relevance preservation entries are not available on this Internal Model input."]
+        };
+    }
+
+    if (!Array.isArray(assessment.riskRelevanceEntries)) {
+        return {
+            riskRelevanceInterpretations: Object.freeze([]),
+            limitations: ["RR_SKIPPED_MALFORMED_ENTRY_WITHOUT_REFERENCE"]
+        };
+    }
+
+    const references = new Map();
+    const limitations = [];
+    const interpretations = assessment.riskRelevanceEntries
+        .map((entry, index) => {
+            const interpretation = buildRiskRelevanceInterpretation({
+                assessment,
+                entry,
+                entryPosition: index,
+                references
+            });
+
+            if (!interpretation) {
+                limitations.push("RR_SKIPPED_MALFORMED_ENTRY_WITHOUT_REFERENCE");
+            }
+
+            return interpretation;
+        })
+        .filter((entry) => entry);
+
+    return {
+        riskRelevanceInterpretations: Object.freeze(interpretations),
+        limitations
+    };
+}
+
+function buildRiskRelevanceInterpretation({ assessment, entry, entryPosition, references }) {
+    void entryPosition;
+
+    if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
+        return null;
+    }
+
+    const sourceRiskRelevanceEntryReference = safeReference(entry.riskRelevanceEntryReference) || safeReference(entry.sourceElementReference);
+
+    if (!sourceRiskRelevanceEntryReference) {
+        return null;
+    }
+
+    const baseReference = `${sourceRiskRelevanceEntryReference}:interpretation`;
+    const referenceCount = references.get(baseReference) || 0;
+    references.set(baseReference, referenceCount + 1);
+
+    const interpretationReason = getRiskRelevanceInterpretationReason(entry);
+    const interpreted = isRiskRelevanceEntryInterpreted(entry, interpretationReason);
+    const sourceElementIndex = parseSourceElementIndex(entry.sourceElementReference);
+    const sourceHypothesisId = getSourceHypothesisId(assessment, sourceElementIndex);
+    const interpretation = {
+        riskRelevanceInterpretationReference: referenceCount === 0
+            ? baseReference
+            : `${baseReference}:${String(referenceCount + 1).padStart(3, "0")}`,
+        sourceRiskRelevanceEntryReference,
+        sourceReference: safeReference(entry.sourceReference) || assessment.sourceReference,
+        sourceElementReference: safeReference(entry.sourceElementReference) || null,
+        sourceElementType: typeof entry.sourceElementType === "string" ? entry.sourceElementType : null,
+        canonicalValue: typeof entry.canonicalValue === "string" ? entry.canonicalValue : null,
+        valueState: typeof entry.valueState === "string" ? entry.valueState : null,
+        versionState: typeof entry.versionState === "string" ? entry.versionState : null,
+        interpretationState: interpreted
+            ? RISK_RELEVANCE_INTERPRETATION_STATES.INTERPRETED
+            : RISK_RELEVANCE_INTERPRETATION_STATES.NOT_INTERPRETED,
+        interpretationReason,
+        governanceVersion: typeof entry.governanceVersion === "string" ? entry.governanceVersion : null,
+        sourceRiskRelevanceVersion: safeScalar(entry.rawVersion),
+        auditVisibility: "INTERNAL_AUDIT_VISIBLE"
+    };
+
+    if (Number.isInteger(sourceElementIndex)) {
+        interpretation.sourceElementIndex = sourceElementIndex;
+    }
+
+    if (sourceHypothesisId) {
+        interpretation.sourceHypothesisId = sourceHypothesisId;
+    }
+
+    if (hasOwnDataProperty(entry, "interpretationEligible")) {
+        interpretation.preservedInterpretationEligible = entry.interpretationEligible === true;
+    }
+
+    if (interpreted) {
+        interpretation.relevanceLevel = entry.canonicalValue;
+    }
+
+    return Object.freeze(interpretation);
+}
+
+function getRiskRelevanceInterpretationReason(entry) {
+    if (!isStructurallyUsableRiskRelevanceEntry(entry)) {
+        return "RR_NOT_ELIGIBLE_MALFORMED_ENTRY";
+    }
+
+    const valueStates = RISK_RELEVANCE_GOVERNANCE_DEFINITION.valueStates;
+    const versionStates = RISK_RELEVANCE_GOVERNANCE_DEFINITION.versionStates;
+
+    if (entry.governanceVersion !== SUPPORTED_RISK_RELEVANCE_GOVERNANCE_VERSION) {
+        return "RR_NOT_ELIGIBLE_UNSUPPORTED_GOVERNANCE_VERSION";
+    }
+
+    if (entry.valueState === valueStates.CANONICAL && entry.versionState === versionStates.VERSION_SUPPORTED) {
+        return entry.canonicalValue
+            ? "RR_ELIGIBLE_CANONICAL_SUPPORTED_VERSION"
+            : "RR_NOT_ELIGIBLE_MISSING_CANONICAL_VALUE";
+    }
+
+    if (entry.valueState === valueStates.CANONICAL && entry.versionState === versionStates.UNKNOWN_VERSION) {
+        return "RR_NOT_ELIGIBLE_CANONICAL_UNKNOWN_VERSION";
+    }
+
+    if (entry.valueState === valueStates.CANONICAL && entry.versionState === versionStates.VERSION_UNSUPPORTED) {
+        return "RR_NOT_ELIGIBLE_UNSUPPORTED_VERSION";
+    }
+
+    if (entry.valueState === valueStates.LEGACY_SUPPORTED && entry.versionState === versionStates.VERSION_SUPPORTED) {
+        return entry.canonicalValue
+            ? "RR_ELIGIBLE_LEGACY_SUPPORTED_VERSION"
+            : "RR_NOT_ELIGIBLE_MISSING_CANONICAL_VALUE";
+    }
+
+    if (entry.valueState === valueStates.LEGACY_SUPPORTED && entry.versionState === versionStates.UNKNOWN_VERSION) {
+        return "RR_NOT_ELIGIBLE_LEGACY_UNKNOWN_VERSION";
+    }
+
+    if (entry.valueState === valueStates.LEGACY_SUPPORTED && entry.versionState === versionStates.VERSION_UNSUPPORTED) {
+        return "RR_NOT_ELIGIBLE_LEGACY_UNSUPPORTED_VERSION";
+    }
+
+    if (entry.valueState === valueStates.LEGACY_UNSUPPORTED && entry.versionState === versionStates.VERSION_UNSUPPORTED) {
+        return "RR_NOT_ELIGIBLE_UNSUPPORTED_VALUE_AND_VERSION";
+    }
+
+    if (entry.valueState === valueStates.LEGACY_UNSUPPORTED) {
+        return "RR_NOT_ELIGIBLE_UNSUPPORTED_VALUE";
+    }
+
+    if (entry.valueState === valueStates.UNKNOWN_VALUE && entry.versionState === versionStates.VERSION_UNSUPPORTED) {
+        return "RR_NOT_ELIGIBLE_UNKNOWN_VALUE_UNSUPPORTED_VERSION";
+    }
+
+    if (entry.valueState === valueStates.UNKNOWN_VALUE) {
+        return "RR_NOT_ELIGIBLE_UNKNOWN_VALUE";
+    }
+
+    if (entry.valueState === valueStates.INVALID_VALUE && entry.versionState === versionStates.VERSION_UNSUPPORTED) {
+        return "RR_NOT_ELIGIBLE_INVALID_VALUE_UNSUPPORTED_VERSION";
+    }
+
+    if (entry.valueState === valueStates.INVALID_VALUE) {
+        return "RR_NOT_ELIGIBLE_INVALID_VALUE";
+    }
+
+    if (entry.valueState === valueStates.NOT_PRESENT) {
+        return "RR_NOT_ELIGIBLE_NOT_PRESENT";
+    }
+
+    return "RR_NOT_ELIGIBLE_MALFORMED_ENTRY";
+}
+
+function isRiskRelevanceEntryInterpreted(entry, interpretationReason) {
+    return (
+        interpretationReason === "RR_ELIGIBLE_CANONICAL_SUPPORTED_VERSION" ||
+        interpretationReason === "RR_ELIGIBLE_LEGACY_SUPPORTED_VERSION"
+    ) &&
+        typeof entry.canonicalValue === "string" &&
+        entry.governanceVersion === SUPPORTED_RISK_RELEVANCE_GOVERNANCE_VERSION;
+}
+
+function isStructurallyUsableRiskRelevanceEntry(entry) {
+    return typeof entry.valueState === "string" &&
+    typeof entry.versionState === "string";
+}
+
+function getSourceHypothesisId(assessment, sourceElementIndex) {
+    if (!Number.isInteger(sourceElementIndex)) {
+        return null;
+    }
+
+    const hypothesis = Array.isArray(assessment.hypotheses)
+        ? assessment.hypotheses[sourceElementIndex]?.hypothesis
+        : null;
+
+    return typeof hypothesis?.id === "string" && hypothesis.id.length > 0
+        ? hypothesis.id
+        : null;
+}
+
+function parseSourceElementIndex(sourceElementReference) {
+    if (typeof sourceElementReference !== "string") {
+        return null;
+    }
+
+    const match = sourceElementReference.match(/:hypothesis:(\d+)$/);
+
+    return match
+        ? Number.parseInt(match[1], 10) - 1
+        : null;
 }
 
 function collectRiskDrivers(assessment, conflicts) {
@@ -644,7 +866,7 @@ function getExplicitCategory(value) {
     }
 
     const direct = CATEGORY_SOURCE_FIELDS
-        .map((field) => value[field])
+        .map((field) => readOwnDataValue(value, field))
         .map((entry) => explicitCategoryFromValue(entry))
         .find((entry) => entry);
 
@@ -708,10 +930,11 @@ function buildElementReference(sourceReference, elementType, index) {
     return `${sourceReference}:${elementType}:${String(index + 1).padStart(3, "0")}`;
 }
 
-function buildDomainLimitations({ assessment, riskDrivers, missingEvidence, unknowns, conflicts, blockingConflicts, evidenceSufficiency }) {
+function buildDomainLimitations({ assessment, riskDrivers, missingEvidence, unknowns, conflicts, blockingConflicts, evidenceSufficiency, riskRelevanceLimitations = [] }) {
     const limitations = [];
 
     limitations.push("Interpretation is limited to source-bound internal model elements.");
+    riskRelevanceLimitations.forEach((entry) => limitations.push(entry));
 
     if (riskDrivers.length === 0) {
         limitations.push("No explicit structured risk driver was available for this domain assessment.");
@@ -769,6 +992,7 @@ function buildAuditContext(input, domainInterpretations, conflicts) {
         sourceContractReferences: collectArray(input.sourceContracts).map((entry) => entry.sourceReference),
         domainInterpretationReferences: domainInterpretations.map((entry) => entry.domainInterpretationReference),
         riskDriverReferences: domainInterpretations.flatMap((entry) => entry.riskDrivers.map((driver) => driver.riskDriverReference)),
+        riskRelevanceInterpretationReferences: domainInterpretations.flatMap((entry) => entry.riskRelevanceInterpretations.map((interpretation) => interpretation.riskRelevanceInterpretationReference)),
         conflictReferences: conflicts.map((entry) => entry.conflictReference),
         transformations: [
             "internal model boundary validated",
@@ -776,7 +1000,8 @@ function buildAuditContext(input, domainInterpretations, conflicts) {
             "confidence contexts preserved without aggregation",
             "red flags preserved without derivation",
             "conflicts preserved without resolution",
-            "risk categories assigned only from explicit structured source fields"
+            "risk categories assigned only from explicit structured source fields",
+            "risk relevance interpretations derived only from preserved riskRelevanceEntries"
         ]
     };
 }
@@ -800,10 +1025,102 @@ function collectArray(value) {
         : [];
 }
 
-function cloneValue(value) {
+function cloneValue(value, seen = new WeakMap()) {
     if (value === undefined) {
         return undefined;
     }
 
-    return JSON.parse(JSON.stringify(value));
+    if (value === null || typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+        return value;
+    }
+
+    if (typeof value === "bigint") {
+        return value.toString();
+    }
+
+    if (typeof value === "symbol" || typeof value === "function") {
+        return undefined;
+    }
+
+    if (typeof value !== "object") {
+        return undefined;
+    }
+
+    if (seen.has(value)) {
+        return "[Circular]";
+    }
+
+    if (Array.isArray(value)) {
+        seen.set(value, true);
+        return value.map((entry) => cloneValue(entry, seen));
+    }
+
+    seen.set(value, true);
+
+    return Object.keys(value).reduce((clone, key) => {
+        if (key === "riskRelevance" || key === "riskRelevanceVersion" || key === "rawValue") {
+            return clone;
+        }
+
+        const descriptor = getOwnDescriptor(value, key);
+
+        if (!descriptor || !Object.hasOwn(descriptor, "value")) {
+            return clone;
+        }
+
+        if (descriptor.value === undefined) {
+            clone[key] = undefined;
+            return clone;
+        }
+
+        const cloned = cloneValue(descriptor.value, seen);
+
+        if (cloned !== undefined) {
+            clone[key] = cloned;
+        }
+
+        return clone;
+    }, {});
+}
+
+function readOwnDataValue(value, field) {
+    const descriptor = getOwnDescriptor(value, field);
+
+    return descriptor && Object.hasOwn(descriptor, "value")
+        ? descriptor.value
+        : undefined;
+}
+
+function hasOwnDataProperty(value, field) {
+    return Boolean(getOwnDescriptor(value, field));
+}
+
+function getOwnDescriptor(value, field) {
+    if (!value || (typeof value !== "object" && typeof value !== "function")) {
+        return null;
+    }
+
+    try {
+        return Object.getOwnPropertyDescriptor(value, field) || null;
+    } catch {
+        return null;
+    }
+}
+
+function safeReference(value) {
+    return typeof value === "string" && value.length > 0
+        ? value
+        : null;
+}
+
+function safeScalar(value) {
+    if (value === null || value === undefined || typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+        return value;
+    }
+
+    if (typeof value === "bigint") {
+        return value.toString();
+    }
+
+    return null;
 }
