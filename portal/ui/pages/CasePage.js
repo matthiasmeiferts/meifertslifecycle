@@ -16,6 +16,7 @@ import Notification from "../components/Notification.js";
 import FormDialog from "../components/FormDialog.js";
 import DetailPanel from "../components/DetailPanel.js";
 import IntelligenceEngine from "../../core/IntelligenceEngine.js";
+import CaseWorkflowProgressManager from "../../core/CaseWorkflowProgressManager.js";
 
 export default class CasePage {
 
@@ -457,45 +458,11 @@ export default class CasePage {
     }
 
     static getCaseIntelligence(caseItem = {}, data = {}) {
-        const caseId = caseItem.id || caseItem.caseId;
-
-        const filterByCase = (items = []) => {
-            if (!Array.isArray(items)) {
-                return [];
-            }
-
-            if (!caseId) {
-                return items;
-            }
-
-            return items.filter((item) =>
-                item.caseId === caseId ||
-                item.linkedCaseId === caseId ||
-                item.case === caseId
-            );
-        };
-
-        const evidence = filterByCase(data.evidence || data.evidences || []);
-        const findings = filterByCase(data.findings || []);
-        const assessments = filterByCase(data.assessments || []);
-        const recommendations = filterByCase(data.recommendations || []);
-        const decisions = filterByCase(data.decisions || []);
-        const reports = filterByCase(data.reports || []);
-
-        const counts = {
-            evidence: evidence.length,
-            finding: findings.length,
-            assessment: assessments.length,
-            recommendation: recommendations.length,
-            decision: decisions.length,
-            report: reports.length
-        };
-
-        const stageKeys = this.intelligenceStages.map((stage) => stage.key);
-        const readiness = IntelligenceEngine.getStageReadiness(counts, stageKeys);
-        const readinessPercent = readiness.percent;
-        const completedStages = readiness.completedStages;
-        const totalStages = readiness.totalStages;
+        const progress = CaseWorkflowProgressManager.create(caseItem, data);
+        const counts = progress.counts;
+        const readinessPercent = progress.readinessPercent;
+        const completedStages = progress.representedStageCount;
+        const totalStages = progress.totalStages;
 
         const downstreamSignals =
             counts.finding +
@@ -536,12 +503,14 @@ export default class CasePage {
             };
         }
 
-        const firstOpenStage = this.intelligenceStages.find((stage) => counts[stage.key] === 0);
+        const nextStageDefinition = this.intelligenceStages.find(
+            stage => stage.key === progress.nextStage
+        );
 
-        const nextAction = firstOpenStage
+        const nextAction = nextStageDefinition
             ? {
-                label: `${LanguageManager.t("CaseStrengthenPrefix")} ${LanguageManager.t(firstOpenStage.labelKey || firstOpenStage.label)}`,
-                description: `${LanguageManager.t(firstOpenStage.labelKey || firstOpenStage.label)} ${LanguageManager.t("CaseStageMissingDescription")}`,
+                label: `${LanguageManager.t("CaseStrengthenPrefix")} ${LanguageManager.t(nextStageDefinition.labelKey || nextStageDefinition.label)}`,
+                description: `${LanguageManager.t(nextStageDefinition.labelKey || nextStageDefinition.label)} ${LanguageManager.t("CaseStageMissingDescription")}`,
                 tone: "active"
             }
             : {
@@ -551,7 +520,7 @@ export default class CasePage {
             };
 
         return {
-            counts,
+            ...progress,
             completedStages,
             totalStages,
             readinessPercent,
