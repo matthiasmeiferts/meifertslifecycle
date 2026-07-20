@@ -72,6 +72,20 @@ if (emptyModel.validationStatus !== "passed") {
     );
 }
 
+if (emptyModel.isReviewReady) {
+    throw new Error(
+        "Empty case must not be review ready without represented workflow stages"
+    );
+}
+
+if (emptyModel.hasReviewBlockers) {
+    throw new Error("Empty case should not report review blockers");
+}
+
+if (emptyModel.hasReviewWarnings) {
+    throw new Error("Empty case should not report review warnings");
+}
+
 const developingCaseId = "CASE-PROGRESS-DEVELOPING";
 
 const evidence = EvidenceManager.create({
@@ -161,6 +175,20 @@ if (developingModel.canProceedToReport) {
     throw new Error("Warning model should not proceed without allowWarnings");
 }
 
+if (!developingModel.hasReviewBlockers) {
+    throw new Error("Developing model should expose its review blocker");
+}
+
+if (developingModel.hasReviewWarnings) {
+    throw new Error(
+        "Blocking review items must not also be exposed as separate warnings"
+    );
+}
+
+if (developingModel.isReviewReady) {
+    throw new Error("Developing blocked workflow must not be review ready");
+}
+
 const blockedCaseId = "CASE-PROGRESS-BLOCKED";
 
 const blockedAssessment = AssessmentManager.create({
@@ -193,6 +221,14 @@ if (blockedModel.validationStatus !== "blocked") {
 
 if (blockedModel.canProceedToReport) {
     throw new Error("Blocked workflow must not proceed to report use");
+}
+
+if (!blockedModel.hasReviewBlockers) {
+    throw new Error("Blocked workflow should expose review blockers");
+}
+
+if (blockedModel.isReviewReady) {
+    throw new Error("Blocked workflow must not be review ready");
 }
 
 const completeCaseId = "CASE-PROGRESS-COMPLETE";
@@ -229,6 +265,22 @@ if (completeModel.currentStage !== "report") {
 
 if (completeModel.nextStage !== null) {
     throw new Error("Complete workflow should not have a next stage");
+}
+
+if (!completeModel.canProceedToReport) {
+    throw new Error("Complete clean workflow should pass report validation");
+}
+
+if (!completeModel.isReviewReady) {
+    throw new Error(
+        "Complete represented workflow with a passed gate should be review ready"
+    );
+}
+
+if (completeModel.hasReviewBlockers || completeModel.hasReviewWarnings) {
+    throw new Error(
+        "Complete clean workflow should not expose blockers or warnings"
+    );
 }
 
 console.log("CaseWorkflowProgressManager tests passed.");

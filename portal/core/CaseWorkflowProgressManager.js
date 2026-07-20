@@ -62,6 +62,11 @@ export default class CaseWorkflowProgressManager {
                 warningItems: []
             };
 
+        const blockingReviewItemCount = validation.blockingItems.length;
+        const warningReviewItemCount = validation.warningItems.length;
+        const isWorkflowRepresented = readiness.isComplete;
+        const canProceedToReport = validation.canProceed;
+
         return {
             caseId,
             counts,
@@ -70,15 +75,18 @@ export default class CaseWorkflowProgressManager {
             representedStageCount: readiness.completedStages,
             totalStages: readiness.totalStages,
             readinessPercent: readiness.percent,
-            isWorkflowRepresented: readiness.isComplete,
+            isWorkflowRepresented,
             currentStage,
             nextStage,
             reviewItemCount: reviewSummary.total,
             reviewItemsByStage: reviewSummary.byStage,
-            blockingReviewItemCount: validation.blockingItems.length,
-            warningReviewItemCount: validation.warningItems.length,
+            blockingReviewItemCount,
+            warningReviewItemCount,
+            hasReviewBlockers: blockingReviewItemCount > 0,
+            hasReviewWarnings: warningReviewItemCount > 0,
             validationStatus: validation.status,
-            canProceedToReport: validation.canProceed
+            canProceedToReport,
+            isReviewReady: isWorkflowRepresented && canProceedToReport
         };
     }
 
