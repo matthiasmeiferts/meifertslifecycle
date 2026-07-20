@@ -7,6 +7,8 @@
  * hypotheses. The provider does not diagnose or confirm causes.
  */
 
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../risk/RiskRelevanceGovernanceRegistry.js";
+
 const EMPTY_CONTRACT = Object.freeze({
     domain: "hvac-systems",
     hypotheses: []
@@ -324,6 +326,7 @@ function toHypothesis(entry) {
         potentialConsequences: [...entry.potentialConsequences],
         recommendedActions: [...entry.recommendedActions],
         riskRelevance: entry.riskRelevance,
+        riskRelevanceVersion: RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION,
         capexRelevance: entry.capexRelevance,
         valuationRelevance: entry.valuationRelevance
     };

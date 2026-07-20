@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 import RoofEnvelopeKnowledgeProvider from "../portal/core/knowledge/RoofEnvelopeKnowledgeProvider.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -45,8 +46,33 @@ runTest(
         assert.ok(Array.isArray(result.hypotheses[0].potentialConsequences));
         assert.ok(Array.isArray(result.hypotheses[0].recommendedActions));
         assert.equal(typeof result.hypotheses[0].riskRelevance, "string");
+        assert.equal(result.hypotheses[0].riskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+        assert.ok(["medium", "high"].includes(result.hypotheses[0].riskRelevance));
         assert.equal(typeof result.hypotheses[0].capexRelevance, "string");
         assert.equal(typeof result.hypotheses[0].valuationRelevance, "string");
+    }
+);
+
+runTest(
+    "risk relevance source version is emitted next to every roof envelope risk relevance value",
+    () => {
+        const result = RoofEnvelopeKnowledgeProvider.getKnowledge({
+            finding: {
+                location: "flat roof and gutter",
+                description: "Standing water on flat roof membrane with blocked gutter overflow",
+                observations: ["ponding", "debris in downpipe"]
+            },
+            building: {
+                roofType: "flat roof"
+            }
+        });
+
+        assert.ok(result.hypotheses.length > 0);
+        result.hypotheses.forEach((hypothesis) => {
+            assert.equal(typeof hypothesis.riskRelevance, "string");
+            assert.equal(hypothesis.riskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+            assert.ok(["medium", "high"].includes(hypothesis.riskRelevance));
+        });
     }
 );
 

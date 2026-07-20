@@ -8,6 +8,8 @@
  * status.
  */
 
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../risk/RiskRelevanceGovernanceRegistry.js";
+
 const EMPTY_CONTRACT = Object.freeze({
     domain: "vertical-transportation-systems",
     hypotheses: []
@@ -246,6 +248,7 @@ function toHypothesis(entry) {
         potentialConsequences: [...entry.potentialConsequences],
         recommendedActions: [...entry.recommendedActions],
         riskRelevance: entry.riskRelevance,
+        riskRelevanceVersion: RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION,
         capexRelevance: entry.capexRelevance,
         valuationRelevance: entry.valuationRelevance
     };

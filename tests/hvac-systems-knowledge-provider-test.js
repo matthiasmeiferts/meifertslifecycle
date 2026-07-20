@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import HvacSystemsKnowledgeProvider from "../portal/core/knowledge/HvacSystemsKnowledgeProvider.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -310,6 +311,8 @@ runTest(
 
         assert.ok(result.hypotheses.length > 0);
         assert.ok(result.hypotheses.every((hypothesis) => typeof hypothesis.riskRelevance === "string"));
+        assert.ok(result.hypotheses.every((hypothesis) => hypothesis.riskRelevanceVersion === RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION));
+        assert.ok(result.hypotheses.every((hypothesis) => ["low", "medium", "high"].includes(hypothesis.riskRelevance)));
         assert.ok(result.hypotheses.every((hypothesis) => typeof hypothesis.capexRelevance === "string"));
         assert.ok(result.hypotheses.every((hypothesis) => typeof hypothesis.valuationRelevance === "string"));
     }

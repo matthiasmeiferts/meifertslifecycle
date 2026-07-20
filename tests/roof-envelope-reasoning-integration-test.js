@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 
 import ExpertReasoningEngine from "../portal/core/ExpertReasoningEngine.js";
 import KnowledgeDomainRouter from "../portal/core/reasoning/KnowledgeDomainRouter.js";
+import BuildingRiskInternalModel from "../portal/core/risk/BuildingRiskInternalModel.js";
+import BuildingRiskInterpretationModel from "../portal/core/risk/BuildingRiskInterpretationModel.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -57,6 +60,7 @@ runTest(
         assert.ok(allCauses(result).includes("failed flashing or penetration detail"));
         assert.ok(result.primaryHypothesis.classification);
         assert.equal(typeof result.primaryHypothesis.riskRelevance, "string");
+        assert.equal(result.primaryHypothesis.riskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
         assert.equal(typeof result.primaryHypothesis.capexRelevance, "string");
         assert.equal(typeof result.primaryHypothesis.valuationRelevance, "string");
         assert.ok(Array.isArray(result.requiredVerification) && result.requiredVerification.length > 0);
@@ -165,6 +169,34 @@ runTest(
         assert.equal(typeof result.primaryHypothesis.valuationRelevance, "string");
         assert.ok(result.primaryHypothesis.requiredVerification.length > 0);
         assertHypothetical(result);
+    }
+);
+
+runTest(
+    "roof envelope risk relevance source version reaches internal interpretation without risk drivers",
+    () => {
+        const result = ExpertReasoningEngine.analyze({
+            finding: {
+                category: "roof-envelope",
+                location: "roof penetration",
+                description: "failed flashing detail around roof penetration",
+                observations: ["staining near flashing"]
+            }
+        });
+        const internalModel = BuildingRiskInternalModel.build(result);
+        const entry = internalModel.domainAssessments[0].riskRelevanceEntries[0];
+        const interpretation = BuildingRiskInterpretationModel.interpret(internalModel);
+        const riskRelevanceInterpretation = interpretation.domainInterpretations[0].riskRelevanceInterpretations[0];
+
+        assert.equal(result.primaryHypothesis.riskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+        assert.equal(entry.rawValue, result.primaryHypothesis.riskRelevance);
+        assert.equal(entry.rawVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+        assert.equal(entry.valueState, "LEGACY_SUPPORTED");
+        assert.equal(entry.versionState, "VERSION_SUPPORTED");
+        assert.equal(riskRelevanceInterpretation.interpretationState, "INTERPRETED");
+        assert.equal(riskRelevanceInterpretation.interpretationReason, "RR_ELIGIBLE_LEGACY_SUPPORTED_VERSION");
+        assert.equal(riskRelevanceInterpretation.sourceRiskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+        assert.deepStrictEqual(interpretation.domainInterpretations[0].riskDrivers, []);
     }
 );
 

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 import FacadeWallSystemsKnowledgeProvider from "../portal/core/knowledge/FacadeWallSystemsKnowledgeProvider.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -296,6 +297,30 @@ runTest(
         });
 
         assert.ok(causes(result).includes("workmanship defect"));
+    }
+);
+
+runTest(
+    "risk relevance source version is emitted next to every facade wall risk relevance value",
+    () => {
+        const result = FacadeWallSystemsKnowledgeProvider.getKnowledge({
+            finding: {
+                category: "facade",
+                location: "render and cladding anchor",
+                description: "render cracking with facade anchor deterioration and algae",
+                observations: ["anchor corrosion", "biological growth"]
+            },
+            building: {
+                facadeType: "render and cladding"
+            }
+        });
+
+        assert.ok(result.hypotheses.length > 0);
+        result.hypotheses.forEach((hypothesis) => {
+            assert.equal(typeof hypothesis.riskRelevance, "string");
+            assert.equal(hypothesis.riskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+            assert.ok(["low", "medium", "high"].includes(hypothesis.riskRelevance));
+        });
     }
 );
 

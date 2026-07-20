@@ -7,6 +7,8 @@
  * AI, external services, or UI concerns.
  */
 
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../risk/RiskRelevanceGovernanceRegistry.js";
+
 const EMPTY_CONTRACT = Object.freeze({
     domain: "roof-envelope",
     hypotheses: []
@@ -492,6 +494,7 @@ function toHypothesis(entry) {
         potentialConsequences: cloneArray(entry.consequences),
         recommendedActions: cloneArray(entry.actions),
         riskRelevance: entry.riskRelevance,
+        riskRelevanceVersion: RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION,
         capexRelevance: entry.capexRelevance,
         valuationRelevance: entry.valuationRelevance
     };
