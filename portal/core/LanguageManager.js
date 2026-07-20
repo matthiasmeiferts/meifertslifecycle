@@ -1511,6 +1511,30 @@ export default class LanguageManager {
                 en: "Review complete intelligence chain",
                 de: "Vollständige Intelligence-Kette prüfen"
             },
+            CaseReviewReadyChain: {
+                en: "Workflow chain is review-ready",
+                de: "Workflow-Kette ist prüfbereit"
+            },
+            CaseReviewReadyChainDescription: {
+                en: "All workflow stages are represented and report validation permits further use.",
+                de: "Alle Workflow-Stufen sind abgebildet und die Berichtsvalidierung erlaubt die weitere Nutzung."
+            },
+            CaseReviewBlockedChain: {
+                en: "Workflow chain requires blocker resolution",
+                de: "Workflow-Kette erfordert die Auflösung von Blockern"
+            },
+            CaseReviewBlockedChainDescription: {
+                en: "All workflow stages are represented, but blocking review items prevent report use.",
+                de: "Alle Workflow-Stufen sind abgebildet, aber blockierende Review-Einträge verhindern die Berichtsnutzung."
+            },
+            CaseReviewRequiredChain: {
+                en: "Workflow chain requires governance review",
+                de: "Workflow-Kette erfordert eine Governance-Prüfung"
+            },
+            CaseReviewRequiredChainDescription: {
+                en: "All workflow stages are represented, but validation has not yet cleared the workflow for report use.",
+                de: "Alle Workflow-Stufen sind abgebildet, aber die Validierung hat den Workflow noch nicht für die Berichtsnutzung freigegeben."
+            },
             CaseMoveThroughChain: {
                 en: "Move this case through the intelligence chain",
                 de: "Diesen Case durch die Intelligence-Kette führen"
@@ -1618,6 +1642,14 @@ export default class LanguageManager {
             CaseWorkflowComplete: {
                 en: "Case workflow complete",
                 de: "Case Workflow vollständig"
+            },
+            CaseWorkflowReviewReady: {
+                en: "Case workflow review-ready",
+                de: "Case Workflow prüfbereit"
+            },
+            CaseWorkflowReviewRequired: {
+                en: "Case workflow review required",
+                de: "Case Workflow prüfbedürftig"
             },
             CaseWorkflowDeveloping: {
                 en: "Case workflow developing",

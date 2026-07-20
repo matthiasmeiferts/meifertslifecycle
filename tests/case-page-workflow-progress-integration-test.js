@@ -107,3 +107,82 @@ if (intelligence.validationStatus !== "passed") {
 }
 
 console.log("CasePage workflow progress integration tests passed.");
+
+const noCasePresentation = CasePage.getWorkflowActionPresentation();
+
+if (
+    noCasePresentation.titleKey !== "CaseSelectToContinueWorkflow" ||
+    noCasePresentation.buttonKey !== null
+) {
+    throw new Error(
+        "No-case workflow presentation should request case selection"
+    );
+}
+
+const incompletePresentation = CasePage.getWorkflowActionPresentation({
+    hasCurrentCase: true,
+    workflowRepresented: false,
+    workflowReviewReady: false,
+    workflowBlocked: false
+});
+
+if (
+    incompletePresentation.titleKey !== "CaseMoveThroughChain" ||
+    incompletePresentation.buttonKey !== "CaseCreateWorkflowChain"
+) {
+    throw new Error(
+        "Incomplete workflow should remain in workflow creation mode"
+    );
+}
+
+const representedPresentation = CasePage.getWorkflowActionPresentation({
+    hasCurrentCase: true,
+    workflowRepresented: true,
+    workflowReviewReady: false,
+    workflowBlocked: false
+});
+
+if (
+    representedPresentation.titleKey !== "CaseReviewRequiredChain" ||
+    representedPresentation.buttonKey !== "CaseReviewWorkflowChain"
+) {
+    throw new Error(
+        "Represented workflow awaiting validation should require governance review"
+    );
+}
+
+const blockedPresentation = CasePage.getWorkflowActionPresentation({
+    hasCurrentCase: true,
+    workflowRepresented: true,
+    workflowReviewReady: false,
+    workflowBlocked: true
+});
+
+if (
+    blockedPresentation.titleKey !== "CaseReviewBlockedChain" ||
+    blockedPresentation.buttonKey !== "CaseReviewWorkflowChain"
+) {
+    throw new Error(
+        "Blocked represented workflow should remain in review mode"
+    );
+}
+
+const readyPresentation = CasePage.getWorkflowActionPresentation({
+    hasCurrentCase: true,
+    workflowRepresented: true,
+    workflowReviewReady: true,
+    workflowBlocked: false
+});
+
+if (
+    readyPresentation.titleKey !== "CaseReviewReadyChain" ||
+    readyPresentation.buttonKey !== "CaseReviewWorkflowChain"
+) {
+    throw new Error(
+        "Review-ready workflow should expose the cleared review state"
+    );
+}
+
+console.log(
+    "CasePage governance-aware workflow presentation tests passed."
+);

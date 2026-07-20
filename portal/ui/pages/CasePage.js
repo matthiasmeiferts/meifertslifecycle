@@ -281,6 +281,51 @@ export default class CasePage {
         ]);
     }
 
+    static getWorkflowActionPresentation({
+        hasCurrentCase = false,
+        workflowRepresented = false,
+        workflowReviewReady = false,
+        workflowBlocked = false
+    } = {}) {
+        if (!hasCurrentCase) {
+            return {
+                titleKey: "CaseSelectToContinueWorkflow",
+                descriptionKey: "CaseOpenFirstThenContinue",
+                buttonKey: null
+            };
+        }
+
+        if (workflowReviewReady) {
+            return {
+                titleKey: "CaseReviewReadyChain",
+                descriptionKey: "CaseReviewReadyChainDescription",
+                buttonKey: "CaseReviewWorkflowChain"
+            };
+        }
+
+        if (workflowBlocked) {
+            return {
+                titleKey: "CaseReviewBlockedChain",
+                descriptionKey: "CaseReviewBlockedChainDescription",
+                buttonKey: "CaseReviewWorkflowChain"
+            };
+        }
+
+        if (workflowRepresented) {
+            return {
+                titleKey: "CaseReviewRequiredChain",
+                descriptionKey: "CaseReviewRequiredChainDescription",
+                buttonKey: "CaseReviewWorkflowChain"
+            };
+        }
+
+        return {
+            titleKey: "CaseMoveThroughChain",
+            descriptionKey: "CaseCreateReviewLinkedRecords",
+            buttonKey: "CaseCreateWorkflowChain"
+        };
+    }
+
     static createWorkflowActions() {
         const current = CaseManager.getCurrent();
 
@@ -302,23 +347,34 @@ export default class CasePage {
             decisions: DecisionManager.getByCase(current.id),
             reports: ReportManager.getByCase(current.id)
         } : null;
-        const workflowComplete = current
-            ? this.getCaseIntelligence(current, workflowData).readinessPercent >= 100
-            : false;
+        const workflowIntelligence = current
+            ? this.getCaseIntelligence(current, workflowData)
+            : null;
+        const workflowRepresented = Boolean(
+            workflowIntelligence?.isWorkflowRepresented
+        );
+        const workflowReviewReady = Boolean(
+            workflowIntelligence?.isReviewReady
+        );
+        const workflowBlocked = Boolean(
+            workflowIntelligence?.hasReviewBlockers
+        );
+        const workflowPresentation = this.getWorkflowActionPresentation({
+            hasCurrentCase: Boolean(current),
+            workflowRepresented,
+            workflowReviewReady,
+            workflowBlocked
+        });
 
         const title = document.createElement("strong");
-        title.textContent = current
-            ? workflowComplete
-                ? LanguageManager.t("CaseReviewCompleteChain")
-                : LanguageManager.t("CaseMoveThroughChain")
-            : LanguageManager.t("CaseSelectToContinueWorkflow");
+        title.textContent = LanguageManager.t(
+            workflowPresentation.titleKey
+        );
 
         const description = document.createElement("p");
-        description.textContent = current
-            ? workflowComplete
-                ? LanguageManager.t("CaseAllStagesReviewLinks")
-                : LanguageManager.t("CaseCreateReviewLinkedRecords")
-            : LanguageManager.t("CaseOpenFirstThenContinue");
+        description.textContent = LanguageManager.t(
+            workflowPresentation.descriptionKey
+        );
 
         header.appendChild(eyebrow);
         header.appendChild(title);
@@ -331,7 +387,9 @@ export default class CasePage {
             const builderButton = document.createElement("button");
             builderButton.type = "button";
             builderButton.className = "button button--primary case-workflow-actions__primary";
-            builderButton.textContent = workflowComplete ? LanguageManager.t("CaseReviewWorkflowChain") : LanguageManager.t("CaseCreateWorkflowChain");
+            builderButton.textContent = LanguageManager.t(
+                workflowPresentation.buttonKey
+            );
             builderButton.addEventListener("click", () => this.createWorkflowChainBuilder());
             workflowTools.appendChild(builderButton);
 
@@ -527,11 +585,13 @@ export default class CasePage {
             confidenceScore,
             riskSignal,
             nextAction,
-            label: readinessPercent >= 100
-                ? LanguageManager.t("CaseWorkflowComplete")
-                : readinessPercent >= 50
-                    ? LanguageManager.t("CaseWorkflowDeveloping")
-                    : LanguageManager.t("CaseWorkflowEarly")
+            label: progress.isReviewReady
+                ? LanguageManager.t("CaseWorkflowReviewReady")
+                : progress.isWorkflowRepresented
+                    ? LanguageManager.t("CaseWorkflowReviewRequired")
+                    : readinessPercent >= 50
+                        ? LanguageManager.t("CaseWorkflowDeveloping")
+                        : LanguageManager.t("CaseWorkflowEarly")
         };
     }
 
