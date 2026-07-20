@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 
 import BuildingRiskInternalModel from "../portal/core/risk/BuildingRiskInternalModel.js";
+import {
+    RISK_RELEVANCE_GOVERNANCE_VERSION,
+    RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION,
+    RISK_RELEVANCE_VALUES,
+    RISK_RELEVANCE_VALUE_STATES,
+    RISK_RELEVANCE_VERSION_STATES
+} from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -66,6 +73,19 @@ function legacyContract() {
         potentialConsequences: ["Delayed diagnosis."],
         confidence: 20
     };
+}
+
+function completeContractWithPrimaryRiskRelevance(primaryFields = {}) {
+    return completeContract({
+        primaryHypothesis: {
+            ...completeContract().primaryHypothesis,
+            ...primaryFields
+        }
+    });
+}
+
+function primaryRiskRelevanceEntry(contract) {
+    return BuildingRiskInternalModel.build(contract).domainAssessments[0].riskRelevanceEntries[0];
 }
 
 runTest(
@@ -321,6 +341,282 @@ runTest(
         assert.equal(BuildingRiskInternalModel.MODEL_VERSION, "brs-internal-model-1.0");
         assert.equal(model.internalModelVersion, "brs-internal-model-1.0");
         assert.equal(model.auditContext.internalModelVersion, "brs-internal-model-1.0");
+    }
+);
+
+runTest(
+    "risk relevance entries preserve canonical value and supported source version",
+    () => {
+        const model = BuildingRiskInternalModel.build(completeContractWithPrimaryRiskRelevance({
+            riskRelevance: RISK_RELEVANCE_VALUES.HIGH_RELEVANCE,
+            riskRelevanceVersion: RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION
+        }));
+        const entry = model.domainAssessments[0].riskRelevanceEntries[0];
+
+        assert.deepStrictEqual(Object.keys(entry), [
+            "riskRelevanceEntryReference",
+            "sourceReference",
+            "sourceElementReference",
+            "sourceElementType",
+            "sourceField",
+            "valuePresent",
+            "rawValue",
+            "canonicalValue",
+            "valueState",
+            "versionField",
+            "versionPresent",
+            "rawVersion",
+            "versionState",
+            "governanceVersion",
+            "interpretationEligible"
+        ]);
+        assert.equal(entry.riskRelevanceEntryReference, "src-contract-a:hypothesis:001:risk-relevance");
+        assert.equal(entry.sourceReference, "src-contract-a");
+        assert.equal(entry.sourceElementReference, "src-contract-a:hypothesis:001");
+        assert.equal(entry.sourceElementType, "primary-hypothesis");
+        assert.equal(entry.sourceField, "riskRelevance");
+        assert.equal(entry.valuePresent, true);
+        assert.equal(entry.rawValue, RISK_RELEVANCE_VALUES.HIGH_RELEVANCE);
+        assert.equal(entry.canonicalValue, RISK_RELEVANCE_VALUES.HIGH_RELEVANCE);
+        assert.equal(entry.valueState, RISK_RELEVANCE_VALUE_STATES.CANONICAL);
+        assert.equal(entry.versionField, "riskRelevanceVersion");
+        assert.equal(entry.versionPresent, true);
+        assert.equal(entry.rawVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+        assert.equal(entry.versionState, RISK_RELEVANCE_VERSION_STATES.VERSION_SUPPORTED);
+        assert.equal(entry.governanceVersion, RISK_RELEVANCE_GOVERNANCE_VERSION);
+        assert.equal(entry.interpretationEligible, false);
+        assert.equal(Object.isFrozen(entry), true);
+        assert.equal(Object.isFrozen(model), false);
+    }
+);
+
+runTest(
+    "risk relevance entries are created for primary and alternative hypotheses",
+    () => {
+        const model = BuildingRiskInternalModel.build(completeContract({
+            alternativeHypotheses: [
+                {
+                    id: "h-alt-a",
+                    cause: "alternative A",
+                    status: "hypothesis",
+                    riskRelevance: "medium"
+                },
+                {
+                    id: "h-alt-b",
+                    cause: "alternative B",
+                    status: "hypothesis",
+                    riskRelevance: "critical",
+                    riskRelevanceVersion: "risk-relevance-2.0"
+                }
+            ]
+        }));
+
+        assert.deepStrictEqual(
+            model.domainAssessments[0].riskRelevanceEntries.map((entry) => entry.sourceElementReference),
+            [
+                "src-contract-a:hypothesis:001",
+                "src-contract-a:hypothesis:002",
+                "src-contract-a:hypothesis:003"
+            ]
+        );
+        assert.deepStrictEqual(
+            model.domainAssessments[0].riskRelevanceEntries.map((entry) => entry.valueState),
+            [
+                RISK_RELEVANCE_VALUE_STATES.LEGACY_SUPPORTED,
+                RISK_RELEVANCE_VALUE_STATES.LEGACY_SUPPORTED,
+                RISK_RELEVANCE_VALUE_STATES.LEGACY_UNSUPPORTED
+            ]
+        );
+        assert.equal(model.domainAssessments[0].riskRelevanceEntries[2].versionState, RISK_RELEVANCE_VERSION_STATES.VERSION_UNSUPPORTED);
+    }
+);
+
+runTest(
+    "risk relevance value presence distinguishes absent undefined null empty whitespace legacy unknown and invalid values",
+    () => {
+        const absent = { ...completeContract().primaryHypothesis };
+        delete absent.riskRelevance;
+
+        const cases = [
+            [completeContract({ primaryHypothesis: absent }), false, undefined, null, RISK_RELEVANCE_VALUE_STATES.NOT_PRESENT],
+            [completeContractWithPrimaryRiskRelevance({ riskRelevance: undefined }), true, undefined, null, RISK_RELEVANCE_VALUE_STATES.UNKNOWN_VALUE],
+            [completeContractWithPrimaryRiskRelevance({ riskRelevance: null }), true, null, null, RISK_RELEVANCE_VALUE_STATES.UNKNOWN_VALUE],
+            [completeContractWithPrimaryRiskRelevance({ riskRelevance: "" }), true, "", null, RISK_RELEVANCE_VALUE_STATES.UNKNOWN_VALUE],
+            [completeContractWithPrimaryRiskRelevance({ riskRelevance: "   " }), true, "   ", null, RISK_RELEVANCE_VALUE_STATES.UNKNOWN_VALUE],
+            [completeContractWithPrimaryRiskRelevance({ riskRelevance: "low" }), true, "low", RISK_RELEVANCE_VALUES.LOW_RELEVANCE, RISK_RELEVANCE_VALUE_STATES.LEGACY_SUPPORTED],
+            [completeContractWithPrimaryRiskRelevance({ riskRelevance: "critical" }), true, "critical", null, RISK_RELEVANCE_VALUE_STATES.LEGACY_UNSUPPORTED],
+            [completeContractWithPrimaryRiskRelevance({ riskRelevance: "unknown" }), true, "unknown", null, RISK_RELEVANCE_VALUE_STATES.UNKNOWN_VALUE],
+            [completeContractWithPrimaryRiskRelevance({ riskRelevance: "future" }), true, "future", null, RISK_RELEVANCE_VALUE_STATES.INVALID_VALUE],
+            [completeContractWithPrimaryRiskRelevance({ riskRelevance: 42 }), true, 42, null, RISK_RELEVANCE_VALUE_STATES.INVALID_VALUE]
+        ];
+
+        cases.forEach(([contract, valuePresent, rawValue, canonicalValue, valueState]) => {
+            const entry = primaryRiskRelevanceEntry(contract);
+
+            assert.equal(entry.valuePresent, valuePresent);
+            assert.equal(entry.rawValue, rawValue);
+            assert.equal(entry.canonicalValue, canonicalValue);
+            assert.equal(entry.valueState, valueState);
+        });
+    }
+);
+
+runTest(
+    "risk relevance version presence preserves supported missing unknown and invalid source versions",
+    () => {
+        const absent = { riskRelevance: RISK_RELEVANCE_VALUES.LOW_RELEVANCE };
+
+        const cases = [
+            [absent, false, undefined, RISK_RELEVANCE_VERSION_STATES.UNKNOWN_VERSION],
+            [{ riskRelevanceVersion: undefined }, true, undefined, RISK_RELEVANCE_VERSION_STATES.UNKNOWN_VERSION],
+            [{ riskRelevanceVersion: null }, true, null, RISK_RELEVANCE_VERSION_STATES.UNKNOWN_VERSION],
+            [{ riskRelevanceVersion: "" }, true, "", RISK_RELEVANCE_VERSION_STATES.UNKNOWN_VERSION],
+            [{ riskRelevanceVersion: "   " }, true, "   ", RISK_RELEVANCE_VERSION_STATES.UNKNOWN_VERSION],
+            [{ riskRelevanceVersion: RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION }, true, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION, RISK_RELEVANCE_VERSION_STATES.VERSION_SUPPORTED],
+            [{ riskRelevanceVersion: "risk-relevance-2.0" }, true, "risk-relevance-2.0", RISK_RELEVANCE_VERSION_STATES.VERSION_UNSUPPORTED],
+            [{ riskRelevanceVersion: 12 }, true, 12, RISK_RELEVANCE_VERSION_STATES.VERSION_UNSUPPORTED]
+        ];
+
+        cases.forEach(([fields, versionPresent, rawVersion, versionState]) => {
+            const entry = primaryRiskRelevanceEntry(completeContractWithPrimaryRiskRelevance({
+                riskRelevance: RISK_RELEVANCE_VALUES.LOW_RELEVANCE,
+                ...fields
+            }));
+
+            assert.equal(entry.versionPresent, versionPresent);
+            assert.equal(entry.rawVersion, rawVersion);
+            assert.equal(entry.versionState, versionState);
+            assert.equal(entry.governanceVersion, RISK_RELEVANCE_GOVERNANCE_VERSION);
+        });
+    }
+);
+
+runTest(
+    "risk relevance complex raw values keep the original reference without copying",
+    () => {
+        const rawValue = { nested: { state: "before" } };
+        const model = BuildingRiskInternalModel.build(completeContractWithPrimaryRiskRelevance({
+            riskRelevance: rawValue
+        }));
+        const entry = model.domainAssessments[0].riskRelevanceEntries[0];
+
+        rawValue.nested.state = "after";
+
+        assert.equal(entry.rawValue, rawValue);
+        assert.equal(entry.rawValue.nested, rawValue.nested);
+        assert.equal(entry.rawValue.nested.state, "after");
+        assert.equal(entry.valueState, RISK_RELEVANCE_VALUE_STATES.INVALID_VALUE);
+    }
+);
+
+runTest(
+    "risk relevance raw object edge cases do not break internal model construction",
+    () => {
+        const cyclic = {};
+        const arrayValue = [{ nested: true }];
+        const throwingJson = {
+            toJSON() {
+                throw new Error("risk relevance toJSON must not run");
+            }
+        };
+        const accessorHypothesis = {
+            ...completeContract().primaryHypothesis
+        };
+        const cases = [cyclic, arrayValue, throwingJson, 1n, Symbol("risk-relevance"), Object.freeze({ value: "high" }), Object.create(null)];
+
+        cyclic.self = cyclic;
+        Object.defineProperty(accessorHypothesis, "riskRelevance", {
+            enumerable: true,
+            get() {
+                throw new Error("risk relevance getter must not run");
+            }
+        });
+
+        cases.forEach((rawValue) => {
+            const entry = primaryRiskRelevanceEntry(completeContractWithPrimaryRiskRelevance({ riskRelevance: rawValue }));
+
+            assert.equal(entry.rawValue, rawValue);
+            assert.equal(entry.valueState, RISK_RELEVANCE_VALUE_STATES.INVALID_VALUE);
+        });
+
+        const accessorEntry = primaryRiskRelevanceEntry(completeContract({ primaryHypothesis: accessorHypothesis }));
+        assert.equal(accessorEntry.valuePresent, true);
+        assert.equal(typeof accessorEntry.rawValue, "function");
+        assert.equal(accessorEntry.valueState, RISK_RELEVANCE_VALUE_STATES.INVALID_VALUE);
+    }
+);
+
+runTest(
+    "risk relevance preservation does not mutate source input and creates independent entry wrappers",
+    () => {
+        const input = completeContractWithPrimaryRiskRelevance({
+            riskRelevance: "medium",
+            riskRelevanceVersion: RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION
+        });
+        const before = structuredClone(input);
+        const first = BuildingRiskInternalModel.build(input).domainAssessments[0].riskRelevanceEntries[0];
+        const second = BuildingRiskInternalModel.build(input).domainAssessments[0].riskRelevanceEntries[0];
+
+        assert.deepStrictEqual(input, before);
+        assert.deepStrictEqual(first, second);
+        assert.notEqual(first, second);
+        assert.equal(Object.isFrozen(first), true);
+        assert.equal(Object.isFrozen(second), true);
+    }
+);
+
+runTest(
+    "risk relevance preservation is additive and keeps existing model fields unchanged",
+    () => {
+        const model = BuildingRiskInternalModel.build(completeContract());
+        const assessment = model.domainAssessments[0];
+
+        assert.equal(Array.isArray(assessment.riskRelevanceEntries), true);
+        assert.equal(assessment.hypotheses.length, 2);
+        assert.equal(assessment.evidenceReferences.length > 0, true);
+        assert.deepStrictEqual(assessment.sourceReferences, ["src-contract-a"]);
+        assert.equal(assessment.confidenceContext.value, 0.67);
+        assert.equal(assessment.riskRelevanceEntries[0].valueState, RISK_RELEVANCE_VALUE_STATES.LEGACY_SUPPORTED);
+        assert.equal(assessment.riskRelevanceEntries[1].valueState, RISK_RELEVANCE_VALUE_STATES.NOT_PRESENT);
+    }
+);
+
+runTest(
+    "risk relevance preservation adds no interpretation priority score provider router or conflict fields",
+    () => {
+        const entry = primaryRiskRelevanceEntry(completeContractWithPrimaryRiskRelevance({
+            riskRelevance: "critical",
+            riskRelevanceVersion: "risk-relevance-2.0"
+        }));
+        const forbiddenFields = [
+            "concernCategory",
+            "riskCategory",
+            "riskConcern",
+            "severity",
+            "criticality",
+            "redFlag",
+            "reviewPriority",
+            "score",
+            "riskClass",
+            "resultClassification",
+            "blocking",
+            "auditRequired",
+            "priority",
+            "decision",
+            "recommendation",
+            "provider",
+            "domain",
+            "router",
+            "hypothesis",
+            "sourceReferenceText",
+            "conflictReferences"
+        ];
+
+        forbiddenFields.forEach((field) => {
+            assert.equal(Object.hasOwn(entry, field), false);
+        });
+        assert.equal(entry.valueState, RISK_RELEVANCE_VALUE_STATES.LEGACY_UNSUPPORTED);
+        assert.equal(entry.versionState, RISK_RELEVANCE_VERSION_STATES.VERSION_UNSUPPORTED);
     }
 );
 

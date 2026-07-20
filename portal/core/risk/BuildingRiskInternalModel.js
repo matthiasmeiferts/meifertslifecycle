@@ -7,6 +7,11 @@
  * render UI, create reports, call providers, or inspect router state.
  */
 
+import {
+    classifyRiskRelevanceValue,
+    classifyRiskRelevanceVersion
+} from "./RiskRelevanceGovernanceRegistry.js";
+
 const INTERNAL_MODEL_VERSION = "brs-internal-model-1.0";
 
 const COMPLETENESS = Object.freeze({
@@ -253,6 +258,7 @@ function prepareContract(contract, index, referenceState) {
 
     const evidenceReferences = collectEvidenceReferences(contract, sourceReference);
     const hypotheses = collectHypotheses(contract, sourceReference);
+    const riskRelevanceEntries = collectRiskRelevanceEntries(contract, sourceReference);
     const recommendations = collectRecommendations(contract, sourceReference);
     const unknowns = collectUnknowns(contract, sourceReference, completenessState);
     const redFlags = collectRedFlags(contract, sourceReference);
@@ -271,6 +277,7 @@ function prepareContract(contract, index, referenceState) {
             contractVersionState: versionState.state,
             completenessState,
             hypotheses,
+            riskRelevanceEntries,
             evidenceReferences,
             missingEvidence: collectArray(contract.missingEvidence),
             unknowns,
@@ -431,17 +438,137 @@ function getDomainId(contract) {
 
 function collectHypotheses(contract, sourceReference) {
     const primary = contract.primaryHypothesis
-        ? [{ role: "primary", sourceReference, hypothesis: cloneObject(contract.primaryHypothesis) }]
+        ? [{ role: "primary", sourceReference, hypothesis: cloneHypothesis(contract.primaryHypothesis) }]
         : [];
 
-    const alternatives = collectArray(contract.alternativeHypotheses).map((hypothesis, index) => ({
+    const alternatives = Array.isArray(contract.alternativeHypotheses)
+        ? contract.alternativeHypotheses.map((hypothesis, index) => ({
         role: "alternative",
         sourceReference,
         alternativePosition: index,
-        hypothesis: cloneObject(hypothesis)
-    }));
+        hypothesis: cloneHypothesis(hypothesis)
+    }))
+        : [];
 
     return [...primary, ...alternatives];
+}
+
+function cloneHypothesis(hypothesis) {
+    if (!hypothesis || typeof hypothesis !== "object" || Array.isArray(hypothesis)) {
+        return {};
+    }
+
+    const cloneSource = {};
+    Object.keys(hypothesis).forEach((key) => {
+        if (key !== "riskRelevance" && key !== "riskRelevanceVersion") {
+            cloneSource[key] = hypothesis[key];
+        }
+    });
+
+    const cloned = cloneObject(cloneSource);
+    preserveOwnField(cloned, hypothesis, "riskRelevance");
+    preserveOwnField(cloned, hypothesis, "riskRelevanceVersion");
+
+    return cloned;
+}
+
+function preserveOwnField(target, source, field) {
+    const value = readOwnValueWithoutGetter(source, field);
+
+    if (value.present) {
+        target[field] = value.rawValue;
+    }
+}
+
+function collectRiskRelevanceEntries(contract, sourceReference) {
+    const entries = [];
+
+    if (contract.primaryHypothesis && typeof contract.primaryHypothesis === "object" && !Array.isArray(contract.primaryHypothesis)) {
+        entries.push(buildRiskRelevanceEntry({
+            sourceReference,
+            sourceElementReference: buildHypothesisReference(sourceReference, 0),
+            sourceElementType: "primary-hypothesis",
+            sourceElement: contract.primaryHypothesis
+        }));
+    }
+
+    if (Array.isArray(contract.alternativeHypotheses)) {
+        contract.alternativeHypotheses.forEach((hypothesis, index) => {
+            if (!hypothesis || typeof hypothesis !== "object" || Array.isArray(hypothesis)) {
+                return;
+            }
+
+            entries.push(buildRiskRelevanceEntry({
+                sourceReference,
+                sourceElementReference: buildHypothesisReference(sourceReference, index + 1),
+                sourceElementType: "alternative-hypothesis",
+                sourceElement: hypothesis
+            }));
+        });
+    }
+
+    return entries;
+}
+
+function buildRiskRelevanceEntry({ sourceReference, sourceElementReference, sourceElementType, sourceElement }) {
+    const valuePresent = hasOwnField(sourceElement, "riskRelevance");
+    const versionPresent = hasOwnField(sourceElement, "riskRelevanceVersion");
+    const valueResult = classifyRiskRelevanceValue(
+        readOwnValueWithoutGetter(sourceElement, "riskRelevance").rawValue,
+        { isPresent: valuePresent }
+    );
+    const versionResult = classifyRiskRelevanceVersion(
+        readOwnValueWithoutGetter(sourceElement, "riskRelevanceVersion").rawValue,
+        { isPresent: versionPresent }
+    );
+
+    return Object.freeze({
+        riskRelevanceEntryReference: `${sourceElementReference}:risk-relevance`,
+        sourceReference,
+        sourceElementReference,
+        sourceElementType,
+        sourceField: "riskRelevance",
+        valuePresent,
+        rawValue: valueResult.rawValue,
+        canonicalValue: valueResult.canonicalValue,
+        valueState: valueResult.valueState,
+        versionField: "riskRelevanceVersion",
+        versionPresent,
+        rawVersion: versionResult.sourceVersion,
+        versionState: versionResult.versionState,
+        governanceVersion: versionResult.governanceVersion,
+        interpretationEligible: false
+    });
+}
+
+function hasOwnField(sourceElement, field) {
+    try {
+        return Object.hasOwn(sourceElement, field);
+    } catch {
+        return false;
+    }
+}
+
+function readOwnValueWithoutGetter(sourceElement, field) {
+    try {
+        const descriptor = Object.getOwnPropertyDescriptor(sourceElement, field);
+
+        if (!descriptor) {
+            return { present: false, rawValue: undefined };
+        }
+
+        if (Object.hasOwn(descriptor, "value")) {
+            return { present: true, rawValue: descriptor.value };
+        }
+
+        return { present: true, rawValue: descriptor.get || descriptor.set || undefined };
+    } catch {
+        return { present: false, rawValue: undefined };
+    }
+}
+
+function buildHypothesisReference(sourceReference, index) {
+    return `${sourceReference}:hypothesis:${String(index + 1).padStart(3, "0")}`;
 }
 
 function collectEvidenceReferences(contract, sourceReference) {
