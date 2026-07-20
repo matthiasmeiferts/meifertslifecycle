@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 import BalconiesTerracesKnowledgeProvider from "../portal/core/knowledge/BalconiesTerracesKnowledgeProvider.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -48,6 +49,29 @@ runTest(
         });
 
         assert.ok(causes(result).includes("defective balcony waterproofing"));
+    }
+);
+
+runTest(
+    "risk relevance source version is emitted next to every balcony terrace risk relevance value",
+    () => {
+        const result = BalconiesTerracesKnowledgeProvider.getKnowledge({
+            finding: {
+                category: "balcony",
+                location: "balcony slab and railing anchor",
+                description: "balcony waterproofing defect with standing water and railing anchor deterioration",
+                observations: ["ponding", "anchor corrosion"]
+            },
+            building: {
+                balconyType: "cantilever"
+            }
+        });
+
+        assert.ok(result.hypotheses.length > 0);
+        result.hypotheses.forEach((hypothesis) => {
+            assert.equal(typeof hypothesis.riskRelevance, "string");
+            assert.equal(hypothesis.riskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+        });
     }
 );
 

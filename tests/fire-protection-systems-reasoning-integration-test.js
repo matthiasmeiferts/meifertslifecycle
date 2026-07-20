@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 
 import ExpertReasoningEngine from "../portal/core/ExpertReasoningEngine.js";
 import KnowledgeDomainRouter from "../portal/core/reasoning/KnowledgeDomainRouter.js";
+import BuildingRiskInternalModel from "../portal/core/risk/BuildingRiskInternalModel.js";
+import BuildingRiskInterpretationModel from "../portal/core/risk/BuildingRiskInterpretationModel.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -193,6 +196,49 @@ runTest(
             "potentialConsequences",
             "confidence"
         ]);
+    }
+);
+
+runTest(
+    "fire protection risk relevance source version reaches internal interpretation without safety legal or escalation fields",
+    () => {
+        const result = analyzeAsFireProtection({
+            finding: {
+                category: "fire protection",
+                location: "escape route",
+                description: "Blocked escape route with missing exit sign and damaged emergency lighting."
+            }
+        });
+        const internalModel = BuildingRiskInternalModel.build(result);
+        const entry = internalModel.domainAssessments[0].riskRelevanceEntries[0];
+        const interpretation = BuildingRiskInterpretationModel.interpret(internalModel);
+        const domainInterpretation = interpretation.domainInterpretations[0];
+        const riskRelevanceInterpretation = domainInterpretation.riskRelevanceInterpretations[0];
+        const forbiddenFields = [
+            "immediateDanger",
+            "evacuationRequired",
+            "occupancyRestriction",
+            "authorityNotification",
+            "operationalShutdown",
+            "legalAssessment",
+            "complianceDecision",
+            "diagnosis",
+            "decision"
+        ];
+
+        assert.equal(result.primaryHypothesis.riskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+        assert.equal(entry.rawValue, result.primaryHypothesis.riskRelevance);
+        assert.equal(entry.rawVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+        assert.equal(entry.valueState, "LEGACY_SUPPORTED");
+        assert.equal(entry.versionState, "VERSION_SUPPORTED");
+        assert.equal(riskRelevanceInterpretation.interpretationState, "INTERPRETED");
+        assert.equal(riskRelevanceInterpretation.interpretationReason, "RR_ELIGIBLE_LEGACY_SUPPORTED_VERSION");
+        assert.equal(riskRelevanceInterpretation.sourceRiskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+        assert.deepStrictEqual(domainInterpretation.riskDrivers, []);
+        forbiddenFields.forEach((field) => {
+            assert.equal(Object.hasOwn(result.primaryHypothesis, field), false);
+            assert.equal(Object.hasOwn(riskRelevanceInterpretation, field), false);
+        });
     }
 );
 

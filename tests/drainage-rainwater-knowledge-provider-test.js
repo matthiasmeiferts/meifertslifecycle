@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 import DrainageRainwaterKnowledgeProvider from "../portal/core/knowledge/DrainageRainwaterKnowledgeProvider.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -61,6 +62,19 @@ runTest(
     "blocked gutter produces blocked-gutter hypothesis",
     () => {
         assertHasCause(getKnowledge("Blocked gutter with debris in gutter and overflow."), "blocked rainwater gutter");
+    }
+);
+
+runTest(
+    "risk relevance source version is emitted next to every drainage rainwater risk relevance value",
+    () => {
+        const result = getKnowledge("Blocked gutter, blocked roof outlet, runoff directed toward building, and backwater indicators.");
+
+        assert.ok(result.hypotheses.length > 0);
+        result.hypotheses.forEach((hypothesis) => {
+            assert.equal(typeof hypothesis.riskRelevance, "string");
+            assert.equal(hypothesis.riskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+        });
     }
 );
 

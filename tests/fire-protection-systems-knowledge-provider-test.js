@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import FireProtectionSystemsKnowledgeProvider from "../portal/core/knowledge/FireProtectionSystemsKnowledgeProvider.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -118,6 +119,33 @@ runTest(
         assertHasCause(result, "damaged or obstructed portable fire protection equipment");
         assert.equal(ids(result)[0], "damaged-or-obstructed-portable-fire-equipment");
         assert.equal(/confirmed fire safety failure|system is unsafe|immediate replacement required/i.test(allHypothesisText(result)), false);
+    }
+);
+
+runTest(
+    "risk relevance source version is emitted without safety legal or escalation fields",
+    () => {
+        const result = getKnowledge("Damaged fire door, painted sprinkler head, blocked escape route, and unsealed penetration.");
+        const forbiddenFields = [
+            "immediateDanger",
+            "evacuationRequired",
+            "occupancyRestriction",
+            "authorityNotification",
+            "operationalShutdown",
+            "legalAssessment",
+            "complianceDecision",
+            "diagnosis",
+            "decision"
+        ];
+
+        assert.ok(result.hypotheses.length > 0);
+        result.hypotheses.forEach((hypothesis) => {
+            assert.equal(typeof hypothesis.riskRelevance, "string");
+            assert.equal(hypothesis.riskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+            forbiddenFields.forEach((field) => {
+                assert.equal(Object.hasOwn(hypothesis, field), false);
+            });
+        });
     }
 );
 
@@ -271,6 +299,7 @@ runTest(
                 "potentialConsequences",
                 "recommendedActions",
                 "riskRelevance",
+                "riskRelevanceVersion",
                 "capexRelevance",
                 "valuationRelevance"
             ]);

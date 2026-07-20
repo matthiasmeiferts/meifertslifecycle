@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 
 import ExpertReasoningEngine from "../portal/core/ExpertReasoningEngine.js";
 import KnowledgeDomainRouter from "../portal/core/reasoning/KnowledgeDomainRouter.js";
+import BuildingRiskInternalModel from "../portal/core/risk/BuildingRiskInternalModel.js";
+import BuildingRiskInterpretationModel from "../portal/core/risk/BuildingRiskInterpretationModel.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -348,6 +351,34 @@ runTest(
         assert.equal(typeof result.primaryHypothesis.riskRelevance, "string");
         assert.equal(typeof result.primaryHypothesis.capexRelevance, "string");
         assert.equal(typeof result.primaryHypothesis.valuationRelevance, "string");
+    }
+);
+
+runTest(
+    "balconies terraces risk relevance source version reaches internal interpretation without risk drivers",
+    () => {
+        const result = ExpertReasoningEngine.analyze({
+            finding: {
+                category: "balcony",
+                location: "balcony railing anchor",
+                description: "railing anchor deterioration and corrosion",
+                observations: ["balustrade fixing corrosion"]
+            }
+        });
+        const internalModel = BuildingRiskInternalModel.build(result);
+        const entry = internalModel.domainAssessments[0].riskRelevanceEntries[0];
+        const interpretation = BuildingRiskInterpretationModel.interpret(internalModel);
+        const riskRelevanceInterpretation = interpretation.domainInterpretations[0].riskRelevanceInterpretations[0];
+
+        assert.equal(result.primaryHypothesis.riskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+        assert.equal(entry.rawValue, result.primaryHypothesis.riskRelevance);
+        assert.equal(entry.rawVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+        assert.equal(entry.valueState, "LEGACY_SUPPORTED");
+        assert.equal(entry.versionState, "VERSION_SUPPORTED");
+        assert.equal(riskRelevanceInterpretation.interpretationState, "INTERPRETED");
+        assert.equal(riskRelevanceInterpretation.interpretationReason, "RR_ELIGIBLE_LEGACY_SUPPORTED_VERSION");
+        assert.equal(riskRelevanceInterpretation.sourceRiskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+        assert.deepStrictEqual(interpretation.domainInterpretations[0].riskDrivers, []);
     }
 );
 
