@@ -186,3 +186,78 @@ if (
 console.log(
     "CasePage governance-aware workflow presentation tests passed."
 );
+
+
+const passedGovernance = CasePage.getGovernanceSummaryPresentation({
+    validationStatus: "passed",
+    blockingReviewItemCount: 0,
+    warningReviewItemCount: 0
+});
+
+if (
+    passedGovernance.validationTone !== "passed" ||
+    passedGovernance.blockerCount !== 0 ||
+    passedGovernance.warningCount !== 0 ||
+    !passedGovernance.validationLabel
+) {
+    throw new Error(
+        "Passed governance presentation should expose cleared validation"
+    );
+}
+
+const warningGovernance = CasePage.getGovernanceSummaryPresentation({
+    validationStatus: "warning",
+    blockingReviewItemCount: 0,
+    warningReviewItemCount: 2
+});
+
+if (
+    warningGovernance.validationTone !== "warning" ||
+    warningGovernance.blockerCount !== 0 ||
+    warningGovernance.warningCount !== 2
+) {
+    throw new Error(
+        "Warning governance presentation should expose review warnings"
+    );
+}
+
+const blockedGovernance = CasePage.getGovernanceSummaryPresentation({
+    validationStatus: "blocked",
+    blockingReviewItemCount: 3,
+    warningReviewItemCount: 1
+});
+
+if (
+    blockedGovernance.validationTone !== "blocked" ||
+    blockedGovernance.blockerCount !== 3 ||
+    blockedGovernance.warningCount !== 1
+) {
+    throw new Error(
+        "Blocked governance presentation should expose blockers and warnings"
+    );
+}
+
+const snapshotMarkup = CasePage.renderCaseIntelligenceSnapshot(
+    { id: caseId },
+    {
+        evidence: [],
+        findings: [],
+        assessments: [],
+        recommendations: [],
+        decisions: [],
+        reports: []
+    }
+);
+
+if (
+    !snapshotMarkup.includes('class="case-intelligence__governance"') ||
+    !snapshotMarkup.includes("case-intelligence__governance-item--passed")
+) {
+    throw new Error(
+        "Case intelligence snapshot should render the governance summary"
+    );
+}
+
+console.log(
+    "CasePage governance summary presentation tests passed."
+);

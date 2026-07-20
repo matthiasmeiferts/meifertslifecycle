@@ -595,9 +595,33 @@ export default class CasePage {
         };
     }
 
+    static getGovernanceSummaryPresentation(intelligence = {}) {
+        const validationStatus = ["passed", "warning", "blocked"].includes(
+            intelligence.validationStatus
+        )
+            ? intelligence.validationStatus
+            : "warning";
+
+        const validationKeyByStatus = {
+            passed: "CaseValidationPassed",
+            warning: "CaseValidationWarning",
+            blocked: "CaseValidationBlocked"
+        };
+
+        return {
+            validationLabel: LanguageManager.t(
+                validationKeyByStatus[validationStatus]
+            ),
+            validationTone: validationStatus,
+            blockerCount: intelligence.blockingReviewItemCount || 0,
+            warningCount: intelligence.warningReviewItemCount || 0
+        };
+    }
+
     static renderCaseIntelligenceSnapshot(caseItem = {}, data = {}) {
         const intelligence = this.getCaseIntelligence(caseItem, data);
         const stageSummary = `${intelligence.completedStages}/${intelligence.totalStages}`;
+        const governance = this.getGovernanceSummaryPresentation(intelligence);
 
         return `
             <section class="case-intelligence intelligence-snapshot case-intelligence--refined" aria-label="Case intelligence snapshot">
@@ -622,6 +646,21 @@ export default class CasePage {
                     <div>
                         <span>${LanguageManager.t("CaseStagesLabel")}</span>
                         <strong>${stageSummary}</strong>
+                    </div>
+                </div>
+
+                <div class="case-intelligence__governance">
+                    <div class="case-intelligence__governance-item case-intelligence__governance-item--${governance.validationTone}">
+                        <span>${LanguageManager.t("CaseValidationLabel")}</span>
+                        <strong>${governance.validationLabel}</strong>
+                    </div>
+                    <div class="case-intelligence__governance-item">
+                        <span>${LanguageManager.t("CaseBlockersLabel")}</span>
+                        <strong>${governance.blockerCount}</strong>
+                    </div>
+                    <div class="case-intelligence__governance-item">
+                        <span>${LanguageManager.t("CaseWarningsLabel")}</span>
+                        <strong>${governance.warningCount}</strong>
                     </div>
                 </div>
 

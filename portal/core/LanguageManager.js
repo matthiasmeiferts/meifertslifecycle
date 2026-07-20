@@ -1667,6 +1667,30 @@ export default class LanguageManager {
                 en: "Workflow coverage, risk signal and next action for the active case.",
                 de: "Workflow-Abdeckung, Risikosignal und nächste Aktion für den aktiven Case."
             },
+            CaseValidationLabel: {
+                en: "Validation",
+                de: "Validierung"
+            },
+            CaseBlockersLabel: {
+                en: "Blockers",
+                de: "Blocker"
+            },
+            CaseWarningsLabel: {
+                en: "Warnings",
+                de: "Warnungen"
+            },
+            CaseValidationPassed: {
+                en: "Passed",
+                de: "Bestanden"
+            },
+            CaseValidationWarning: {
+                en: "Warning",
+                de: "Warnung"
+            },
+            CaseValidationBlocked: {
+                en: "Blocked",
+                de: "Blockiert"
+            },
             CaseReadinessLabel: {
                 en: "Readiness",
                 de: "Bereitschaft"

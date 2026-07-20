@@ -3449,6 +3449,47 @@ button.dashboard-readiness-card__action:focus-visible {
     line-height: 1.1;
 }
 
+
+.case-intelligence__governance {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.case-intelligence__governance-item {
+    border-left: 3px solid rgba(27, 43, 69, 0.16);
+    padding: 0.2rem 0.75rem;
+}
+
+.case-intelligence__governance-item span {
+    color: var(--muted-text);
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.2rem;
+    text-transform: uppercase;
+}
+
+.case-intelligence__governance-item strong {
+    color: var(--ink);
+    display: block;
+    font-size: 1rem;
+    line-height: 1.2;
+}
+
+.case-intelligence__governance-item--passed {
+    border-left-color: rgba(61, 125, 91, 0.72);
+}
+
+.case-intelligence__governance-item--warning {
+    border-left-color: rgba(184, 153, 104, 0.84);
+}
+
+.case-intelligence__governance-item--blocked {
+    border-left-color: rgba(148, 58, 58, 0.76);
+}
+
 .case-intelligence--refined .intelligence-snapshot__grid {
     gap: 0.8rem;
 }
@@ -3464,7 +3505,8 @@ button.dashboard-readiness-card__action:focus-visible {
 }
 
 @media (max-width: 720px) {
-    .case-intelligence__summary {
+    .case-intelligence__summary,
+    .case-intelligence__governance {
         grid-template-columns: 1fr;
     }
 }
