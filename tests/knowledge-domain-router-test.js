@@ -1867,6 +1867,115 @@ runTest(
 );
 
 runTest(
+    "structural-systems-only routing",
+    () => {
+        const domains = KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "structural",
+                location: "load-bearing wall",
+                description: "removed load-bearing wall with missing structural approval"
+            }
+        });
+
+        assert.deepStrictEqual(domains, ["structural-systems", "crack"]);
+    }
+);
+
+runTest(
+    "structural-systems medium signals require structural context",
+    () => {
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "inspection",
+                location: "beam",
+                description: "sagging and significant movement at beam"
+            }
+        }), ["structural-systems", "crack"]);
+
+        assert.equal(KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "inspection",
+                description: "sagging and significant movement observed"
+            }
+        }).includes("structural-systems"), false);
+    }
+);
+
+runTest(
+    "structural-systems weak signals alone do not route",
+    () => {
+        const weakInputs = [
+            { finding: { category: "crack", description: "generic wall crack" } },
+            { finding: { category: "moisture", description: "damp moisture staining" } },
+            { finding: { category: "corrosion", description: "corrosion and rust staining" } },
+            { finding: { category: "inspection", description: "uneven movement damage defect" } }
+        ];
+
+        weakInputs.forEach((input) => {
+            assert.equal(KnowledgeDomainRouter.resolve(input).includes("structural-systems"), false);
+        });
+    }
+);
+
+runTest(
+    "structural-systems preserves existing non-structural domains",
+    () => {
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "crack",
+                location: "interior wall",
+                description: "generic wall crack in bedroom"
+            }
+        }), ["crack"]);
+
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "corrosion",
+                location: "concrete surface",
+                description: "spalling with rust staining at concrete cover"
+            }
+        }), ["concrete-corrosion"]);
+
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "moisture",
+                location: "basement wall",
+                description: "wet crack and seepage at retaining wall without deformation"
+            }
+        }), ["basement-waterproofing", "moisture", "crack"]);
+    }
+);
+
+runTest(
+    "structural-systems precedence before overlapping domains",
+    () => {
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "crack",
+                location: "foundation wall",
+                description: "foundation movement with diagonal crack and differential settlement"
+            }
+        }), ["structural-systems", "basement-waterproofing", "crack"]);
+
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "corrosion",
+                location: "damaged column",
+                description: "structural corrosion with section loss, rust staining, and spalling at damaged column"
+            }
+        }), ["structural-systems", "concrete-corrosion"]);
+
+        assert.deepStrictEqual(KnowledgeDomainRouter.resolve({
+            finding: {
+                category: "facade",
+                location: "load-bearing wall facade",
+                description: "structural alteration with major opening and facade crack"
+            }
+        }), ["structural-systems", "facade-wall-systems", "crack"]);
+    }
+);
+
+runTest(
     "fire-protection-systems output is deterministic and input immutable",
     () => {
         const input = {

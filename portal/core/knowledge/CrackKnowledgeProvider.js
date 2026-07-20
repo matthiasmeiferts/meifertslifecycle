@@ -8,7 +8,7 @@
  */
 
 const EMPTY_CONTRACT = Object.freeze({
-    domain: "cracks",
+    domain: "crack",
     hypotheses: []
 });
 
@@ -460,7 +460,7 @@ export default class CrackKnowledgeProvider {
         }
 
         return {
-            domain: "cracks",
+            domain: "crack",
             hypotheses: ranked.map(({ entry }) => toHypothesis(entry))
         };
     }

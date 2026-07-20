@@ -36,7 +36,7 @@ runTest(
                 measurements: []
             });
 
-        assert.equal(result.domain, "cracks");
+        assert.equal(result.domain, "crack");
         assert.ok(Array.isArray(result.hypotheses));
         assert.ok(result.hypotheses.length > 0);
         assert.ok(result.hypotheses.every((hypothesis) => {
@@ -176,7 +176,7 @@ runTest(
         const result2 = CrackKnowledgeProvider.getKnowledge({});
 
         assert.deepStrictEqual(result1, {
-            domain: "cracks",
+            domain: "crack",
             hypotheses: []
         });
 

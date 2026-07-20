@@ -1,6 +1,7 @@
 import MoistureKnowledgeProvider from "./knowledge/MoistureKnowledgeProvider.js";
 import CrackKnowledgeProvider from "./knowledge/CrackKnowledgeProvider.js";
 import RoofEnvelopeKnowledgeProvider from "./knowledge/RoofEnvelopeKnowledgeProvider.js";
+import StructuralSystemsKnowledgeProvider from "./knowledge/StructuralSystemsKnowledgeProvider.js";
 import ConcreteCorrosionKnowledgeProvider from "./knowledge/ConcreteCorrosionKnowledgeProvider.js";
 import BasementWaterproofingKnowledgeProvider from "./knowledge/BasementWaterproofingKnowledgeProvider.js";
 import BalconiesTerracesKnowledgeProvider from "./knowledge/BalconiesTerracesKnowledgeProvider.js";
@@ -170,7 +171,9 @@ export default class ExpertReasoningEngine {
         const domains = KnowledgeDomainRouter.resolve(source);
 
         for (const domain of domains) {
-            const contract = domain === "concrete-corrosion"
+            const contract = domain === "structural-systems"
+                ? buildStructuralSystemsReasoning(source)
+                : domain === "concrete-corrosion"
                 ? buildConcreteCorrosionReasoning(source)
                 : domain === "basement-waterproofing"
                     ? buildBasementWaterproofingReasoning(source)
@@ -706,6 +709,19 @@ function buildConcreteCorrosionReasoning(source = {}) {
         potentialConsequences: mappedPrimary.potentialConsequences,
         confidence: mappedPrimary.confidence
     };
+}
+
+function buildStructuralSystemsReasoning(source = {}) {
+    const knowledge = StructuralSystemsKnowledgeProvider.getKnowledge({
+        finding: cloneObject(source.finding),
+        building: cloneObject(source.building),
+        measurements: cloneArray(source.measurements)
+    });
+
+    return KnowledgeReasoningMapper.map({
+        knowledge,
+        input: source
+    });
 }
 
 function mapConcreteHypothesis(hypothesis = {}, source = {}) {

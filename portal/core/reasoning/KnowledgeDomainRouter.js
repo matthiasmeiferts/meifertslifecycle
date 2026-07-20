@@ -9,6 +9,7 @@
 import ExpertIntelligenceTerminologyRegistry from "./ExpertIntelligenceTerminologyRegistry.js";
 
 const DOMAIN_PRECEDENCE = [
+    "structural-systems",
     "concrete-corrosion",
     "basement-waterproofing",
     "balconies-terraces",
@@ -36,6 +37,10 @@ export default class KnowledgeDomainRouter {
     static resolve(input = {}) {
         const source = normalizeInput(input);
         const domains = [];
+
+        if (isStructuralSystemsFinding(source)) {
+            domains.push("structural-systems");
+        }
 
         if (isConcreteCorrosionFinding(source)) {
             domains.push("concrete-corrosion");
@@ -106,6 +111,64 @@ function normalizeInput(input) {
         building: cloneObject(source.building),
         measurements: cloneArray(source.measurements)
     };
+}
+
+function isStructuralSystemsFinding(source = {}) {
+    const text = [
+        textOf(source.finding?.category),
+        textOf(source.finding?.location),
+        textOf(source.finding?.description),
+        textOf(source.finding?.observations),
+        ...cloneArray(source.measurements).map((entry) => textOf(entry))
+    ].join(" ").toLowerCase();
+
+    if (text.trim().length === 0) {
+        return false;
+    }
+
+    if (/without structural (member )?(context|relevance)|no structural (member )?(context|relevance)/.test(text)) {
+        return false;
+    }
+
+    const strongSignals = [
+        "structural", "structural damage", "structural defect", "load-bearing", "load bearing", "foundation settlement", "differential settlement", "structural deflection", "excessive deflection", "instability", "structural instability", "removed load-bearing wall", "removed load bearing wall", "structural alteration", "structural opening", "damaged column", "damaged beam", "damaged slab", "damaged roof truss", "missing structural member", "structural engineer", "structural approval", "structural calculations"
+    ];
+    const mediumSignals = [
+        "diagonal crack", "step crack", "deformation", "sagging", "leaning", "misalignment", "significant movement", "major opening", "section loss", "corrosion with section loss", "damaged connection", "anchor deterioration", "fire damage", "water damage", "deflection", "foundation movement"
+    ];
+    const structuralContexts = [
+        "column", "beam", "girder", "slab", "foundation", "footing", "load-bearing wall", "load bearing wall", "roof truss", "rafter", "purlin", "bracing", "structural connection", "structural member", "structural frame", "retaining wall", "bearing wall", "support", "anchor", "reinforcement"
+    ];
+    const weakOnlySignals = ["crack", "cracks", "damp", "moisture", "corrosion", "movement", "uneven", "damage", "defect"];
+    const exclusionPatterns = [
+        /cosmetic crack|hairline crack|plaster crack|render crack|surface crack|paint crack/,
+        /non[- ]load[- ]bearing partition|lightweight partition|partition crack/,
+        /damp|moisture|mould|mold|staining|condensation/,
+        /waterproofing defect|membrane defect|sealant defect|etics defect|facade surface defect/,
+        /roof waterproofing|roof membrane|flashing defect|gutter|drainage defect/,
+        /balcony waterproofing|terrace waterproofing/,
+        /electrical|sanitary|hvac|ventilation|heating|cooling|elevator|lift|fire alarm|sprinkler/
+    ];
+
+    const hasStrong = strongSignals.some((term) => matchesWholeWord(text, term));
+    const mediumCount = mediumSignals.filter((term) => matchesWholeWord(text, term)).length;
+    const hasStructuralContext = structuralContexts.some((term) => matchesWholeWord(text, term));
+    const weakCount = weakOnlySignals.filter((term) => matchesWholeWord(text, term)).length;
+    const hasExclusion = exclusionPatterns.some((pattern) => pattern.test(text));
+
+    if (hasStrong) {
+        return !hasExclusion || hasStructuralContext;
+    }
+
+    if (mediumCount >= 2 && hasStructuralContext) {
+        return true;
+    }
+
+    if (weakCount > 0) {
+        return false;
+    }
+
+    return false;
 }
 
 function isMoistureFinding(source = {}) {
