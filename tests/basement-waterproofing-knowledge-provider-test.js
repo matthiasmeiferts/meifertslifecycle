@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 import BasementWaterproofingKnowledgeProvider from "../portal/core/knowledge/BasementWaterproofingKnowledgeProvider.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -55,6 +56,7 @@ runTest(
             allCauses.includes("defective external basement waterproofing") ||
             allCauses.includes("lateral moisture penetration")
         );
+        assert.ok(result.hypotheses.every((hypothesis) => hypothesis.riskRelevanceVersion === RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION));
     }
 );
 

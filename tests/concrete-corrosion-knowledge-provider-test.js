@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 import ConcreteCorrosionKnowledgeProvider from "../portal/core/knowledge/ConcreteCorrosionKnowledgeProvider.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -59,6 +60,7 @@ runTest(
         assert.ok(Array.isArray(result.hypotheses[0].potentialConsequences));
         assert.ok(Array.isArray(result.hypotheses[0].recommendedActions));
         assert.equal(typeof result.hypotheses[0].riskRelevance, "string");
+        assert.equal(result.hypotheses[0].riskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
         assert.equal(typeof result.hypotheses[0].capexRelevance, "string");
         assert.equal(typeof result.hypotheses[0].valuationRelevance, "string");
     }

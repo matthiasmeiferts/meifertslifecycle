@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import SanitarySystemsKnowledgeProvider from "../portal/core/knowledge/SanitarySystemsKnowledgeProvider.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -259,6 +260,7 @@ runTest(
                 "potentialConsequences",
                 "recommendedActions",
                 "riskRelevance",
+                "riskRelevanceVersion",
                 "capexRelevance",
                 "valuationRelevance"
             ]);
@@ -269,6 +271,7 @@ runTest(
             assert.ok(Array.isArray(hypothesis.requiredVerification));
             assert.ok(Array.isArray(hypothesis.potentialConsequences));
             assert.ok(Array.isArray(hypothesis.recommendedActions));
+            assert.equal(hypothesis.riskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
         });
     }
 );

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 import ExpertReasoningEngine from "../portal/core/ExpertReasoningEngine.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -35,6 +36,7 @@ runTest(
 
         assert.ok(result.primaryHypothesis);
         assert.equal(result.primaryHypothesis.cause, "rising damp");
+        assert.equal(result.primaryHypothesis.riskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
         assert.ok(Array.isArray(result.alternativeHypotheses));
         assert.ok(result.alternativeHypotheses.length > 0);
         assert.ok(Array.isArray(result.supportingEvidence));

@@ -7,6 +7,8 @@
  * external services, or UI concerns.
  */
 
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../risk/RiskRelevanceGovernanceRegistry.js";
+
 const EMPTY_CONTRACT = Object.freeze({
     domain: "moisture",
     hypotheses: []
@@ -446,6 +448,7 @@ function toHypothesis(item) {
         potentialConsequences: [...item.consequences],
         recommendedActions: [...item.actions],
         riskRelevance: item.riskRelevance,
+        riskRelevanceVersion: RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION,
         capexRelevance: item.capexRelevance,
         valuationRelevance: item.valuationRelevance
     };

@@ -8,6 +8,8 @@
  * outputs.
  */
 
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../risk/RiskRelevanceGovernanceRegistry.js";
+
 const EMPTY_CONTRACT = Object.freeze({
     domain: "concrete-corrosion",
     hypotheses: []
@@ -594,6 +596,7 @@ function toHypothesis(entry) {
         potentialConsequences: [...entry.consequences],
         recommendedActions: [...entry.actions],
         riskRelevance: entry.riskRelevance,
+        riskRelevanceVersion: RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION,
         capexRelevance: entry.capexRelevance,
         valuationRelevance: entry.valuationRelevance
     };

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 import CrackKnowledgeProvider from "../portal/core/knowledge/CrackKnowledgeProvider.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -50,6 +51,7 @@ runTest(
                 Array.isArray(hypothesis.potentialConsequences) &&
                 Array.isArray(hypothesis.recommendedActions) &&
                 typeof hypothesis.riskRelevance === "string" &&
+                hypothesis.riskRelevanceVersion === RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION &&
                 typeof hypothesis.capexRelevance === "string" &&
                 typeof hypothesis.valuationRelevance === "string";
         }));

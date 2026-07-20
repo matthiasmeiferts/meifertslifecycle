@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 import ExpertReasoningEngine from "../portal/core/ExpertReasoningEngine.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -61,6 +62,7 @@ runTest(
         assert.ok(result.primaryHypothesis.requiredVerification.length > 0);
         assert.ok(result.primaryHypothesis.potentialConsequences.length > 0);
         assert.ok(result.primaryHypothesis.status === "hypothesis");
+        assert.equal(result.primaryHypothesis.riskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
         assert.ok(result.confidence >= 0);
         assert.ok(result.confidence <= 1);
     }

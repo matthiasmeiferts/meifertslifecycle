@@ -656,6 +656,7 @@ function mapBasementHypothesis(hypothesis = {}, source = {}) {
             potentialConsequences: cloneArray(hypothesis.potentialConsequences),
             recommendedActions: cloneArray(hypothesis.recommendedActions),
             riskRelevance: hypothesis.riskRelevance,
+            ...(Object.hasOwn(hypothesis, "riskRelevanceVersion") ? { riskRelevanceVersion: hypothesis.riskRelevanceVersion } : {}),
             capexRelevance: hypothesis.capexRelevance,
             valuationRelevance: hypothesis.valuationRelevance,
             status: "hypothesis"
@@ -746,6 +747,7 @@ function mapConcreteHypothesis(hypothesis = {}, source = {}) {
             potentialConsequences: cloneArray(hypothesis.potentialConsequences),
             recommendedActions: cloneArray(hypothesis.recommendedActions),
             riskRelevance: hypothesis.riskRelevance,
+            ...(Object.hasOwn(hypothesis, "riskRelevanceVersion") ? { riskRelevanceVersion: hypothesis.riskRelevanceVersion } : {}),
             capexRelevance: hypothesis.capexRelevance,
             valuationRelevance: hypothesis.valuationRelevance,
             status: "hypothesis"
@@ -886,6 +888,7 @@ function mapCrackHypothesis(hypothesis = {}, isPrimary = false) {
         potentialConsequences: cloneArray(hypothesis.potentialConsequences),
         recommendedActions: cloneArray(hypothesis.recommendedActions),
         riskRelevance: hypothesis.riskRelevance,
+        ...(Object.hasOwn(hypothesis, "riskRelevanceVersion") ? { riskRelevanceVersion: hypothesis.riskRelevanceVersion } : {}),
         capexRelevance: hypothesis.capexRelevance,
         valuationRelevance: hypothesis.valuationRelevance,
         status: isPrimary ? "hypothesis" : "hypothesis"

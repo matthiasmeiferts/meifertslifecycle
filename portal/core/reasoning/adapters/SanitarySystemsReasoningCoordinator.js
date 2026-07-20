@@ -83,6 +83,7 @@ function mapHypothesis(hypothesis = {}) {
         potentialConsequences: cloneArray(hypothesis.potentialConsequences),
         recommendedActions: cloneArray(hypothesis.recommendedActions),
         riskRelevance: hypothesis.riskRelevance,
+        ...(Object.hasOwn(hypothesis, "riskRelevanceVersion") ? { riskRelevanceVersion: hypothesis.riskRelevanceVersion } : {}),
         capexRelevance: hypothesis.capexRelevance,
         valuationRelevance: hypothesis.valuationRelevance,
         status: "hypothesis"

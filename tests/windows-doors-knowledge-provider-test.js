@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 
 import WindowsDoorsKnowledgeProvider from "../portal/core/knowledge/WindowsDoorsKnowledgeProvider.js";
 import WindowsDoorsTerminologyAdapter from "../portal/core/reasoning/adapters/WindowsDoorsTerminologyAdapter.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -49,6 +50,7 @@ runTest(
         });
 
         assert.ok(causes(result).includes("water penetration through window connection") || causes(result).includes("failed installation joint"));
+        assert.ok(result.hypotheses.every((hypothesis) => hypothesis.riskRelevanceVersion === RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION));
     }
 );
 

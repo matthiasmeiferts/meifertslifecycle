@@ -7,6 +7,8 @@
  * function, conclude regulatory compliance, or mandate repair or replacement.
  */
 
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../risk/RiskRelevanceGovernanceRegistry.js";
+
 const EMPTY_CONTRACT = Object.freeze({
     domain: "sanitary-systems",
     hypotheses: []
@@ -250,6 +252,7 @@ function toHypothesis(entry) {
         potentialConsequences: [...entry.potentialConsequences],
         recommendedActions: [...entry.recommendedActions],
         riskRelevance: entry.riskRelevance,
+        riskRelevanceVersion: RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION,
         capexRelevance: entry.capexRelevance,
         valuationRelevance: entry.valuationRelevance
     };

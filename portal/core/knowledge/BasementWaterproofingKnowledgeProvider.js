@@ -6,6 +6,8 @@
  * below-grade components, waterproofing defects, and drainage-related findings.
  */
 
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../risk/RiskRelevanceGovernanceRegistry.js";
+
 const EMPTY_CONTRACT = Object.freeze({
     domain: "basement-waterproofing",
     hypotheses: []
@@ -901,6 +903,7 @@ function toHypothesis(entry) {
         potentialConsequences: [...entry.potentialConsequences],
         recommendedActions: [...entry.recommendedActions],
         riskRelevance: entry.riskRelevance,
+        riskRelevanceVersion: RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION,
         capexRelevance: entry.capexRelevance,
         valuationRelevance: entry.valuationRelevance
     };

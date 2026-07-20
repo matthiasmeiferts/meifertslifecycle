@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 
 import ExpertReasoningEngine from "../portal/core/ExpertReasoningEngine.js";
 import KnowledgeDomainRouter from "../portal/core/reasoning/KnowledgeDomainRouter.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -341,6 +342,7 @@ runTest(
         });
 
         assert.equal(typeof result.primaryHypothesis.riskRelevance, "string");
+        assert.equal(result.primaryHypothesis.riskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
         assert.equal(typeof result.primaryHypothesis.capexRelevance, "string");
         assert.equal(typeof result.primaryHypothesis.valuationRelevance, "string");
     }
