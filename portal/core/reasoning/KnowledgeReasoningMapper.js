@@ -95,8 +95,7 @@ function calculateConfidence(supportingEvidence = [], hypothesis = {}) {
 
 function mapHypothesis(hypothesis = {}, source = {}) {
     const supportingEvidence = collectSupportingEvidence(hypothesis, source);
-
-    return {
+    const mappedHypothesis = {
         id: hypothesis.id,
         label: hypothesis.cause,
         cause: hypothesis.cause,
@@ -112,6 +111,30 @@ function mapHypothesis(hypothesis = {}, source = {}) {
         valuationRelevance: hypothesis.valuationRelevance,
         status: "hypothesis"
     };
+
+    if (hasOwnDataProperty(hypothesis, "riskRelevanceVersion")) {
+        mappedHypothesis.riskRelevanceVersion = hypothesis.riskRelevanceVersion;
+    }
+
+    return mappedHypothesis;
+}
+
+function hasOwnDataProperty(value, field) {
+    const descriptor = getOwnDescriptor(value, field);
+
+    return Boolean(descriptor && Object.hasOwn(descriptor, "value"));
+}
+
+function getOwnDescriptor(value, field) {
+    if (!value || (typeof value !== "object" && typeof value !== "function")) {
+        return null;
+    }
+
+    try {
+        return Object.getOwnPropertyDescriptor(value, field) || null;
+    } catch {
+        return null;
+    }
 }
 
 function buildVerification(hypothesis = {}, supportingEvidence = []) {

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 import StructuralSystemsKnowledgeProvider from "../portal/core/knowledge/StructuralSystemsKnowledgeProvider.js";
+import { RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION } from "../portal/core/risk/RiskRelevanceGovernanceRegistry.js";
 
 function runTest(name, fn) {
     try {
@@ -59,6 +60,33 @@ runTest(
         assert.equal(result.domain, "structural-systems");
         assert.ok(result.hypotheses.length > 0);
         assert.ok(result.hypotheses.every((hypothesis) => hypothesis.classification.includes("hypothesis") || hypothesis.classification.includes("verification")));
+    }
+);
+
+runTest(
+    "risk relevance version is emitted next to every structural risk relevance value",
+    () => {
+        const result = getKnowledge("Structural damage at load-bearing wall with excessive deflection and missing structural approval.");
+        const hypothesesWithRiskRelevance = result.hypotheses.filter((hypothesis) => Object.hasOwn(hypothesis, "riskRelevance"));
+
+        assert.ok(hypothesesWithRiskRelevance.length > 0);
+        hypothesesWithRiskRelevance.forEach((hypothesis) => {
+            assert.equal(hypothesis.riskRelevance, "high");
+            assert.equal(hypothesis.riskRelevanceVersion, RISK_RELEVANCE_SUPPORTED_SOURCE_VERSION);
+        });
+    }
+);
+
+runTest(
+    "empty structural result does not receive risk relevance version metadata",
+    () => {
+        const result = getKnowledge("Cosmetic crack in plaster finish.");
+
+        assert.deepStrictEqual(result, {
+            domain: "structural-systems",
+            hypotheses: []
+        });
+        assert.equal(JSON.stringify(result).includes("riskRelevanceVersion"), false);
     }
 );
 
@@ -174,9 +202,15 @@ runTest(
     "no public result fields are introduced by provider contract",
     () => {
         const result = getKnowledge("Removed load-bearing wall with structural approval missing.");
+        const forbiddenHypothesisFields = ["score", "priority", "severity", "criticality", "reviewPriority", "riskClass", "resultClassification"];
 
         assert.deepStrictEqual(Object.keys(result), ["domain", "hypotheses"]);
         assert.equal(Object.hasOwn(result, "severity"), false);
+        result.hypotheses.forEach((hypothesis) => {
+            forbiddenHypothesisFields.forEach((field) => {
+                assert.equal(Object.hasOwn(hypothesis, field), false);
+            });
+        });
     }
 );
 
