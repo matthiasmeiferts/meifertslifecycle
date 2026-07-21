@@ -6,6 +6,7 @@ import InspectionScopeManager from "../../core/InspectionScopeManager.js";
 import InspectionQuestionCatalog from "../../core/InspectionQuestionCatalog.js";
 import InspectionQuestionEngine from "../../core/InspectionQuestionEngine.js";
 import ExpertIntelligenceRuntimeManager from "../../core/ExpertIntelligenceRuntimeManager.js";
+import HumanReviewRuntimeManager from "../../core/HumanReviewRuntimeManager.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
@@ -386,6 +387,7 @@ export default class InspectionPage {
         fragment.appendChild(WorkflowContextBanner.create(CaseManager.getCurrent()));
         fragment.appendChild(this.createInspectionScopeOverview(activeInspection));
         fragment.appendChild(this.createExpertIntelligenceRuntimePanel(activeInspection));
+        fragment.appendChild(this.createHumanReviewRuntimePanel(activeInspection));
         fragment.appendChild(this.createMetrics(inspections));
         fragment.appendChild(this.createMainLayout(inspections, activeInspection));
 
@@ -565,6 +567,262 @@ export default class InspectionPage {
         limitations.appendChild(list);
         wrapper.appendChild(limitations);
         return wrapper;
+    }
+
+    static createHumanReviewRuntimePanel(activeInspection = null) {
+        const panel = document.createElement("section");
+        panel.className = "workflow-card human-review-runtime";
+        panel.dataset.humanReviewRuntime = "";
+
+        const heading = document.createElement("div");
+        heading.className = "platform-intelligence__header";
+        const title = document.createElement("strong");
+        title.textContent = "Human Review";
+        const description = document.createElement("p");
+        description.textContent = "Professional decisions are recorded as append-only review data. Reviewer details are descriptive and do not establish identity assurance or external-use authority.";
+        heading.appendChild(title);
+        heading.appendChild(description);
+        panel.appendChild(heading);
+
+        if (!activeInspection) {
+            panel.appendChild(this.createHumanReviewMessage(
+                "Select an inspection to view its Human Review state.",
+                "no_inspection"
+            ));
+            return panel;
+        }
+
+        const state = HumanReviewRuntimeManager.getHumanReviewStateForInspection(activeInspection.id);
+        panel.appendChild(this.createHumanReviewRuntimeSummary(state));
+
+        if (state.status === "REVIEW_STATE_AVAILABLE"
+            && ["NOT_REVIEWED", "REVIEWED"].includes(state.reviewResolution?.status)) {
+            panel.appendChild(this.createHumanReviewEntryForm(activeInspection.id, state));
+        }
+
+        return panel;
+    }
+
+    static createHumanReviewRuntimeSummary(state = {}) {
+        const summary = document.createElement("div");
+        summary.className = "human-review-runtime__summary";
+        summary.dataset.humanReviewStatus = state.status || "UNKNOWN";
+
+        if (state.status === "NO_CURRENT_EXECUTION") {
+            summary.appendChild(this.createHumanReviewMessage(
+                "No current persisted Expert Intelligence execution is available for Human Review.",
+                "no_current_execution"
+            ));
+            return summary;
+        }
+
+        if (state.status === "UNSUPPORTED_EXECUTION_STATE") {
+            summary.appendChild(this.createHumanReviewMessage(
+                state.errorMessage || "The current execution cannot be reviewed under the existing Human Review contract.",
+                "unsupported_execution"
+            ));
+            return summary;
+        }
+
+        const resolution = state.reviewResolution || {};
+        const current = resolution.effectiveReview || null;
+        const grid = document.createElement("dl");
+        grid.className = "detail-panel";
+        [
+            ["Current execution", state.executionId || "Not available"],
+            ["Human review required", state.humanReviewRequired ? "Yes" : "No"],
+            ["Review state", resolution.status || "Not available"],
+            ["Safe review records", resolution.reviewCount ?? 0],
+            ["Professional decision", current?.decision || "Not recorded"],
+            ["Current rationale", current?.rationale || "Not recorded"],
+            ["Stale when reviewed", current ? (current.staleAtReview ? "Yes" : "No") : "Not recorded"]
+        ].forEach(([label, value]) => {
+            const row = document.createElement("div");
+            const term = document.createElement("dt");
+            const detail = document.createElement("dd");
+            term.textContent = label;
+            detail.textContent = String(value);
+            row.appendChild(term);
+            row.appendChild(detail);
+            grid.appendChild(row);
+        });
+        summary.appendChild(grid);
+
+        if (state.executionStale) {
+            summary.appendChild(this.createHumanReviewMessage(
+                "The current execution is stale. Any review record must preserve that condition and provide the required rationale.",
+                "stale_execution"
+            ));
+        }
+
+        if (["PARTIAL_WITH_CORRUPTION", "CORRUPT_HISTORY"].includes(resolution.status)) {
+            summary.appendChild(this.createHumanReviewMessage(
+                "Review history contains integrity issues. Only the integrity-safe review prefix is displayed.",
+                "corruption"
+            ));
+            const diagnostics = document.createElement("ul");
+            diagnostics.dataset.humanReviewDiagnostics = "";
+            (resolution.diagnostics || []).forEach((entry) => {
+                const item = document.createElement("li");
+                item.textContent = entry.reason || entry.state || "Human Review integrity issue.";
+                diagnostics.appendChild(item);
+            });
+            summary.appendChild(diagnostics);
+        }
+
+        if (state.errorMessage) {
+            summary.appendChild(this.createHumanReviewMessage(state.errorMessage, "error"));
+        }
+
+        return summary;
+    }
+
+    static createHumanReviewEntryForm(inspectionId, state) {
+        const form = document.createElement("form");
+        form.className = "human-review-runtime__form";
+        form.dataset.humanReviewForm = "";
+
+        const decision = this.createHumanReviewSelect("decision", "Professional decision", [
+            "CONFIRMED",
+            "CONFIRMED_WITH_LIMITATIONS",
+            "REJECTED",
+            "RERUN_REQUIRED"
+        ]);
+        const reviewerRole = this.createHumanReviewSelect("reviewerRole", "Reviewer role", [
+            "PROFESSIONAL_REVIEWER",
+            "SECOND_REVIEWER",
+            "QUALITY_ASSURANCE_REVIEWER",
+            "LEAD_REVIEWER"
+        ]);
+        const reviewerId = this.createHumanReviewInput("reviewerId", "Reviewer identifier");
+        const reviewerName = this.createHumanReviewInput("reviewerDisplayName", "Reviewer display name");
+        const rationale = this.createHumanReviewInput("rationale", "Professional rationale", "textarea");
+        const notes = this.createHumanReviewInput("notes", "Notes", "textarea");
+        const limitations = this.createHumanReviewInput("limitations", "Limitations, one per line", "textarea");
+        const followUp = this.createHumanReviewInput("followUpRequirements", "Follow-up requirements, one per line", "textarea");
+        const rerun = this.createHumanReviewInput("rerunRecommendation", "Rerun recommendation", "textarea");
+
+        [
+            decision,
+            reviewerId,
+            reviewerName,
+            reviewerRole,
+            rationale,
+            notes,
+            limitations,
+            followUp,
+            rerun
+        ].forEach((field) => form.appendChild(field.wrapper));
+
+        const error = document.createElement("p");
+        error.className = "platform-intelligence__note";
+        error.dataset.humanReviewError = "";
+        error.hidden = true;
+        form.appendChild(error);
+
+        const submit = document.createElement("button");
+        submit.type = "submit";
+        submit.className = "button";
+        submit.dataset.action = "record-human-review";
+        submit.textContent = "Record Human Review";
+        form.appendChild(submit);
+
+        let submitting = false;
+        form.addEventListener("submit", async event => {
+            event.preventDefault();
+
+            if (submitting) {
+                return;
+            }
+
+            submitting = true;
+            submit.disabled = true;
+            error.hidden = true;
+            const submittedAt = new Date().toISOString();
+            const reviewData = {
+                executionId: state.executionId,
+                reviewerId: reviewerId.control.value,
+                reviewerDisplayName: reviewerName.control.value,
+                reviewerRole: reviewerRole.control.value,
+                decision: decision.control.value,
+                rationale: rationale.control.value,
+                notes: notes.control.value,
+                limitations: this.parseHumanReviewLines(limitations.control.value),
+                followUpRequirements: this.parseHumanReviewLines(followUp.control.value),
+                rerunRecommendation: rerun.control.value || null,
+                references: [],
+                staleAtReview: state.executionStale === true,
+                reviewedAt: submittedAt,
+                createdAt: submittedAt
+            };
+
+            await Promise.resolve();
+
+            try {
+                const result = HumanReviewRuntimeManager.recordHumanReviewForCurrentExecution(
+                    inspectionId,
+                    reviewData
+                );
+
+                if (result.status === "REVIEW_RECORDED") {
+                    this.refresh();
+                    return;
+                }
+
+                error.textContent = result.errorMessage
+                    || "Human Review could not be recorded in the current state.";
+                error.hidden = false;
+            } catch (caught) {
+                error.textContent = caught.message || "Human Review input is invalid.";
+                error.hidden = false;
+            } finally {
+                submitting = false;
+                submit.disabled = false;
+            }
+        });
+
+        return form;
+    }
+
+    static createHumanReviewSelect(name, label, values) {
+        const wrapper = document.createElement("label");
+        wrapper.textContent = label;
+        const control = document.createElement("select");
+        control.name = name;
+        control.dataset.humanReviewField = name;
+        values.forEach((value) => {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = value;
+            control.appendChild(option);
+        });
+        wrapper.appendChild(control);
+        return { wrapper, control };
+    }
+
+    static createHumanReviewInput(name, label, type = "input") {
+        const wrapper = document.createElement("label");
+        wrapper.textContent = label;
+        const control = document.createElement(type);
+        control.name = name;
+        control.dataset.humanReviewField = name;
+        if (type === "input") {
+            control.type = "text";
+        }
+        wrapper.appendChild(control);
+        return { wrapper, control };
+    }
+
+    static createHumanReviewMessage(text, state) {
+        const message = document.createElement("p");
+        message.className = "platform-intelligence__note";
+        message.dataset.humanReviewMessage = state;
+        message.textContent = text;
+        return message;
+    }
+
+    static parseHumanReviewLines(value = "") {
+        return String(value).split("\n").filter((entry) => entry.trim().length > 0);
     }
 
     static formatExpertIntelligenceStatus(status = "not_run") {
