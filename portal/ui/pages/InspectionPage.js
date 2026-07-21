@@ -5,6 +5,7 @@ import BuildingManager from "../../core/BuildingManager.js";
 import InspectionScopeManager from "../../core/InspectionScopeManager.js";
 import InspectionQuestionCatalog from "../../core/InspectionQuestionCatalog.js";
 import InspectionQuestionEngine from "../../core/InspectionQuestionEngine.js";
+import ExpertIntelligenceRuntimeManager from "../../core/ExpertIntelligenceRuntimeManager.js";
 import WorkflowContextBanner from "../components/WorkflowContextBanner.js";
 import SectionHeader from "../components/SectionHeader.js";
 import ActionBar from "../components/ActionBar.js";
@@ -384,10 +385,198 @@ export default class InspectionPage {
         fragment.appendChild(this.createHeader(activeInspection));
         fragment.appendChild(WorkflowContextBanner.create(CaseManager.getCurrent()));
         fragment.appendChild(this.createInspectionScopeOverview(activeInspection));
+        fragment.appendChild(this.createExpertIntelligenceRuntimePanel(activeInspection));
         fragment.appendChild(this.createMetrics(inspections));
         fragment.appendChild(this.createMainLayout(inspections, activeInspection));
 
         return fragment;
+    }
+
+    static createExpertIntelligenceRuntimePanel(activeInspection = null) {
+        const panel = document.createElement("section");
+        panel.className = "workflow-card expert-intelligence-runtime";
+        panel.dataset.expertIntelligenceRuntime = "";
+
+        const header = document.createElement("div");
+        header.className = "platform-intelligence__header";
+
+        const heading = document.createElement("div");
+        const eyebrow = document.createElement("span");
+        eyebrow.className = "platform-intelligence__eyebrow";
+        eyebrow.textContent = "Expert Intelligence Runtime";
+
+        const title = document.createElement("strong");
+        title.textContent = activeInspection
+            ? "Governed reasoning for the selected inspection"
+            : "Select an inspection before running Expert Intelligence";
+
+        const description = document.createElement("p");
+        description.textContent = "Deterministic hypotheses and Risk Relevance interpretation remain subject to human expert review. No Building Risk Score or automatic diagnosis is produced.";
+
+        heading.appendChild(eyebrow);
+        heading.appendChild(title);
+        heading.appendChild(description);
+        header.appendChild(heading);
+
+        const action = document.createElement("button");
+        action.type = "button";
+        action.className = "button";
+        action.dataset.action = "run-expert-intelligence";
+        action.textContent = "Run Expert Intelligence";
+        action.disabled = !activeInspection;
+
+        header.appendChild(action);
+        panel.appendChild(header);
+
+        if (!activeInspection) {
+            const empty = document.createElement("p");
+            empty.dataset.expertIntelligenceStatus = "not_run";
+            empty.textContent = "Expert Intelligence has not been run because no inspection is selected.";
+            panel.appendChild(empty);
+            return panel;
+        }
+
+        const state = ExpertIntelligenceRuntimeManager.getExecutionState(activeInspection.id);
+        panel.appendChild(this.createExpertIntelligenceRuntimeSummary(state));
+
+        action.addEventListener("click", async () => {
+            action.disabled = true;
+            action.textContent = "Running Expert Intelligence…";
+            panel.dataset.runtimeStatus = "running";
+
+            const status = panel.querySelector("[data-expert-intelligence-status]");
+            if (status) {
+                status.textContent = "Expert Intelligence is running.";
+            }
+
+            await Promise.resolve();
+
+            try {
+                ExpertIntelligenceRuntimeManager.executeForInspection(activeInspection.id);
+            } catch (error) {
+                Notification.warning(error.message || "Expert Intelligence execution failed.");
+            }
+
+            this.refresh();
+        });
+
+        return panel;
+    }
+
+    static createExpertIntelligenceRuntimeSummary(state = {}) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "expert-intelligence-runtime__summary";
+        const status = state.status || "not_run";
+        wrapper.dataset.expertIntelligenceStatus = status;
+
+        if (state.corruption?.detected) {
+            const corruption = document.createElement("p");
+            corruption.className = "platform-intelligence__note";
+            corruption.dataset.expertIntelligenceCorruption = "true";
+            corruption.textContent = `${state.corruption.count} malformed Expert Intelligence execution record${state.corruption.count === 1 ? " was" : "s were"} excluded. Human review of local execution history is required.`;
+            wrapper.appendChild(corruption);
+        }
+
+        if (!state.latest) {
+            const empty = document.createElement("p");
+            empty.textContent = "Expert Intelligence has not been run for this inspection.";
+            wrapper.appendChild(empty);
+            return wrapper;
+        }
+
+        const summary = ExpertIntelligenceRuntimeManager.createSummary(state.latest);
+        const statusHeading = document.createElement("strong");
+        statusHeading.textContent = this.formatExpertIntelligenceStatus(status);
+        wrapper.appendChild(statusHeading);
+
+        if (state.stale) {
+            const stale = document.createElement("p");
+            stale.className = "platform-intelligence__note";
+            stale.dataset.expertIntelligenceStale = "true";
+            stale.textContent = "This execution is stale because persisted inspection source data has changed. Run Expert Intelligence again before relying on it.";
+            wrapper.appendChild(stale);
+        }
+
+        const grid = document.createElement("dl");
+        grid.className = "detail-panel";
+
+        [
+            ["Execution", summary.executionId],
+            ["Selected domain / provider", summary.selectedDomain
+                ? `${summary.selectedDomain} / ${summary.selectedProvider}`
+                : "No successful provider contract"],
+            ["Matched indicators", summary.matchedIndicatorCount],
+            ["Supporting evidence", summary.evidenceCount],
+            ["Missing evidence", summary.missingEvidenceCount],
+            ["Confidence", summary.confidence],
+            ["Risk Relevance value", summary.riskRelevanceValue || "Not present"],
+            ["Risk Relevance value state", summary.riskRelevanceValueState],
+            ["Risk Relevance source version", summary.riskRelevanceVersion || "Not present"],
+            ["Risk Relevance version state", summary.riskRelevanceVersionState],
+            ["Interpretation state", summary.interpretationState],
+            ["Interpretation eligible", summary.interpretationEligible ? "Yes" : "No"],
+            ["Conflicts preserved", summary.conflictCount],
+            ["Limitations", summary.limitationCount],
+            ["Human review required", summary.humanReviewRequired ? "Yes" : "No"]
+        ].forEach(([label, value]) => {
+            const row = document.createElement("div");
+            const term = document.createElement("dt");
+            const detail = document.createElement("dd");
+            term.textContent = label;
+            detail.textContent = value === null || value === undefined || value === "" ? "Not available" : String(value);
+            row.appendChild(term);
+            row.appendChild(detail);
+            grid.appendChild(row);
+        });
+
+        wrapper.appendChild(grid);
+
+        if (summary.errorMessage) {
+            const error = document.createElement("p");
+            error.className = "platform-intelligence__note";
+            error.dataset.expertIntelligenceError = "";
+            error.textContent = summary.errorMessage;
+            wrapper.appendChild(error);
+        }
+
+        const limitations = document.createElement("div");
+        limitations.className = "expert-intelligence-runtime__limitations";
+        const limitationTitle = document.createElement("strong");
+        limitationTitle.textContent = "Preserved limitations";
+        limitations.appendChild(limitationTitle);
+
+        const list = document.createElement("ul");
+        const entries = state.latest.limitations || [];
+
+        if (!entries.length) {
+            const item = document.createElement("li");
+            item.textContent = "No additional limitation was recorded.";
+            list.appendChild(item);
+        } else {
+            entries.forEach((entry) => {
+                const item = document.createElement("li");
+                item.textContent = typeof entry === "string"
+                    ? entry
+                    : entry.reason || entry.message || JSON.stringify(entry);
+                list.appendChild(item);
+            });
+        }
+
+        limitations.appendChild(list);
+        wrapper.appendChild(limitations);
+        return wrapper;
+    }
+
+    static formatExpertIntelligenceStatus(status = "not_run") {
+        const labels = {
+            not_run: "Expert Intelligence has not been run",
+            running: "Expert Intelligence is running",
+            succeeded: "Expert Intelligence execution succeeded",
+            no_provider_contract: "No Knowledge Provider produced a supported reasoning contract",
+            failed: "Expert Intelligence execution failed"
+        };
+
+        return labels[status] || `Expert Intelligence status: ${status}`;
     }
 
     static createHeader(activeInspection = null) {

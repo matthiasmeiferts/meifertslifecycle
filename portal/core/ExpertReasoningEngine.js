@@ -150,6 +150,24 @@ const SCENARIOS = {
     }
 };
 
+const DOMAIN_PROVIDER_IDENTITIES = Object.freeze({
+    "structural-systems": "StructuralSystemsKnowledgeProvider",
+    "concrete-corrosion": "ConcreteCorrosionKnowledgeProvider",
+    "basement-waterproofing": "BasementWaterproofingKnowledgeProvider",
+    "balconies-terraces": "BalconiesTerracesKnowledgeProvider",
+    "drainage-rainwater": "DrainageRainwaterKnowledgeProvider",
+    "hvac-systems": "HvacSystemsKnowledgeProvider",
+    "electrical-systems": "ElectricalSystemsKnowledgeProvider",
+    "sanitary-systems": "SanitarySystemsKnowledgeProvider",
+    "fire-protection-systems": "FireProtectionSystemsKnowledgeProvider",
+    "vertical-transportation-systems": "VerticalTransportationSystemsKnowledgeProvider",
+    "windows-doors": "WindowsDoorsKnowledgeProvider",
+    "facade-wall-systems": "FacadeWallSystemsKnowledgeProvider",
+    "roof-envelope": "RoofEnvelopeKnowledgeProvider",
+    moisture: "MoistureKnowledgeProvider",
+    crack: "CrackKnowledgeProvider"
+});
+
 /**
  * Analyze a finding/building/measurement bundle and return a deterministic
  * expert-reasoning contract.
@@ -166,6 +184,15 @@ const SCENARIOS = {
 export default class ExpertReasoningEngine {
 
     static analyze(input = {}, options = {}) {
+        return this.analyzeWithTrace(input, options).reasoningResult;
+    }
+
+    /**
+     * Execute the existing first-success orchestration while exposing the
+     * selected domain to governed internal runtime consumers. The public
+     * reasoning result returned by analyze() remains unchanged.
+     */
+    static analyzeWithTrace(input = {}, options = {}) {
         const source = cloneObject(input);
         const language = ExpertIntelligenceLanguage.normalize(options.language);
         const domains = KnowledgeDomainRouter.resolve(source);
@@ -204,15 +231,27 @@ export default class ExpertReasoningEngine {
                             : null;
 
             if (contract) {
-                return contract;
+                return {
+                    status: "success",
+                    routedDomains: [...domains],
+                    selectedDomain: domain,
+                    selectedProvider: DOMAIN_PROVIDER_IDENTITIES[domain],
+                    reasoningResult: contract
+                };
             }
         }
 
-        if (domains.length > 0) {
-            return this.analyzeLegacy();
-        }
+        const reasoningResult = domains.length > 0
+            ? this.analyzeLegacy()
+            : this.analyzeLegacy(source);
 
-        return this.analyzeLegacy(source);
+        return {
+            status: "no_provider_contract",
+            routedDomains: [...domains],
+            selectedDomain: null,
+            selectedProvider: null,
+            reasoningResult
+        };
     }
 
     static analyzeLegacy(input = {}) {
