@@ -1000,6 +1000,51 @@ export default class ReportPage {
         `;
     }
 
+    static renderExpertIntelligenceReportSection(report = {}) {
+        const expertIntelligence = report?.expertIntelligence;
+
+        if (expertIntelligence === null || expertIntelligence === undefined) {
+            return "";
+        }
+
+        const rows = [
+            ["Availability status", expertIntelligence.status],
+            ["Domain", expertIntelligence.domain],
+            ["Provider", expertIntelligence.provider],
+            ["Confidence", expertIntelligence.confidence],
+            ["Interpretation state", expertIntelligence.interpretation?.state],
+            ["Interpretation eligible", expertIntelligence.interpretation?.eligible],
+            ["Stale", expertIntelligence.stale],
+            ["Human Review required", expertIntelligence.humanReviewRequired],
+            ["Human Review status", expertIntelligence.humanReviewStatus],
+            ["Projection version", expertIntelligence.generatedFromVersion]
+        ];
+
+        return `
+                <section class="report-preview__section report-preview__expert-intelligence" data-expert-intelligence-report-section>
+                    <span class="report-preview__section-label">Expert Intelligence</span>
+                    <table class="report-preview__table">
+                        <tbody>
+                            ${rows.map(([label, value]) => `
+                                <tr>
+                                    <th>${this.escapeHtml(label)}</th>
+                                    <td>${this.renderExpertIntelligenceReportValue(value)}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                </section>
+        `;
+    }
+
+    static renderExpertIntelligenceReportValue(value) {
+        if (!["string", "number", "boolean"].includes(typeof value)) {
+            return "—";
+        }
+
+        return this.escapeHtml(String(value));
+    }
+
     static createReportPreview(report = {}) {
         const section = document.createElement("section");
         section.className = "workflow-card report-preview";
@@ -1071,6 +1116,8 @@ export default class ReportPage {
                         </tbody>
                     </table>
                 </section>
+
+                ${this.renderExpertIntelligenceReportSection(report)}
             </article>
         `;
 
