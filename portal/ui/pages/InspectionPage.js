@@ -387,6 +387,7 @@ export default class InspectionPage {
         fragment.appendChild(WorkflowContextBanner.create(CaseManager.getCurrent()));
         fragment.appendChild(this.createInspectionScopeOverview(activeInspection));
         fragment.appendChild(this.createExpertIntelligenceRuntimePanel(activeInspection));
+        fragment.appendChild(this.createExpertIntelligenceExecutionHistory(activeInspection));
         fragment.appendChild(this.createHumanReviewRuntimePanel(activeInspection));
         fragment.appendChild(this.createMetrics(inspections));
         fragment.appendChild(this.createMainLayout(inspections, activeInspection));
@@ -567,6 +568,225 @@ export default class InspectionPage {
         limitations.appendChild(list);
         wrapper.appendChild(limitations);
         return wrapper;
+    }
+
+    static createExpertIntelligenceExecutionHistory(activeInspection = null) {
+        const panel = document.createElement("section");
+        panel.className = "workflow-card expert-intelligence-history";
+        panel.dataset.expertIntelligenceHistory = "";
+
+        const heading = document.createElement("div");
+        heading.className = "platform-intelligence__header";
+        const title = document.createElement("h3");
+        title.textContent = "Expert Intelligence Execution History";
+        const description = document.createElement("p");
+        description.textContent = "Persisted executions are shown in their released history order. History visibility does not approve, rank, rerun, or reinterpret an execution.";
+        heading.appendChild(title);
+        heading.appendChild(description);
+        panel.appendChild(heading);
+
+        if (!activeInspection?.id) {
+            panel.dataset.expertIntelligenceHistoryState = "NO_INSPECTION";
+            const empty = document.createElement("p");
+            empty.textContent = "Select an inspection to view its Expert Intelligence execution history.";
+            panel.appendChild(empty);
+            return panel;
+        }
+
+        let executions;
+        let state;
+
+        try {
+            executions = ExpertIntelligenceRuntimeManager.getByInspection(activeInspection.id);
+            state = ExpertIntelligenceRuntimeManager.getExecutionState(activeInspection.id);
+        } catch (error) {
+            panel.dataset.expertIntelligenceHistoryState = "UNAVAILABLE";
+            const unavailable = document.createElement("p");
+            unavailable.className = "platform-intelligence__note";
+            unavailable.textContent = "Expert Intelligence execution history is unavailable. No history record was inferred or reconstructed.";
+            panel.appendChild(unavailable);
+            return panel;
+        }
+
+        if (!Array.isArray(executions) || !state || typeof state !== "object") {
+            panel.dataset.expertIntelligenceHistoryState = "UNAVAILABLE";
+            const unavailable = document.createElement("p");
+            unavailable.className = "platform-intelligence__note";
+            unavailable.textContent = "Expert Intelligence execution history is unavailable because the released runtime contract returned an unsupported result.";
+            panel.appendChild(unavailable);
+            return panel;
+        }
+
+        const corruption = state.corruption && typeof state.corruption === "object"
+            ? state.corruption
+            : { detected: false, count: 0, records: [] };
+        const hasCorruption = corruption.detected === true;
+        const presentationDiagnostics = [];
+        panel.dataset.expertIntelligenceHistoryState = executions.length
+            ? (hasCorruption ? "AVAILABLE_WITH_UNSCOPED_CORRUPTION" : "AVAILABLE")
+            : (hasCorruption ? "UNSCOPED_CORRUPTION_ONLY" : "EMPTY");
+
+        if (hasCorruption) {
+            const warning = document.createElement("p");
+            warning.className = "platform-intelligence__note";
+            warning.dataset.expertIntelligenceHistoryCorruption = "unscoped";
+            warning.textContent = `${corruption.count || 0} malformed Expert Intelligence execution record${corruption.count === 1 ? " was" : "s were"} excluded at repository level. Released diagnostics do not attribute malformed records to an inspection, so this warning is intentionally unscoped.`;
+            panel.appendChild(warning);
+
+            if (executions.length) {
+                const scope = document.createElement("p");
+                scope.textContent = "The valid persisted executions returned by the released B1 history API are shown below. This view does not claim that the persisted history is complete.";
+                panel.appendChild(scope);
+            }
+        }
+
+        if (!executions.length) {
+            const empty = document.createElement("p");
+            empty.dataset.expertIntelligenceHistoryEmpty = "";
+            empty.textContent = hasCorruption
+                ? "No valid persisted Expert Intelligence execution is available for this inspection."
+                : "No persisted Expert Intelligence execution exists for this inspection.";
+            panel.appendChild(empty);
+        } else {
+            const list = document.createElement("ol");
+            list.dataset.expertIntelligenceHistoryList = "";
+            const currentExecutionId = state.latest?.id || null;
+
+            executions.forEach((execution) => {
+                const executionId = this.getExpertIntelligenceHistoryScalar(execution?.id);
+
+                if (typeof executionId !== "string" || !executionId) {
+                    presentationDiagnostics.push("An execution-history entry could not be presented because its stable execution identifier was unavailable.");
+                    return;
+                }
+
+                const item = document.createElement("li");
+                item.dataset.expertIntelligenceExecutionId = executionId;
+                const isCurrent = Boolean(currentExecutionId && executionId === currentExecutionId);
+                item.dataset.expertIntelligenceCurrent = isCurrent ? "true" : "false";
+
+                const itemTitle = document.createElement("strong");
+                itemTitle.textContent = isCurrent ? "Current execution" : "Previous execution";
+                item.appendChild(itemTitle);
+
+                let summary;
+
+                try {
+                    summary = ExpertIntelligenceRuntimeManager.createSummary(execution);
+
+                    if (!summary || typeof summary !== "object" || Array.isArray(summary)) {
+                        throw new Error("Unsupported execution summary projection.");
+                    }
+                } catch (error) {
+                    const unavailable = document.createElement("p");
+                    unavailable.className = "platform-intelligence__note";
+                    unavailable.dataset.expertIntelligenceHistoryEntryUnavailable = "";
+                    unavailable.textContent = "Summary metadata is unavailable for this persisted execution. No metadata was inferred or reconstructed.";
+                    item.appendChild(unavailable);
+                    this.appendExpertIntelligenceHistoryStaleState(item, isCurrent, state.stale);
+                    list.appendChild(item);
+                    return;
+                }
+
+                const details = document.createElement("dl");
+                details.className = "detail-panel";
+                [
+                    ["Execution", this.getExpertIntelligenceHistoryScalar(summary.executionId) || executionId],
+                    ["Sequence", execution?.sequence],
+                    ["Executed at", execution?.executedAt],
+                    ["Execution schema version", execution?.executionSchemaVersion],
+                    ["Source fingerprint", execution?.sourceFingerprint],
+                    ["Status", summary.status],
+                    ["Selected domain", summary.selectedDomain],
+                    ["Selected provider", summary.selectedProvider],
+                    ["Human review required", typeof summary.humanReviewRequired === "boolean"
+                        ? (summary.humanReviewRequired ? "Yes" : "No")
+                        : null]
+                ].forEach(([label, value]) => {
+                    const scalarValue = this.getExpertIntelligenceHistoryScalar(value);
+
+                    if (scalarValue === null || scalarValue === "") return;
+
+                    const row = document.createElement("div");
+                    const term = document.createElement("dt");
+                    const detail = document.createElement("dd");
+                    term.textContent = label;
+                    detail.textContent = String(scalarValue);
+                    row.appendChild(term);
+                    row.appendChild(detail);
+                    details.appendChild(row);
+                });
+                item.appendChild(details);
+
+                this.appendExpertIntelligenceHistoryStaleState(item, isCurrent, state.stale);
+
+                list.appendChild(item);
+            });
+
+            panel.appendChild(list);
+        }
+
+        const repositoryDiagnostics = hasCorruption && Array.isArray(corruption.records)
+            ? corruption.records
+            : [];
+
+        if (presentationDiagnostics.length || repositoryDiagnostics.length) {
+            const diagnosticSection = document.createElement("section");
+            diagnosticSection.dataset.expertIntelligenceHistoryDiagnosticRegion = "";
+            const diagnosticHeading = document.createElement("h4");
+            diagnosticHeading.textContent = "Execution-history diagnostics";
+            diagnosticSection.appendChild(diagnosticHeading);
+
+            if (presentationDiagnostics.length) {
+                const diagnostics = document.createElement("ul");
+                diagnostics.dataset.expertIntelligenceHistoryPresentationDiagnostics = "";
+                presentationDiagnostics.forEach((message) => {
+                    const item = document.createElement("li");
+                    item.textContent = message;
+                    diagnostics.appendChild(item);
+                });
+                diagnosticSection.appendChild(diagnostics);
+            }
+
+            if (repositoryDiagnostics.length) {
+                const diagnostics = document.createElement("ul");
+                diagnostics.dataset.expertIntelligenceHistoryDiagnostics = "unscoped";
+                repositoryDiagnostics.forEach((record) => {
+                    const item = document.createElement("li");
+                    item.textContent = typeof record?.reason === "string"
+                        ? record.reason
+                        : (typeof record?.state === "string" ? record.state : "Malformed execution record excluded.");
+                    diagnostics.appendChild(item);
+                });
+                diagnosticSection.appendChild(diagnostics);
+            }
+
+            panel.appendChild(diagnosticSection);
+        }
+
+        return panel;
+    }
+
+    static appendExpertIntelligenceHistoryStaleState(item, isCurrent, staleState) {
+        if (!isCurrent || !staleState) return;
+
+        const stale = document.createElement("p");
+        stale.className = "platform-intelligence__note";
+        stale.dataset.expertIntelligenceHistoryStale = "true";
+        stale.textContent = "The current Expert Intelligence execution is marked stale because persisted inspection source data has changed.";
+        item.appendChild(stale);
+    }
+
+    static getExpertIntelligenceHistoryScalar(value) {
+        if (typeof value === "string" || typeof value === "boolean") {
+            return value;
+        }
+
+        if (typeof value === "number" && Number.isFinite(value)) {
+            return value;
+        }
+
+        return null;
     }
 
     static createHumanReviewRuntimePanel(activeInspection = null) {
