@@ -600,6 +600,10 @@ export default class InspectionPage {
             panel.appendChild(this.createHumanReviewEntryForm(activeInspection.id, state));
         }
 
+        if (state.reviewResolution) {
+            panel.appendChild(this.createHumanReviewAuditTrail(state.reviewResolution));
+        }
+
         return panel;
     }
 
@@ -653,21 +657,6 @@ export default class InspectionPage {
                 "The current execution is stale. Any review record must preserve that condition and provide the required rationale.",
                 "stale_execution"
             ));
-        }
-
-        if (["PARTIAL_WITH_CORRUPTION", "CORRUPT_HISTORY"].includes(resolution.status)) {
-            summary.appendChild(this.createHumanReviewMessage(
-                "Review history contains integrity issues. Only the integrity-safe review prefix is displayed.",
-                "corruption"
-            ));
-            const diagnostics = document.createElement("ul");
-            diagnostics.dataset.humanReviewDiagnostics = "";
-            (resolution.diagnostics || []).forEach((entry) => {
-                const item = document.createElement("li");
-                item.textContent = entry.reason || entry.state || "Human Review integrity issue.";
-                diagnostics.appendChild(item);
-            });
-            summary.appendChild(diagnostics);
         }
 
         if (state.errorMessage) {
@@ -782,6 +771,173 @@ export default class InspectionPage {
         });
 
         return form;
+    }
+
+    static createHumanReviewAuditTrail(resolution = {}) {
+        const section = document.createElement("section");
+        section.className = "human-review-runtime__audit-trail";
+        section.dataset.humanReviewAuditTrail = "";
+
+        const heading = document.createElement("h3");
+        heading.textContent = "Human Review history";
+        section.appendChild(heading);
+
+        const records = Array.isArray(resolution.records) ? resolution.records : [];
+        const effectiveReviewId = resolution.effectiveReview?.reviewId || null;
+
+        if (resolution.status === "NOT_REVIEWED") {
+            section.appendChild(this.createHumanReviewMessage(
+                "No Human Review records have been recorded for the current Expert Intelligence execution.",
+                "empty_history"
+            ));
+            return section;
+        }
+
+        if (["REVIEWED", "PARTIAL_WITH_CORRUPTION"].includes(resolution.status)) {
+            const list = document.createElement("ol");
+            list.dataset.humanReviewAuditRecords = "";
+            records.forEach((record) => {
+                list.appendChild(this.createHumanReviewAuditTrailEntry(
+                    record,
+                    Boolean(effectiveReviewId) && record?.reviewId === effectiveReviewId
+                ));
+            });
+            section.appendChild(list);
+        }
+
+        if (resolution.status === "PARTIAL_WITH_CORRUPTION") {
+            section.appendChild(this.createHumanReviewMessage(
+                "Human Review history contains integrity issues. Only the integrity-safe portion of the history is shown. Additional persisted review data could not be validated.",
+                "partial_history"
+            ));
+            section.appendChild(this.createHumanReviewDiagnostics(resolution.diagnostics));
+        }
+
+        if (resolution.status === "CORRUPT_HISTORY") {
+            section.appendChild(this.createHumanReviewMessage(
+                "Human Review history contains integrity issues. No integrity-safe Human Review history can be presented for the current execution.",
+                "corrupt_history"
+            ));
+            section.appendChild(this.createHumanReviewDiagnostics(resolution.diagnostics));
+        }
+
+        return section;
+    }
+
+    static createHumanReviewAuditTrailEntry(record = {}, effective = false) {
+        const entry = document.createElement("li");
+        entry.dataset.humanReviewAuditRecord = record.reviewId || "";
+
+        if (effective) {
+            entry.dataset.humanReviewEffective = "";
+            const marker = document.createElement("strong");
+            marker.textContent = "Current effective review";
+            entry.appendChild(marker);
+        }
+
+        const decisionLabels = {
+            CONFIRMED: "Confirmed",
+            CONFIRMED_WITH_LIMITATIONS: "Confirmed with limitations",
+            REJECTED: "Rejected",
+            RERUN_REQUIRED: "Rerun required"
+        };
+        const decision = decisionLabels[record.decision]
+            ? `${decisionLabels[record.decision]} (${record.decision})`
+            : record.decision;
+
+        [
+            ["Sequence", record.sequence],
+            ["Professional decision", decision],
+            ["Rationale", record.rationale],
+            ["Reviewer", record.reviewerDisplayName],
+            ["Reviewer role", record.reviewerRole],
+            ["Reviewed at", record.reviewedAt],
+            ["Previous review", record.previousReviewId]
+        ].forEach(([label, value]) => {
+            if (this.hasHumanReviewAuditValue(value)) {
+                entry.appendChild(this.createHumanReviewAuditField(label, value));
+            }
+        });
+
+        if (record.staleAtReview === true) {
+            entry.appendChild(this.createHumanReviewMessage(
+                "The Expert Intelligence execution was marked stale when this review was recorded.",
+                "stale_at_review"
+            ));
+        }
+
+        [
+            ["Notes", record.notes],
+            ["Limitations", record.limitations],
+            ["Follow-up requirements", record.followUpRequirements],
+            ["References", record.references],
+            ["Rerun recommendation", record.rerunRecommendation]
+        ].forEach(([label, value]) => {
+            if (this.hasHumanReviewAuditValue(value)) {
+                entry.appendChild(this.createHumanReviewAuditField(label, value));
+            }
+        });
+
+        return entry;
+    }
+
+    static createHumanReviewAuditField(label, value) {
+        const field = document.createElement("div");
+        const term = document.createElement("strong");
+        term.textContent = label;
+        field.appendChild(term);
+
+        if (Array.isArray(value)) {
+            const list = document.createElement("ul");
+            value.forEach((item) => {
+                const entry = document.createElement("li");
+                entry.textContent = this.formatHumanReviewAuditValue(item);
+                list.appendChild(entry);
+            });
+            field.appendChild(list);
+            return field;
+        }
+
+        const detail = document.createElement("span");
+        detail.textContent = this.formatHumanReviewAuditValue(value);
+        field.appendChild(detail);
+        return field;
+    }
+
+    static createHumanReviewDiagnostics(diagnostics = []) {
+        const wrapper = document.createElement("div");
+        wrapper.dataset.humanReviewDiagnostics = "";
+        const heading = document.createElement("strong");
+        heading.textContent = "Integrity diagnostics";
+        wrapper.appendChild(heading);
+        const list = document.createElement("ul");
+        (Array.isArray(diagnostics) ? diagnostics : []).forEach((diagnostic) => {
+            const item = document.createElement("li");
+            item.textContent = diagnostic?.reason || diagnostic?.state || "Human Review integrity issue.";
+            list.appendChild(item);
+        });
+        wrapper.appendChild(list);
+        return wrapper;
+    }
+
+    static hasHumanReviewAuditValue(value) {
+        if (Array.isArray(value)) {
+            return value.length > 0;
+        }
+
+        return value !== null && value !== undefined && value !== "";
+    }
+
+    static formatHumanReviewAuditValue(value) {
+        if (value && typeof value === "object") {
+            try {
+                return JSON.stringify(value);
+            } catch {
+                return "Structured reference could not be displayed.";
+            }
+        }
+
+        return String(value);
     }
 
     static createHumanReviewSelect(name, label, values) {

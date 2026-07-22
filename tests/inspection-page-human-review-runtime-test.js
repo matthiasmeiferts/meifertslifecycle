@@ -321,7 +321,7 @@ await runAsyncTest("shows execution-changed and validation failures while preser
 runTest("UI depends only on the Human Review runtime manager and owns no sequence logic", () => {
     const source = fs.readFileSync(new URL("../portal/ui/pages/InspectionPage.js", import.meta.url), "utf8");
     assert.doesNotMatch(source, /HumanReviewDomainModel|HumanReviewPersistenceManager|HumanReviewResolutionManager/);
-    assert.doesNotMatch(source, /createReviewId|createNextReviewSequence|previousReviewId/);
+    assert.doesNotMatch(source, /createReviewId|createNextReviewSequence|\.sort\s*\(|sequence\s*[+\-]|previousReviewId\s*[:=]/);
     assert.doesNotMatch(source, /ReviewResolutionManager|ReviewQueueManager/);
 });
 
