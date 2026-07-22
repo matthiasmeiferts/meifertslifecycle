@@ -20,6 +20,8 @@ export default class InspectionPage {
 
     static profileStorageKey = "mbi:inspectionProfile";
 
+    static expertIntelligenceAuditItemLimit = 20;
+
     static getInspectionProfile() {
         return localStorage.getItem(this.profileStorageKey) || "default";
     }
@@ -718,6 +720,18 @@ export default class InspectionPage {
                 });
                 item.appendChild(details);
 
+                try {
+                    const auditDetails = this.createExpertIntelligenceExecutionAuditDetails(execution, summary);
+
+                    if (auditDetails) item.appendChild(auditDetails);
+                } catch (error) {
+                    const unavailable = document.createElement("p");
+                    unavailable.className = "platform-intelligence__note";
+                    unavailable.dataset.expertIntelligenceAuditDetailUnavailable = "";
+                    unavailable.textContent = "Some execution audit details could not be presented.";
+                    item.appendChild(unavailable);
+                }
+
                 this.appendExpertIntelligenceHistoryStaleState(item, isCurrent, state.stale);
 
                 list.appendChild(item);
@@ -765,6 +779,233 @@ export default class InspectionPage {
         }
 
         return panel;
+    }
+
+    static createExpertIntelligenceExecutionAuditDetails(execution, summary) {
+        const executionId = this.getExpertIntelligenceHistoryScalar(execution?.id);
+
+        if (typeof executionId !== "string" || !executionId) return null;
+
+        const disclosure = document.createElement("details");
+        disclosure.dataset.expertIntelligenceAuditDetails = executionId;
+        const disclosureSummary = document.createElement("summary");
+        disclosureSummary.textContent = "View execution audit details";
+        disclosure.appendChild(disclosureSummary);
+        const auditHeading = document.createElement("h4");
+        auditHeading.textContent = "Execution audit details";
+        disclosure.appendChild(auditHeading);
+        let sectionCount = 0;
+        let omittedDetail = false;
+
+        const appendCollection = (title, values, formatter) => {
+            if (values === undefined || values === null) return;
+
+            if (!Array.isArray(values)) {
+                omittedDetail = true;
+                return;
+            }
+
+            const supported = [];
+            values.forEach((value) => {
+                let formatted = null;
+
+                try {
+                    formatted = formatter(value);
+                } catch (error) {
+                    formatted = null;
+                }
+
+                if (typeof formatted === "string" && formatted) {
+                    supported.push(formatted);
+                }
+            });
+
+            const persistedCount = values.length;
+            const supportedCount = supported.length;
+            const displayedCount = Math.min(supportedCount, this.expertIntelligenceAuditItemLimit);
+            const unsupportedCount = persistedCount - supportedCount;
+
+            if (!supportedCount && !unsupportedCount) return;
+
+            const section = document.createElement("section");
+            const heading = document.createElement("h5");
+            heading.textContent = title;
+            section.appendChild(heading);
+
+            if (supportedCount) {
+                const list = document.createElement("ul");
+                supported.slice(0, this.expertIntelligenceAuditItemLimit).forEach((value) => {
+                    const item = document.createElement("li");
+                    item.textContent = value;
+                    list.appendChild(item);
+                });
+                section.appendChild(list);
+            }
+
+            if (supportedCount > this.expertIntelligenceAuditItemLimit || unsupportedCount) {
+                const bound = document.createElement("p");
+                bound.dataset.expertIntelligenceAuditCollectionBound = "";
+
+                if (!unsupportedCount) {
+                    bound.textContent = `Showing ${displayedCount} of ${persistedCount} preserved items.`;
+                } else if (!supportedCount) {
+                    bound.textContent = `No supported items could be presented from ${persistedCount} preserved ${persistedCount === 1 ? "item" : "items"}. ${unsupportedCount} unsupported ${unsupportedCount === 1 ? "item was" : "items were"} omitted.`;
+                } else {
+                    bound.textContent = `Showing ${displayedCount} of ${supportedCount} supported ${supportedCount === 1 ? "item" : "items"} from ${persistedCount} preserved ${persistedCount === 1 ? "item" : "items"}. ${unsupportedCount} unsupported ${unsupportedCount === 1 ? "item was" : "items were"} omitted.`;
+                }
+
+                section.appendChild(bound);
+            }
+
+            disclosure.appendChild(section);
+            sectionCount += 1;
+        };
+
+        const appendFacts = (title, facts) => {
+            const supported = facts
+                .map(([label, value]) => [label, this.getExpertIntelligenceHistoryScalar(value)])
+                .filter(([, value]) => value !== null && value !== "");
+
+            if (!supported.length) return;
+
+            const section = document.createElement("section");
+            const heading = document.createElement("h5");
+            heading.textContent = title;
+            section.appendChild(heading);
+            const list = document.createElement("dl");
+            supported.forEach(([label, value]) => {
+                const row = document.createElement("div");
+                const term = document.createElement("dt");
+                const detail = document.createElement("dd");
+                term.textContent = label;
+                detail.textContent = String(value);
+                row.appendChild(term);
+                row.appendChild(detail);
+                list.appendChild(row);
+            });
+            section.appendChild(list);
+            disclosure.appendChild(section);
+            sectionCount += 1;
+        };
+
+        appendCollection("Routing facts", execution.routedDomains, (value) => {
+            return this.getExpertIntelligenceAuditText(value);
+        });
+        appendFacts("Provider facts", [
+            ["Selected domain", summary.selectedDomain],
+            ["Selected provider", summary.selectedProvider]
+        ]);
+
+        const reasoning = execution.reasoningResult;
+
+        if (reasoning !== undefined && reasoning !== null
+            && (typeof reasoning !== "object" || Array.isArray(reasoning))) {
+            omittedDetail = true;
+        } else if (reasoning) {
+            const hypotheses = [];
+
+            if (reasoning.primaryHypothesis !== undefined && reasoning.primaryHypothesis !== null) {
+                hypotheses.push(reasoning.primaryHypothesis);
+            }
+
+            if (reasoning.alternativeHypotheses !== undefined
+                && !Array.isArray(reasoning.alternativeHypotheses)) {
+                omittedDetail = true;
+            } else if (Array.isArray(reasoning.alternativeHypotheses)) {
+                hypotheses.push(...reasoning.alternativeHypotheses);
+            }
+
+            appendCollection("Preserved hypotheses", hypotheses, (hypothesis) => {
+                if (!hypothesis || typeof hypothesis !== "object" || Array.isArray(hypothesis)) return null;
+                const label = this.getExpertIntelligenceAuditText(hypothesis.label)
+                    || this.getExpertIntelligenceAuditText(hypothesis.cause);
+                const status = this.getExpertIntelligenceAuditText(hypothesis.status);
+
+                if (!label) return null;
+
+                return status ? `${label} — Status: ${status}` : label;
+            });
+            appendCollection("Supporting evidence", reasoning.supportingEvidence, (value) => {
+                return this.getExpertIntelligenceAuditText(value);
+            });
+            appendCollection("Missing evidence", reasoning.missingEvidence, (value) => {
+                return this.getExpertIntelligenceAuditText(value);
+            });
+        }
+
+        appendFacts("Stored confidence", [["Confidence", summary.confidence]]);
+        appendFacts("Risk Relevance state", [
+            ["Value", summary.riskRelevanceValue],
+            ["Value state", summary.riskRelevanceValueState],
+            ["Source version", summary.riskRelevanceVersion],
+            ["Version state", summary.riskRelevanceVersionState]
+        ]);
+        appendFacts("Interpretation state", [
+            ["State", summary.interpretationState],
+            ["Eligible", typeof summary.interpretationEligible === "boolean"
+                ? (summary.interpretationEligible ? "Yes" : "No")
+                : null]
+        ]);
+
+        const conflicts = execution.internalModelResult?.conflicts;
+        appendCollection("Preserved model conflicts", conflicts, (conflict) => {
+            if (!conflict || typeof conflict !== "object" || Array.isArray(conflict)) return null;
+            const type = this.getExpertIntelligenceAuditText(conflict.conflictType);
+            const reference = this.getExpertIntelligenceAuditText(conflict.conflictReference);
+
+            if (!type && !reference) return null;
+
+            return [type, reference].filter(Boolean).join(" — ");
+        });
+        appendCollection("Preserved limitations", execution.limitations, (value) => {
+            return this.getExpertIntelligenceAuditText(value);
+        });
+
+        const governance = execution.governanceVersions;
+
+        if (governance !== undefined && governance !== null
+            && (typeof governance !== "object" || Array.isArray(governance))) {
+            omittedDetail = true;
+        } else if (governance) {
+            appendFacts("Governance versions", [
+                ["Risk Relevance governance", governance.riskRelevanceGovernanceVersion],
+                ["Risk Relevance supported source", governance.riskRelevanceSupportedSourceVersion],
+                ["Internal model", governance.internalModelVersion],
+                ["Interpretation model", governance.interpretationModelVersion]
+            ]);
+        }
+
+        if (execution.errorState !== undefined && execution.errorState !== null) {
+            if (typeof execution.errorState === "object" && !Array.isArray(execution.errorState)) {
+                const section = document.createElement("section");
+                const heading = document.createElement("h5");
+                heading.textContent = "Execution error information";
+                const message = document.createElement("p");
+                message.textContent = "Execution error information was preserved for this execution.";
+                section.appendChild(heading);
+                section.appendChild(message);
+                disclosure.appendChild(section);
+                sectionCount += 1;
+            } else {
+                omittedDetail = true;
+            }
+        }
+
+        if (omittedDetail) {
+            const omission = document.createElement("p");
+            omission.className = "platform-intelligence__note";
+            omission.dataset.expertIntelligenceAuditDetailOmission = "";
+            omission.textContent = "Some execution audit details could not be presented.";
+            disclosure.appendChild(omission);
+        }
+
+        return sectionCount || omittedDetail ? disclosure : null;
+    }
+
+    static getExpertIntelligenceAuditText(value) {
+        const scalar = this.getExpertIntelligenceHistoryScalar(value);
+
+        return typeof scalar === "string" && scalar ? scalar : null;
     }
 
     static appendExpertIntelligenceHistoryStaleState(item, isCurrent, staleState) {
