@@ -1,4 +1,6 @@
-const GATE_VERSION = "report-finalization-gate-1.0";
+import ReportContentDigest from "./ReportContentDigest.js";
+
+const GATE_VERSION = "report-finalization-gate-1.1";
 
 const REQUIRED_REPORT_SECTIONS = Object.freeze([
     "metadata",
@@ -24,12 +26,14 @@ export default class ReportFinalizationGate {
 
         if (report === null || report === undefined) {
             reasons.push(REASONS.REPORT_MISSING);
-            return createResult(reasons);
+            return createResult(reasons, null);
         }
+
+        const reportDigest = ReportContentDigest.create(report);
 
         if (!isPlainDataObject(report)) {
             reasons.push(REASONS.REPORT_STRUCTURE_INVALID);
-            return createResult(reasons);
+            return createResult(reasons, reportDigest);
         }
 
         const missingSection = REQUIRED_REPORT_SECTIONS.some(
@@ -50,7 +54,7 @@ export default class ReportFinalizationGate {
             }
         }
 
-        return createResult(reasons);
+        return createResult(reasons, reportDigest);
     }
 }
 
@@ -153,10 +157,11 @@ function isValidExpertIntelligenceSection(section) {
         && reviewStateValid;
 }
 
-function createResult(reasons) {
+function createResult(reasons, reportDigest) {
     return deepFreeze({
         eligible: reasons.length === 0,
         reasons: [...new Set(reasons)],
+        reportDigest,
         version: GATE_VERSION
     });
 }

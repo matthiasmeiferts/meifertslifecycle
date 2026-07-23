@@ -49,8 +49,10 @@ group("accepts a valid released assembled report", () => {
     assert.deepEqual(result, {
         eligible: true,
         reasons: [],
-        version: "report-finalization-gate-1.0"
+        reportDigest: result.reportDigest,
+        version: "report-finalization-gate-1.1"
     });
+    assert.match(result.reportDigest, /^[0-9a-f]{64}$/);
 });
 
 group("accepts a valid governed Expert Intelligence section", () => {
@@ -95,7 +97,8 @@ group("rejects a missing report deterministically", () => {
         assert.deepEqual(ReportFinalizationGate.evaluate(report), {
             eligible: false,
             reasons: ["REPORT_MISSING"],
-            version: "report-finalization-gate-1.0"
+            reportDigest: null,
+            version: "report-finalization-gate-1.1"
         });
     });
 });
@@ -133,7 +136,8 @@ group("ignores structured future top-level sections without weakening governed s
     assert.deepEqual(first, {
         eligible: true,
         reasons: [],
-        version: "report-finalization-gate-1.0"
+        reportDigest: first.reportDigest,
+        version: "report-finalization-gate-1.1"
     });
     assert.deepEqual(second, first);
     assert.notEqual(second, first);
@@ -238,6 +242,97 @@ group("returns deterministic detached deeply immutable results", () => {
     assert.throws(() => { first.reasons.push("ALTERED"); }, TypeError);
 });
 
+group("binds complete report content independently of property insertion order", () => {
+    const report = validReport({
+        futureReleasedSection: {
+            version: "future-section-1.0",
+            values: ["first", "second"]
+        }
+    });
+    const detached = structuredClone(report);
+    const reordered = Object.fromEntries(Object.entries(detached).reverse());
+    const changedGoverned = structuredClone(report);
+    changedGoverned.context.inspectionId = "inspection-changed";
+    const changedFuture = structuredClone(report);
+    changedFuture.futureReleasedSection.values[1] = "changed";
+    const removed = structuredClone(report);
+    delete removed.summary;
+    const reorderedArray = structuredClone(report);
+    reorderedArray.futureReleasedSection.values.reverse();
+
+    const digest = ReportFinalizationGate.evaluate(report).reportDigest;
+
+    assert.equal(ReportFinalizationGate.evaluate(detached).reportDigest, digest);
+    assert.equal(ReportFinalizationGate.evaluate(reordered).reportDigest, digest);
+    [changedGoverned, changedFuture, removed, reorderedArray].forEach((value) => {
+        assert.notEqual(ReportFinalizationGate.evaluate(value).reportDigest, digest);
+    });
+    assert.equal(ReportFinalizationGate.evaluate(report).eligible, true);
+    assert.equal(ReportFinalizationGate.evaluate(changedFuture).eligible, true);
+});
+
+group("binds negative zero and prototype-named own properties", () => {
+    const negativeZeroReport = validReport({
+        futureReleasedSection: JSON.parse(
+            '{"__proto__":{"value":-0},"constructor":"own","prototype":null}'
+        )
+    });
+    const positiveZeroReport = structuredClone(negativeZeroReport);
+    positiveZeroReport.futureReleasedSection.__proto__.value = 0;
+
+    assert.notEqual(
+        ReportFinalizationGate.evaluate(negativeZeroReport).reportDigest,
+        ReportFinalizationGate.evaluate(positiveZeroReport).reportDigest
+    );
+    assert.equal(Object.is(negativeZeroReport.futureReleasedSection.__proto__.value, -0), true);
+    assert.equal(Object.prototype.value, undefined);
+});
+
+group("rejects unsupported and cyclic report content deterministically", () => {
+    const cyclic = validReport();
+    cyclic.context.self = cyclic.context;
+    const unsupported = validReport();
+    unsupported.context.value = undefined;
+
+    assert.throws(() => ReportFinalizationGate.evaluate(cyclic), /REPORT_CONTENT_DIGEST_UNSUPPORTED/);
+    assert.throws(() => ReportFinalizationGate.evaluate(unsupported), /REPORT_CONTENT_DIGEST_UNSUPPORTED/);
+});
+
+group("does not leak proxy traps or revoked-proxy native failures", () => {
+    const throwingProxy = new Proxy({}, {
+        ownKeys() {
+            throw new RangeError("INCIDENTAL_PROXY_TRAP");
+        }
+    });
+    const revoked = Proxy.revocable({}, {});
+    revoked.revoke();
+
+    [throwingProxy, revoked.proxy, { deeply: [{ nested: revoked.proxy }] }].forEach((report) => {
+        assert.throws(
+            () => ReportFinalizationGate.evaluate(report),
+            (error) => error instanceof Error
+                && error.name === "Error"
+                && error.message === "REPORT_CONTENT_DIGEST_UNSUPPORTED"
+        );
+    });
+});
+
+group("exposes the exact versioned decision contract for eligible and ineligible reports", () => {
+    [
+        ReportFinalizationGate.evaluate(validReport()),
+        ReportFinalizationGate.evaluate({ ...validReport(), findings: {} })
+    ].forEach((decision) => {
+        assert.deepEqual(Object.keys(decision), [
+            "eligible",
+            "reasons",
+            "reportDigest",
+            "version"
+        ]);
+        assert.equal(decision.version, "report-finalization-gate-1.1");
+        assert.match(decision.reportDigest, /^[0-9a-f]{64}$/);
+    });
+});
+
 group("exposes exactly one public evaluation method and remains dependency isolated", () => {
     assert.deepEqual(Object.getOwnPropertyNames(ReportFinalizationGate)
         .filter((name) => !["length", "name", "prototype"].includes(name)), ["evaluate"]);
@@ -247,12 +342,12 @@ group("exposes exactly one public evaluation method and remains dependency isola
         "utf8"
     );
 
-    assert.doesNotMatch(source, /^import\s/m);
+    assert.match(source, /^import ReportContentDigest from "\.\/ReportContentDigest\.js";/m);
     assert.doesNotMatch(
         source,
         /ExpertIntelligenceRuntimeManager|StorageManager|ExpertIntelligenceReportProjection|ReportPage|ReportAssemblyEngine|ReportOutputGovernanceManager|ReportFinalizationLockManager|localStorage|fetch/
     );
 });
 
-assert.equal(groups, 12);
+assert.equal(groups, 17);
 console.log(`Report Finalization Gate tests completed: ${groups} groups passed.`);
