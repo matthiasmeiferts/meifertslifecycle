@@ -21,6 +21,12 @@ function test(name, operation) {
     console.log(`PASS ${name}`);
 }
 
+async function asyncTest(name, operation) {
+    await operation();
+    passed += 1;
+    console.log(`PASS ${name}`);
+}
+
 function records() {
     return [
         InspectionCaseDomainModel.createCase({
@@ -150,8 +156,10 @@ test("depends only on the ten released Foundation domain models", () => {
     );
     const imports = [...source.matchAll(/^import .* from "([^"]+)";/gm)]
         .map((match) => match[1]);
-    assert.equal(imports.length, 10);
-    assert.equal(imports.every((value) => /^\.\/Inspection(?:Case|Session|Area|Observation|Evidence|Finding|Assessment|Recommendation|Decision|Report)DomainModel\.js$/.test(value)), true);
+    assert.equal(imports.length, 11);
+    assert.equal(imports.filter((value) => value.startsWith("./Inspection")).every((value) => /^\.\/Inspection(?:Case|Session|Area|Observation|Evidence|Finding|Assessment|Recommendation|Decision|Report)DomainModel\.js$/.test(value)), true);
+    assert.equal(imports.filter((value) => value.startsWith("./Inspection")).length, 10);
+    assert.equal(imports.includes("node:util"), true);
     [
         "StorageManager", "HumanReviewPersistenceManager", "InspectionContext",
         "PipelineIntegrityValidator", "RuntimeManager", "Workspace", "ReportAssembly"
@@ -191,6 +199,75 @@ test("does not mutate envelope inputs", () => {
     const before = JSON.stringify(source);
     envelopes(source);
     assert.equal(JSON.stringify(source), before);
+});
+
+test("rejects transparent proxies at root, record, payload and nested boundaries without mutation", () => {
+    const source = mutable(records()[0]);
+    const before = JSON.stringify(source);
+    rejects(
+        () => FoundationPersistenceBoundary.createEnvelope("InspectionCase", new Proxy(source, {})),
+        "FOUNDATION_PERSISTENCE_NON_JSON_VALUE"
+    );
+    assert.equal(JSON.stringify(source), before);
+
+    const trapCounts = { get: 0, getPrototypeOf: 0, ownKeys: 0, getOwnPropertyDescriptor: 0 };
+    const instrumented = new Proxy(source, {
+        get() { trapCounts.get += 1; throw new Error("get trap must not run"); },
+        getPrototypeOf() { trapCounts.getPrototypeOf += 1; throw new Error("prototype trap must not run"); },
+        ownKeys() { trapCounts.ownKeys += 1; throw new Error("ownKeys trap must not run"); },
+        getOwnPropertyDescriptor() {
+            trapCounts.getOwnPropertyDescriptor += 1;
+            throw new Error("descriptor trap must not run");
+        }
+    });
+    rejects(
+        () => FoundationPersistenceBoundary.createEnvelope("InspectionCase", instrumented),
+        "FOUNDATION_PERSISTENCE_NON_JSON_VALUE"
+    );
+    assert.deepEqual(trapCounts, { get: 0, getPrototypeOf: 0, ownKeys: 0, getOwnPropertyDescriptor: 0 });
+
+    const proxiedReference = new Proxy({ city: "Berlin" }, {});
+    rejects(
+        () => FoundationPersistenceBoundary.createEnvelope("InspectionCase", {
+            ...source,
+            propertyReference: proxiedReference
+        }),
+        "FOUNDATION_PERSISTENCE_NON_JSON_VALUE"
+    );
+
+    const finding = mutable(records()[5]);
+    finding.evidenceIds = new Proxy(finding.evidenceIds, {});
+    rejects(
+        () => FoundationPersistenceBoundary.createEnvelope("InspectionFinding", finding),
+        "FOUNDATION_PERSISTENCE_NON_JSON_VALUE"
+    );
+
+    const root = new Proxy(namespace(), {});
+    rejects(
+        () => FoundationPersistenceBoundary.serialize(root),
+        "FOUNDATION_PERSISTENCE_ROOT_INVALID"
+    );
+
+    const serializable = mutable(namespace());
+    serializable.foundationRecords[0].payload = new Proxy(serializable.foundationRecords[0].payload, {});
+    rejects(
+        () => FoundationPersistenceBoundary.serialize(serializable),
+        "FOUNDATION_PERSISTENCE_NON_JSON_VALUE"
+    );
+
+    const technical = mutable(namespace());
+    technical.foundationRecords[0] = new Proxy(technical.foundationRecords[0], {});
+    rejects(
+        () => FoundationPersistenceBoundary.rehydrate(technical),
+        "FOUNDATION_PERSISTENCE_NON_JSON_VALUE"
+    );
+
+    const list = records();
+    list[9] = new Proxy(list[9], {});
+    rejects(
+        () => FoundationPersistenceBoundary.roundtrip(list),
+        "FOUNDATION_PERSISTENCE_NON_JSON_VALUE"
+    );
 });
 
 test("serializes the exact namespace deterministically", () => {
@@ -263,7 +340,7 @@ test("rejects invalid roots and missing namespace", () => {
 });
 
 test("deserialize accepts only non-empty JSON strings", () => {
-    [null, undefined, {}, [], 1, true, "", "   "].forEach((value) => {
+    [null, undefined, {}, [], Buffer.from("{}"), 1, true, "", "   "].forEach((value) => {
         rejects(() => FoundationPersistenceBoundary.deserialize(value), "FOUNDATION_PERSISTENCE_INPUT_INVALID");
     });
     rejects(() => FoundationPersistenceBoundary.deserialize("{"), "FOUNDATION_PERSISTENCE_JSON_INVALID");
@@ -338,6 +415,37 @@ test("rejects an envelope ID mismatch", () => {
     rejects(() => FoundationPersistenceBoundary.serialize(root), "FOUNDATION_PERSISTENCE_ENVELOPE_ID_MISMATCH");
 });
 
+test("rejects missing, empty and incorrectly typed canonical IDs and envelope IDs", () => {
+    const source = mutable(records()[0]);
+    delete source.caseId;
+    rejects(
+        () => FoundationPersistenceBoundary.createEnvelope("InspectionCase", source),
+        "FOUNDATION_PERSISTENCE_PAYLOAD_INVALID"
+    );
+    rejects(
+        () => FoundationPersistenceBoundary.createEnvelope("InspectionCase", { ...records()[0], caseId: "" }),
+        "FOUNDATION_PERSISTENCE_PAYLOAD_INVALID"
+    );
+    rejects(
+        () => FoundationPersistenceBoundary.createEnvelope("InspectionCase", { ...records()[0], caseId: 1 }),
+        "FOUNDATION_PERSISTENCE_PAYLOAD_INVALID"
+    );
+
+    const root = mutable(namespace());
+    root.foundationRecords[0].envelopeId = 1;
+    rejects(
+        () => FoundationPersistenceBoundary.serialize(root),
+        "FOUNDATION_PERSISTENCE_ENVELOPE_ID_MISMATCH"
+    );
+
+    const contradiction = mutable(namespace());
+    contradiction.foundationRecords[0].payload.caseId = "different-case";
+    rejects(
+        () => FoundationPersistenceBoundary.serialize(contradiction),
+        "FOUNDATION_PERSISTENCE_ENVELOPE_ID_MISMATCH"
+    );
+});
+
 test("rejects duplicate envelopes, records and payloads", () => {
     const first = mutable(envelopes()[0]);
     rejects(
@@ -369,6 +477,33 @@ test("rejects duplicate envelopes, records and payloads", () => {
         FoundationPersistenceBoundary.createEnvelope("InspectionCase", caseRecord),
         FoundationPersistenceBoundary.createEnvelope("InspectionSession", sessionRecord)
     ])));
+});
+
+test("rejects an identical payload as a duplicate envelope", () => {
+    const first = mutable(envelopes()[0]);
+    rejects(
+        () => FoundationPersistenceBoundary.serialize(namespace([first, mutable(first)])),
+        "FOUNDATION_PERSISTENCE_DUPLICATE_ENVELOPE"
+    );
+});
+
+test("rejects a different payload for the same record type and ID", () => {
+    const first = mutable(envelopes()[0]);
+    const conflicting = mutable(first);
+    conflicting.payload.title = "Different title";
+    rejects(
+        () => FoundationPersistenceBoundary.serialize(namespace([first, conflicting])),
+        "FOUNDATION_PERSISTENCE_DUPLICATE_RECORD"
+    );
+});
+
+test("rejects envelope-ID collisions before duplicate processing", () => {
+    const source = mutable(envelopes());
+    source[1].envelopeId = source[0].envelopeId;
+    rejects(
+        () => FoundationPersistenceBoundary.serialize(namespace([source[0], source[1]])),
+        "FOUNDATION_PERSISTENCE_ENVELOPE_ID_MISMATCH"
+    );
 });
 
 test("rejects non-JSON primitive values at every relevant boundary", () => {
@@ -409,6 +544,41 @@ test("rejects unsupported object prototypes and sparse or extended arrays", () =
     const sparse = [];
     sparse.length = 1;
     rejects(() => FoundationPersistenceBoundary.roundtrip(sparse), "FOUNDATION_PERSISTENCE_NON_JSON_VALUE");
+});
+
+test("rejects Map, Set, Promise and foreign class instances separately", () => {
+    class ForeignRecord {}
+
+    [new Map(), new Set(), Promise.resolve(), new ForeignRecord()].forEach((value) => {
+        rejects(
+            () => FoundationPersistenceBoundary.createEnvelope("InspectionCase", {
+                ...records()[0],
+                title: value
+            }),
+            "FOUNDATION_PERSISTENCE_NON_JSON_VALUE"
+        );
+    });
+});
+
+test("preserves optional propertyReference presence and absence exactly", () => {
+    const withoutOptional = InspectionCaseDomainModel.createCase({
+        caseId: "case-without-property",
+        title: "Without property reference",
+        inspectionType: "OTHER",
+        createdAt: CREATED_AT
+    });
+    const withOptional = records()[0];
+    const restored = FoundationPersistenceBoundary.rehydrate(namespace([
+        FoundationPersistenceBoundary.createEnvelope("InspectionCase", withoutOptional),
+        FoundationPersistenceBoundary.createEnvelope("InspectionCase", withOptional)
+    ]));
+
+    assert.equal(Object.hasOwn(restored[0], "propertyReference"), false);
+    assert.deepEqual(Object.keys(restored[0]), [
+        "version", "caseId", "title", "inspectionType", "createdAt"
+    ]);
+    assert.equal(Object.hasOwn(restored[1], "propertyReference"), true);
+    assert.deepEqual(restored[1].propertyReference, withOptional.propertyReference);
 });
 
 test("fails atomically without returning valid prefixes", () => {
@@ -463,6 +633,54 @@ test("detects a payload-field-order roundtrip mismatch", () => {
     }
 });
 
+test("rejects identical record object identities during roundtrip comparison", () => {
+    const originalCreateEnvelope = FoundationPersistenceBoundary.createEnvelope;
+    const originalRehydrate = FoundationPersistenceBoundary.rehydrate;
+    const capturedRecords = [];
+
+    try {
+        FoundationPersistenceBoundary.createEnvelope = function (recordType, record) {
+            capturedRecords.push(record);
+            return originalCreateEnvelope.call(this, recordType, record);
+        };
+        FoundationPersistenceBoundary.rehydrate = function () {
+            return Object.freeze([...capturedRecords]);
+        };
+        rejects(
+            () => FoundationPersistenceBoundary.roundtrip(records()),
+            "FOUNDATION_PERSISTENCE_ROUNDTRIP_MISMATCH"
+        );
+    } finally {
+        FoundationPersistenceBoundary.createEnvelope = originalCreateEnvelope;
+        FoundationPersistenceBoundary.rehydrate = originalRehydrate;
+    }
+});
+
+test("rejects added, lost and optional fields during roundtrip comparison", () => {
+    const mutations = [
+        (record) => { record.extra = true; },
+        (record) => { delete record.title; },
+        (record) => { delete record.propertyReference; }
+    ];
+
+    mutations.forEach((mutate) => {
+        const originalRehydrate = FoundationPersistenceBoundary.rehydrate;
+        try {
+            FoundationPersistenceBoundary.rehydrate = function (root) {
+                const value = mutable(originalRehydrate.call(this, root));
+                mutate(value[0]);
+                return value;
+            };
+            rejects(
+                () => FoundationPersistenceBoundary.roundtrip(records()),
+                "FOUNDATION_PERSISTENCE_ROUNDTRIP_MISMATCH"
+            );
+        } finally {
+            FoundationPersistenceBoundary.rehydrate = originalRehydrate;
+        }
+    });
+});
+
 test("does not retain input references or permit mutations", () => {
     const source = records();
     const root = namespace(envelopes(source));
@@ -471,8 +689,42 @@ test("does not retain input references or permit mutations", () => {
     assert.notEqual(technical, root);
     assert.notEqual(technical.foundationRecords, root.foundationRecords);
     assert.notEqual(restored[0], source[0]);
+    assert.throws(() => { technical.extra = true; }, TypeError);
+    assert.throws(() => { technical.foundationRecords.push(null); }, TypeError);
+    assert.throws(() => { technical.foundationRecords[0].recordType = "changed"; }, TypeError);
     assert.throws(() => { technical.foundationRecords[0].payload.caseId = "changed"; }, TypeError);
+    assert.throws(() => { technical.foundationRecords[0].payload.propertyReference.city = "changed"; }, TypeError);
+    assert.throws(() => { technical.foundationRecords[5].payload.evidenceIds.push("changed"); }, TypeError);
+    assert.throws(() => { restored[0].propertyReference.city = "changed"; }, TypeError);
     assert.throws(() => { restored[5].evidenceIds.push("changed"); }, TypeError);
+});
+
+await asyncTest("wraps validateX and createX failures fail-closed", async () => {
+    const originalValidate = InspectionCaseDomainModel.validateCase;
+    let ValidateFailureBoundary;
+    try {
+        InspectionCaseDomainModel.validateCase = () => { throw new Error("validate failure"); };
+        ValidateFailureBoundary = (await import("../portal/core/FoundationPersistenceBoundary.js?validate-failure")).default;
+    } finally {
+        InspectionCaseDomainModel.validateCase = originalValidate;
+    }
+    rejects(
+        () => ValidateFailureBoundary.serialize(namespace()),
+        "FOUNDATION_PERSISTENCE_PAYLOAD_INVALID"
+    );
+
+    const originalCreate = InspectionCaseDomainModel.createCase;
+    let CreateFailureBoundary;
+    try {
+        InspectionCaseDomainModel.createCase = () => { throw new Error("create failure"); };
+        CreateFailureBoundary = (await import("../portal/core/FoundationPersistenceBoundary.js?create-failure")).default;
+    } finally {
+        InspectionCaseDomainModel.createCase = originalCreate;
+    }
+    rejects(
+        () => CreateFailureBoundary.serialize(namespace()),
+        "FOUNDATION_PERSISTENCE_REHYDRATION_FAILED"
+    );
 });
 
 test("uses deterministic closed error context", () => {

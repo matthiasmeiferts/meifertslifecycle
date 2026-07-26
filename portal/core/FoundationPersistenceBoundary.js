@@ -8,6 +8,7 @@ import InspectionAssessmentDomainModel from "./InspectionAssessmentDomainModel.j
 import InspectionRecommendationDomainModel from "./InspectionRecommendationDomainModel.js";
 import InspectionDecisionDomainModel from "./InspectionDecisionDomainModel.js";
 import InspectionReportDomainModel from "./InspectionReportDomainModel.js";
+import { types } from "node:util";
 
 const ROOT_FIELDS = Object.freeze(["foundationRecords"]);
 const ENVELOPE_FIELDS = Object.freeze([
@@ -188,7 +189,7 @@ function requireModel(recordType) {
 }
 
 function captureNamespace(value) {
-    if (!isOrdinaryObject(value)) {
+    if (types.isProxy(value) || !isOrdinaryObject(value)) {
         fail(ERROR_CODES.ROOT_INVALID, "Foundation persistence root is invalid.");
     }
 
@@ -385,6 +386,9 @@ function captureJsonValue(value, field, ancestors = new WeakSet()) {
     if (!value || typeof value !== "object") {
         fail(ERROR_CODES.NON_JSON_VALUE, "Foundation persistence contains a non-JSON value.", { field });
     }
+    if (types.isProxy(value)) {
+        fail(ERROR_CODES.NON_JSON_VALUE, "Foundation persistence contains a proxy value.", { field });
+    }
     if (ancestors.has(value)) {
         fail(ERROR_CODES.NON_JSON_VALUE, "Foundation persistence contains cyclic data.", { field });
     }
@@ -455,7 +459,7 @@ function captureJsonValue(value, field, ancestors = new WeakSet()) {
 
 function canonicalEqual(left, right, requireFrozen = false, seen = new WeakMap()) {
     if (Object.is(left, right)) {
-        return true;
+        return !left || typeof left !== "object";
     }
     if (!left || !right || typeof left !== "object" || typeof right !== "object") {
         return false;
